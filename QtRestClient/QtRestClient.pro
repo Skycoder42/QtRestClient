@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += network webengine
+QT       += network
 
 QT       -= gui
 
@@ -24,10 +24,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-SOURCES += qtrestclient.cpp
+SOURCES += \
+    restclient.cpp
 
-HEADERS += qtrestclient.h\
-        qtrestclient_global.h
+HEADERS +=\
+        qtrestclient_global.h \
+    restclient.h \
+    restclient_p.h \
+    QtRestClient
 
 unix {
     target.path = /usr/lib
