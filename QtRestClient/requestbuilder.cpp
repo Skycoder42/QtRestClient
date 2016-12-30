@@ -5,7 +5,7 @@
 using namespace QtRestClient;
 
 namespace QtRestClient {
-struct RequestBuilderPrivate
+struct RequestBuilderPrivate : public QSharedData
 {
 	static QByteArray ContentType;
 	static QByteArray ContentTypeJson;
@@ -22,6 +22,7 @@ struct RequestBuilderPrivate
 	QByteArray verb;
 
 	inline RequestBuilderPrivate(QNetworkAccessManager *nam = nullptr, QUrl baseUrl = QUrl()) :
+		QSharedData(),
 		nam(nam),
 		base(baseUrl),
 		version(),
@@ -31,6 +32,19 @@ struct RequestBuilderPrivate
 		attributes({{QNetworkRequest::FollowRedirectsAttribute, true}}),
 		body(),
 		verb("GET")
+	{}
+
+	inline RequestBuilderPrivate(const RequestBuilderPrivate &other) :
+		QSharedData(other),
+		nam(other.nam),
+		base(other.base),
+		version(other.version),
+		path(other.path),
+		query(other.query),
+		headers(other.headers),
+		attributes(other.attributes),
+		body(other.body),
+		verb(other.verb)
 	{}
 };
 
@@ -45,15 +59,10 @@ RequestBuilder::RequestBuilder(QNetworkAccessManager *nam, QUrl baseUrl) :
 {}
 
 RequestBuilder::RequestBuilder(const RequestBuilder &other) :
-	d_ptr(new RequestBuilderPrivate())
-{
-	*d = *(other.d);
-}
+	d_ptr(other.d_ptr)
+{}
 
-RequestBuilder::~RequestBuilder()
-{
-	delete d_ptr;
-}
+RequestBuilder::~RequestBuilder() {}
 
 RequestBuilder &RequestBuilder::setVersion(const QVersionNumber &version)
 {
@@ -132,7 +141,7 @@ RequestBuilder &RequestBuilder::setVerb(const QByteArray &verb)
 	return *this;
 }
 
-QNetworkRequest RequestBuilder::build()
+QNetworkRequest RequestBuilder::build() const
 {
 	auto url = d->base;
 
@@ -156,7 +165,7 @@ QNetworkRequest RequestBuilder::build()
 	return request;
 }
 
-QNetworkReply *RequestBuilder::send()
+QNetworkReply *RequestBuilder::send() const
 {
 	auto request = build();
 

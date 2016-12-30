@@ -10,6 +10,7 @@
 #include <QUrl>
 #include <QUrlQuery>
 #include <QVersionNumber>
+#include <QSharedDataPointer>
 
 namespace QtRestClient {
 
@@ -35,11 +36,11 @@ public:
 	RequestBuilder &setBody(const QJsonArray &body);
 	RequestBuilder &setVerb(const QByteArray &verb);
 
-	QNetworkRequest build();
-	QNetworkReply *send();
+	QNetworkRequest build() const;
+	QNetworkReply *send() const;
 
 private:
-	RequestBuilderPrivate *d_ptr;
+	QSharedDataPointer<RequestBuilderPrivate> d_ptr;
 };
 
 }
