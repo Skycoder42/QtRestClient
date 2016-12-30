@@ -14,7 +14,7 @@
 namespace QtRestClient {
 
 struct RequestBuilderPrivate;
-class RequestBuilder
+class QTRESTCLIENTSHARED_EXPORT RequestBuilder
 {
 public:
 	RequestBuilder(QNetworkAccessManager *nam, QUrl baseUrl);
