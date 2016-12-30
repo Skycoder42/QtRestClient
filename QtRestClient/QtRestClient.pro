@@ -25,13 +25,15 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    restclient.cpp
+    restclient.cpp \
+    requestbuilder.cpp
 
 HEADERS +=\
         qtrestclient_global.h \
     restclient.h \
     restclient_p.h \
-    QtRestClient
+    QtRestClient \
+    requestbuilder.h
 
 unix {
     target.path = /usr/lib

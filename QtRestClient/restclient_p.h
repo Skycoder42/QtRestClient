@@ -5,9 +5,13 @@
 
 namespace QtRestClient {
 
-class QtRestClientPrivate
+class RestClientPrivate
 {
-
+public:
+	QUrl baseUrl;
+	QVersionNumber apiVersion;
+	HeaderHash headers;
+	QUrlQuery query;
 };
 
 }

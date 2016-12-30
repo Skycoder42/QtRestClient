@@ -9,4 +9,10 @@
 #  define QTRESTCLIENTSHARED_EXPORT Q_DECL_IMPORT
 #endif
 
+namespace QtRestClient {
+
+typedef QHash<QByteArray, QByteArray> HeaderHash;
+
+}
+
 #endif // QTRESTCLIENT_GLOBAL_H
