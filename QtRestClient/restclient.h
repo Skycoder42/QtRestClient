@@ -21,7 +21,7 @@ class QTRESTCLIENTSHARED_EXPORT RestClient : public QObject
 	Q_PROPERTY(QVersionNumber apiVersion READ apiVersion WRITE setApiVersion NOTIFY apiVersionChanged)
 	Q_PROPERTY(HeaderHash globalHeaders READ globalHeaders WRITE setGlobalHeaders NOTIFY globalHeadersChanged)
 	Q_PROPERTY(QUrlQuery globalParameters READ globalParameters WRITE setGlobalParameters NOTIFY globalParametersChanged)
-	//TODO ssl config
+	Q_PROPERTY(QSslConfiguration sslConfiguration READ sslConfiguration WRITE setSslConfiguration NOTIFY sslConfigurationChanged)
 
 public:
 	explicit RestClient(QObject *parent = nullptr);
@@ -30,7 +30,8 @@ public:
 	QUrl baseUrl() const;
 	QVersionNumber apiVersion() const;	
 	HeaderHash globalHeaders() const;
-	QUrlQuery globalParameters() const;
+	QUrlQuery globalParameters() const;	
+	QSslConfiguration sslConfiguration() const;
 
 	RequestBuilder builder() const;
 
@@ -39,6 +40,7 @@ public slots:
 	void setApiVersion(QVersionNumber apiVersion);	
 	void setGlobalHeaders(HeaderHash globalHeaders);
 	void setGlobalParameters(QUrlQuery globalParameters);
+	void setSslConfiguration(QSslConfiguration sslConfiguration);
 
 	void addGlobalHeader(QByteArray name, QByteArray value);
 	void removeGlobalHeader(QByteArray name);
@@ -50,7 +52,8 @@ signals:
 	void baseUrlChanged(QUrl baseUrl);
 	void apiVersionChanged(QVersionNumber apiVersion);	
 	void globalHeadersChanged(HeaderHash globalHeaders);
-	void globalParametersChanged(QUrlQuery globalParameters);
+	void globalParametersChanged(QUrlQuery globalParameters);	
+	void sslConfigurationChanged(QSslConfiguration sslConfiguration);
 
 private:
 	QScopedPointer<RestClientPrivate> d_ptr;

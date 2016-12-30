@@ -18,6 +18,7 @@ struct RequestBuilderPrivate : public QSharedData
 	QUrlQuery query;
 	HeaderHash headers;
 	QHash<QNetworkRequest::Attribute, QVariant> attributes;
+	QSslConfiguration sslConfig;
 	QByteArray body;
 	QByteArray verb;
 
@@ -30,6 +31,7 @@ struct RequestBuilderPrivate : public QSharedData
 		query(),
 		headers(),
 		attributes({{QNetworkRequest::FollowRedirectsAttribute, true}}),
+		sslConfig(QSslConfiguration::defaultConfiguration()),
 		body(),
 		verb("GET")
 	{}
@@ -43,6 +45,7 @@ struct RequestBuilderPrivate : public QSharedData
 		query(other.query),
 		headers(other.headers),
 		attributes(other.attributes),
+		sslConfig(other.sslConfig),
 		body(other.body),
 		verb(other.verb)
 	{}
@@ -114,6 +117,12 @@ RequestBuilder &RequestBuilder::setAttribute(QNetworkRequest::Attribute attribut
 	return *this;
 }
 
+RequestBuilder &RequestBuilder::setSslConfig(QSslConfiguration sslConfig)
+{
+	d->sslConfig = sslConfig;
+	return *this;
+}
+
 RequestBuilder &RequestBuilder::setBody(const QByteArray &body, const QByteArray &contentType)
 {
 	d->body = body;
@@ -162,6 +171,7 @@ QNetworkRequest RequestBuilder::build() const
 		request.setRawHeader(it.key(), it.value());
 	for(auto it = d->attributes.constBegin(); it != d->attributes.constEnd(); it++)
 		request.setAttribute(it.key(), it.value());
+	request.setSslConfiguration(d->sslConfig);
 	return request;
 }
 
@@ -191,4 +201,10 @@ QNetworkReply *RequestBuilder::send() const
 	}
 
 	return reply;
+}
+
+RequestBuilder &RequestBuilder::operator =(const RequestBuilder &other)
+{
+	d_ptr = other.d_ptr;
+	return *this;
 }

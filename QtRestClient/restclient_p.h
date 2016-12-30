@@ -12,6 +12,9 @@ public:
 	QVersionNumber apiVersion;
 	HeaderHash headers;
 	QUrlQuery query;
+	QSslConfiguration sslConfig;
+
+	RestClientPrivate();
 };
 
 }

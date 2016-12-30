@@ -31,12 +31,18 @@ QUrlQuery RestClient::globalParameters() const
 	return d->query;
 }
 
+QSslConfiguration RestClient::sslConfiguration() const
+{
+	return d->sslConfig;
+}
+
 RequestBuilder RestClient::builder() const
 {
 	return RequestBuilder(nullptr, d->baseUrl)
 			.setVersion(d->apiVersion)
 			.addHeaders(d->headers)
-			.addParameters(d->query);
+			.addParameters(d->query)
+			.setSslConfig(d->sslConfig);
 }
 
 void RestClient::setBaseUrl(QUrl baseUrl)
@@ -75,22 +81,45 @@ void RestClient::setGlobalParameters(QUrlQuery globalParameters)
 	emit globalParametersChanged(globalParameters);
 }
 
+void RestClient::setSslConfiguration(QSslConfiguration sslConfiguration)
+{
+	if (d->sslConfig == sslConfiguration)
+		return;
+
+	d->sslConfig = sslConfiguration;
+	emit sslConfigurationChanged(sslConfiguration);
+}
+
 void RestClient::addGlobalHeader(QByteArray name, QByteArray value)
 {
 	d->headers.insert(name, value);
+	emit globalHeadersChanged(d->headers);
 }
 
 void RestClient::removeGlobalHeader(QByteArray name)
 {
-	d->headers.remove(name);
+	if(d->headers.remove(name) > 0)
+		emit globalHeadersChanged(d->headers);
 }
 
 void RestClient::addGlobalParameter(QString name, QString value)
 {
 	d->query.addQueryItem(name, value);
+	emit globalParametersChanged(d->query);
 }
 
 void RestClient::removeGlobalParameter(QString name)
 {
 	d->query.removeQueryItem(name);
+	emit globalParametersChanged(d->query);
 }
+
+// ------------- Private Implementation -------------
+
+RestClientPrivate::RestClientPrivate() :
+	baseUrl(),
+	apiVersion(),
+	headers(),
+	query(),
+	sslConfig(QSslConfiguration::defaultConfiguration())
+{}

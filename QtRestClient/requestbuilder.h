@@ -29,7 +29,9 @@ public:
 	RequestBuilder &addParameters(const QUrlQuery &parameters);
 	RequestBuilder &addPath(QString pathSegment);
 	RequestBuilder &addPath(QStringList pathSegment);
+
 	RequestBuilder &setAttribute(QNetworkRequest::Attribute attribute, const QVariant &value);
+	RequestBuilder &setSslConfig(QSslConfiguration sslConfig);
 
 	RequestBuilder &setBody(const QByteArray &body, const QByteArray &contentType);
 	RequestBuilder &setBody(const QJsonObject &body);
@@ -38,6 +40,8 @@ public:
 
 	QNetworkRequest build() const;
 	QNetworkReply *send() const;
+
+	RequestBuilder &operator =(const RequestBuilder &other);
 
 private:
 	QSharedDataPointer<RequestBuilderPrivate> d_ptr;
