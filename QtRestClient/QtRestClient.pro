@@ -26,14 +26,20 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     restclient.cpp \
-    requestbuilder.cpp
+    requestbuilder.cpp \
+    restclass.cpp \
+    restreply.cpp
 
 HEADERS +=\
         qtrestclient_global.h \
     restclient.h \
     restclient_p.h \
     QtRestClient \
-    requestbuilder.h
+    requestbuilder.h \
+    restclass.h \
+    restclass_p.h \
+    restreply.h \
+    restreply_p.h
 
 unix {
     target.path = /usr/lib

@@ -12,6 +12,8 @@
 
 namespace QtRestClient {
 
+class RestClass;
+
 class RestClientPrivate;
 class QTRESTCLIENTSHARED_EXPORT RestClient : public QObject
 {
@@ -26,6 +28,8 @@ class QTRESTCLIENTSHARED_EXPORT RestClient : public QObject
 public:
 	explicit RestClient(QObject *parent = nullptr);
 	~RestClient();
+
+	RestClass *restClass(QString path, QObject *parent = nullptr);
 
 	QUrl baseUrl() const;
 	QVersionNumber apiVersion() const;	
@@ -49,11 +53,11 @@ public slots:
 	void removeGlobalParameter(QString name);
 
 signals:
-	void baseUrlChanged(QUrl baseUrl);
-	void apiVersionChanged(QVersionNumber apiVersion);	
-	void globalHeadersChanged(HeaderHash globalHeaders);
-	void globalParametersChanged(QUrlQuery globalParameters);	
-	void sslConfigurationChanged(QSslConfiguration sslConfiguration);
+	void baseUrlChanged(QUrl baseUrl, QPrivateSignal);
+	void apiVersionChanged(QVersionNumber apiVersion, QPrivateSignal);
+	void globalHeadersChanged(HeaderHash globalHeaders, QPrivateSignal);
+	void globalParametersChanged(QUrlQuery globalParameters, QPrivateSignal);
+	void sslConfigurationChanged(QSslConfiguration sslConfiguration, QPrivateSignal);
 
 private:
 	QScopedPointer<RestClientPrivate> d_ptr;
