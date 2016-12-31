@@ -4,5 +4,5 @@ CONFIG += ordered
 
 SUBDIRS += \
     QtRestClient \
-    Tests \
-	SimpleRestClientApp
+	SimpleRestClientApp \
+    Tests

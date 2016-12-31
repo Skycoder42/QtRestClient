@@ -1,1 +1,3 @@
 #include "restclient.h"
+#include "restclass.h"
+#include "requestbuilder.h"

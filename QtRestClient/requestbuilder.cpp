@@ -154,15 +154,11 @@ QNetworkRequest RequestBuilder::build() const
 {
 	auto url = d->base;
 
-	auto pathList = d->path;
+	auto pathList = url.path().split(QLatin1Char('/'), QString::SkipEmptyParts);
 	if(!d->version.isNull())
-		pathList.prepend(d->version.toString());
-	auto path = url.path();
-	if(!pathList.isEmpty() && !path.endsWith(QLatin1Char('/'))){
-		path.append(QLatin1Char('/'));
-		path.append(pathList.join(QLatin1Char('/')));
-	}
-	url.setPath(path);
+		pathList.append(QLatin1Char('v') + d->version.normalized().toString());
+	pathList.append(d->path);
+	url.setPath(QLatin1Char('/') + pathList.join(QLatin1Char('/')));
 
 	url.setQuery(d->query);
 
