@@ -5,8 +5,20 @@ Q_DECLARE_METATYPE(QUrlQuery)
 Q_DECLARE_METATYPE(QNetworkRequest::Attribute)
 
 RequestBuilderTest::RequestBuilderTest(QObject *parent) :
-	QObject(parent)
+	QObject(parent),
+	nam(nullptr)
 {}
+
+void RequestBuilderTest::initTestCase()
+{
+	nam = new QNetworkAccessManager(this);
+}
+
+void RequestBuilderTest::cleanupTestCase()
+{
+	nam->deleteLater();
+	nam = nullptr;
+}
 
 void RequestBuilderTest::testBuilding_data()
 {
@@ -222,4 +234,75 @@ void RequestBuilderTest::testBuilding()
 	QCOMPARE(request.sslConfiguration(), sslConfig);
 	if(attributeValue.isValid())
 		QCOMPARE(request.attribute(attributeKey), attributeValue);
+}
+
+void RequestBuilderTest::testSending_data()
+{
+	QTest::addColumn<QUrl>("url");
+	QTest::addColumn<QJsonObject>("body");
+	QTest::addColumn<QByteArray>("verb");
+	QTest::addColumn<int>("status");
+	QTest::addColumn<QNetworkReply::NetworkError>("error");
+	QTest::addColumn<QJsonObject>("object");
+
+	QJsonObject object;
+	object["userId"] = 1;
+	object["id"] = 1;
+	object["title"] = "sunt aut facere repellat provident occaecati excepturi optio reprehenderit";
+	object["body"] = "quia et suscipit\n"
+					 "suscipit recusandae consequuntur expedita et cum\n"
+					 "reprehenderit molestiae ut ut quas totam\n"
+					 "nostrum rerum est autem sunt rem eveniet architecto";
+	QTest::newRow("testDefaultGet") << QUrl("https://jsonplaceholder.typicode.com/posts/1")
+									<< QJsonObject()
+									<< QByteArray()
+									<< 200
+									<< QNetworkReply::NoError
+									<< object;
+
+	object["title"] = "baum";
+	object["body"] = 42;
+	QTest::newRow("testPut") << QUrl("https://jsonplaceholder.typicode.com/posts/1")
+							 << object
+							 << QByteArray("PUT")
+							 << 200
+							 << QNetworkReply::NoError
+							 << object;
+
+	QTest::newRow("testError") << QUrl("https://jsonplaceholder.typicode.com/posts/baum")
+									<< QJsonObject()
+									<< QByteArray()
+									<< 404
+									<< QNetworkReply::ContentNotFoundError
+									<< QJsonObject();
+}
+
+void RequestBuilderTest::testSending()
+{
+	QFETCH(QUrl, url);
+	QFETCH(QJsonObject, body);
+	QFETCH(QByteArray, verb);
+	QFETCH(int, status);
+	QFETCH(QNetworkReply::NetworkError, error);
+	QFETCH(QJsonObject, object);
+
+	auto builder = QtRestClient::RequestBuilder(nam, url);
+	if(!verb.isEmpty())
+		builder.setVerb(verb);
+	if(!body.isEmpty())
+		builder.setBody(body);
+
+	auto reply = builder.send();
+	QSignalSpy replySpy(reply, &QNetworkReply::finished);
+
+	QVERIFY(replySpy.wait());
+	QCOMPARE(reply->error(), error);
+	QCOMPARE(reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt(), status);
+
+	QJsonParseError e;
+	auto repData = QJsonDocument::fromJson(reply->readAll(), &e).object();
+	QCOMPARE(e.error, QJsonParseError::NoError);
+	QCOMPARE(repData, object);
+
+	reply->deleteLater();
 }
