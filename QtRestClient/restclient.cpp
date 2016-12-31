@@ -7,7 +7,7 @@ using namespace QtRestClient;
 
 RestClient::RestClient(QObject *parent) :
 	QObject(parent),
-	d_ptr(new RestClientPrivate())
+	d_ptr(new RestClientPrivate(this))
 {}
 
 RestClient::~RestClient() {}
@@ -44,7 +44,7 @@ QSslConfiguration RestClient::sslConfiguration() const
 
 RequestBuilder RestClient::builder() const
 {
-	return RequestBuilder(nullptr, d->baseUrl)
+	return RequestBuilder(d->nam, d->baseUrl)
 			.setVersion(d->apiVersion)
 			.addHeaders(d->headers)
 			.addParameters(d->query)
@@ -122,10 +122,16 @@ void RestClient::removeGlobalParameter(QString name)
 
 // ------------- Private Implementation -------------
 
-RestClientPrivate::RestClientPrivate() :
+QNetworkAccessManager *RestClientPrivate::getNam(RestClient *client)
+{
+	return client->d_ptr->nam;
+}
+
+RestClientPrivate::RestClientPrivate(RestClient *q_ptr) :
 	baseUrl(),
 	apiVersion(),
 	headers(),
 	query(),
-	sslConfig(QSslConfiguration::defaultConfiguration())
+	sslConfig(QSslConfiguration::defaultConfiguration()),
+	nam(new QNetworkAccessManager(q_ptr))
 {}

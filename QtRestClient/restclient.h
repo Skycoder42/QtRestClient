@@ -18,6 +18,7 @@ class RestClientPrivate;
 class QTRESTCLIENTSHARED_EXPORT RestClient : public QObject
 {
 	Q_OBJECT
+	friend class RestClientPrivate;
 
 	Q_PROPERTY(QUrl baseUrl READ baseUrl WRITE setBaseUrl NOTIFY baseUrlChanged)
 	Q_PROPERTY(QVersionNumber apiVersion READ apiVersion WRITE setApiVersion NOTIFY apiVersionChanged)

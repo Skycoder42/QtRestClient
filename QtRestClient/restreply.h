@@ -25,7 +25,7 @@ public:
 	};
 	Q_ENUM(ErrorType)
 
-	RestReply(QNetworkReply *networkReply);
+	RestReply(QNetworkReply *networkReply);//TODO parent? make private?
 
 	RestReply &onSucceeded(std::function<void(RestReply*, int, QJsonObject)> handler);
 	RestReply &onSucceeded(std::function<void(RestReply*, int, QJsonArray)> handler);
