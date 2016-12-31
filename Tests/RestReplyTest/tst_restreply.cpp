@@ -9,6 +9,7 @@ private Q_SLOTS:
 	void cleanupTestCase();
 	void testReplyWrapping_data();
 	void testReplyWrapping();
+	void testReplyError();
 
 private:
 	QNetworkAccessManager *nam;
@@ -81,8 +82,38 @@ void RestReplyTest::testReplyWrapping()
 		QCOMPARE(data, result);
 		called = true;
 	});
-	reply->onError([](QtRestClient::RestReply *, QString error, int, QtRestClient::RestReply::ErrorType){
+	reply->onError([&](QtRestClient::RestReply *, QString error, int, QtRestClient::RestReply::ErrorType){
 		QFAIL(qUtf8Printable(error));
+		called = true;
+	});
+	QSignalSpy deleteSpy(reply, &QtRestClient::RestReply::destroyed);
+
+	QVERIFY(deleteSpy.wait());
+	QVERIFY(called);
+}
+
+void RestReplyTest::testReplyError()
+{
+	QNetworkRequest request(QStringLiteral("https://invalid.jsonplaceholder.typicode.com"));
+	request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
+
+	bool called = false;
+
+	auto reply = new QtRestClient::RestReply(nam->get(request));
+	reply->enableAutoDelete();
+	reply->onSucceeded([&](QtRestClient::RestReply *, int, QJsonObject){
+		QFAIL("succeed with non existant domain");
+		called = true;
+	});
+	reply->onFailed([&](QtRestClient::RestReply *, int, QJsonObject){
+		QFAIL("succeed with non existant domain");
+		called = true;
+	});
+	reply->onError([&](QtRestClient::RestReply *rep, QString, int code, QtRestClient::RestReply::ErrorType type) {
+		QCOMPARE(rep, reply);
+		QCOMPARE(code, (int)QNetworkReply::HostNotFoundError);
+		QCOMPARE(type, QtRestClient::RestReply::NetworkError);
+		called = true;
 	});
 	QSignalSpy deleteSpy(reply, &QtRestClient::RestReply::destroyed);
 
