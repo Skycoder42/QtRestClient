@@ -1,13 +1,15 @@
-#include "tst_restclient.h"
-#include <QtRestClient>
+#include "tst_global.h"
 
-Q_DECLARE_METATYPE(QUrlQuery)
+class RestClientTest : public QObject
+{
+	Q_OBJECT
 
-RestClientTest::RestClientTest(QObject *parent) :
-	QObject(parent)
-{}
+private Q_SLOTS:
+	void testBaseUrl_data();
+	void testBaseUrl();
+};
 
-void RestClientTest::testbaseUrl_data()
+void RestClientTest::testBaseUrl_data()
 {
 	QTest::addColumn<QUrl>("base");
 	QTest::addColumn<QVersionNumber>("version");
@@ -30,7 +32,7 @@ void RestClientTest::testbaseUrl_data()
 							 << QUrl("https://api.example.com/basic/v4.2?p1=baum&p2=42");
 }
 
-void RestClientTest::testbaseUrl()
+void RestClientTest::testBaseUrl()
 {
 	QFETCH(QUrl, base);
 	QFETCH(QVersionNumber, version);
@@ -53,3 +55,7 @@ void RestClientTest::testbaseUrl()
 		QCOMPARE(request.rawHeader(it.key()), it.value());
 	QCOMPARE(request.sslConfiguration(), sslConfig);
 }
+
+QTEST_MAIN(RestClientTest)
+
+#include "tst_restclient.moc"

@@ -1,13 +1,22 @@
-#include "tst_requestbuilder.h"
-#include <QtRestClient>
+#include "tst_global.h"
 
-Q_DECLARE_METATYPE(QUrlQuery)
-Q_DECLARE_METATYPE(QNetworkRequest::Attribute)
+class RequestBuilderTest : public QObject
+{
+	Q_OBJECT
 
-RequestBuilderTest::RequestBuilderTest(QObject *parent) :
-	QObject(parent),
-	nam(nullptr)
-{}
+private Q_SLOTS:
+	void initTestCase();
+	void cleanupTestCase();
+
+	void testBuilding_data();
+	void testBuilding();
+
+	void testSending_data();
+	void testSending();
+
+private:
+	QNetworkAccessManager *nam;
+};
 
 void RequestBuilderTest::initTestCase()
 {
@@ -306,3 +315,7 @@ void RequestBuilderTest::testSending()
 
 	reply->deleteLater();
 }
+
+QTEST_MAIN(RequestBuilderTest)
+
+#include "tst_requestbuilder.moc"
