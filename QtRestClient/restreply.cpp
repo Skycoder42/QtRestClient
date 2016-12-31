@@ -7,8 +7,8 @@ using namespace QtRestClient;
 
 #define d d_ptr
 
-RestReply::RestReply(QNetworkReply *networkReply) :
-	QObject(),
+RestReply::RestReply(QNetworkReply *networkReply, QObject *parent) :
+	QObject(parent),
 	d_ptr(new RestReplyPrivate(networkReply, this))
 {
 	connect(networkReply, &QNetworkReply::finished,

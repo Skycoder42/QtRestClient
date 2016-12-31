@@ -19,6 +19,12 @@ class QTRESTCLIENTSHARED_EXPORT RestClass : public QObject
 	friend class RestClientPrivate;
 
 public:
+	static const QByteArray GetVerb;
+	static const QByteArray PostVerb;
+	static const QByteArray PutVerb;
+	static const QByteArray DeleteVerb;
+	static const QByteArray PatchVerb;
+
 	~RestClass();
 
 	RestClass *subClass(const QString &path, QObject *parent = nullptr);
@@ -36,8 +42,8 @@ public:
 //	void* get(const QString &methodPath, const T &body, const HeaderHash & headers, Args... parameters);
 
 	RestReply* call(QByteArray verb, const QString &methodPath, const QVariantHash &parameters = {}, const HeaderHash & headers = {});
-	RestReply* call(QByteArray verb,const QString &methodPath, QJsonObject body, const QVariantHash &parameters = {}, const HeaderHash & headers = {});
-	RestReply* call(QByteArray verb,const QString &methodPath, QJsonArray body, const QVariantHash &parameters = {}, const HeaderHash & headers = {});
+	RestReply* call(QByteArray verb, const QString &methodPath, QJsonObject body, const QVariantHash &parameters = {}, const HeaderHash & headers = {});
+	RestReply* call(QByteArray verb, const QString &methodPath, QJsonArray body, const QVariantHash &parameters = {}, const HeaderHash & headers = {});
 //	template<typename... Args>
 //	void* call(QByteArray verb,const QString &methodPath, Args... parameters);
 //	template<typename T, typename... Args>
