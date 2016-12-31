@@ -271,7 +271,7 @@ void RequestBuilderTest::testSending_data()
 
 	QTest::newRow("testError") << QUrl("https://jsonplaceholder.typicode.com/posts/baum")
 									<< QJsonObject()
-									<< QByteArray()
+									<< QByteArray("GET")
 									<< 404
 									<< QNetworkReply::ContentNotFoundError
 									<< QJsonObject();
