@@ -10,6 +10,7 @@ private Q_SLOTS:
 	void testReplyWrapping_data();
 	void testReplyWrapping();
 	void testReplyError();
+	void testReplyRetry();
 
 private:
 	QNetworkAccessManager *nam;
@@ -118,6 +119,39 @@ void RestReplyTest::testReplyError()
 	QSignalSpy deleteSpy(reply, &QtRestClient::RestReply::destroyed);
 	QVERIFY(deleteSpy.wait());
 	QVERIFY(called);
+}
+
+void RestReplyTest::testReplyRetry()
+{
+	QNetworkRequest request(QStringLiteral("https://invalid.jsonplaceholder.typicode.com"));
+	request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
+
+	auto retryCount = 0;
+
+	auto reply = new QtRestClient::RestReply(nam->get(request));
+	reply->enableAutoDelete();
+	reply->onSucceeded([&](QtRestClient::RestReply *, int, QJsonObject){
+		retryCount = 42;
+		QFAIL("succeed with non existant domain");
+	});
+	reply->onFailed([&](QtRestClient::RestReply *, int, QJsonObject){
+		retryCount = 42;
+		QFAIL("succeed with non existant domain");
+	});
+	reply->onError([&](QtRestClient::RestReply *rep, QString, int code, QtRestClient::RestReply::ErrorType type) {
+		retryCount++;
+		QCOMPARE(rep, reply);
+		QCOMPARE(code, (int)QNetworkReply::HostNotFoundError);
+		QCOMPARE(type, QtRestClient::RestReply::NetworkError);
+		if(retryCount < 3)
+			rep->retryAfter((retryCount - 1) * 1500);//first 0, the 1500
+	});
+
+	QSignalSpy deleteSpy(reply, &QtRestClient::RestReply::destroyed);
+	QVERIFY(!deleteSpy.wait(1000));
+	QVERIFY(deleteSpy.wait(14000));
+	QVERIFY(retryCount);
+	QCOMPARE(retryCount, 3);
 }
 
 QTEST_MAIN(RestReplyTest)

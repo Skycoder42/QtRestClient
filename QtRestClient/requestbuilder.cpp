@@ -1,4 +1,5 @@
 #include "requestbuilder.h"
+#include "restreply_p.h"
 
 #include <QBuffer>
 #include <QJsonDocument>
@@ -218,21 +219,7 @@ QNetworkReply *RequestBuilder::send() const
 		buffer->open(QIODevice::ReadOnly);
 	}
 
-	auto reply = d->nam->sendCustomRequest(request, d->verb, buffer);
-
-	if(buffer) {
-		if(reply) {
-			QObject::connect(reply, &QNetworkReply::destroyed, d->nam, [=](){
-				buffer->close();
-				buffer->deleteLater();
-			});
-		} else {
-			buffer->close();
-			buffer->deleteLater();
-		}
-	}
-
-	return reply;
+	return RestReplyPrivate::compatSend(d->nam, request, d->verb, buffer);
 }
 
 RequestBuilder &RequestBuilder::operator =(const RequestBuilder &other)

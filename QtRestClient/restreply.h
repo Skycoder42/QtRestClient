@@ -45,6 +45,7 @@ public:
 public slots:
 	void abort();
 	void retry();
+	void retryAfter(int mSecs);
 
 	void setAutoDelete(bool autoDelete);
 
