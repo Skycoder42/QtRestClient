@@ -12,7 +12,7 @@ RestClient::RestClient(QObject *parent) :
 
 RestClient::~RestClient() {}
 
-RestClass *RestClient::restClass(QString path, QObject *parent)
+RestClass *RestClient::createClass(QString path, QObject *parent)
 {
 	return new RestClass(this, path.split(QLatin1Char('/'), QString::SkipEmptyParts), parent);
 }

@@ -3,4 +3,5 @@ TEMPLATE = subdirs
 SUBDIRS += \
     RequestBuilderTest \
     RestClientTest \
-    RestReplyTest
+    RestReplyTest \
+    BasicJsonTest
