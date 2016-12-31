@@ -11,40 +11,70 @@ RequestBuilderTest::RequestBuilderTest(QObject *parent) :
 void RequestBuilderTest::testBuilding_data()
 {
 	QTest::addColumn<QUrl>("base");
+	QTest::addColumn<QString>("user");
+	QTest::addColumn<QString>("pass");
 	QTest::addColumn<QVersionNumber>("version");
 	QTest::addColumn<QtRestClient::HeaderHash>("headers");
 	QTest::addColumn<QUrlQuery>("params");
+	QTest::addColumn<QString>("fragment");
 	QTest::addColumn<QString>("path");
+	QTest::addColumn<bool>("trailingSlash");
 	QTest::addColumn<QNetworkRequest::Attribute>("attributeKey");
 	QTest::addColumn<QVariant>("attributeValue");
 	QTest::addColumn<QSslConfiguration>("sslConfig");
 	QTest::addColumn<QUrl>("resultUrl");
 
 	QTest::newRow("base") << QUrl("https://api.example.com/basic/")
+						  << QString()
+						  << QString()
 						  << QVersionNumber()
 						  << QtRestClient::HeaderHash()
 						  << QUrlQuery()
 						  << QString()
+						  << QString()
+						  << false
 						  << (QNetworkRequest::Attribute)0
 						  << QVariant()
 						  << QSslConfiguration::defaultConfiguration()
 						  << QUrl("https://api.example.com/basic");
 
+	QTest::newRow("credentials") << QUrl("https://api.example.com/basic/")
+								 << "user"
+								 << "password"
+								 << QVersionNumber()
+								 << QtRestClient::HeaderHash()
+								 << QUrlQuery()
+								 << QString()
+								 << QString()
+								 << false
+								 << (QNetworkRequest::Attribute)0
+								 << QVariant()
+								 << QSslConfiguration::defaultConfiguration()
+								 << QUrl("https://user:password@api.example.com/basic");
+
 	QTest::newRow("version") << QUrl("https://api.example.com/basic/")
+							 << QString()
+							 << QString()
 							 << QVersionNumber(4,2,0)
 							 << QtRestClient::HeaderHash()
 							 << QUrlQuery()
 							 << QString()
+							 << QString()
+							 << false
 							 << (QNetworkRequest::Attribute)0
 							 << QVariant()
 							 << QSslConfiguration::defaultConfiguration()
 							 << QUrl("https://api.example.com/basic/v4.2");
 
 	QTest::newRow("header") << QUrl("https://api.example.com/basic/")
+							<< QString()
+							<< QString()
 							<< QVersionNumber()
 							<< QtRestClient::HeaderHash({{"Bearer", "Secret"}})
 							<< QUrlQuery()
 							<< QString()
+							<< QString()
+							<< false
 							<< (QNetworkRequest::Attribute)0
 							<< QVariant()
 							<< QSslConfiguration::defaultConfiguration()
@@ -54,30 +84,70 @@ void RequestBuilderTest::testBuilding_data()
 	query.addQueryItem("p1", "baum");
 	query.addQueryItem("p2", "42");
 	QTest::newRow("parameters") << QUrl("https://api.example.com/basic/")
+								<< QString()
+								<< QString()
 								<< QVersionNumber()
 								<< QtRestClient::HeaderHash()
 								<< query
 								<< QString()
+								<< QString()
+								<< false
 								<< (QNetworkRequest::Attribute)0
 								<< QVariant()
 								<< QSslConfiguration::defaultConfiguration()
 								<< QUrl("https://api.example.com/basic?p1=baum&p2=42");
 
+	QTest::newRow("fragment") << QUrl("https://api.example.com/basic/")
+							  << QString()
+							  << QString()
+							  << QVersionNumber()
+							  << QtRestClient::HeaderHash()
+							  << QUrlQuery()
+							  << QStringLiteral("example")
+							  << QString()
+							  << false
+							  << (QNetworkRequest::Attribute)0
+							  << QVariant()
+							  << QSslConfiguration::defaultConfiguration()
+							  << QUrl("https://api.example.com/basic#example");
+
 	QTest::newRow("path") << QUrl("https://api.example.com/basic/")
+						  << QString()
+						  << QString()
 						  << QVersionNumber()
 						  << QtRestClient::HeaderHash()
 						  << QUrlQuery()
+						  << QString()
 						  << QStringLiteral("/examples/exampleStuff/")
+						  << false
 						  << (QNetworkRequest::Attribute)0
 						  << QVariant()
 						  << QSslConfiguration::defaultConfiguration()
 						  << QUrl("https://api.example.com/basic/examples/exampleStuff");
 
+	QTest::newRow("slash") << QUrl("https://api.example.com/basic/")
+						   << QString()
+						   << QString()
+						   << QVersionNumber()
+						   << QtRestClient::HeaderHash()
+						   << QUrlQuery()
+						   << QString()
+						   << QString()
+						   << true
+						   << (QNetworkRequest::Attribute)0
+						   << QVariant()
+						   << QSslConfiguration::defaultConfiguration()
+						   << QUrl("https://api.example.com/basic/");
+
 	QTest::newRow("attribute") << QUrl("https://api.example.com/basic/")
+							   << QString()
+							   << QString()
 							   << QVersionNumber()
 							   << QtRestClient::HeaderHash()
 							   << QUrlQuery()
 							   << QString()
+							   << QString()
+							   << false
 							   << QNetworkRequest::CacheSaveControlAttribute
 							   << QVariant(false)
 							   << QSslConfiguration::defaultConfiguration()
@@ -87,44 +157,60 @@ void RequestBuilderTest::testBuilding_data()
 	config.setProtocol(QSsl::TlsV1_2);
 	config.setPeerVerifyMode(QSslSocket::VerifyPeer);
 	QTest::newRow("sslConfig") << QUrl("https://api.example.com/basic/")
+							   << QString()
+							   << QString()
 							   << QVersionNumber()
 							   << QtRestClient::HeaderHash()
 							   << QUrlQuery()
 							   << QString()
+							   << QString()
+							   << false
 							   << (QNetworkRequest::Attribute)0
 							   << QVariant()
 							   << config
 							   << QUrl("https://api.example.com/basic");
 
 	QTest::newRow("full") << QUrl("https://api.example.com/basic/")
+						  << "user"
+						  << "password"
 						  << QVersionNumber(4,2,0)
 						  << QtRestClient::HeaderHash({{"Bearer", "Secret"}})
 						  << query
-						  << QStringLiteral("/examples/exampleStuff/")
+						  << QStringLiteral("example")
+						  << QStringLiteral("/examples/exampleStuff")
+						  << true
 						  << QNetworkRequest::CacheSaveControlAttribute
 						  << QVariant(false)
 						  << config
-						  << QUrl("https://api.example.com/basic/v4.2/examples/exampleStuff?p1=baum&p2=42");
+						  << QUrl("https://user:password@api.example.com/basic/v4.2/examples/exampleStuff/?p1=baum&p2=42#example");
 }
 
 void RequestBuilderTest::testBuilding()
 {
 	QFETCH(QUrl, base);
+	QFETCH(QString, user);
+	QFETCH(QString, pass);
 	QFETCH(QVersionNumber, version);
 	QFETCH(QtRestClient::HeaderHash, headers);
 	QFETCH(QUrlQuery, params);
+	QFETCH(QString, fragment);
 	QFETCH(QString, path);
+	QFETCH(bool, trailingSlash);
 	QFETCH(QNetworkRequest::Attribute, attributeKey);
 	QFETCH(QVariant, attributeValue);
 	QFETCH(QSslConfiguration, sslConfig);
 	QFETCH(QUrl, resultUrl);
 
 	auto builder = QtRestClient::RequestBuilder(nullptr, base)
+				   .setCredentials(user, pass)
 				   .setVersion(version)
-				   .addHeaders(headers)
-				   .addParameters(params)
 				   .addPath(path)
+				   .addParameters(params)
+				   .setFragment(fragment)
+				   .addHeaders(headers)
 				   .setSslConfig(sslConfig);
+	if(trailingSlash)
+		builder.trailingSlash();
 	if(attributeValue.isValid())
 		builder.setAttribute(attributeKey, attributeValue);
 

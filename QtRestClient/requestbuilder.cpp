@@ -14,8 +14,12 @@ struct RequestBuilderPrivate : public QSharedData
 
 	QUrl base;
 	QVersionNumber version;
+	QString user;
+	QString pass;
 	QStringList path;
+	bool trailingSlash;
 	QUrlQuery query;
+	QString fragment;
 	HeaderHash headers;
 	QHash<QNetworkRequest::Attribute, QVariant> attributes;
 	QSslConfiguration sslConfig;
@@ -27,8 +31,12 @@ struct RequestBuilderPrivate : public QSharedData
 		nam(nam),
 		base(baseUrl),
 		version(),
+		user(),
+		pass(),
 		path(),
+		trailingSlash(false),
 		query(),
+		fragment(),
 		headers(),
 		attributes({{QNetworkRequest::FollowRedirectsAttribute, true}}),
 		sslConfig(QSslConfiguration::defaultConfiguration()),
@@ -41,8 +49,12 @@ struct RequestBuilderPrivate : public QSharedData
 		nam(other.nam),
 		base(other.base),
 		version(other.version),
+		user(other.user),
+		pass(other.pass),
 		path(other.path),
+		trailingSlash(other.trailingSlash),
 		query(other.query),
+		fragment(other.fragment),
 		headers(other.headers),
 		attributes(other.attributes),
 		sslConfig(other.sslConfig),
@@ -73,6 +85,13 @@ RequestBuilder &RequestBuilder::setVersion(const QVersionNumber &version)
 	return *this;
 }
 
+RequestBuilder &RequestBuilder::setCredentials(const QString &user, const QString &password)
+{
+	d->user = user;
+	d->pass = password;
+	return *this;
+}
+
 RequestBuilder &RequestBuilder::addHeader(const QByteArray &name, const QByteArray &value)
 {
 	d->headers.insert(name, value);
@@ -99,6 +118,12 @@ RequestBuilder &RequestBuilder::addParameters(const QUrlQuery &parameters)
 	return *this;
 }
 
+RequestBuilder &RequestBuilder::setFragment(const QString &fragment)
+{
+	d->fragment = fragment;
+	return *this;
+}
+
 RequestBuilder &RequestBuilder::addPath(QString pathSegment)
 {
 	d->path.append(pathSegment.split(QLatin1Char('/'), QString::SkipEmptyParts));
@@ -108,6 +133,12 @@ RequestBuilder &RequestBuilder::addPath(QString pathSegment)
 RequestBuilder &RequestBuilder::addPath(QStringList pathSegment)
 {
 	d->path.append(pathSegment);
+	return *this;
+}
+
+RequestBuilder &RequestBuilder::trailingSlash()
+{
+	d->trailingSlash = true;
 	return *this;
 }
 
@@ -158,9 +189,14 @@ QNetworkRequest RequestBuilder::build() const
 	if(!d->version.isNull())
 		pathList.append(QLatin1Char('v') + d->version.normalized().toString());
 	pathList.append(d->path);
-	url.setPath(QLatin1Char('/') + pathList.join(QLatin1Char('/')));
+	url.setPath(QLatin1Char('/') + pathList.join(QLatin1Char('/')) + (d->trailingSlash ? QLatin1String("/") : QString()));
 
+	if(!d->user.isNull())
+		url.setUserName(d->user);
+	if(!d->pass.isNull())
+		url.setPassword(d->pass);
 	url.setQuery(d->query);
+	url.setFragment(d->fragment);
 
 	QNetworkRequest request(url);
 	for(auto it = d->headers.constBegin(); it != d->headers.constEnd(); it++)

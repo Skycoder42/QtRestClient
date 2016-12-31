@@ -22,13 +22,16 @@ public:
 	RequestBuilder(const RequestBuilder &other);
 	~RequestBuilder();
 
+	RequestBuilder &setCredentials(const QString &user, const QString &password);
 	RequestBuilder &setVersion(const QVersionNumber &version);
-	RequestBuilder &addHeader(const QByteArray &name, const QByteArray &value);
-	RequestBuilder &addHeaders(const HeaderHash &headers);
-	RequestBuilder &addParameter(const QString &name, const QString &value);
-	RequestBuilder &addParameters(const QUrlQuery &parameters);
 	RequestBuilder &addPath(QString pathSegment);
 	RequestBuilder &addPath(QStringList pathSegment);
+	RequestBuilder &trailingSlash();
+	RequestBuilder &addParameter(const QString &name, const QString &value);
+	RequestBuilder &addParameters(const QUrlQuery &parameters);
+	RequestBuilder &setFragment(const QString &fragment);
+	RequestBuilder &addHeader(const QByteArray &name, const QByteArray &value);
+	RequestBuilder &addHeaders(const HeaderHash &headers);
 
 	RequestBuilder &setAttribute(QNetworkRequest::Attribute attribute, const QVariant &value);
 	RequestBuilder &setSslConfig(QSslConfiguration sslConfig);
