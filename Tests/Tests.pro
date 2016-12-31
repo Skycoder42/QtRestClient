@@ -28,10 +28,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
 SOURCES += tst_requestbuilder.cpp \
-	main.cpp
+	main.cpp \
+    tst_restclient.cpp
 
 HEADERS += \
-    tst_requestbuilder.h
+    tst_requestbuilder.h \
+    tst_restclient.h
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../QtRestClient/release/ -lQtRestClient
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../QtRestClient/debug/ -lQtRestClient

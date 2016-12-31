@@ -17,6 +17,11 @@ RestClass *RestClient::restClass(QString path, QObject *parent)
 	return new RestClass(this, path.split(QLatin1Char('/'), QString::SkipEmptyParts), parent);
 }
 
+RestClass *RestClient::rootClass() const
+{
+	return d->rootClass;
+}
+
 QUrl RestClient::baseUrl() const
 {
 	return d->baseUrl;
@@ -133,5 +138,6 @@ RestClientPrivate::RestClientPrivate(RestClient *q_ptr) :
 	headers(),
 	query(),
 	sslConfig(QSslConfiguration::defaultConfiguration()),
-	nam(new QNetworkAccessManager(q_ptr))
+	nam(new QNetworkAccessManager(q_ptr)),
+	rootClass(new RestClass(q_ptr, {}, q_ptr))
 {}

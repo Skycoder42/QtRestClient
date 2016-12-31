@@ -31,6 +31,7 @@ public:
 	~RestClient();
 
 	RestClass *restClass(QString path, QObject *parent = nullptr);
+	RestClass *rootClass() const;
 
 	QUrl baseUrl() const;
 	QVersionNumber apiVersion() const;	

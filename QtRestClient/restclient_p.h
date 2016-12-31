@@ -20,6 +20,7 @@ private:
 	QSslConfiguration sslConfig;
 
 	QNetworkAccessManager *nam;
+	RestClass *rootClass;
 
 	RestClientPrivate(RestClient *q_ptr);
 };

@@ -16,6 +16,7 @@ class QTRESTCLIENTSHARED_EXPORT RestClass : public QObject
 {
 	Q_OBJECT
 	friend class RestClient;
+	friend class RestClientPrivate;
 
 public:
 	~RestClass();
