@@ -1,3 +1,4 @@
+#include "brokentestobject.h"
 #include "tst_global.h"
 
 #include "testobject.h"
@@ -66,6 +67,7 @@ void RestObjectTest::testSerialization_data()
 {
 	QTest::addColumn<TestObject*>("object");
 	QTest::addColumn<QJsonObject>("result");
+	QTest::addColumn<bool>("shouldFail");
 
 	QTest::newRow("default") << new TestObject(this)
 							 << QJsonObject({
@@ -74,7 +76,8 @@ void RestObjectTest::testSerialization_data()
 												{"stateMap", QJsonArray()},
 												{"child", QJsonValue::Null},
 												{"relatives", QJsonArray()}
-											});
+											})
+							 << false;
 
 	QTest::newRow("basic") << new TestObject(42, "baum", {}, -1, this)
 						   << QJsonObject({
@@ -83,7 +86,8 @@ void RestObjectTest::testSerialization_data()
 											  {"stateMap", QJsonArray()},
 											  {"child", QJsonValue::Null},
 											  {"relatives", QJsonArray()}
-										  });
+										  })
+						   << false;
 
 	QTest::newRow("list") << new TestObject(42, "baum", {true, false, false, true}, -1, this)
 						  << QJsonObject({
@@ -92,7 +96,8 @@ void RestObjectTest::testSerialization_data()
 											 {"stateMap", QJsonArray({QJsonValue(true), QJsonValue(false), QJsonValue(false), QJsonValue(true)})},
 											 {"child", QJsonValue::Null},
 											 {"relatives", QJsonArray()}
-										 });
+										 })
+						  << false;
 
 	QTest::newRow("child") << new TestObject(42, "baum", {}, 13, this)
 						   << QJsonObject({
@@ -107,7 +112,8 @@ void RestObjectTest::testSerialization_data()
 												   {"relatives", QJsonArray()}
 											   })},
 											  {"relatives", QJsonArray()}
-										  });
+										  })
+						   << false;
 
 	auto parent = new TestObject(42, "baum", {}, -1, this);
 	parent->child = new TestObject(13, "lucky", {}, 7, parent);
@@ -130,7 +136,8 @@ void RestObjectTest::testSerialization_data()
 													   {"relatives", QJsonArray()}
 												   })},
 												  {"relatives", QJsonArray()}
-											  });
+											  })
+							   << false;
 
 	QTest::newRow("full") << new TestObject(42, "baum", {true, false, true, false}, 13, this)
 						  << QJsonObject({
@@ -145,7 +152,8 @@ void RestObjectTest::testSerialization_data()
 												  {"relatives", QJsonArray()}
 											  })},
 											 {"relatives", QJsonArray()}
-										 });
+										 })
+						  << false;
 
 	auto relator = new TestObject(42, "baum", {}, -1, this);
 	relator->relatives.append(new TestObject(13, "lucky", {}, -1, relator));
@@ -180,15 +188,32 @@ void RestObjectTest::testSerialization_data()
 														   {"relatives", QJsonArray()}
 													   })
 												   })}
-											  });
+											  })
+							   << false;
+
+	QTest::newRow("invalidType") << (TestObject*)new BrokenTestObject(this)
+								 << QJsonObject({
+													{"id", -1},
+													{"name", QString()},
+													{"stateMap", QJsonArray()},
+													{"child", QJsonValue::Null},
+													{"relatives", QJsonArray()},
+													{"broken", QJsonValue::Null}
+												})
+								 << true;
 }
 
 void RestObjectTest::testSerialization()
 {
 	QFETCH(TestObject*, object);
 	QFETCH(QJsonObject, result);
+	QFETCH(bool, shouldFail);
 
-	QCOMPARE(ser->serialize(object), result);
+	if(shouldFail)
+		QVERIFY_EXCEPTION_THROWN(ser->serialize(object), QtRestClient::SerializerException);
+	else
+		QCOMPARE(ser->serialize(object), result);
+
 	object->deleteLater();
 }
 
@@ -196,6 +221,7 @@ void RestObjectTest::testDeserialization_data()
 {
 	QTest::addColumn<QJsonObject>("data");
 	QTest::addColumn<TestObject*>("result");
+	QTest::addColumn<bool>("shouldFail");
 
 	QTest::newRow("default") << QJsonObject({
 												{"id", -1},
@@ -204,7 +230,8 @@ void RestObjectTest::testDeserialization_data()
 												{"child", QJsonValue::Null},
 												{"relatives", QJsonArray()}
 											})
-							 << new TestObject(this);
+							 << new TestObject(this)
+							 << false;
 
 	QTest::newRow("basic") << QJsonObject({
 											  {"id", 42},
@@ -213,7 +240,8 @@ void RestObjectTest::testDeserialization_data()
 											  {"child", QJsonValue::Null},
 											  {"relatives", QJsonArray()}
 										  })
-						   << new TestObject(42, "baum", {}, -1, this);
+						   << new TestObject(42, "baum", {}, -1, this)
+						   << false;
 
 	QTest::newRow("list") << QJsonObject({
 											 {"id", 42},
@@ -222,7 +250,8 @@ void RestObjectTest::testDeserialization_data()
 											 {"child", QJsonValue::Null},
 											 {"relatives", QJsonArray()}
 										 })
-						  << new TestObject(42, "baum", {true, false, false, true}, -1, this);
+						  << new TestObject(42, "baum", {true, false, false, true}, -1, this)
+						  << false;
 
 	QTest::newRow("child") << QJsonObject({
 											  {"id", 42},
@@ -237,7 +266,8 @@ void RestObjectTest::testDeserialization_data()
 											   })},
 											  {"relatives", QJsonArray()}
 										  })
-						   << new TestObject(42, "baum", {}, 13, this);
+						   << new TestObject(42, "baum", {}, 13, this)
+						   << false;
 
 	auto parent = new TestObject(42, "baum", {}, -1, this);
 	parent->child = new TestObject(13, "lucky", {}, 7, parent);
@@ -260,7 +290,8 @@ void RestObjectTest::testDeserialization_data()
 												   })},
 												  {"relatives", QJsonArray()}
 											  })
-							   << parent;
+							   << parent
+							   << false;
 
 	QTest::newRow("full") << QJsonObject({
 											 {"id", 42},
@@ -275,7 +306,8 @@ void RestObjectTest::testDeserialization_data()
 											  })},
 											 {"relatives", QJsonArray()}
 										 })
-						  << new TestObject(42, "baum", {true, false, true, false}, 13, this);
+						  << new TestObject(42, "baum", {true, false, true, false}, 13, this)
+						  << false;
 
 	auto relator = new TestObject(42, "baum", {}, -1, this);
 	relator->relatives.append(new TestObject(13, "lucky", {}, -1, relator));
@@ -310,22 +342,63 @@ void RestObjectTest::testDeserialization_data()
 													   })
 												   })}
 											  })
-							   << relator;
+							   << relator
+							   << false;
+
+	auto dynT = new TestObject(42, "baum", {}, -1, this);
+	dynT->setProperty("baum", 42);
+	QTest::newRow("dynamicProperties") << QJsonObject({
+														  {"id", 42},
+														  {"name", "baum"},
+														  {"stateMap", QJsonArray()},
+														  {"child", QJsonValue::Null},
+														  {"relatives", QJsonArray()},
+														  {"baum", 42}
+													  })
+									   << dynT
+									   << false;
+
+	QTest::newRow("invalidDataType") << QJsonObject({
+														{"id", -1},
+														{"name", QString()},
+														{"stateMap", 42},
+														{"child", QJsonValue::Null},
+														{"relatives", QJsonArray()}
+													})
+									 << new TestObject(this)
+									 << true;
+
+	QTest::newRow("invalidDataType") << QJsonObject({
+														{"id", -1},
+														{"name", QString()},
+														{"stateMap", QJsonArray()},
+														{"child", QJsonValue::Null},
+														{"relatives", QJsonArray()},
+														{"broken", QJsonValue::Null}
+													})
+									 << (TestObject*)new BrokenTestObject(this)
+									 << true;
 }
 
 void RestObjectTest::testDeserialization()
 {
 	QFETCH(QJsonObject, data);
 	QFETCH(TestObject*, result);
+	QFETCH(bool, shouldFail);
 
-	auto obj = ser->deserialize(data, &TestObject::staticMetaObject, this);
-	QVERIFY(obj);
-	auto tObj = qobject_cast<TestObject*>(obj);
-	QVERIFY(tObj);
+	if(shouldFail)
+		QVERIFY_EXCEPTION_THROWN(ser->deserialize(data, result->metaObject(), this), QtRestClient::SerializerException);//to allow broken type
+	else {
+		auto obj = ser->deserialize(data, &TestObject::staticMetaObject, this);
+		QVERIFY(obj);
+		auto tObj = qobject_cast<TestObject*>(obj);
+		QVERIFY(tObj);
 
-	QVERIFY(result->equals(tObj));
+		QVERIFY(result->equals(tObj));
 
-	obj->deleteLater();
+		obj->deleteLater();
+	}
+
 	result->deleteLater();
 }
 

@@ -28,8 +28,10 @@ DEFINES += QT_DEPRECATED_WARNINGS
 include(../tests.pri)
 
 SOURCES += tst_restobject.cpp \
-    testobject.cpp
+    testobject.cpp \
+    brokentestobject.cpp
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
 HEADERS += \
-    testobject.h
+    testobject.h \
+    brokentestobject.h

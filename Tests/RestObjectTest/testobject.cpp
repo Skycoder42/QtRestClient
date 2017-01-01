@@ -35,7 +35,11 @@ bool TestObject::equals(const TestObject *other) const
 			if(!relatives[i]->equals(other->relatives[i]))
 				return false;
 		}
-		return true;
+
+		if(this->dynamicPropertyNames().contains("baum"))
+			return this->property("baum") == other->property("baum");
+		else
+			return true;
 	} else
 		return false;
 }

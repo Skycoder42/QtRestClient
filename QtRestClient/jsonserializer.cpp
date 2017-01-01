@@ -56,15 +56,7 @@ QJsonValue JsonSerializer::serializeValue(QVariant value)
 
 QVariant JsonSerializer::deserializeValue(QJsonValue value)
 {
-	if(value.isNull())
-		return {};
-	else {
-		auto variant = value.toVariant();
-		if(!variant.isValid())
-			throw SerializerException(QStringLiteral("Failed to convert JSON %1 to a QVariant representation").arg(value.type()), true);
-		else
-			return variant;
-	}
+	return value.toVariant();//all json can be converted to qvariant
 }
 
 // ------------- Private Implementation -------------
