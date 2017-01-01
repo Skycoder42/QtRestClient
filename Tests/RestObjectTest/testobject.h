@@ -13,7 +13,7 @@ class TestObject : public QtRestClient::RestObject
 	Q_PROPERTY(TestObject* child MEMBER child)
 
 	Q_PROPERTY(QList<TestObject*> relatives MEMBER relatives)
-	QTRESTCLIENT_OBJECT_LIST_PROPERTY(TestObject*, relatives)
+	QTRESTCLIENT_OBJECT_LIST_PROPERTY(relatives, TestObject*)
 
 public:
 	Q_INVOKABLE TestObject(QObject *parent = nullptr);

@@ -13,7 +13,7 @@ public:
 	QJsonValue doSerialize(const QMetaProperty &property, const QVariant &value);
 	QJsonObject serializeObject(const RestObject *restObject);
 
-	QVariant doDeserialize(const QMetaProperty &property, const QJsonValue &value, QObject *parent);
+	QVariant doDeserialize(const QMetaProperty &property, const QJsonValue &value, QObject *parent, int overrideTypeId = -1);
 	RestObject *deserializeObject(QJsonObject jsonObject, const QMetaObject *metaObject, QObject *parent);
 
 private:
@@ -111,17 +111,28 @@ QJsonObject JsonSerializerPrivate::serializeObject(const RestObject *restObject)
 	return object;
 }
 
-QVariant JsonSerializerPrivate::doDeserialize(const QMetaProperty &property, const QJsonValue &value, QObject *parent)
+QVariant JsonSerializerPrivate::doDeserialize(const QMetaProperty &property, const QJsonValue &value, QObject *parent, int overrideTypeId)
 {
 	QVariant variant;
 	if(value.isArray()) {
+		//check for a registered list object type
+		auto oTypeId = -1;
+		if(property.isValid()) {
+			auto ok = false;
+			oTypeId = parent->property((QByteArray("__qtrc_ro_olp_") + property.name()).constData()).toInt(&ok);
+			if(!ok)
+				oTypeId = -1;
+		}
+
+		//generate the list
 		QVariantList vList;
 		foreach(auto element, value.toArray())
-			vList.append(doDeserialize({}, element, parent));
+			vList.append(doDeserialize({}, element, parent, oTypeId));
 		variant = vList;
-	} else if(property.isValid() &&
+	} else if((property.isValid() || overrideTypeId != -1) &&
 			  (value.isObject() || value.isNull())) {
-		QMetaType mType(property.userType());
+		auto rId = overrideTypeId != -1 ? overrideTypeId : property.userType();
+		QMetaType mType(rId);
 		if(mType.flags().testFlag(QMetaType::PointerToQObject) &&
 		   mType.metaObject()->inherits(&RestObject::staticMetaObject)) {
 			if(value.isNull())
