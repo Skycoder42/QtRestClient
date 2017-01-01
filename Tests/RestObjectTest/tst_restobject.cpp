@@ -16,6 +16,9 @@ private Q_SLOTS:
 	void testSerialization_data();
 	void testSerialization();
 
+	void testDeserialization_data();
+	void testDeserialization();
+
 private:
 	QtRestClient::JsonSerializer *ser;
 };
@@ -67,7 +70,7 @@ void RestObjectTest::testSerialization_data()
 	QTest::newRow("default") << new TestObject(this)
 							 << QJsonObject({
 												{"id", -1},
-												{"name", QJsonValue::Null},
+												{"name", QString()},
 												{"stateMap", QJsonArray()},
 												{"child", QJsonValue::Null},
 												{"relatives", QJsonArray()}
@@ -98,7 +101,7 @@ void RestObjectTest::testSerialization_data()
 											  {"stateMap", QJsonArray()},
 											  {"child", QJsonObject({
 												   {"id", 13},
-												   {"name", QJsonValue::Null},
+												   {"name", QString()},
 												   {"stateMap", QJsonArray()},
 												   {"child", QJsonValue::Null},
 												   {"relatives", QJsonArray()}
@@ -119,7 +122,7 @@ void RestObjectTest::testSerialization_data()
 													   {"stateMap", QJsonArray()},
 													   {"child", QJsonObject({
 															{"id", 7},
-															{"name", QJsonValue::Null},
+															{"name", QString()},
 															{"stateMap", QJsonArray()},
 															{"child", QJsonValue::Null},
 															{"relatives", QJsonArray()}
@@ -136,7 +139,7 @@ void RestObjectTest::testSerialization_data()
 											 {"stateMap", QJsonArray({QJsonValue(true), QJsonValue(false), QJsonValue(true), QJsonValue(false)})},
 											 {"child", QJsonObject({
 												  {"id", 13},
-												  {"name", QJsonValue::Null},
+												  {"name", QString()},
 												  {"stateMap", QJsonArray()},
 												  {"child", QJsonValue::Null},
 												  {"relatives", QJsonArray()}
@@ -186,6 +189,144 @@ void RestObjectTest::testSerialization()
 	QFETCH(QJsonObject, result);
 
 	QCOMPARE(ser->serialize(object), result);
+	object->deleteLater();
+}
+
+void RestObjectTest::testDeserialization_data()
+{
+	QTest::addColumn<QJsonObject>("data");
+	QTest::addColumn<TestObject*>("result");
+
+	QTest::newRow("default") << QJsonObject({
+												{"id", -1},
+												{"name", QString()},
+												{"stateMap", QJsonArray()},
+												{"child", QJsonValue::Null},
+												{"relatives", QJsonArray()}
+											})
+							 << new TestObject(this);
+
+	QTest::newRow("basic") << QJsonObject({
+											  {"id", 42},
+											  {"name", "baum"},
+											  {"stateMap", QJsonArray()},
+											  {"child", QJsonValue::Null},
+											  {"relatives", QJsonArray()}
+										  })
+						   << new TestObject(42, "baum", {}, -1, this);
+
+	QTest::newRow("list") << QJsonObject({
+											 {"id", 42},
+											 {"name", "baum"},
+											 {"stateMap", QJsonArray({QJsonValue(true), QJsonValue(false), QJsonValue(false), QJsonValue(true)})},
+											 {"child", QJsonValue::Null},
+											 {"relatives", QJsonArray()}
+										 })
+						  << new TestObject(42, "baum", {true, false, false, true}, -1, this);
+
+	QTest::newRow("child") << QJsonObject({
+											  {"id", 42},
+											  {"name", "baum"},
+											  {"stateMap", QJsonArray()},
+											  {"child", QJsonObject({
+												   {"id", 13},
+												   {"name", QString()},
+												   {"stateMap", QJsonArray()},
+												   {"child", QJsonValue::Null},
+												   {"relatives", QJsonArray()}
+											   })},
+											  {"relatives", QJsonArray()}
+										  })
+						   << new TestObject(42, "baum", {}, 13, this);
+
+	auto parent = new TestObject(42, "baum", {}, -1, this);
+	parent->child = new TestObject(13, "lucky", {}, 7, parent);
+	QTest::newRow("recursive") << QJsonObject({
+												  {"id", 42},
+												  {"name", "baum"},
+												  {"stateMap", QJsonArray()},
+												  {"child", QJsonObject({
+													   {"id", 13},
+													   {"name", "lucky"},
+													   {"stateMap", QJsonArray()},
+													   {"child", QJsonObject({
+															{"id", 7},
+															{"name", QString()},
+															{"stateMap", QJsonArray()},
+															{"child", QJsonValue::Null},
+															{"relatives", QJsonArray()}
+														})},
+													   {"relatives", QJsonArray()}
+												   })},
+												  {"relatives", QJsonArray()}
+											  })
+							   << parent;
+
+	QTest::newRow("full") << QJsonObject({
+											 {"id", 42},
+											 {"name", "baum"},
+											 {"stateMap", QJsonArray({QJsonValue(true), QJsonValue(false), QJsonValue(true), QJsonValue(false)})},
+											 {"child", QJsonObject({
+												  {"id", 13},
+												  {"name", QString()},
+												  {"stateMap", QJsonArray()},
+												  {"child", QJsonValue::Null},
+												  {"relatives", QJsonArray()}
+											  })},
+											 {"relatives", QJsonArray()}
+										 })
+						  << new TestObject(42, "baum", {true, false, true, false}, 13, this);
+
+	auto relator = new TestObject(42, "baum", {}, -1, this);
+	relator->relatives.append(new TestObject(13, "lucky", {}, -1, relator));
+	relator->relatives.append(new TestObject(7, "magically", {}, -1, relator));
+	relator->relatives.append(new TestObject(3, "trinity", {}, -1, relator));
+	QTest::newRow("relatives") << QJsonObject({
+												  {"id", 42},
+												  {"name", "baum"},
+												  {"stateMap", QJsonArray()},
+												  {"child", QJsonValue::Null},
+												  {"relatives", QJsonArray({
+													   QJsonObject({
+														   {"id", 13},
+														   {"name", "lucky"},
+														   {"stateMap", QJsonArray()},
+														   {"child", QJsonValue::Null},
+														   {"relatives", QJsonArray()}
+													   }),
+													   QJsonObject({
+														   {"id", 7},
+														   {"name", "magically"},
+														   {"stateMap", QJsonArray()},
+														   {"child", QJsonValue::Null},
+														   {"relatives", QJsonArray()}
+													   }),
+													   QJsonObject({
+														   {"id", 3},
+														   {"name", "trinity"},
+														   {"stateMap", QJsonArray()},
+														   {"child", QJsonValue::Null},
+														   {"relatives", QJsonArray()}
+													   })
+												   })}
+											  })
+							   << relator;
+}
+
+void RestObjectTest::testDeserialization()
+{
+	QFETCH(QJsonObject, data);
+	QFETCH(TestObject*, result);
+
+	auto obj = ser->deserialize(data, &TestObject::staticMetaObject, this);
+	QVERIFY(obj);
+	auto tObj = qobject_cast<TestObject*>(obj);
+	QVERIFY(tObj);
+
+	QVERIFY(result->equals(tObj));
+
+	obj->deleteLater();
+	result->deleteLater();
 }
 
 QTEST_MAIN(RestObjectTest)

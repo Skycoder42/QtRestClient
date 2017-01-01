@@ -1,5 +1,6 @@
 #include "jsonserializer.h"
 
+#include <QDebug>
 #include <QJsonArray>
 using namespace QtRestClient;
 
@@ -12,7 +13,7 @@ public:
 	QJsonValue doSerialize(const QMetaProperty &property, const QVariant &value);
 	QJsonObject serializeObject(const RestObject *restObject);
 
-	QVariant doDeserialize(const QMetaProperty &property, const QJsonValue &value);
+	QVariant doDeserialize(const QMetaProperty &property, const QJsonValue &value, QObject *parent);
 	RestObject *deserializeObject(QJsonObject jsonObject, const QMetaObject *metaObject, QObject *parent);
 
 private:
@@ -42,7 +43,7 @@ RestObject *JsonSerializer::deserialize(QJsonObject jsonObject, const QMetaObjec
 
 QJsonValue JsonSerializer::serializeValue(QVariant value)
 {
-	if(value.isNull())
+	if(!value.isValid())
 		return QJsonValue::Null;
 	else {
 		auto json = QJsonValue::fromVariant(value);
@@ -55,7 +56,15 @@ QJsonValue JsonSerializer::serializeValue(QVariant value)
 
 QVariant JsonSerializer::deserializeValue(QJsonValue value)
 {
-	return QVariant();
+	if(value.isNull())
+		return {};
+	else {
+		auto variant = value.toVariant();
+		if(!variant.isValid())
+			throw SerializerException(QStringLiteral("Failed to convert JSON %1 to a QVariant representation").arg(value.type()), true);
+		else
+			return variant;
+	}
 }
 
 // ------------- Private Implementation -------------
@@ -102,16 +111,27 @@ QJsonObject JsonSerializerPrivate::serializeObject(const RestObject *restObject)
 	return object;
 }
 
-QVariant JsonSerializerPrivate::doDeserialize(const QMetaProperty &property, const QJsonValue &value)
+QVariant JsonSerializerPrivate::doDeserialize(const QMetaProperty &property, const QJsonValue &value, QObject *parent)
 {
 	QVariant variant;
 	if(value.isArray()) {
 		QVariantList vList;
 		foreach(auto element, value.toArray())
-			vList.append(doDeserialize({}, element));
+			vList.append(doDeserialize({}, element, parent));
 		variant = vList;
-	} else if(value.isObject()) {
-		//SHIT
+	} else if(property.isValid() &&
+			  (value.isObject() || value.isNull())) {
+		QMetaType mType(property.userType());
+		if(mType.flags().testFlag(QMetaType::PointerToQObject) &&
+		   mType.metaObject()->inherits(&RestObject::staticMetaObject)) {
+			if(value.isNull())
+				variant = QVariant::fromValue<RestObject*>(nullptr);
+			else {
+				auto restObj = deserializeObject(value.toObject(), mType.metaObject(), parent);
+				variant = QVariant::fromValue(restObj);
+			}
+		} else
+			variant = q_ptr->deserializeValue(value);
 	} else
 		variant = q_ptr->deserializeValue(value);
 
@@ -121,7 +141,7 @@ QVariant JsonSerializerPrivate::doDeserialize(const QMetaProperty &property, con
 			return variant;
 		else {
 			throw SerializerException(QStringLiteral("Failed to convert deserialized variant of type %1 to property type %2")
-									  .arg(vType)
+									  .arg(vType ? vType : "<unknown>")
 									  .arg(property.typeName()),
 									  true);
 		}
@@ -138,9 +158,10 @@ RestObject *JsonSerializerPrivate::deserializeObject(QJsonObject jsonObject, con
 
 	//now deserialize all json properties
 	for(auto it = jsonObject.constBegin(); it != jsonObject.constEnd(); it++) {
+		auto tmp = it.key();
 		auto propIndex = metaObject->indexOfProperty(qUtf8Printable(it.key()));
 		object->setProperty(qUtf8Printable(it.key()),
-							doDeserialize(metaObject->property(propIndex), it.value()));
+							doDeserialize(metaObject->property(propIndex), it.value(), object));
 	}
 
 	return object;

@@ -17,7 +17,7 @@ typedef QHash<QByteArray, QByteArray> HeaderHash;
 
 template<typename T>
 static inline bool registerListConverters() {
-	auto ok1 = QMetaType::registerConverter<QList<T>, QVariantList>([](const QList<T> &list) -> QVariantList{
+	auto ok1 = QMetaType::registerConverter<QList<T>, QVariantList>([](const QList<T> &list) -> QVariantList {
 		QVariantList l;
 		foreach(auto v, list)
 			l.append(QVariant::fromValue(v));

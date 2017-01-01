@@ -24,6 +24,8 @@ public:
 	QList<bool> stateMap;
 	TestObject* child;
 	QList<TestObject*> relatives;
+
+	bool equals(const TestObject *other) const;
 };
 
 #endif // TESTOBJECT_H
