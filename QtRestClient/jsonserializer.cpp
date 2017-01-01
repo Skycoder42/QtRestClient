@@ -169,7 +169,6 @@ RestObject *JsonSerializerPrivate::deserializeObject(QJsonObject jsonObject, con
 
 	//now deserialize all json properties
 	for(auto it = jsonObject.constBegin(); it != jsonObject.constEnd(); it++) {
-		auto tmp = it.key();
 		auto propIndex = metaObject->indexOfProperty(qUtf8Printable(it.key()));
 		object->setProperty(qUtf8Printable(it.key()),
 							doDeserialize(metaObject->property(propIndex), it.value(), object));
