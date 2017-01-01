@@ -1,7 +1,7 @@
 #include "tst_global.h"
 using namespace QtRestClient;
 
-class BasicJsonTest : public QObject
+class IntegrationTest : public QObject
 {
 	Q_OBJECT
 
@@ -14,19 +14,19 @@ private:
 	RestClient *client;
 };
 
-void BasicJsonTest::initTestCase()
+void IntegrationTest::initTestCase()
 {
 	client = new RestClient(this);
 	client->setBaseUrl(QStringLiteral("https://jsonplaceholder.typicode.com"));
 }
 
-void BasicJsonTest::cleanupTestCase()
+void IntegrationTest::cleanupTestCase()
 {
 	client->deleteLater();
 	client = nullptr;
 }
 
-void BasicJsonTest::testRestChain()
+void IntegrationTest::testRestChain()
 {
 	QJsonObject object;
 	object["userId"] = 42;
@@ -62,6 +62,6 @@ void BasicJsonTest::testRestChain()
 	postClass->deleteLater();
 }
 
-QTEST_MAIN(BasicJsonTest)
+QTEST_MAIN(IntegrationTest)
 
-#include "tst_basicjson.moc"
+#include "tst_integration.moc"

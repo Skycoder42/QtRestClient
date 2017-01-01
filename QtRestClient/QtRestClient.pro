@@ -28,7 +28,8 @@ SOURCES += \
     restclient.cpp \
     requestbuilder.cpp \
     restclass.cpp \
-    restreply.cpp
+    restreply.cpp \
+    restobject.cpp
 
 HEADERS +=\
         qtrestclient_global.h \
@@ -39,7 +40,8 @@ HEADERS +=\
     restclass.h \
     restclass_p.h \
     restreply.h \
-    restreply_p.h
+    restreply_p.h \
+    restobject.h
 
 unix {
     target.path = /usr/lib

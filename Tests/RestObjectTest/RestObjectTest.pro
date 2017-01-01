@@ -1,6 +1,6 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2016-12-31T15:14:24
+# Project created by QtCreator 2017-01-01T17:13:39
 #
 #-------------------------------------------------
 
@@ -8,7 +8,7 @@ QT       += testlib
 
 QT       -= gui
 
-TARGET = tst_restclient
+TARGET = tst_restobject
 CONFIG   += console
 CONFIG   -= app_bundle
 
@@ -27,5 +27,9 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 include(../tests.pri)
 
-SOURCES += tst_restclient.cpp
+SOURCES += tst_restobject.cpp \
+    testobject.cpp
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
+
+HEADERS += \
+    testobject.h

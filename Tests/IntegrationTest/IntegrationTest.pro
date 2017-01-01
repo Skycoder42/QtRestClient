@@ -4,11 +4,11 @@
 #
 #-------------------------------------------------
 
-QT       += network testlib
+QT       += testlib
 
 QT       -= gui
 
-TARGET = tst_basicjson
+TARGET = tst_integration
 CONFIG   += console
 CONFIG   -= app_bundle
 
@@ -27,5 +27,5 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 include(../tests.pri)
 
-SOURCES += tst_basicjson.cpp
+SOURCES += tst_integration.cpp
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
