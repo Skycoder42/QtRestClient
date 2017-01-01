@@ -12,8 +12,6 @@ class QTRESTCLIENTSHARED_EXPORT RestObject : public QObject
 	Q_OBJECT
 
 public:
-	static const int metaId();
-
 	explicit RestObject(QObject *parent = nullptr);
 };
 

@@ -7,3 +7,11 @@ TestObject::TestObject(QObject *parent) :
 	stateMap(),
 	child(nullptr)
 {}
+
+TestObject::TestObject(int id, QString name, QList<bool> stateMap, int childId, QObject *parent) :
+	RestObject(parent),
+	id(id),
+	name(name),
+	stateMap(stateMap),
+	child(childId > 0 ? new TestObject(childId, {}, {}, -1, this) : nullptr)
+{}

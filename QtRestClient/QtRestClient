@@ -3,3 +3,4 @@
 #include "requestbuilder.h"
 
 #include "restobject.h"
+#include "jsonserializer.h"

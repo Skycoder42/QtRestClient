@@ -14,6 +14,7 @@ class TestObject : public QtRestClient::RestObject
 
 public:
 	Q_INVOKABLE TestObject(QObject *parent = nullptr);
+	TestObject(int id, QString name, QList<bool> stateMap, int childId, QObject *parent = nullptr);
 
 	int id;
 	QString name;

@@ -29,7 +29,8 @@ SOURCES += \
     requestbuilder.cpp \
     restclass.cpp \
     restreply.cpp \
-    restobject.cpp
+    restobject.cpp \
+    jsonserializer.cpp
 
 HEADERS +=\
         qtrestclient_global.h \
@@ -41,7 +42,8 @@ HEADERS +=\
     restclass_p.h \
     restreply.h \
     restreply_p.h \
-    restobject.h
+    restobject.h \
+    jsonserializer.h
 
 unix {
     target.path = /usr/lib
