@@ -30,7 +30,8 @@ SOURCES += \
     restclass.cpp \
     restreply.cpp \
     restobject.cpp \
-    jsonserializer.cpp
+    jsonserializer.cpp \
+    restexception.cpp
 
 HEADERS +=\
         qtrestclient_global.h \
@@ -43,7 +44,8 @@ HEADERS +=\
     restreply.h \
     restreply_p.h \
     restobject.h \
-    jsonserializer.h
+    jsonserializer.h \
+    restexception.h
 
 unix {
     target.path = /usr/lib

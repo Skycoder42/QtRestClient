@@ -5,7 +5,8 @@ TestObject::TestObject(QObject *parent) :
 	id(-1),
 	name(),
 	stateMap(),
-	child(nullptr)
+	child(nullptr),
+	relatives()
 {}
 
 TestObject::TestObject(int id, QString name, QList<bool> stateMap, int childId, QObject *parent) :
@@ -13,5 +14,6 @@ TestObject::TestObject(int id, QString name, QList<bool> stateMap, int childId, 
 	id(id),
 	name(name),
 	stateMap(stateMap),
-	child(childId > 0 ? new TestObject(childId, {}, {}, -1, this) : nullptr)
+	child(childId > 0 ? new TestObject(childId, {}, {}, -1, this) : nullptr),
+	relatives()
 {}

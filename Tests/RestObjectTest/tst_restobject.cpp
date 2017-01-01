@@ -23,6 +23,7 @@ private:
 void RestObjectTest::initTestCase()
 {
 	QtRestClient::registerListConverters<bool>();
+	QtRestClient::registerListConverters<TestObject*>();
 	ser = new QtRestClient::JsonSerializer(this);
 }
 
@@ -52,6 +53,10 @@ void RestObjectTest::testRestMacros()
 	QVERIFY(meta->property(stateMapPos).read(&testObject).convert(QMetaType::QVariantList));
 	auto childPos = meta->indexOfProperty("child");
 	QVERIFY(meta->property(childPos).read(&testObject).convert(qMetaTypeId<QtRestClient::RestObject*>()));
+	auto relativesPos = meta->indexOfProperty("relatives");
+	QVERIFY(meta->property(relativesPos).read(&testObject).convert(QMetaType::QVariantList));
+
+	QVERIFY(meta->indexOfProperty("__qtrc_ro_olp_relatives") != -1);
 }
 
 void RestObjectTest::testSerialization_data()
@@ -64,7 +69,8 @@ void RestObjectTest::testSerialization_data()
 												{"id", -1},
 												{"name", QJsonValue::Null},
 												{"stateMap", QJsonArray()},
-												{"child", QJsonValue::Null}
+												{"child", QJsonValue::Null},
+												{"relatives", QJsonArray()}
 											});
 
 	QTest::newRow("basic") << new TestObject(42, "baum", {}, -1, this)
@@ -72,7 +78,8 @@ void RestObjectTest::testSerialization_data()
 											  {"id", 42},
 											  {"name", "baum"},
 											  {"stateMap", QJsonArray()},
-											  {"child", QJsonValue::Null}
+											  {"child", QJsonValue::Null},
+											  {"relatives", QJsonArray()}
 										  });
 
 	QTest::newRow("list") << new TestObject(42, "baum", {true, false, false, true}, -1, this)
@@ -80,7 +87,8 @@ void RestObjectTest::testSerialization_data()
 											 {"id", 42},
 											 {"name", "baum"},
 											 {"stateMap", QJsonArray({QJsonValue(true), QJsonValue(false), QJsonValue(false), QJsonValue(true)})},
-											 {"child", QJsonValue::Null}
+											 {"child", QJsonValue::Null},
+											 {"relatives", QJsonArray()}
 										 });
 
 	QTest::newRow("child") << new TestObject(42, "baum", {}, 13, this)
@@ -92,12 +100,14 @@ void RestObjectTest::testSerialization_data()
 												   {"id", 13},
 												   {"name", QJsonValue::Null},
 												   {"stateMap", QJsonArray()},
-												   {"child", QJsonValue::Null}
-											   })}
+												   {"child", QJsonValue::Null},
+												   {"relatives", QJsonArray()}
+											   })},
+											  {"relatives", QJsonArray()}
 										  });
 
 	auto parent = new TestObject(42, "baum", {}, -1, this);
-	parent->child = new TestObject(13, "lucky", {}, 7, this);
+	parent->child = new TestObject(13, "lucky", {}, 7, parent);
 	QTest::newRow("recursive") << parent
 							   << QJsonObject({
 												  {"id", 42},
@@ -111,9 +121,12 @@ void RestObjectTest::testSerialization_data()
 															{"id", 7},
 															{"name", QJsonValue::Null},
 															{"stateMap", QJsonArray()},
-															{"child", QJsonValue::Null}
-														})}
-												   })}
+															{"child", QJsonValue::Null},
+															{"relatives", QJsonArray()}
+														})},
+													   {"relatives", QJsonArray()}
+												   })},
+												  {"relatives", QJsonArray()}
 											  });
 
 	QTest::newRow("full") << new TestObject(42, "baum", {true, false, true, false}, 13, this)
@@ -125,9 +138,46 @@ void RestObjectTest::testSerialization_data()
 												  {"id", 13},
 												  {"name", QJsonValue::Null},
 												  {"stateMap", QJsonArray()},
-												  {"child", QJsonValue::Null}
-											  })}
+												  {"child", QJsonValue::Null},
+												  {"relatives", QJsonArray()}
+											  })},
+											 {"relatives", QJsonArray()}
 										 });
+
+	auto relator = new TestObject(42, "baum", {}, -1, this);
+	relator->relatives.append(new TestObject(13, "lucky", {}, -1, relator));
+	relator->relatives.append(new TestObject(7, "magically", {}, -1, relator));
+	relator->relatives.append(new TestObject(3, "trinity", {}, -1, relator));
+	QTest::newRow("relatives") << relator
+							   << QJsonObject({
+												  {"id", 42},
+												  {"name", "baum"},
+												  {"stateMap", QJsonArray()},
+												  {"child", QJsonValue::Null},
+												  {"relatives", QJsonArray({
+													   QJsonObject({
+														   {"id", 13},
+														   {"name", "lucky"},
+														   {"stateMap", QJsonArray()},
+														   {"child", QJsonValue::Null},
+														   {"relatives", QJsonArray()}
+													   }),
+													   QJsonObject({
+														   {"id", 7},
+														   {"name", "magically"},
+														   {"stateMap", QJsonArray()},
+														   {"child", QJsonValue::Null},
+														   {"relatives", QJsonArray()}
+													   }),
+													   QJsonObject({
+														   {"id", 3},
+														   {"name", "trinity"},
+														   {"stateMap", QJsonArray()},
+														   {"child", QJsonValue::Null},
+														   {"relatives", QJsonArray()}
+													   })
+												   })}
+											  });
 }
 
 void RestObjectTest::testSerialization()
@@ -135,10 +185,7 @@ void RestObjectTest::testSerialization()
 	QFETCH(TestObject*, object);
 	QFETCH(QJsonObject, result);
 
-	auto ok = false;
-	auto res = ser->serialize(object, &ok);
-	QVERIFY(ok);
-	QCOMPARE(res, result);
+	QCOMPARE(ser->serialize(object), result);
 }
 
 QTEST_MAIN(RestObjectTest)
