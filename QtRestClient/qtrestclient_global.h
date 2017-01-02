@@ -26,8 +26,18 @@ static inline bool registerListConverters() {
 
 	auto ok2 = QMetaType::registerConverter<QVariantList, QList<T>>([](const QVariantList &list) -> QList<T> {
 		QList<T> l;
-		foreach(auto v, list)
-			l.append(v.value<T>());
+		foreach(auto v, list) {
+			auto vt = v.type();
+			if(v.convert(qMetaTypeId<T>()))
+				l.append(v.value<T>());
+			else {
+				qWarning() << "Conversion to"
+						   << QMetaType::typeName(qMetaTypeId<QList<T>>())
+						   << "failed, could not convert element of type"
+						   << QMetaType::typeName(vt);
+				l.append(T());
+			}
+		}
 		return l;
 	});
 

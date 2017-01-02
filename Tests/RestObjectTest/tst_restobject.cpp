@@ -378,6 +378,16 @@ void RestObjectTest::testDeserialization_data()
 													})
 									 << (TestObject*)new BrokenTestObject(this)
 									 << true;
+
+	QTest::newRow("testImplicitListConvert") << QJsonObject({
+																{"id", 42},
+																{"name", "baum"},
+																{"stateMap", QJsonArray({QJsonValue(true), QJsonValue(42), QJsonValue(0)})},
+																{"child", QJsonValue::Null},
+																{"relatives", QJsonArray()}
+															})
+											 << new TestObject(42, "baum", {true, true, false}, -1, this)
+											 << false;
 }
 
 void RestObjectTest::testDeserialization()
