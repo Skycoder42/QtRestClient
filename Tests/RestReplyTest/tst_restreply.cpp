@@ -201,7 +201,7 @@ void RestReplyTest::testGenericReplyWrapping()
 			QVERIFY(succeed);
 			QCOMPARE(rep, reply);
 			QCOMPARE(code, status);
-			QVERIFY(data->equals(result));
+			QVERIFY(QtRestClient::RestObject::equals(data, result));
 		}();
 		return false;
 	});
@@ -211,7 +211,7 @@ void RestReplyTest::testGenericReplyWrapping()
 			QVERIFY(!succeed);
 			QCOMPARE(rep, reply);
 			QCOMPARE(code, status);
-			QVERIFY(data->equals(result));
+			QVERIFY(QtRestClient::RestObject::equals(data, result));
 		}();
 		return false;
 	});
