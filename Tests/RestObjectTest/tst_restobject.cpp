@@ -101,6 +101,18 @@ void RestObjectTest::testEquality_data()
 										 << (QtRestClient::RestObject*)parent2
 										 << true;
 
+	auto relator1 = new TestObject(42, "baum", {}, -1, this);
+	relator1->relatives.append(new TestObject(13, "lucky", {}, -1, relator1));
+	relator1->relatives.append(new TestObject(7, "magically", {}, -1, relator1));
+	relator1->relatives.append(new TestObject(3, "trinity", {}, -1, relator1));
+	auto relator2 = new TestObject(42, "baum", {}, -1, this);
+	relator2->relatives.append(new TestObject(13, "lucky", {}, -1, relator2));
+	relator2->relatives.append(new TestObject(7, "magically", {}, -1, relator2));
+	relator2->relatives.append(new TestObject(3, "trinity", {}, -1, relator2));
+	QTest::newRow("equalRelatives") << (QtRestClient::RestObject*)relator1
+									<< (QtRestClient::RestObject*)relator2
+									<< true;
+
 	QTest::newRow("unequalProperty") << (QtRestClient::RestObject*)new TestObject(42, "baum", {true, false, true}, -1, this)
 									 << (QtRestClient::RestObject*)new TestObject(42, "42", {true, false, true}, -1, this)
 									 << false;
