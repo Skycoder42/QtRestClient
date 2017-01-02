@@ -14,6 +14,9 @@ private Q_SLOTS:
 
 	void testRestMacros();
 
+	void testEquality_data();
+	void testEquality();
+
 	void testSerialization_data();
 	void testSerialization();
 
@@ -61,6 +64,70 @@ void RestObjectTest::testRestMacros()
 	QVERIFY(meta->property(relativesPos).read(&testObject).convert(QMetaType::QVariantList));
 
 	QVERIFY(meta->indexOfProperty("__qtrc_ro_olp_relatives") != -1);
+}
+
+void RestObjectTest::testEquality_data()
+{
+	QTest::addColumn<QtRestClient::RestObject*>("object1");
+	QTest::addColumn<QtRestClient::RestObject*>("object2");
+	QTest::addColumn<bool>("areEqual");
+
+	auto ident = new TestObject(this);
+	QTest::newRow("ident") << (QtRestClient::RestObject*)ident
+						   << (QtRestClient::RestObject*)ident
+						   << true;
+
+	QTest::newRow("null") << (QtRestClient::RestObject*)new TestObject(this)
+						  << (QtRestClient::RestObject*)nullptr
+						  << false;
+
+	QTest::newRow("differentClasses") << (QtRestClient::RestObject*)new TestObject(this)
+									  << (QtRestClient::RestObject*)new QtRestClient::RestObject(this)
+									  << false;
+
+	QTest::newRow("equalNoChild") << (QtRestClient::RestObject*)new TestObject(42, "baum", {true, false, true}, -1, this)
+								  << (QtRestClient::RestObject*)new TestObject(42, "baum", {true, false, true}, -1, this)
+								  << true;
+
+	QTest::newRow("equalChild") << (QtRestClient::RestObject*)new TestObject(42, "baum", {true, false, true}, 13, this)
+								  << (QtRestClient::RestObject*)new TestObject(42, "baum", {true, false, true}, 13, this)
+								  << true;
+
+	auto parent1 = new TestObject(42, "baum", {}, -1, this);
+	parent1->child = new TestObject(13, "lucky", {}, 7, parent1);
+	auto parent2 = new TestObject(42, "baum", {}, -1, this);
+	parent2->child = new TestObject(13, "lucky", {}, 7, parent1);
+	QTest::newRow("equalChildRecursive") << (QtRestClient::RestObject*)parent1
+										 << (QtRestClient::RestObject*)parent2
+										 << true;
+
+	QTest::newRow("unequalProperty") << (QtRestClient::RestObject*)new TestObject(42, "baum", {true, false, true}, -1, this)
+									 << (QtRestClient::RestObject*)new TestObject(42, "42", {true, false, true}, -1, this)
+									 << false;
+
+	QTest::newRow("unequalList") << (QtRestClient::RestObject*)new TestObject(42, "baum", {true, false, true}, -1, this)
+								 << (QtRestClient::RestObject*)new TestObject(42, "baum", {true, true, true}, -1, this)
+								 << false;
+
+	QTest::newRow("unequalChild") << (QtRestClient::RestObject*)new TestObject(42, "baum", {true, false, true}, 13, this)
+								  << (QtRestClient::RestObject*)new TestObject(42, "baum", {true, false, true}, 14, this)
+								  << false;
+
+	QTest::newRow("unequalChildNull") << (QtRestClient::RestObject*)new TestObject(42, "baum", {true, false, true}, 13, this)
+									  << (QtRestClient::RestObject*)new TestObject(42, "baum", {true, false, true}, -1, this)
+									  << false;
+}
+
+void RestObjectTest::testEquality()
+{
+	QFETCH(QtRestClient::RestObject*, object1);
+	QFETCH(QtRestClient::RestObject*, object2);
+	QFETCH(bool, areEqual);
+
+	QCOMPARE(object1->equals(object2), areEqual);
+	if(object2 != object1)
+		object2->deleteLater();
+	object1->deleteLater();
 }
 
 void RestObjectTest::testSerialization_data()

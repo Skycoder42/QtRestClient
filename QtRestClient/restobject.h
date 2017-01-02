@@ -12,7 +12,9 @@ class QTRESTCLIENTSHARED_EXPORT RestObject : public QObject
 	Q_OBJECT
 
 public:
-	explicit RestObject(QObject *parent = nullptr);
+	Q_INVOKABLE RestObject(QObject *parent = nullptr);
+
+	virtual bool equals(const RestObject *other) const;
 };
 
 }

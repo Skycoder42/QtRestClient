@@ -45,7 +45,8 @@ HEADERS +=\
     restreply_p.h \
     restobject.h \
     jsonserializer.h \
-    restexception.h
+    restexception.h \
+    genericrestreply.h
 
 unix {
     target.path = /usr/lib

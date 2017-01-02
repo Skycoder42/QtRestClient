@@ -1,5 +1,7 @@
 #include "tst_global.h"
 
+#include <jphpost.h>
+
 class RestReplyTest : public QObject
 {
 	Q_OBJECT
@@ -12,19 +14,26 @@ private Q_SLOTS:
 	void testReplyError();
 	void testReplyRetry();
 
+	void testGenericReplyWrapping_data();
+	void testGenericReplyWrapping();
+
 private:
 	QNetworkAccessManager *nam;
+	QtRestClient::JsonSerializer *ser;
 };
 
 void RestReplyTest::initTestCase()
 {
 	nam = new QNetworkAccessManager(this);
+	ser = new QtRestClient::JsonSerializer(this);
 }
 
 void RestReplyTest::cleanupTestCase()
 {
 	nam->deleteLater();
 	nam = nullptr;
+	ser->deleteLater();
+	ser = nullptr;
 }
 
 void RestReplyTest::testReplyWrapping_data()
@@ -48,10 +57,10 @@ void RestReplyTest::testReplyWrapping_data()
 						 << 200
 						 << object;
 
-	QTest::newRow("get") << QUrl("https://jsonplaceholder.typicode.com/posts/baum")
-						 << false
-						 << 404
-						 << QJsonObject();
+	QTest::newRow("notFound") << QUrl("https://jsonplaceholder.typicode.com/posts/baum")
+							  << false
+							  << 404
+							  << QJsonObject();
 }
 
 void RestReplyTest::testReplyWrapping()
@@ -152,6 +161,68 @@ void RestReplyTest::testReplyRetry()
 	QVERIFY(deleteSpy.wait(14000));
 	QVERIFY(retryCount);
 	QCOMPARE(retryCount, 3);
+}
+
+void RestReplyTest::testGenericReplyWrapping_data()
+{
+	QTest::addColumn<QUrl>("url");
+	QTest::addColumn<bool>("succeed");
+	QTest::addColumn<int>("status");
+	QTest::addColumn<QtRestClient::RestObject*>("result");
+
+	QTest::newRow("get") << QUrl("https://jsonplaceholder.typicode.com/posts/1")
+						 << true
+						 << 200
+						 << (QtRestClient::RestObject*)JphPost::createDefault(this);
+
+	QTest::newRow("notFound") << QUrl("https://jsonplaceholder.typicode.com/posts/baum")
+							  << false
+							  << 404
+							  << new QtRestClient::RestObject(this);
+}
+
+void RestReplyTest::testGenericReplyWrapping()
+{
+	QFETCH(QUrl, url);
+	QFETCH(bool, succeed);
+	QFETCH(int, status);
+	QFETCH(QtRestClient::RestObject*, result);
+
+	QNetworkRequest request(url);
+	request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
+
+	bool called = false;
+
+	auto reply = new QtRestClient::GenericRestReply<JphPost>(nam->get(request), ser);
+	reply->enableAutoDelete();
+	reply->onSucceeded([&](QtRestClient::GenericRestReply<JphPost> *rep, int code, JphPost *data){
+		called = true;
+		[&](){//trick, because the macros return from a void function...
+			QVERIFY(succeed);
+			QCOMPARE(rep, reply);
+			QCOMPARE(code, status);
+			QVERIFY(data->equals(result));
+		}();
+		return false;
+	});
+	reply->onFailed([&](QtRestClient::GenericRestReply<JphPost> *rep, int code, QtRestClient::RestObject *data){
+		called = true;
+		[&](){//trick, because the macros return from a void function...
+			QVERIFY(!succeed);
+			QCOMPARE(rep, reply);
+			QCOMPARE(code, status);
+			QVERIFY(data->equals(result));
+		}();
+		return false;
+	});
+	reply->onError([&](QtRestClient::RestReply *, QString error, int, QtRestClient::RestReply::ErrorType){
+		called = true;
+		QFAIL(qUtf8Printable(error));
+	});
+
+	QSignalSpy deleteSpy(reply, &QtRestClient::RestReply::destroyed);
+	QVERIFY(deleteSpy.wait());
+	QVERIFY(called);
 }
 
 QTEST_MAIN(RestReplyTest)

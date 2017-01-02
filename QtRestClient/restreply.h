@@ -66,13 +66,6 @@ private:
 	RestReplyPrivate *d_ptr;
 };
 
-//TODO add GenericRestReply
-//template <typename T>
-//class GenericRestReply : public RestReply
-//{
-
-//};
-
 }
 
 #endif // RESTREPLY_H

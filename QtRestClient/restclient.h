@@ -13,6 +13,7 @@
 namespace QtRestClient {
 
 class RestClass;
+class JsonSerializer;
 
 class RestClientPrivate;
 class QTRESTCLIENTSHARED_EXPORT RestClient : public QObject
@@ -32,6 +33,8 @@ public:
 
 	RestClass *createClass(QString path, QObject *parent = nullptr);
 	RestClass *rootClass() const;
+
+	JsonSerializer *serializer() const;
 
 	QUrl baseUrl() const;
 	QVersionNumber apiVersion() const;	

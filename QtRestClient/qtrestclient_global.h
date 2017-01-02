@@ -41,7 +41,9 @@ static inline bool registerListConverters() {
 		return l;
 	});
 
-	return ok1 && ok2;
+	auto ok3 = QMetaType::registerComparators<QList<T>>();
+
+	return ok1 && ok2 && ok3;
 }
 
 }

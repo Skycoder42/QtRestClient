@@ -22,6 +22,11 @@ RestClass *RestClient::rootClass() const
 	return d->rootClass;
 }
 
+JsonSerializer *RestClient::serializer() const
+{
+	return d->serializer;
+}
+
 QUrl RestClient::baseUrl() const
 {
 	return d->baseUrl;
@@ -139,5 +144,6 @@ RestClientPrivate::RestClientPrivate(RestClient *q_ptr) :
 	query(),
 	sslConfig(QSslConfiguration::defaultConfiguration()),
 	nam(new QNetworkAccessManager(q_ptr)),
-	rootClass(new RestClass(q_ptr, {}, q_ptr))
+	rootClass(new RestClass(q_ptr, {}, q_ptr)),
+	serializer(new JsonSerializer(q_ptr))
 {}

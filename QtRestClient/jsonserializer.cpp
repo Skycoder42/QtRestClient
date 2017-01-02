@@ -94,7 +94,7 @@ QJsonObject JsonSerializerPrivate::serializeObject(const RestObject *restObject)
 
 	QJsonObject object;
 	//go through all properties and try to serialize them
-	for(auto i = RestObject::staticMetaObject.propertyOffset(); i !=meta->propertyCount(); i++) {
+	for(auto i = RestObject::staticMetaObject.propertyOffset(); i < meta->propertyCount(); i++) {
 		auto property = meta->property(i);
 		if(property.isStored())
 			object[property.name()]= doSerialize(property, property.read(restObject));

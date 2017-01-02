@@ -1,6 +1,7 @@
 #ifndef QRESTCLIENT_P_H
 #define QRESTCLIENT_P_H
 
+#include "jsonserializer.h"
 #include "restclient.h"
 
 namespace QtRestClient {
@@ -21,6 +22,7 @@ private:
 
 	QNetworkAccessManager *nam;
 	RestClass *rootClass;
+	JsonSerializer *serializer;
 
 	RestClientPrivate(RestClient *q_ptr);
 };

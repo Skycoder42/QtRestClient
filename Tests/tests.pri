@@ -9,6 +9,10 @@ INCLUDEPATH += $$PWD/../QtRestClient
 DEPENDPATH += $$PWD/../QtRestClient
 
 HEADERS += \
-    $$PWD/tst_global.h
+    $$PWD/tst_global.h \
+    $$PWD/jphpost.h
 
 INCLUDEPATH += $$PWD
+
+SOURCES += \
+    $$PWD/jphpost.cpp

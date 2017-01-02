@@ -1,6 +1,8 @@
 #include "restclient.h"
 #include "restclass.h"
 #include "requestbuilder.h"
+#include "restreply.h"
+#include "genericrestreply.h"
 
 #include "restobject.h"
 #include "jsonserializer.h"
