@@ -41,7 +41,7 @@ void IntegrationTest::testJsonChain()
 
 	bool called = false;
 
-	auto reply = postClass->put("1", object);
+	auto reply = postClass->callJson(RestClass::PutVerb, "1", object);
 	reply->enableAutoDelete();
 	reply->onSucceeded([&](QtRestClient::RestReply *rep, int code, QJsonObject data){
 		called = true;
@@ -159,25 +159,17 @@ static void DO_NOT_CALL_compilation_test()
 	postClass->call<JphPost>(RestClass::GetVerb, object, RestClass::concatParameters("baum", 42));
 	postClass->call<JphPost>(RestClass::GetVerb, list, RestClass::concatParameters("baum", 42));
 
-	postClass->get(QStringLiteral("test"));
 	postClass->get<JphPost>(QStringLiteral("test"));
 	postClass->get<JphPost>(QStringLiteral("test"), RestClass::concatParameters("baum", 42));
-	postClass->get();
 	postClass->get<JphPost>();
 	postClass->get<JphPost>(RestClass::concatParameters("baum", 42));
 
-	postClass->post(QStringLiteral("test"));
-	postClass->post(QStringLiteral("test"), QJsonObject());
-	postClass->post(QStringLiteral("test"), QJsonArray());
 	postClass->post<JphPost>(QStringLiteral("test"));
 	postClass->post<JphPost>(QStringLiteral("test"), object);
 	postClass->post<JphPost>(QStringLiteral("test"), list);
 	postClass->post<JphPost>(QStringLiteral("test"), RestClass::concatParameters("baum", 42));
 	postClass->post<JphPost>(QStringLiteral("test"), object, RestClass::concatParameters("baum", 42));
 	postClass->post<JphPost>(QStringLiteral("test"), list, RestClass::concatParameters("baum", 42));
-	postClass->post();
-	postClass->post(QJsonObject());
-	postClass->post(QJsonArray());
 	postClass->post<JphPost>();
 	postClass->post<JphPost>(object);
 	postClass->post<JphPost>(list);
@@ -185,18 +177,12 @@ static void DO_NOT_CALL_compilation_test()
 	postClass->post<JphPost>(object, RestClass::concatParameters("baum", 42));
 	postClass->post<JphPost>(list, RestClass::concatParameters("baum", 42));
 
-	postClass->put(QStringLiteral("test"));
-	postClass->put(QStringLiteral("test"), QJsonObject());
-	postClass->put(QStringLiteral("test"), QJsonArray());
 	postClass->put<JphPost>(QStringLiteral("test"));
 	postClass->put<JphPost>(QStringLiteral("test"), object);
 	postClass->put<JphPost>(QStringLiteral("test"), list);
 	postClass->put<JphPost>(QStringLiteral("test"), RestClass::concatParameters("baum", 42));
 	postClass->put<JphPost>(QStringLiteral("test"), object, RestClass::concatParameters("baum", 42));
 	postClass->put<JphPost>(QStringLiteral("test"), list, RestClass::concatParameters("baum", 42));
-	postClass->put();
-	postClass->put(QJsonObject());
-	postClass->put(QJsonArray());
 	postClass->put<JphPost>();
 	postClass->put<JphPost>(object);
 	postClass->put<JphPost>(list);
@@ -204,25 +190,17 @@ static void DO_NOT_CALL_compilation_test()
 	postClass->put<JphPost>(object, RestClass::concatParameters("baum", 42));
 	postClass->put<JphPost>(list, RestClass::concatParameters("baum", 42));
 
-	postClass->deleteResource(QStringLiteral("test"));
 	postClass->deleteResource<JphPost>(QStringLiteral("test"));
 	postClass->deleteResource<JphPost>(QStringLiteral("test"), RestClass::concatParameters("baum", 42));
-	postClass->deleteResource();
 	postClass->deleteResource<JphPost>();
 	postClass->deleteResource<JphPost>(RestClass::concatParameters("baum", 42));
 
-	postClass->patch(QStringLiteral("test"));
-	postClass->patch(QStringLiteral("test"), QJsonObject());
-	postClass->patch(QStringLiteral("test"), QJsonArray());
 	postClass->patch<JphPost>(QStringLiteral("test"));
 	postClass->patch<JphPost>(QStringLiteral("test"), object);
 	postClass->patch<JphPost>(QStringLiteral("test"), list);
 	postClass->patch<JphPost>(QStringLiteral("test"), RestClass::concatParameters("baum", 42));
 	postClass->patch<JphPost>(QStringLiteral("test"), object, RestClass::concatParameters("baum", 42));
 	postClass->patch<JphPost>(QStringLiteral("test"), list, RestClass::concatParameters("baum", 42));
-	postClass->patch();
-	postClass->patch(QJsonObject());
-	postClass->patch(QJsonArray());
 	postClass->patch<JphPost>();
 	postClass->patch<JphPost>(object);
 	postClass->patch<JphPost>(list);

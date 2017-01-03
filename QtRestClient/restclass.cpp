@@ -33,32 +33,32 @@ RestClass *RestClass::subClass(const QString &path, QObject *parent)
 	return new RestClass(d->client, nPath, parent);
 }
 
-RestReply *RestClass::call(QByteArray verb, const QString &methodPath, const QVariantHash &parameters, const HeaderHash &headers)
+RestReply *RestClass::callJson(QByteArray verb, const QString &methodPath, const QVariantHash &parameters, const HeaderHash &headers)
 {
 	return new RestReply(create(verb, methodPath, parameters, headers), this);
 }
 
-RestReply *RestClass::call(QByteArray verb, const QString &methodPath, QJsonObject body, const QVariantHash &parameters, const HeaderHash &headers)
+RestReply *RestClass::callJson(QByteArray verb, const QString &methodPath, QJsonObject body, const QVariantHash &parameters, const HeaderHash &headers)
 {
 	return new RestReply(create(verb, methodPath, body, parameters, headers), this);
 }
 
-RestReply *RestClass::call(QByteArray verb, const QString &methodPath, QJsonArray body, const QVariantHash &parameters, const HeaderHash &headers)
+RestReply *RestClass::callJson(QByteArray verb, const QString &methodPath, QJsonArray body, const QVariantHash &parameters, const HeaderHash &headers)
 {
 	return new RestReply(create(verb, methodPath, body, parameters, headers), this);
 }
 
-RestReply *RestClass::call(QByteArray verb, const QVariantHash &parameters, const HeaderHash &headers)
+RestReply *RestClass::callJson(QByteArray verb, const QVariantHash &parameters, const HeaderHash &headers)
 {
 	return new RestReply(create(verb, parameters, headers), this);
 }
 
-RestReply *RestClass::call(QByteArray verb, QJsonObject body, const QVariantHash &parameters, const HeaderHash &headers)
+RestReply *RestClass::callJson(QByteArray verb, QJsonObject body, const QVariantHash &parameters, const HeaderHash &headers)
 {
 	return new RestReply(create(verb, body, parameters, headers), this);
 }
 
-RestReply *RestClass::call(QByteArray verb, QJsonArray body, const QVariantHash &parameters, const HeaderHash &headers)
+RestReply *RestClass::callJson(QByteArray verb, QJsonArray body, const QVariantHash &parameters, const HeaderHash &headers)
 {
 	return new RestReply(create(verb, body, parameters, headers), this);
 }
