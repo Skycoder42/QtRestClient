@@ -30,7 +30,6 @@ public:
 	RestClient *client() const;
 	RestClass *subClass(const QString &path, QObject *parent = nullptr);
 
-	//TODO add support for array bodies
 	//general calls
 	RestReply *call(QByteArray verb, const QString &methodPath, const QVariantHash &parameters = {}, const HeaderHash & headers = {});
 	RestReply *call(QByteArray verb, const QString &methodPath, QJsonObject body, const QVariantHash &parameters = {}, const HeaderHash & headers = {});
@@ -39,6 +38,8 @@ public:
 	GenericRestReply<DT, ET> *call(QByteArray verb, const QString &methodPath, const QVariantHash &parameters = {}, const HeaderHash & headers = {});
 	template<typename DT, typename ET = RestObject>
 	GenericRestReply<DT, ET> *call(QByteArray verb, const QString &methodPath, RestObject *body, const QVariantHash &parameters = {}, const HeaderHash & headers = {});
+	template<typename DT, typename ET = RestObject, typename RO = RestObject>
+	GenericRestReply<DT, ET> *call(QByteArray verb, const QString &methodPath, QList<RO*> body, const QVariantHash &parameters = {}, const HeaderHash & headers = {});
 	RestReply *call(QByteArray verb, const QVariantHash &parameters = {}, const HeaderHash & headers = {});
 	RestReply *call(QByteArray verb, QJsonObject body, const QVariantHash &parameters = {}, const HeaderHash & headers = {});
 	RestReply *call(QByteArray verb, QJsonArray body, const QVariantHash &parameters = {}, const HeaderHash & headers = {});
@@ -46,6 +47,8 @@ public:
 	GenericRestReply<DT, ET> *call(QByteArray verb, const QVariantHash &parameters = {}, const HeaderHash & headers = {});
 	template<typename DT, typename ET = RestObject>
 	GenericRestReply<DT, ET> *call(QByteArray verb, RestObject *body, const QVariantHash &parameters = {}, const HeaderHash & headers = {});
+	template<typename DT, typename ET = RestObject, typename RO = RestObject>
+	GenericRestReply<DT, ET> *call(QByteArray verb, QList<RO*> body, const QVariantHash &parameters = {}, const HeaderHash & headers = {});
 
 	//the following methods are simply shortcuts, and thus inlinied
 	//get
@@ -81,6 +84,10 @@ public:
 	GenericRestReply<DT, ET> *post(const QString &methodPath, RestObject *body, const QVariantHash &parameters = {}, const HeaderHash & headers = {}) {
 		return call<DT, ET>(PostVerb, methodPath, body, parameters, headers);
 	}
+	template<typename DT, typename ET = RestObject, typename RO = RestObject>
+	GenericRestReply<DT, ET> *post(const QString &methodPath, QList<RO*> body, const QVariantHash &parameters = {}, const HeaderHash & headers = {}) {
+		return call<DT, ET>(PostVerb, methodPath, body, parameters, headers);
+	}
 	inline RestReply *post(const QVariantHash &parameters = {}, const HeaderHash & headers = {}) {
 		return call(PostVerb, parameters, headers);
 	}
@@ -96,6 +103,10 @@ public:
 	}
 	template<typename DT, typename ET = RestObject>
 	GenericRestReply<DT, ET> *post(RestObject *body, const QVariantHash &parameters = {}, const HeaderHash & headers = {}) {
+		return call<DT, ET>(PostVerb, body, parameters, headers);
+	}
+	template<typename DT, typename ET = RestObject, typename RO = RestObject>
+	GenericRestReply<DT, ET> *post(QList<RO*> body, const QVariantHash &parameters = {}, const HeaderHash & headers = {}) {
 		return call<DT, ET>(PostVerb, body, parameters, headers);
 	}
 	//put
@@ -116,6 +127,10 @@ public:
 	GenericRestReply<DT, ET> *put(const QString &methodPath, RestObject *body, const QVariantHash &parameters = {}, const HeaderHash & headers = {}) {
 		return call<DT, ET>(PutVerb, methodPath, body, parameters, headers);
 	}
+	template<typename DT, typename ET = RestObject, typename RO = RestObject>
+	GenericRestReply<DT, ET> *put(const QString &methodPath, QList<RO*> body, const QVariantHash &parameters = {}, const HeaderHash & headers = {}) {
+		return call<DT, ET>(PutVerb, methodPath, body, parameters, headers);
+	}
 	inline RestReply *put(const QVariantHash &parameters = {}, const HeaderHash & headers = {}) {
 		return call(PutVerb, parameters, headers);
 	}
@@ -131,6 +146,10 @@ public:
 	}
 	template<typename DT, typename ET = RestObject>
 	GenericRestReply<DT, ET> *put(RestObject *body, const QVariantHash &parameters = {}, const HeaderHash & headers = {}) {
+		return call<DT, ET>(PutVerb, body, parameters, headers);
+	}
+	template<typename DT, typename ET = RestObject, typename RO = RestObject>
+	GenericRestReply<DT, ET> *put(QList<RO*> body, const QVariantHash &parameters = {}, const HeaderHash & headers = {}) {
 		return call<DT, ET>(PutVerb, body, parameters, headers);
 	}
 	//delete
@@ -166,6 +185,10 @@ public:
 	GenericRestReply<DT, ET> *patch(const QString &methodPath, RestObject *body, const QVariantHash &parameters = {}, const HeaderHash & headers = {}) {
 		return call<DT, ET>(PatchVerb, methodPath, body, parameters, headers);
 	}
+	template<typename DT, typename ET = RestObject, typename RO = RestObject>
+	GenericRestReply<DT, ET> *patch(const QString &methodPath, QList<RO*> body, const QVariantHash &parameters = {}, const HeaderHash & headers = {}) {
+		return call<DT, ET>(PatchVerb, methodPath, body, parameters, headers);
+	}
 	inline RestReply *patch(const QVariantHash &parameters = {}, const HeaderHash & headers = {}) {
 		return call(PatchVerb, parameters, headers);
 	}
@@ -181,6 +204,10 @@ public:
 	}
 	template<typename DT, typename ET = RestObject>
 	GenericRestReply<DT, ET> *patch(RestObject *body, const QVariantHash &parameters = {}, const HeaderHash & headers = {}) {
+		return call<DT, ET>(PatchVerb, body, parameters, headers);
+	}
+	template<typename DT, typename ET = RestObject, typename RO = RestObject>
+	GenericRestReply<DT, ET> *patch(QList<RO*> body, const QVariantHash &parameters = {}, const HeaderHash & headers = {}) {
 		return call<DT, ET>(PatchVerb, body, parameters, headers);
 	}
 
@@ -228,6 +255,18 @@ GenericRestReply<DT, ET> *RestClass::call(QByteArray verb, const QString &method
 										this);
 }
 
+template<typename DT, typename ET, typename RO>
+GenericRestReply<DT, ET> *RestClass::call(QByteArray verb, const QString &methodPath, QList<RO*> body, const QVariantHash &parameters, const HeaderHash & headers)
+{
+	return new GenericRestReply<DT, ET>(create(verb,
+											   methodPath,
+											   client()->serializer()->serialize(body),
+											   parameters,
+											   headers),
+										client()->serializer(),
+										this);
+}
+
 template<typename DT, typename ET>
 GenericRestReply<DT, ET> *RestClass::call(QByteArray verb, const QVariantHash &parameters, const HeaderHash & headers)
 {
@@ -240,6 +279,17 @@ GenericRestReply<DT, ET> *RestClass::call(QByteArray verb, const QVariantHash &p
 
 template<typename DT, typename ET>
 GenericRestReply<DT, ET> *RestClass::call(QByteArray verb, RestObject *body, const QVariantHash &parameters, const HeaderHash & headers)
+{
+	return new GenericRestReply<DT, ET>(create(verb,
+											   client()->serializer()->serialize(body),
+											   parameters,
+											   headers),
+										client()->serializer(),
+										this);
+}
+
+template<typename DT, typename ET, typename RO>
+GenericRestReply<DT, ET> *RestClass::call(QByteArray verb, QList<RO *> body, const QVariantHash &parameters, const HeaderHash &headers)
 {
 	return new GenericRestReply<DT, ET>(create(verb,
 											   client()->serializer()->serialize(body),

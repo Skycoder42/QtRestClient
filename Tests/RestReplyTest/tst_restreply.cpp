@@ -172,16 +172,26 @@ void RestReplyTest::testGenericReplyWrapping_data()
 	QTest::addColumn<bool>("succeed");
 	QTest::addColumn<int>("status");
 	QTest::addColumn<QtRestClient::RestObject*>("result");
+	QTest::addColumn<bool>("except");
 
 	QTest::newRow("get") << QUrl("https://jsonplaceholder.typicode.com/posts/1")
 						 << true
 						 << 200
-						 << (QtRestClient::RestObject*)JphPost::createDefault(this);
+						 << (QtRestClient::RestObject*)JphPost::createDefault(this)
+						 << false;
 
 	QTest::newRow("notFound") << QUrl("https://jsonplaceholder.typicode.com/posts/baum")
 							  << false
 							  << 404
-							  << new QtRestClient::RestObject(this);
+							  << new QtRestClient::RestObject(this)
+							  << false;
+
+	//TODO use custom rest server to make this possible
+//	QTest::newRow("serExcept") << QUrl("https://jsonplaceholder.typicode.com/users/1")
+//							   << false
+//							   << 0
+//							   << new QtRestClient::RestObject(this)
+//							   << true;
 }
 
 void RestReplyTest::testGenericReplyWrapping()
@@ -190,6 +200,7 @@ void RestReplyTest::testGenericReplyWrapping()
 	QFETCH(bool, succeed);
 	QFETCH(int, status);
 	QFETCH(QtRestClient::RestObject*, result);
+	QFETCH(bool, except);
 
 	QNetworkRequest request(url);
 	request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
@@ -198,20 +209,22 @@ void RestReplyTest::testGenericReplyWrapping()
 
 	auto reply = new QtRestClient::GenericRestReply<JphPost>(nam->get(request), ser);
 	reply->enableAutoDelete();
-	reply->onSucceeded([&](QtRestClient::GenericRestReply<JphPost> *rep, int code, JphPost *data){
+	reply->onSucceeded([&](QtRestClient::RestReply *rep, int code, JphPost *data){
 		called = true;
 		[&](){//trick, because the macros return from a void function...
 			QVERIFY(succeed);
+			QVERIFY(!except);
 			QCOMPARE(rep, reply);
 			QCOMPARE(code, status);
 			QVERIFY(QtRestClient::RestObject::equals(data, result));
 		}();
 		return false;
 	});
-	reply->onFailed([&](QtRestClient::GenericRestReply<JphPost> *rep, int code, QtRestClient::RestObject *data){
+	reply->onFailed([&](QtRestClient::RestReply *rep, int code, QtRestClient::RestObject *data){
 		called = true;
 		[&](){//trick, because the macros return from a void function...
 			QVERIFY(!succeed);
+			QVERIFY(!except);
 			QCOMPARE(rep, reply);
 			QCOMPARE(code, status);
 			QVERIFY(QtRestClient::RestObject::equals(data, result));
@@ -221,6 +234,12 @@ void RestReplyTest::testGenericReplyWrapping()
 	reply->onError([&](QtRestClient::RestReply *, QString error, int, QtRestClient::RestReply::ErrorType){
 		called = true;
 		QFAIL(qUtf8Printable(error));
+	});
+	reply->onSerializeException([&](QtRestClient::RestReply *rep, QtRestClient::SerializerException &){
+		called = true;
+		QVERIFY(!succeed);
+		QVERIFY(except);
+		QCOMPARE(rep, reply);
 	});
 
 	QSignalSpy deleteSpy(reply, &QtRestClient::RestReply::destroyed);
@@ -247,6 +266,13 @@ void RestReplyTest::testGenericListReplyWrapping_data()
 							  << 404
 							  << 0
 							  << new QtRestClient::RestObject(this);
+
+	//TODO use custom rest server to make this possible
+//	QTest::newRow("serExcept") << QUrl("https://jsonplaceholder.typicode.com/users/1")
+//							   << false
+//							   << 0
+//							   << new QtRestClient::RestObject(this)
+//							   << true;
 }
 
 void RestReplyTest::testGenericListReplyWrapping()
@@ -264,7 +290,7 @@ void RestReplyTest::testGenericListReplyWrapping()
 
 	auto reply = new QtRestClient::GenericRestReply<QList<JphPost>>(nam->get(request), ser);
 	reply->enableAutoDelete();
-	reply->onSucceeded([&](QtRestClient::GenericRestReply<QList<JphPost>> *rep, int code, QList<JphPost*> data){
+	reply->onSucceeded([&](QtRestClient::RestReply *rep, int code, QList<JphPost*> data){
 		called = true;
 		[&](){//trick, because the macros return from a void function...
 			QVERIFY(succeed);
@@ -275,7 +301,7 @@ void RestReplyTest::testGenericListReplyWrapping()
 		}();
 		return false;
 	});
-	reply->onFailed([&](QtRestClient::GenericRestReply<QList<JphPost>> *rep, int code, QtRestClient::RestObject *data){
+	reply->onFailed([&](QtRestClient::RestReply *rep, int code, QtRestClient::RestObject *data){
 		called = true;
 		[&](){//trick, because the macros return from a void function...
 			QVERIFY(!succeed);

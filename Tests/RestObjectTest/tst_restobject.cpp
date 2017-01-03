@@ -17,7 +17,7 @@ private Q_SLOTS:
 	void testEquality_data();
 	void testEquality();
 
-	void testSerialization_data();
+	void testSerialization_data();//TODO test list and generic ser/deser
 	void testSerialization();
 
 	void testDeserialization_data();

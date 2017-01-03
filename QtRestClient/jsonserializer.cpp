@@ -36,14 +36,6 @@ QJsonObject JsonSerializer::serialize(const RestObject *restObject) const
 	return d->serializeObject(restObject);
 }
 
-QJsonArray JsonSerializer::serialize(const QList<RestObject *> restObjects) const
-{
-	QJsonArray array;
-	foreach(auto obj, restObjects)
-		array.append(serialize(obj));
-	return array;
-}
-
 RestObject *JsonSerializer::deserialize(QJsonObject jsonObject, const QMetaObject *metaObject, QObject *parent) const
 {
 	return d->deserializeObject(jsonObject, metaObject, parent);

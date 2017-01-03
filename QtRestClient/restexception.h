@@ -7,7 +7,7 @@
 
 namespace QtRestClient {
 
-class Exception : public std::exception
+class QTRESTCLIENTSHARED_EXPORT Exception : public std::exception
 {
 public:
 	//! Creates a new Exception from an error messsage and an error code

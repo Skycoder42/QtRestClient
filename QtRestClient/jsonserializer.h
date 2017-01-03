@@ -28,9 +28,15 @@ public:
 	~JsonSerializer();
 
 	virtual QJsonObject serialize(const RestObject *restObject) const;
-	QJsonArray serialize(const QList<RestObject*> restObjects) const;
+	template<typename T>
+	QJsonArray serialize(const QList<T*> restObjects) const;
+
 	virtual RestObject *deserialize(QJsonObject jsonObject, const QMetaObject *metaObject, QObject *parent = nullptr) const;
+	template<typename T>
+	T *deserialize(QJsonObject jsonObject, QObject *parent = nullptr) const;
 	QList<RestObject*> deserialize(QJsonArray jsonArray, const QMetaObject *metaObject, QObject *parent = nullptr) const;
+	template<typename T>
+	QList<T*> deserialize(QJsonArray jsonArray, QObject *parent = nullptr) const;
 
 protected:
 	virtual QJsonValue serializeValue(QVariant value);
@@ -39,6 +45,40 @@ protected:
 private:
 	QScopedPointer<JsonSerializerPrivate> d_ptr;
 };
+
+// ------------- Generic Implementation -------------
+
+template<typename T>
+QJsonArray JsonSerializer::serialize(const QList<T*> restObjects) const
+{
+	QJsonArray array;
+	foreach(auto obj, restObjects)
+		array.append(serialize(obj));
+	return array;
+}
+
+template<typename T>
+typename T *JsonSerializer::deserialize(QJsonObject jsonObject, QObject *parent) const
+{
+	return static_cast<T*>(deserialize(jsonObject, &T::staticMetaObject, parent));
+}
+
+template<typename T>
+QList<T*> JsonSerializer::deserialize(QJsonArray jsonArray, QObject *parent) const
+{
+	QList<T*> list;
+	foreach(auto json, jsonArray) {
+		if(json.isObject())
+			list.append(deserialize<T>(json.toObject(), parent));
+		else {
+			throw SerializerException(QStringLiteral("Failed convert array element of type %1 to %2")
+									  .arg(json.type())
+									  .arg(T::staticMetaObject.className()),
+									  true);
+		}
+	}
+	return list;
+}
 
 }
 
