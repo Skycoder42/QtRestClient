@@ -11,6 +11,7 @@ private Q_SLOTS:
 
 	void testJsonChain();
 	void testRestObjectChain();
+	void testRestObjectListChain();
 
 private:
 	RestClient *client;
@@ -40,7 +41,7 @@ void IntegrationTest::testJsonChain()
 
 	bool called = false;
 
-	auto reply = postClass->call(RestClass::PutVerb, "1", object);
+	auto reply = postClass->put("1", object);
 	reply->enableAutoDelete();
 	reply->onSucceeded([&](QtRestClient::RestReply *rep, int code, QJsonObject data){
 		called = true;
@@ -72,7 +73,7 @@ void IntegrationTest::testRestObjectChain()
 
 	bool called = false;
 
-	auto reply = postClass->call<JphPost>(RestClass::PutVerb, "1", object);
+	auto reply = postClass->put<JphPost>("1", object);
 	reply->enableAutoDelete();
 	reply->onSucceeded([&](QtRestClient::GenericRestReply<JphPost> *rep, int code, JphPost *data){
 		called = true;
@@ -101,6 +102,42 @@ void IntegrationTest::testRestObjectChain()
 
 	postClass->deleteLater();
 	object->deleteLater();
+}
+
+void IntegrationTest::testRestObjectListChain()
+{
+	auto postClass = client->createClass("posts", client);
+
+	bool called = false;
+
+	auto reply = postClass->get<QList<JphPost>>();
+	reply->enableAutoDelete();
+	reply->onSucceeded([&](QtRestClient::GenericRestReply<QList<JphPost>> *rep, int code, QList<JphPost*> data){
+		called = true;
+		[&](){
+			QCOMPARE(rep, reply);
+			QCOMPARE(code, 200);
+			QCOMPARE(data.size(), 100);
+		}();
+		return false;
+	});
+	reply->onFailed([&](QtRestClient::GenericRestReply<QList<JphPost>> *, int code, RestObject *){
+		called = true;
+		[&](){
+			QFAIL(QByteArray::number(code).constData());
+		}();
+		return false;
+	});
+	reply->onError([&](QtRestClient::RestReply *, QString error, int, QtRestClient::RestReply::ErrorType){
+		called = true;
+		QFAIL(qUtf8Printable(error));
+	});
+
+	QSignalSpy deleteSpy(reply, &QtRestClient::RestReply::destroyed);
+	QVERIFY(deleteSpy.wait());
+	QVERIFY(called);
+
+	postClass->deleteLater();
 }
 
 static void DO_NOT_CALL_compilation_test()

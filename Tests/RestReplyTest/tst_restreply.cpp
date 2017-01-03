@@ -17,6 +17,9 @@ private Q_SLOTS:
 	void testGenericReplyWrapping_data();
 	void testGenericReplyWrapping();
 
+	void testGenericListReplyWrapping_data();
+	void testGenericListReplyWrapping();
+
 private:
 	QNetworkAccessManager *nam;
 	QtRestClient::JsonSerializer *ser;
@@ -212,6 +215,73 @@ void RestReplyTest::testGenericReplyWrapping()
 			QCOMPARE(rep, reply);
 			QCOMPARE(code, status);
 			QVERIFY(QtRestClient::RestObject::equals(data, result));
+		}();
+		return false;
+	});
+	reply->onError([&](QtRestClient::RestReply *, QString error, int, QtRestClient::RestReply::ErrorType){
+		called = true;
+		QFAIL(qUtf8Printable(error));
+	});
+
+	QSignalSpy deleteSpy(reply, &QtRestClient::RestReply::destroyed);
+	QVERIFY(deleteSpy.wait());
+	QVERIFY(called);
+}
+
+void RestReplyTest::testGenericListReplyWrapping_data()
+{
+	QTest::addColumn<QUrl>("url");
+	QTest::addColumn<bool>("succeed");
+	QTest::addColumn<int>("status");
+	QTest::addColumn<int>("count");
+	QTest::addColumn<QtRestClient::RestObject*>("firstResult");
+
+	QTest::newRow("get") << QUrl("https://jsonplaceholder.typicode.com/posts")
+						 << true
+						 << 200
+						 << 100
+						 << (QtRestClient::RestObject*)JphPost::createDefault(this);
+
+	QTest::newRow("notFound") << QUrl("https://jsonplaceholder.typicode.com/postses")
+							  << false
+							  << 404
+							  << 0
+							  << new QtRestClient::RestObject(this);
+}
+
+void RestReplyTest::testGenericListReplyWrapping()
+{
+	QFETCH(QUrl, url);
+	QFETCH(bool, succeed);
+	QFETCH(int, status);
+	QFETCH(int, count);
+	QFETCH(QtRestClient::RestObject*, firstResult);
+
+	QNetworkRequest request(url);
+	request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
+
+	bool called = false;
+
+	auto reply = new QtRestClient::GenericRestReply<QList<JphPost>>(nam->get(request), ser);
+	reply->enableAutoDelete();
+	reply->onSucceeded([&](QtRestClient::GenericRestReply<QList<JphPost>> *rep, int code, QList<JphPost*> data){
+		called = true;
+		[&](){//trick, because the macros return from a void function...
+			QVERIFY(succeed);
+			QCOMPARE(rep, reply);
+			QCOMPARE(code, status);
+			QCOMPARE(data.size(), count);
+			QVERIFY(QtRestClient::RestObject::equals(data.first(), firstResult));
+		}();
+		return false;
+	});
+	reply->onFailed([&](QtRestClient::GenericRestReply<QList<JphPost>> *rep, int code, QtRestClient::RestObject *data){
+		called = true;
+		[&](){//trick, because the macros return from a void function...
+			QVERIFY(!succeed);
+			QCOMPARE(rep, reply);
+			QCOMPARE(code, status);
+			QVERIFY(QtRestClient::RestObject::equals(data, firstResult));
 		}();
 		return false;
 	});

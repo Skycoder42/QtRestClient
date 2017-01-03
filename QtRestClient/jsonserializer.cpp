@@ -36,9 +36,33 @@ QJsonObject JsonSerializer::serialize(const RestObject *restObject) const
 	return d->serializeObject(restObject);
 }
 
+QJsonArray JsonSerializer::serialize(const QList<RestObject *> restObjects) const
+{
+	QJsonArray array;
+	foreach(auto obj, restObjects)
+		array.append(serialize(obj));
+	return array;
+}
+
 RestObject *JsonSerializer::deserialize(QJsonObject jsonObject, const QMetaObject *metaObject, QObject *parent) const
 {
 	return d->deserializeObject(jsonObject, metaObject, parent);
+}
+
+QList<RestObject *> JsonSerializer::deserialize(QJsonArray jsonArray, const QMetaObject *metaObject, QObject *parent) const
+{
+	QList<RestObject*> list;
+	foreach(auto json, jsonArray) {
+		if(json.isObject())
+			list.append(deserialize(json.toObject(), metaObject, parent));
+		else {
+			throw SerializerException(QStringLiteral("Failed convert array element of type %1 to %2")
+									  .arg(json.type())
+									  .arg(metaObject->className()),
+									  true);
+		}
+	}
+	return list;
 }
 
 QJsonValue JsonSerializer::serializeValue(QVariant value)

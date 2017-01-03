@@ -30,6 +30,7 @@ public:
 	RestClient *client() const;
 	RestClass *subClass(const QString &path, QObject *parent = nullptr);
 
+	//TODO add support for array bodies
 	//general calls
 	RestReply *call(QByteArray verb, const QString &methodPath, const QVariantHash &parameters = {}, const HeaderHash & headers = {});
 	RestReply *call(QByteArray verb, const QString &methodPath, QJsonObject body, const QVariantHash &parameters = {}, const HeaderHash & headers = {});

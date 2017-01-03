@@ -28,7 +28,9 @@ public:
 	~JsonSerializer();
 
 	virtual QJsonObject serialize(const RestObject *restObject) const;
+	QJsonArray serialize(const QList<RestObject*> restObjects) const;
 	virtual RestObject *deserialize(QJsonObject jsonObject, const QMetaObject *metaObject, QObject *parent = nullptr) const;
+	QList<RestObject*> deserialize(QJsonArray jsonArray, const QMetaObject *metaObject, QObject *parent = nullptr) const;
 
 protected:
 	virtual QJsonValue serializeValue(QVariant value);
