@@ -17,11 +17,14 @@ private Q_SLOTS:
 	void testEquality_data();
 	void testEquality();
 
-	void testSerialization_data();//TODO test list and generic ser/deser
+	void testSerialization_data();
 	void testSerialization();
+	void testListSerialization();
 
 	void testDeserialization_data();
 	void testDeserialization();
+	void testListDeserialization();
+	void testGenericListDeserialization();
 
 private:
 	QtRestClient::JsonSerializer *ser;
@@ -296,6 +299,26 @@ void RestObjectTest::testSerialization()
 	object->deleteLater();
 }
 
+void RestObjectTest::testListSerialization()
+{
+	QList<TestObject*> list;
+	for(auto i = 0; i < 10; i++)
+		list.append(new TestObject(i, QString::number(i), {}, -1, this));
+
+	auto jList = ser->serialize(list);
+	QCOMPARE(jList.size(), 10);
+	for(auto i = 0; i < 10; i++) {
+		QVERIFY(jList[i].isObject());
+		auto obj = jList[i].toObject();
+		QCOMPARE(obj["id"].toInt(), list[i]->id);
+		QCOMPARE(obj["name"].toString(), list[i]->name);
+		QVERIFY(obj["stateMap"].isArray());
+		QVERIFY(obj["stateMap"].toArray().isEmpty());
+		QVERIFY(obj["child"].isNull());
+		list[i]->deleteLater();
+	}
+}
+
 void RestObjectTest::testDeserialization_data()
 {
 	QTest::addColumn<QJsonObject>("data");
@@ -478,17 +501,83 @@ void RestObjectTest::testDeserialization()
 	if(shouldFail)
 		QVERIFY_EXCEPTION_THROWN(ser->deserialize(data, result->metaObject(), this), QtRestClient::SerializerException);//to allow broken type
 	else {
-		auto obj = ser->deserialize(data, &TestObject::staticMetaObject, this);
+		auto obj = ser->deserialize<TestObject>(data, this);
 		QVERIFY(obj);
-		auto tObj = qobject_cast<TestObject*>(obj);
-		QVERIFY(tObj);
-
-		QVERIFY(result->equals(tObj));
-
+		QVERIFY(result->equals(obj));
 		obj->deleteLater();
 	}
 
 	result->deleteLater();
+}
+
+void RestObjectTest::testListDeserialization()
+{
+	QJsonArray jList({
+						 QJsonObject({
+							 {"id", 13},
+							 {"name", "lucky"},
+							 {"stateMap", QJsonArray()},
+							 {"child", QJsonValue::Null},
+							 {"relatives", QJsonArray()}
+						 }),
+						 QJsonObject({
+							 {"id", 7},
+							 {"name", "magically"},
+							 {"stateMap", QJsonArray()},
+							 {"child", QJsonValue::Null},
+							 {"relatives", QJsonArray()}
+						 }),
+						 QJsonObject({
+							 {"id", 3},
+							 {"name", "trinity"},
+							 {"stateMap", QJsonArray()},
+							 {"child", QJsonValue::Null},
+							 {"relatives", QJsonArray()}
+						 })
+					 });
+	QList<QtRestClient::RestObject*> resList = {
+		new TestObject(13, "lucky", {}, -1, this),
+		new TestObject(7, "magically", {}, -1, this),
+		new TestObject(3, "trinity", {}, -1, this)
+	};
+
+	auto oList = ser->deserialize(jList, &TestObject::staticMetaObject, this);
+	QVERIFY(QtRestClient::RestObject::listEquals(oList, resList));
+}
+
+void RestObjectTest::testGenericListDeserialization()
+{
+	QJsonArray jList({
+						 QJsonObject({
+							 {"id", 13},
+							 {"name", "lucky"},
+							 {"stateMap", QJsonArray()},
+							 {"child", QJsonValue::Null},
+							 {"relatives", QJsonArray()}
+						 }),
+						 QJsonObject({
+							 {"id", 7},
+							 {"name", "magically"},
+							 {"stateMap", QJsonArray()},
+							 {"child", QJsonValue::Null},
+							 {"relatives", QJsonArray()}
+						 }),
+						 QJsonObject({
+							 {"id", 3},
+							 {"name", "trinity"},
+							 {"stateMap", QJsonArray()},
+							 {"child", QJsonValue::Null},
+							 {"relatives", QJsonArray()}
+						 })
+					 });
+	QList<TestObject*> resList = {
+		new TestObject(13, "lucky", {}, -1, this),
+		new TestObject(7, "magically", {}, -1, this),
+		new TestObject(3, "trinity", {}, -1, this)
+	};
+
+	auto oList = ser->deserialize<TestObject>(jList, this);
+	QVERIFY(QtRestClient::RestObject::listEquals(oList, resList));
 }
 
 QTEST_MAIN(RestObjectTest)

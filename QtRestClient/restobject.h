@@ -16,7 +16,26 @@ public:
 
 	static bool equals(const RestObject *left, const RestObject *right);
 	virtual bool equals(const RestObject *other) const;
+
+	template<typename T>
+	static bool listEquals(const QList<T*> &left, const QList<T*> &right);
 };
+
+// ------------- Generic Implementation -------------
+
+template<typename T>
+static bool RestObject::listEquals(const QList<T*> &left, const QList<T*> &right)
+{
+	if(left.size() != right.size())
+		return false;
+	else {
+		for(auto i = 0; i < left.size(); i++) {
+			if(!equals(left[i], right[i]))
+				return false;
+		}
+		return true;
+	}
+}
 
 }
 
