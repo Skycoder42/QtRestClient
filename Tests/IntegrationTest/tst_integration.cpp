@@ -1,4 +1,5 @@
 #include "tst_global.h"
+
 using namespace QtRestClient;
 
 class IntegrationTest : public QObject
@@ -19,21 +20,23 @@ private:
 
 void IntegrationTest::initTestCase()
 {
+	initTestJsonServer();
 	client = new RestClient(this);
-	client->setBaseUrl(QStringLiteral("https://jsonplaceholder.typicode.com"));
+	client->setBaseUrl(QStringLiteral("http://localhost:3000"));
 }
 
 void IntegrationTest::cleanupTestCase()
 {
-	client->deleteLater();
-	client = nullptr;
+	if(client) {
+		client->deleteLater();
+		client = nullptr;
+	}
 }
 
 void IntegrationTest::testJsonChain()
 {
 	QJsonObject object;
 	object["userId"] = 42;
-	object["id"] = 1;
 	object["title"] = "baum";
 	object["body"] = "baum";
 
@@ -58,6 +61,7 @@ void IntegrationTest::testJsonChain()
 		QFAIL(qUtf8Printable(error));
 	});
 
+	object["id"] = 1;
 	QSignalSpy deleteSpy(reply, &QtRestClient::RestReply::destroyed);
 	QVERIFY(deleteSpy.wait());
 	QVERIFY(called);
@@ -67,13 +71,13 @@ void IntegrationTest::testJsonChain()
 
 void IntegrationTest::testRestObjectChain()
 {
-	RestObject *object = new JphPost(1, 42, "baum", "baum", this);
+	RestObject *object = new JphPost(2, 42, "baum", "baum", this);
 
 	auto postClass = client->createClass("posts", client);
 
 	bool called = false;
 
-	auto reply = postClass->put<JphPost>("1", object);
+	auto reply = postClass->put<JphPost>("2", object);
 	reply->enableAutoDelete();
 	reply->onSucceeded([&](QtRestClient::RestReply *rep, int code, JphPost *data){
 		called = true;
@@ -117,7 +121,7 @@ void IntegrationTest::testRestObjectListChain()
 		[&](){
 			QCOMPARE(rep, reply);
 			QCOMPARE(code, 200);
-			QCOMPARE(data.size(), 100);
+			QCOMPARE(data.size(), 10);
 		}();
 		return false;
 	});

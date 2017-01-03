@@ -18,12 +18,5 @@ JphPost::JphPost(int id, int userId, QString title, QString body, QObject *paren
 
 JphPost *JphPost::createDefault(QObject *parent)
 {
-	return new JphPost(1,
-					   1,
-					   "sunt aut facere repellat provident occaecati excepturi optio reprehenderit",
-					   "quia et suscipit\n"
-					   "suscipit recusandae consequuntur expedita et cum\n"
-					   "reprehenderit molestiae ut ut quas totam\n"
-					   "nostrum rerum est autem sunt rem eveniet architecto",
-					   parent);
+	return new JphPost(1, 1, "Title1", "Body1", parent);
 }

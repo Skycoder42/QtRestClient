@@ -27,6 +27,7 @@ private:
 
 void RestReplyTest::initTestCase()
 {
+	initTestJsonServer();
 	nam = new QNetworkAccessManager(this);
 	ser = new QtRestClient::JsonSerializer(this);
 }
@@ -49,18 +50,15 @@ void RestReplyTest::testReplyWrapping_data()
 	QJsonObject object;
 	object["userId"] = 1;
 	object["id"] = 1;
-	object["title"] = "sunt aut facere repellat provident occaecati excepturi optio reprehenderit";
-	object["body"] = "quia et suscipit\n"
-					 "suscipit recusandae consequuntur expedita et cum\n"
-					 "reprehenderit molestiae ut ut quas totam\n"
-					 "nostrum rerum est autem sunt rem eveniet architecto";
+	object["title"] = "Title1";
+	object["body"] = "Body1";
 
-	QTest::newRow("get") << QUrl("https://jsonplaceholder.typicode.com/posts/1")
+	QTest::newRow("get") << QUrl("http://localhost:3000/posts/1")
 						 << true
 						 << 200
 						 << object;
 
-	QTest::newRow("notFound") << QUrl("https://jsonplaceholder.typicode.com/posts/baum")
+	QTest::newRow("notFound") << QUrl("http://localhost:3000/posts/baum")
 							  << false
 							  << 404
 							  << QJsonObject();
@@ -174,19 +172,19 @@ void RestReplyTest::testGenericReplyWrapping_data()
 	QTest::addColumn<QtRestClient::RestObject*>("result");
 	QTest::addColumn<bool>("except");
 
-	QTest::newRow("get") << QUrl("https://jsonplaceholder.typicode.com/posts/1")
+	QTest::newRow("get") << QUrl("http://localhost:3000/posts/1")
 						 << true
 						 << 200
 						 << (QtRestClient::RestObject*)JphPost::createDefault(this)
 						 << false;
 
-	QTest::newRow("notFound") << QUrl("https://jsonplaceholder.typicode.com/posts/baum")
+	QTest::newRow("notFound") << QUrl("http://localhost:3000/posts/baum")
 							  << false
 							  << 404
 							  << new QtRestClient::RestObject(this)
 							  << false;
 
-	QTest::newRow("serExcept") << QUrl("https://jsonplaceholder.typicode.com/posts")
+	QTest::newRow("serExcept") << QUrl("http://localhost:3000/posts")
 							   << false
 							   << 0
 							   << new QtRestClient::RestObject(this)
@@ -255,21 +253,21 @@ void RestReplyTest::testGenericListReplyWrapping_data()
 	QTest::addColumn<QtRestClient::RestObject*>("firstResult");
 	QTest::addColumn<bool>("except");
 
-	QTest::newRow("get") << QUrl("https://jsonplaceholder.typicode.com/posts")
+	QTest::newRow("get") << QUrl("http://localhost:3000/posts")
 						 << true
 						 << 200
-						 << 100
+						 << 10
 						 << (QtRestClient::RestObject*)JphPost::createDefault(this)
 						 << false;
 
-	QTest::newRow("notFound") << QUrl("https://jsonplaceholder.typicode.com/postses")
+	QTest::newRow("notFound") << QUrl("http://localhost:3000/postses")
 							  << false
 							  << 404
 							  << 0
 							  << new QtRestClient::RestObject(this)
 							  << false;
 
-	QTest::newRow("serExcept") << QUrl("https://jsonplaceholder.typicode.com/posts/1")
+	QTest::newRow("serExcept") << QUrl("http://localhost:3000/posts/1")
 							   << false
 							   << 0
 							   << 0

@@ -20,6 +20,7 @@ private:
 
 void RequestBuilderTest::initTestCase()
 {
+	initTestJsonServer();
 	nam = new QNetworkAccessManager(this);
 }
 
@@ -257,12 +258,9 @@ void RequestBuilderTest::testSending_data()
 	QJsonObject object;
 	object["userId"] = 1;
 	object["id"] = 1;
-	object["title"] = "sunt aut facere repellat provident occaecati excepturi optio reprehenderit";
-	object["body"] = "quia et suscipit\n"
-					 "suscipit recusandae consequuntur expedita et cum\n"
-					 "reprehenderit molestiae ut ut quas totam\n"
-					 "nostrum rerum est autem sunt rem eveniet architecto";
-	QTest::newRow("testDefaultGet") << QUrl("https://jsonplaceholder.typicode.com/posts/1")
+	object["title"] = "Title1";
+	object["body"] = "Body1";
+	QTest::newRow("testDefaultGet") << QUrl("http://localhost:3000/posts/1")
 									<< QJsonObject()
 									<< QByteArray()
 									<< 200
@@ -271,14 +269,14 @@ void RequestBuilderTest::testSending_data()
 
 	object["title"] = "baum";
 	object["body"] = 42;
-	QTest::newRow("testPut") << QUrl("https://jsonplaceholder.typicode.com/posts/1")
+	QTest::newRow("testPut") << QUrl("http://localhost:3000/posts/1")
 							 << object
 							 << QByteArray("PUT")
 							 << 200
 							 << QNetworkReply::NoError
 							 << object;
 
-	QTest::newRow("testError") << QUrl("https://jsonplaceholder.typicode.com/posts/baum")
+	QTest::newRow("testError") << QUrl("http://localhost:3000/posts/baum")
 									<< QJsonObject()
 									<< QByteArray("GET")
 									<< 404

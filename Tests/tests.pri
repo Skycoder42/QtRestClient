@@ -15,4 +15,11 @@ HEADERS += \
 INCLUDEPATH += $$PWD
 
 SOURCES += \
-    $$PWD/jphpost.cpp
+    $$PWD/jphpost.cpp \
+    $$PWD/tst_global.cpp
+
+DISTFILES += \
+    $$PWD/rest-db-setup.bat \
+    $$PWD/default-test-db.json
+
+DEFINES += "TEST_SRC_DIR=\\\"$$PWD\\\""
