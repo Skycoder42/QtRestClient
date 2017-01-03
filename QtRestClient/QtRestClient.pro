@@ -31,7 +31,8 @@ SOURCES += \
     restreply.cpp \
     restobject.cpp \
     jsonserializer.cpp \
-    restexception.cpp
+    restexception.cpp \
+    standardpaging.cpp
 
 HEADERS +=\
         qtrestclient_global.h \
@@ -46,7 +47,9 @@ HEADERS +=\
     restobject.h \
     jsonserializer.h \
     restexception.h \
-    genericrestreply.h
+    genericrestreply.h \
+    ipaging.h \
+    standardpaging.h
 
 unix {
     target.path = /usr/lib
