@@ -5,11 +5,15 @@
 #include "restobject.h"
 #include "restreply.h"
 
+#include <type_traits>
+
 namespace QtRestClient {
 
 template <typename DataClassType, typename ErrorClassType = RestObject>
 class GenericRestReply : public RestReply
 {
+	static_assert(std::is_base_of<RestObject, DataClassType>::value, "DataClassType must inherit RestObject!");
+	static_assert(std::is_base_of<RestObject, ErrorClassType>::value, "ErrorClassType must inherit RestObject!");
 public:
 	GenericRestReply(QNetworkReply *networkReply,
 					 JsonSerializer *serializer,
@@ -27,6 +31,8 @@ private:
 template <typename DataClassType, typename ErrorClassType>
 class GenericRestReply<QList<DataClassType>, ErrorClassType> : public RestReply
 {
+	static_assert(std::is_base_of<RestObject, DataClassType>::value, "DataClassType must inherit RestObject!");
+	static_assert(std::is_base_of<RestObject, ErrorClassType>::value, "ErrorClassType must inherit RestObject!");
 public:
 	GenericRestReply(QNetworkReply *networkReply,
 					 JsonSerializer *serializer,

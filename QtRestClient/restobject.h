@@ -26,6 +26,7 @@ public:
 template<typename T>
 static bool RestObject::listEquals(const QList<T*> &left, const QList<T*> &right)
 {
+	static_assert(std::is_base_of<RestObject, T>::value, "T must inherit RestObject!");
 	if(left.size() != right.size())
 		return false;
 	else {

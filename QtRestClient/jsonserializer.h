@@ -8,6 +8,7 @@
 #include <QJsonObject>
 #include <QMetaProperty>
 #include <QObject>
+#include <type_traits>
 
 namespace QtRestClient {
 
@@ -51,6 +52,7 @@ private:
 template<typename T>
 QJsonArray JsonSerializer::serialize(const QList<T*> restObjects) const
 {
+	static_assert(std::is_base_of<RestObject, T>::value, "T must inherit RestObject!");
 	QJsonArray array;
 	foreach(auto obj, restObjects)
 		array.append(serialize(obj));
@@ -60,12 +62,14 @@ QJsonArray JsonSerializer::serialize(const QList<T*> restObjects) const
 template<typename T>
 typename T *JsonSerializer::deserialize(QJsonObject jsonObject, QObject *parent) const
 {
+	static_assert(std::is_base_of<RestObject, T>::value, "T must inherit RestObject!");
 	return static_cast<T*>(deserialize(jsonObject, &T::staticMetaObject, parent));
 }
 
 template<typename T>
 QList<T*> JsonSerializer::deserialize(QJsonArray jsonArray, QObject *parent) const
 {
+	static_assert(std::is_base_of<RestObject, T>::value, "T must inherit RestObject!");
 	QList<T*> list;
 	foreach(auto json, jsonArray) {
 		if(json.isObject())
