@@ -56,6 +56,8 @@ typename GenericRestReply<DataClassType, ErrorClassType> &GenericRestReply<DataC
 	connect(this, &RestReply::succeeded, this, [=](int code, const QJsonValue &value){
 		DataClassType *ptr = nullptr;
 		try {
+			if(!value.isObject())
+				throw SerializerException(QStringLiteral("Expected JSON object but got %1").arg(value.type()), true);
 			ptr = serializer->deserialize<DataClassType>(value.toObject());
 			if(handler(this, code, ptr))
 				ptr = nullptr;
@@ -77,6 +79,8 @@ typename GenericRestReply<DataClassType, ErrorClassType> &GenericRestReply<DataC
 	connect(this, &RestReply::failed, this, [=](int code, const QJsonValue &value){
 		ErrorClassType *ptr = nullptr;
 		try {
+			if(!value.isObject())
+				throw SerializerException(QStringLiteral("Expected JSON object but got %1").arg(value.type()), true);
 			ptr = serializer->deserialize<ErrorClassType>(value.toObject());
 			if(handler(this, code, ptr))
 				ptr = nullptr;
@@ -114,6 +118,8 @@ typename GenericRestReply<QList<DataClassType>, ErrorClassType> &GenericRestRepl
 	connect(this, &RestReply::succeeded, this, [=](int code, const QJsonValue &value){
 		QList<DataClassType*> ptrLst;
 		try {
+			if(!value.isArray())
+				throw SerializerException(QStringLiteral("Expected JSON object but got %1").arg(value.type()), true);
 			ptrLst = serializer->deserialize<DataClassType>(value.toArray());
 			if(handler(this, code, ptrLst))
 				ptrLst.clear();
@@ -135,6 +141,8 @@ typename GenericRestReply<QList<DataClassType>, ErrorClassType> &GenericRestRepl
 	connect(this, &RestReply::failed, this, [=](int code, const QJsonValue &value){
 		ErrorClassType *ptr = nullptr;
 		try {
+			if(!value.isObject())
+				throw SerializerException(QStringLiteral("Expected JSON object but got %1").arg(value.type()), true);
 			ptr = serializer->deserialize<ErrorClassType>(value.toObject());
 			if(handler(this, code, ptr))
 				ptr = nullptr;

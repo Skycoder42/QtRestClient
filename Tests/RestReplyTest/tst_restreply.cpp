@@ -186,12 +186,11 @@ void RestReplyTest::testGenericReplyWrapping_data()
 							  << new QtRestClient::RestObject(this)
 							  << false;
 
-	//TODO use custom rest server to make this possible
-//	QTest::newRow("serExcept") << QUrl("https://jsonplaceholder.typicode.com/users/1")
-//							   << false
-//							   << 0
-//							   << new QtRestClient::RestObject(this)
-//							   << true;
+	QTest::newRow("serExcept") << QUrl("https://jsonplaceholder.typicode.com/posts")
+							   << false
+							   << 0
+							   << new QtRestClient::RestObject(this)
+							   << true;
 }
 
 void RestReplyTest::testGenericReplyWrapping()
@@ -254,25 +253,28 @@ void RestReplyTest::testGenericListReplyWrapping_data()
 	QTest::addColumn<int>("status");
 	QTest::addColumn<int>("count");
 	QTest::addColumn<QtRestClient::RestObject*>("firstResult");
+	QTest::addColumn<bool>("except");
 
 	QTest::newRow("get") << QUrl("https://jsonplaceholder.typicode.com/posts")
 						 << true
 						 << 200
 						 << 100
-						 << (QtRestClient::RestObject*)JphPost::createDefault(this);
+						 << (QtRestClient::RestObject*)JphPost::createDefault(this)
+						 << false;
 
 	QTest::newRow("notFound") << QUrl("https://jsonplaceholder.typicode.com/postses")
 							  << false
 							  << 404
 							  << 0
-							  << new QtRestClient::RestObject(this);
+							  << new QtRestClient::RestObject(this)
+							  << false;
 
-	//TODO use custom rest server to make this possible
-//	QTest::newRow("serExcept") << QUrl("https://jsonplaceholder.typicode.com/users/1")
-//							   << false
-//							   << 0
-//							   << new QtRestClient::RestObject(this)
-//							   << true;
+	QTest::newRow("serExcept") << QUrl("https://jsonplaceholder.typicode.com/posts/1")
+							   << false
+							   << 0
+							   << 0
+							   << new QtRestClient::RestObject(this)
+							   << true;
 }
 
 void RestReplyTest::testGenericListReplyWrapping()
@@ -282,6 +284,7 @@ void RestReplyTest::testGenericListReplyWrapping()
 	QFETCH(int, status);
 	QFETCH(int, count);
 	QFETCH(QtRestClient::RestObject*, firstResult);
+	QFETCH(bool, except);
 
 	QNetworkRequest request(url);
 	request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
@@ -294,6 +297,7 @@ void RestReplyTest::testGenericListReplyWrapping()
 		called = true;
 		[&](){//trick, because the macros return from a void function...
 			QVERIFY(succeed);
+			QVERIFY(!except);
 			QCOMPARE(rep, reply);
 			QCOMPARE(code, status);
 			QCOMPARE(data.size(), count);
@@ -305,6 +309,7 @@ void RestReplyTest::testGenericListReplyWrapping()
 		called = true;
 		[&](){//trick, because the macros return from a void function...
 			QVERIFY(!succeed);
+			QVERIFY(!except);
 			QCOMPARE(rep, reply);
 			QCOMPARE(code, status);
 			QVERIFY(QtRestClient::RestObject::equals(data, firstResult));
@@ -314,6 +319,12 @@ void RestReplyTest::testGenericListReplyWrapping()
 	reply->onError([&](QtRestClient::RestReply *, QString error, int, QtRestClient::RestReply::ErrorType){
 		called = true;
 		QFAIL(qUtf8Printable(error));
+	});
+	reply->onSerializeException([&](QtRestClient::RestReply *rep, QtRestClient::SerializerException &){
+		called = true;
+		QVERIFY(!succeed);
+		QVERIFY(except);
+		QCOMPARE(rep, reply);
 	});
 
 	QSignalSpy deleteSpy(reply, &QtRestClient::RestReply::destroyed);

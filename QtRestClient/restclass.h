@@ -30,7 +30,7 @@ public:
 	RestClient *client() const;
 	RestClass *subClass(const QString &path, QObject *parent = nullptr);
 
-	//general calls
+	//general calls (json based)
 	RestReply *callJson(QByteArray verb, const QString &methodPath, const QVariantHash &parameters = {}, const HeaderHash & headers = {});
 	RestReply *callJson(QByteArray verb, const QString &methodPath, QJsonObject body, const QVariantHash &parameters = {}, const HeaderHash & headers = {});
 	RestReply *callJson(QByteArray verb, const QString &methodPath, QJsonArray body, const QVariantHash &parameters = {}, const HeaderHash & headers = {});
@@ -38,6 +38,7 @@ public:
 	RestReply *callJson(QByteArray verb, QJsonObject body, const QVariantHash &parameters = {}, const HeaderHash & headers = {});
 	RestReply *callJson(QByteArray verb, QJsonArray body, const QVariantHash &parameters = {}, const HeaderHash & headers = {});
 
+	//general calls
 	template<typename DT = RestObject, typename ET = RestObject>
 	GenericRestReply<DT, ET> *call(QByteArray verb, const QString &methodPath, const QVariantHash &parameters = {}, const HeaderHash & headers = {});
 	template<typename DT = RestObject, typename ET = RestObject>
