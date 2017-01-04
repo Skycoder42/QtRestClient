@@ -63,6 +63,21 @@ RestReply *RestClass::callJson(QByteArray verb, QJsonArray body, const QVariantH
 	return new RestReply(create(verb, body, parameters, headers), this);
 }
 
+RestReply *RestClass::callJson(QByteArray verb, const QUrl &relativeUrl, const QVariantHash &parameters, const HeaderHash &headers)
+{
+	return new RestReply(create(verb, relativeUrl, parameters, headers), this);
+}
+
+RestReply *RestClass::callJson(QByteArray verb, const QUrl &relativeUrl, QJsonObject body, const QVariantHash &parameters, const HeaderHash &headers)
+{
+	return new RestReply(create(verb, relativeUrl, body, parameters, headers), this);
+}
+
+RestReply *RestClass::callJson(QByteArray verb, const QUrl &relativeUrl, QJsonArray body, const QVariantHash &parameters, const HeaderHash &headers)
+{
+	return new RestReply(create(verb, relativeUrl, body, parameters, headers), this);
+}
+
 RequestBuilder RestClass::builder() const
 {
 	return d->client->builder()
@@ -123,6 +138,38 @@ QNetworkReply *RestClass::create(QByteArray verb, QJsonObject body, const QVaria
 QNetworkReply *RestClass::create(QByteArray verb, QJsonArray body, const QVariantHash &parameters, const HeaderHash &headers)
 {
 	return builder()
+			.addParameters(RestClassPrivate::hashToQuery(parameters))
+			.addHeaders(headers)
+			.setBody(body)
+			.setVerb(verb)
+			.send();
+}
+
+QNetworkReply *RestClass::create(QByteArray verb, const QUrl &relativeUrl, const QVariantHash &parameters, const HeaderHash &headers)
+{
+	return builder()
+			.updateFromRelativeUrl(relativeUrl, true)
+			.addParameters(RestClassPrivate::hashToQuery(parameters))
+			.addHeaders(headers)
+			.setVerb(verb)
+			.send();
+}
+
+QNetworkReply *RestClass::create(QByteArray verb, const QUrl &relativeUrl, QJsonObject body, const QVariantHash &parameters, const HeaderHash &headers)
+{
+	return builder()
+			.updateFromRelativeUrl(relativeUrl, true)
+			.addParameters(RestClassPrivate::hashToQuery(parameters))
+			.addHeaders(headers)
+			.setBody(body)
+			.setVerb(verb)
+			.send();
+}
+
+QNetworkReply *RestClass::create(QByteArray verb, const QUrl &relativeUrl, QJsonArray body, const QVariantHash &parameters, const HeaderHash &headers)
+{
+	return builder()
+			.updateFromRelativeUrl(relativeUrl, true)
 			.addParameters(RestClassPrivate::hashToQuery(parameters))
 			.addHeaders(headers)
 			.setBody(body)

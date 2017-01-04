@@ -62,7 +62,7 @@ GenericRestReply<Paging<T>, EO> *Paging<T>::next() const
 {
 	if(iPaging->hasNext()) {
 		auto reply = client->builder()
-				.updateFromRelativeUrl(iPaging->next())
+				.updateFromRelativeUrl(iPaging->next(), true)
 				.send();
 		return new GenericRestReply<Paging<T>, EO>(reply, client, client);
 	} else
@@ -87,7 +87,7 @@ GenericRestReply<Paging<T>, EO> *Paging<T>::previous() const
 {
 	if(iPaging->hasPrevious()) {
 		auto reply = client->builder()
-				.updateFromRelativeUrl(iPaging->previous())
+				.updateFromRelativeUrl(iPaging->previous(), true)
 				.send();
 		return new GenericRestReply<Paging<T>, EO>(reply, client, client);
 	} else

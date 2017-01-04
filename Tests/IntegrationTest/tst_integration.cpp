@@ -202,11 +202,19 @@ static void DO_NOT_CALL_compilation_test()
 	postClass->call<JphPost>(RestClass::GetVerb, RestClass::concatParameters("baum", 42));
 	postClass->call<JphPost>(RestClass::GetVerb, object, RestClass::concatParameters("baum", 42));
 	postClass->call<JphPost>(RestClass::GetVerb, list, RestClass::concatParameters("baum", 42));
+	postClass->call<JphPost>(RestClass::GetVerb, QUrl("test"));
+	postClass->call<JphPost>(RestClass::GetVerb, QUrl("test"), object);
+	postClass->call<JphPost>(RestClass::GetVerb, QUrl("test"), list);
+	postClass->call<JphPost>(RestClass::GetVerb, QUrl("test"), RestClass::concatParameters("baum", 42));
+	postClass->call<JphPost>(RestClass::GetVerb, QUrl("test"), object, RestClass::concatParameters("baum", 42));
+	postClass->call<JphPost>(RestClass::GetVerb, QUrl("test"), list, RestClass::concatParameters("baum", 42));
 
 	postClass->get<JphPost>(QStringLiteral("test"));
 	postClass->get<JphPost>(QStringLiteral("test"), RestClass::concatParameters("baum", 42));
 	postClass->get<JphPost>();
 	postClass->get<JphPost>(RestClass::concatParameters("baum", 42));
+	postClass->get<JphPost>(QUrl("test"));
+	postClass->get<JphPost>(QUrl("test"), RestClass::concatParameters("baum", 42));
 
 	postClass->post<JphPost>(QStringLiteral("test"));
 	postClass->post<JphPost>(QStringLiteral("test"), object);
@@ -220,6 +228,12 @@ static void DO_NOT_CALL_compilation_test()
 	postClass->post<JphPost>(RestClass::concatParameters("baum", 42));
 	postClass->post<JphPost>(object, RestClass::concatParameters("baum", 42));
 	postClass->post<JphPost>(list, RestClass::concatParameters("baum", 42));
+	postClass->post<JphPost>(QUrl("test"));
+	postClass->post<JphPost>(QUrl("test"), object);
+	postClass->post<JphPost>(QUrl("test"), list);
+	postClass->post<JphPost>(QUrl("test"), RestClass::concatParameters("baum", 42));
+	postClass->post<JphPost>(QUrl("test"), object, RestClass::concatParameters("baum", 42));
+	postClass->post<JphPost>(QUrl("test"), list, RestClass::concatParameters("baum", 42));
 
 	postClass->put<JphPost>(QStringLiteral("test"));
 	postClass->put<JphPost>(QStringLiteral("test"), object);
@@ -233,11 +247,19 @@ static void DO_NOT_CALL_compilation_test()
 	postClass->put<JphPost>(RestClass::concatParameters("baum", 42));
 	postClass->put<JphPost>(object, RestClass::concatParameters("baum", 42));
 	postClass->put<JphPost>(list, RestClass::concatParameters("baum", 42));
+	postClass->put<JphPost>(QUrl("test"));
+	postClass->put<JphPost>(QUrl("test"), object);
+	postClass->put<JphPost>(QUrl("test"), list);
+	postClass->put<JphPost>(QUrl("test"), RestClass::concatParameters("baum", 42));
+	postClass->put<JphPost>(QUrl("test"), object, RestClass::concatParameters("baum", 42));
+	postClass->put<JphPost>(QUrl("test"), list, RestClass::concatParameters("baum", 42));
 
 	postClass->deleteResource<JphPost>(QStringLiteral("test"));
 	postClass->deleteResource<JphPost>(QStringLiteral("test"), RestClass::concatParameters("baum", 42));
 	postClass->deleteResource<JphPost>();
 	postClass->deleteResource<JphPost>(RestClass::concatParameters("baum", 42));
+	postClass->deleteResource<JphPost>(QUrl("test"));
+	postClass->deleteResource<JphPost>(QUrl("test"), RestClass::concatParameters("baum", 42));
 
 	postClass->patch<JphPost>(QStringLiteral("test"));
 	postClass->patch<JphPost>(QStringLiteral("test"), object);
@@ -251,6 +273,12 @@ static void DO_NOT_CALL_compilation_test()
 	postClass->patch<JphPost>(RestClass::concatParameters("baum", 42));
 	postClass->patch<JphPost>(object, RestClass::concatParameters("baum", 42));
 	postClass->patch<JphPost>(list, RestClass::concatParameters("baum", 42));
+	postClass->patch<JphPost>(QUrl("test"));
+	postClass->patch<JphPost>(QUrl("test"), object);
+	postClass->patch<JphPost>(QUrl("test"), list);
+	postClass->patch<JphPost>(QUrl("test"), RestClass::concatParameters("baum", 42));
+	postClass->patch<JphPost>(QUrl("test"), object, RestClass::concatParameters("baum", 42));
+	postClass->patch<JphPost>(QUrl("test"), list, RestClass::concatParameters("baum", 42));
 }
 
 QTEST_MAIN(IntegrationTest)
