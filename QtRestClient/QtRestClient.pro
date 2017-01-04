@@ -49,7 +49,8 @@ HEADERS +=\
     restexception.h \
     genericrestreply.h \
     ipaging.h \
-    standardpaging.h
+    standardpaging.h \
+    paging.h
 
 unix {
     target.path = /usr/lib

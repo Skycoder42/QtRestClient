@@ -14,15 +14,15 @@ class QTRESTCLIENTSHARED_EXPORT IPaging
 public:
 	virtual inline ~IPaging() {}
 
-	virtual QJsonArray items() = 0;
+	virtual QJsonArray items() const = 0;
 
-	virtual int total() = 0;
-	virtual int offset() = 0;
-	virtual int limit() = 0;
-	virtual bool hasNext() = 0;
-	virtual QUrl next() = 0;
-	virtual bool hasPrevious() = 0;
-	virtual QUrl previous() = 0;
+	virtual int total() const = 0;
+	virtual int offset() const = 0;
+	virtual int limit() const = 0;
+	virtual bool hasNext() const = 0;
+	virtual QUrl next() const = 0;
+	virtual bool hasPrevious() const = 0;
+	virtual QUrl previous() const = 0;
 };
 
 class QTRESTCLIENTSHARED_EXPORT PagingFactory
@@ -30,7 +30,7 @@ class QTRESTCLIENTSHARED_EXPORT PagingFactory
 public:
 	virtual inline ~PagingFactory() {}
 
-	virtual IPaging *createPaging(const QJsonObject &data) = 0;
+	virtual IPaging *createPaging(const QJsonObject &data) const = 0;
 };
 
 }

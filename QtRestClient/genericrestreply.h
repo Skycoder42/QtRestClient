@@ -73,7 +73,7 @@ typename GenericRestReply<DataClassType, ErrorClassType> &GenericRestReply<DataC
 			else
 				throw;
 		}
-		if(ptr)
+		if(ptr)//TODO remove
 			ptr->deleteLater();
 	});
 	return *this;
@@ -96,7 +96,7 @@ typename GenericRestReply<DataClassType, ErrorClassType> &GenericRestReply<DataC
 			else
 				throw;
 		}
-		if(ptr)
+		if(ptr)//TODO remove
 			ptr->deleteLater();
 	});
 	return *this;
@@ -135,7 +135,7 @@ typename GenericRestReply<QList<DataClassType>, ErrorClassType> &GenericRestRepl
 			else
 				throw;
 		}
-		foreach(auto obj, ptrLst)
+		foreach(auto obj, ptrLst)//TODO remove
 			obj->deleteLater();
 	});
 	return *this;
@@ -158,7 +158,7 @@ typename GenericRestReply<QList<DataClassType>, ErrorClassType> &GenericRestRepl
 			else
 				throw;
 		}
-		if(ptr)
+		if(ptr)//TODO remove
 			ptr->deleteLater();
 	});
 	return *this;

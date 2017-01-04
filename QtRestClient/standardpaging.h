@@ -13,17 +13,26 @@ class QTRESTCLIENTSHARED_EXPORT StandardPaging : public IPaging
 public:
 	StandardPaging(const QJsonObject &object);
 
-	QJsonArray items() override;
-	int total() override;
-	int offset() override;
-	int limit() override;
-	bool hasNext() override;
-	QUrl next() override;
-	bool hasPrevious() override;
-	QUrl previous() override;
+	QJsonArray items() const override;
+	int total() const override;
+	int offset() const override;
+	int limit() const override;
+	bool hasNext() const override;
+	QUrl next() const override;
+	bool hasPrevious() const override;
+	QUrl previous() const override;
 
 private:
 	QScopedPointer<StandardPagingPrivate> d_ptr;
+};
+
+class QTRESTCLIENTSHARED_EXPORT StandardPagingFactory : public PagingFactory
+{
+public:
+	IPaging *createPaging(const QJsonObject &data) const override;
+
+private:
+	static bool validateUrl(const QJsonValue &value);
 };
 
 }
