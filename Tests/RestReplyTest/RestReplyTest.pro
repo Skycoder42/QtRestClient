@@ -29,3 +29,6 @@ include(../tests.pri)
 
 SOURCES += tst_restreply.cpp
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
+
+DISTFILES += \
+    reply-test-db.js

@@ -20,24 +20,27 @@ private Q_SLOTS:
 	void testGenericListReplyWrapping_data();
 	void testGenericListReplyWrapping();
 
+//	void testGenericPagingReplyWrapping_data();
+//	void testGenericPagingReplyWrapping();
+
 private:
 	QNetworkAccessManager *nam;
-	QtRestClient::JsonSerializer *ser;
+	QtRestClient::RestClient *client;
 };
 
 void RestReplyTest::initTestCase()
 {
-	initTestJsonServer();
+	initTestJsonServer("./RestReplyTest/reply-test-db.js");
 	nam = new QNetworkAccessManager(this);
-	ser = new QtRestClient::JsonSerializer(this);
+	client = new QtRestClient::RestClient(this);
 }
 
 void RestReplyTest::cleanupTestCase()
 {
 	nam->deleteLater();
 	nam = nullptr;
-	ser->deleteLater();
-	ser = nullptr;
+	client->deleteLater();
+	client = nullptr;
 }
 
 void RestReplyTest::testReplyWrapping_data()
@@ -204,7 +207,7 @@ void RestReplyTest::testGenericReplyWrapping()
 
 	bool called = false;
 
-	auto reply = new QtRestClient::GenericRestReply<JphPost>(nam->get(request), ser);
+	auto reply = new QtRestClient::GenericRestReply<JphPost>(nam->get(request), client);
 	reply->enableAutoDelete();
 	reply->onSucceeded([&](QtRestClient::RestReply *rep, int code, JphPost *data){
 		called = true;
@@ -252,7 +255,7 @@ void RestReplyTest::testGenericListReplyWrapping_data()
 	QTest::newRow("get") << QUrl("http://localhost:3000/posts")
 						 << true
 						 << 200
-						 << 10
+						 << 100
 						 << (QtRestClient::RestObject*)JphPost::createDefault(this)
 						 << false;
 
@@ -285,7 +288,7 @@ void RestReplyTest::testGenericListReplyWrapping()
 
 	bool called = false;
 
-	auto reply = new QtRestClient::GenericRestReply<QList<JphPost>>(nam->get(request), ser);
+	auto reply = new QtRestClient::GenericRestReply<QList<JphPost>>(nam->get(request), client);
 	reply->enableAutoDelete();
 	reply->onSucceeded([&](QtRestClient::RestReply *rep, int code, QList<JphPost*> data){
 		called = true;
@@ -321,6 +324,99 @@ void RestReplyTest::testGenericListReplyWrapping()
 	QVERIFY(deleteSpy.wait());
 	QVERIFY(called);
 }
+
+//void RestReplyTest::testGenericPagingReplyWrapping_data()
+//{
+//	QTest::addColumn<QUrl>("url");
+//	QTest::addColumn<bool>("succeed");
+//	QTest::addColumn<int>("status");
+//	QTest::addColumn<int>("offset");
+//	QTest::addColumn<int>("limit");
+//	QTest::addColumn<int>("total");
+//	QTest::addColumn<QtRestClient::RestObject*>("firstResult");
+//	QTest::addColumn<bool>("except");
+
+//	QTest::newRow("get") << QUrl("http://localhost:3000/pages/0")
+//						 << true
+//						 << 200
+//						 << 0
+//						 << 5
+//						 << 10
+//						 << (QtRestClient::RestObject*)JphPost::createDefault(this)
+//						 << false;
+
+//	QTest::newRow("notFound") << QUrl("http://localhost:3000/pageses")
+//							  << false
+//							  << 404
+//							  << 0
+//							  << new QtRestClient::RestObject(this)
+//							  << false;
+
+//	QTest::newRow("serExcept") << QUrl("http://localhost:3000/posts/1")
+//							   << false
+//							   << 0
+//							   << 0
+//							   << 0
+//							   << 0
+//							   << new QtRestClient::RestObject(this)
+//							   << true;
+//}
+
+//void RestReplyTest::testGenericPagingReplyWrapping()
+//{
+//	QFETCH(QUrl, url);
+//	QFETCH(bool, succeed);
+//	QFETCH(int, status);
+//	QFETCH(int, offset);
+//	QFETCH(int, limit);
+//	QFETCH(int, total);
+//	QFETCH(QtRestClient::RestObject*, firstResult);
+//	QFETCH(bool, except);
+
+//	QNetworkRequest request(url);
+//	request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
+
+//	bool called = false;
+
+//	auto reply = new QtRestClient::GenericRestReply<QtRestClient::Paging<JphPost>>(nam->get(request), client);
+//	reply->enableAutoDelete();
+//	reply->onSucceeded([&](QtRestClient::RestReply *rep, int code, QtRestClient::Paging<JphPost> data){
+//		called = true;
+//		QVERIFY(succeed);
+//		QVERIFY(!except);
+//		QCOMPARE(rep, reply);
+//		QCOMPARE(code, status);
+//		QVERIFY(data.isValid());
+//		QCOMPARE(data.offset(), offset);
+//		QCOMPARE(data.limit(), limit);
+//		QCOMPARE(data.total(), total);
+//		QVERIFY(QtRestClient::RestObject::equals(data.items().first(), firstResult));
+//		data.deleteAllItems();
+//	});
+//	reply->onFailed([&](QtRestClient::RestReply *rep, int code, QtRestClient::RestObject *data){
+//		called = true;
+//		QVERIFY(!succeed);
+//		QVERIFY(!except);
+//		QCOMPARE(rep, reply);
+//		QCOMPARE(code, status);
+//		QVERIFY(QtRestClient::RestObject::equals(data, firstResult));
+//		data->deleteLater();
+//	});
+//	reply->onError([&](QtRestClient::RestReply *, QString error, int, QtRestClient::RestReply::ErrorType){
+//		called = true;
+//		QFAIL(qUtf8Printable(error));
+//	});
+//	reply->onSerializeException([&](QtRestClient::RestReply *rep, QtRestClient::SerializerException &){
+//		called = true;
+//		QVERIFY(!succeed);
+//		QVERIFY(except);
+//		QCOMPARE(rep, reply);
+//	});
+
+//	QSignalSpy deleteSpy(reply, &QtRestClient::RestReply::destroyed);
+//	QVERIFY(deleteSpy.wait());
+//	QVERIFY(called);
+//}
 
 QTEST_MAIN(RestReplyTest)
 

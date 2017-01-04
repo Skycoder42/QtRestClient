@@ -1,4 +1,6 @@
 #include "tst_global.h"
+#include <QJSEngine>
+#include <QJsonDocument>
 
 void initTestJsonServer(QString relativeDbPath)
 {
@@ -11,7 +13,16 @@ void initTestJsonServer(QString relativeDbPath)
 	if(!outFile.open(QIODevice::WriteOnly | QIODevice::Text))
 		QFAIL("Failed to open input file");
 
-	outFile.write(inFile.readAll());
+	if(QFileInfo(inFile).suffix() == "js") {
+		QJSEngine engine;
+		auto result = engine.evaluate(QString::fromUtf8(inFile.readAll()));
+		QVERIFY2(!result.isError(), qUtf8Printable(result.toString()));
+		auto doc = QJsonDocument::fromVariant(result.toVariant());
+		QVERIFY(!doc.isNull());
+		outFile.write(doc.toJson());
+	} else
+		outFile.write(inFile.readAll());
+
 	inFile.close();
 	outFile.close();
 	QThread::msleep(500);//Time for the server to reload the database

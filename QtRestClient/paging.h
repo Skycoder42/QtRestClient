@@ -6,6 +6,8 @@
 
 // ------------- Generic Implementation -------------
 
+
+
 template<typename T>
 Paging<T>::Paging() :
 	iPaging(nullptr),

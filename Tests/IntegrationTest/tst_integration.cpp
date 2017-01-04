@@ -116,7 +116,7 @@ void IntegrationTest::testRestObjectListChain()
 		called = true;
 		QCOMPARE(rep, reply);
 		QCOMPARE(code, 200);
-		QCOMPARE(data.size(), 10);
+		QCOMPARE(data.size(), 100);
 		qDeleteAll(data);
 	});
 	reply->onFailed([&](QtRestClient::RestReply *, int code, RestObject *data){

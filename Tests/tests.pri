@@ -1,4 +1,4 @@
-QT += network
+QT += network qml
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../QtRestClient/release/ -lQtRestClient
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../../QtRestClient/debug/ -lQtRestClient
@@ -20,6 +20,6 @@ SOURCES += \
 
 DISTFILES += \
     $$PWD/rest-db-setup.bat \
-    $$PWD/default-test-db.json
+    $$PWD/default-test-db.js
 
 DEFINES += "TEST_SRC_DIR=\\\"$$PWD\\\""

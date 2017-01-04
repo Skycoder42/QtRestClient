@@ -1,5 +1,5 @@
-#ifndef PAGING_H
-#define PAGING_H
+#ifndef PAGING_FWD_H
+#define PAGING_FWD_H
 
 #include "qtrestclient_global.h"
 
@@ -14,7 +14,7 @@ template<typename DO, typename EO>
 class GenericRestReply;
 
 template<typename T>
-class QTRESTCLIENTSHARED_EXPORT Paging
+class Paging
 {
 	static_assert(std::is_base_of<RestObject, T>::value, "T must inherit RestObject!");
 public:
@@ -60,4 +60,4 @@ private:
 
 }
 
-#endif // PAGING_H
+#endif // PAGING_FWD_H

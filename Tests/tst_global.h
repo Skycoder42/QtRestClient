@@ -8,6 +8,6 @@
 Q_DECLARE_METATYPE(QUrlQuery)
 Q_DECLARE_METATYPE(QNetworkRequest::Attribute)
 
-void initTestJsonServer(QString relativeDbPath = "./default-test-db.json");
+void initTestJsonServer(QString relativeDbPath = "./default-test-db.js");
 
 #endif // TST_GLOBAL_H

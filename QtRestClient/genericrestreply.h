@@ -18,7 +18,7 @@ class GenericRestReply : public RestReply
 	static_assert(std::is_base_of<RestObject, ErrorClassType>::value, "ErrorClassType must inherit RestObject!");
 public:
 	GenericRestReply(QNetworkReply *networkReply,
-					 JsonSerializer *serializer,
+					 RestClient *client,
 					 QObject *parent = nullptr);
 
 	GenericRestReply<DataClassType, ErrorClassType> &onSucceeded(std::function<void(RestReply*, int, DataClassType*)> handler);
@@ -37,7 +37,7 @@ class GenericRestReply<QList<DataClassType>, ErrorClassType> : public RestReply
 	static_assert(std::is_base_of<RestObject, ErrorClassType>::value, "ErrorClassType must inherit RestObject!");
 public:
 	GenericRestReply(QNetworkReply *networkReply,
-					 JsonSerializer *serializer,
+					 RestClient *client,
 					 QObject *parent = nullptr);
 
 	GenericRestReply<QList<DataClassType>, ErrorClassType> &onSucceeded(std::function<void(RestReply*, int, QList<DataClassType*>)> handler);
@@ -74,9 +74,9 @@ private:
 // ------------- Implementation Single Element -------------
 
 template<typename DataClassType, typename ErrorClassType>
-GenericRestReply<DataClassType, ErrorClassType>::GenericRestReply(QNetworkReply *networkReply, JsonSerializer *serializer, QObject *parent) :
+GenericRestReply<DataClassType, ErrorClassType>::GenericRestReply(QNetworkReply *networkReply, RestClient *client, QObject *parent) :
 	RestReply(networkReply, parent),
-	serializer(serializer),
+	serializer(client->serializer()),
 	exceptionHandler()
 {}
 
@@ -130,9 +130,9 @@ typename GenericRestReply<DataClassType, ErrorClassType> &GenericRestReply<DataC
 // ------------- Implementation List of Elements -------------
 
 template<typename DataClassType, typename ErrorClassType>
-GenericRestReply<QList<DataClassType>, ErrorClassType>::GenericRestReply(QNetworkReply *networkReply, JsonSerializer *serializer, QObject *parent) :
+GenericRestReply<QList<DataClassType>, ErrorClassType>::GenericRestReply(QNetworkReply *networkReply, RestClient *client, QObject *parent) :
 	RestReply(networkReply, parent),
-	serializer(serializer),
+	serializer(client->serializer()),
 	exceptionHandler()
 {}
 

@@ -175,7 +175,7 @@ GenericRestReply<DT, ET> *RestClass::call(QByteArray verb, const QString &method
 											   methodPath,
 											   parameters,
 											   headers),
-										client()->serializer(),
+										client(),
 										this);
 }
 
@@ -187,7 +187,7 @@ GenericRestReply<DT, ET> *RestClass::call(QByteArray verb, const QString &method
 											   client()->serializer()->serialize(body),
 											   parameters,
 											   headers),
-										client()->serializer(),
+										client(),
 										this);
 }
 
@@ -199,7 +199,7 @@ GenericRestReply<DT, ET> *RestClass::call(QByteArray verb, const QString &method
 											   client()->serializer()->serialize(body),
 											   parameters,
 											   headers),
-										client()->serializer(),
+										client(),
 										this);
 }
 
@@ -209,7 +209,7 @@ GenericRestReply<DT, ET> *RestClass::call(QByteArray verb, const QVariantHash &p
 	return new GenericRestReply<DT, ET>(create(verb,
 											   parameters,
 											   headers),
-										client()->serializer(),
+										client(),
 										this);
 }
 
@@ -220,7 +220,7 @@ GenericRestReply<DT, ET> *RestClass::call(QByteArray verb, RestObject *body, con
 											   client()->serializer()->serialize(body),
 											   parameters,
 											   headers),
-										client()->serializer(),
+										client(),
 										this);
 }
 
@@ -231,7 +231,7 @@ GenericRestReply<DT, ET> *RestClass::call(QByteArray verb, QList<RO *> body, con
 											   client()->serializer()->serialize(body),
 											   parameters,
 											   headers),
-										client()->serializer(),
+										client(),
 										this);
 }
 
