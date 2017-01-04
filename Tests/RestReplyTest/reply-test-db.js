@@ -11,17 +11,18 @@ var fn = function(){
 							body: "Body" + i
 						})
 	}
-	for (var i = 0; i < 100; i++) {
+	for (var i = 0; i < 10; i++) {
 		var page = {
+			id: i,
 			total: 100,
-			offset: i,
-			limit: Math.min(i+10, 100),
-			next: i < 90 ? "/pages/" + (i+10) : null,
-			previous: i >= 10 ? "/pages/" + (i-10) : null,
+			offset: i*10,
+			limit: (i+1)*10,
+			next: i < 9 ? "/pages/" + (i+1) : null,
+			previous: i > 0 ? "/pages/" + (i-1) : null,
 			items: []
 		};
 		for(var j = 1; j <= 10; j++) {
-			var cnt = i + j;
+			var cnt = (i*10) + j;
 			page.items.push({
 								id: cnt,
 								userId: Math.ceil(cnt/2),
