@@ -19,8 +19,8 @@ public:
 					 JsonSerializer *serializer,
 					 QObject *parent = nullptr);
 
-	GenericRestReply<DataClassType, ErrorClassType> &onSucceeded(std::function<bool(RestReply*, int, DataClassType*)> handler);
-	GenericRestReply<DataClassType, ErrorClassType> &onFailed(std::function<bool(RestReply*, int, ErrorClassType*)> handler);
+	GenericRestReply<DataClassType, ErrorClassType> &onSucceeded(std::function<void(RestReply*, int, DataClassType*)> handler);
+	GenericRestReply<DataClassType, ErrorClassType> &onFailed(std::function<void(RestReply*, int, ErrorClassType*)> handler);
 	GenericRestReply<DataClassType, ErrorClassType> &onSerializeException(std::function<void(RestReply*, SerializerException &)> handler);
 
 private:
@@ -38,8 +38,8 @@ public:
 					 JsonSerializer *serializer,
 					 QObject *parent = nullptr);
 
-	GenericRestReply<QList<DataClassType>, ErrorClassType> &onSucceeded(std::function<bool(RestReply*, int, QList<DataClassType*>)> handler);
-	GenericRestReply<QList<DataClassType>, ErrorClassType> &onFailed(std::function<bool(RestReply*, int, ErrorClassType*)> handler);
+	GenericRestReply<QList<DataClassType>, ErrorClassType> &onSucceeded(std::function<void(RestReply*, int, QList<DataClassType*>)> handler);
+	GenericRestReply<QList<DataClassType>, ErrorClassType> &onFailed(std::function<void(RestReply*, int, ErrorClassType*)> handler);
 	GenericRestReply<QList<DataClassType>, ErrorClassType> &onSerializeException(std::function<void(RestReply*, SerializerException &)> handler);
 
 private:
@@ -57,47 +57,45 @@ GenericRestReply<DataClassType, ErrorClassType>::GenericRestReply(QNetworkReply 
 {}
 
 template<typename DataClassType, typename ErrorClassType>
-typename GenericRestReply<DataClassType, ErrorClassType> &GenericRestReply<DataClassType, ErrorClassType>::onSucceeded(std::function<bool (RestReply *, int, DataClassType *)> handler)
+typename GenericRestReply<DataClassType, ErrorClassType> &GenericRestReply<DataClassType, ErrorClassType>::onSucceeded(std::function<void (RestReply *, int, DataClassType *)> handler)
 {
+	if(!handler)
+		return *this;
 	connect(this, &RestReply::succeeded, this, [=](int code, const QJsonValue &value){
 		DataClassType *ptr = nullptr;
 		try {
 			if(!value.isObject())
 				throw SerializerException(QStringLiteral("Expected JSON object but got %1").arg(value.type()), true);
 			ptr = serializer->deserialize<DataClassType>(value.toObject());
-			if(handler(this, code, ptr))
-				ptr = nullptr;
+			handler(this, code, ptr);
 		} catch(SerializerException &e) {
 			if(exceptionHandler)
 				exceptionHandler(this, e);
 			else
 				throw;
 		}
-		if(ptr)//TODO remove
-			ptr->deleteLater();
 	});
 	return *this;
 }
 
 template<typename DataClassType, typename ErrorClassType>
-typename GenericRestReply<DataClassType, ErrorClassType> &GenericRestReply<DataClassType, ErrorClassType>::onFailed(std::function<bool (RestReply *, int, ErrorClassType *)> handler)
+typename GenericRestReply<DataClassType, ErrorClassType> &GenericRestReply<DataClassType, ErrorClassType>::onFailed(std::function<void (RestReply *, int, ErrorClassType *)> handler)
 {
+	if(!handler)
+		return *this;
 	connect(this, &RestReply::failed, this, [=](int code, const QJsonValue &value){
 		ErrorClassType *ptr = nullptr;
 		try {
 			if(!value.isObject())
 				throw SerializerException(QStringLiteral("Expected JSON object but got %1").arg(value.type()), true);
 			ptr = serializer->deserialize<ErrorClassType>(value.toObject());
-			if(handler(this, code, ptr))
-				ptr = nullptr;
+			handler(this, code, ptr);
 		} catch(SerializerException &e) {
 			if(exceptionHandler)
 				exceptionHandler(this, e);
 			else
 				throw;
 		}
-		if(ptr)//TODO remove
-			ptr->deleteLater();
 	});
 	return *this;
 }
@@ -119,47 +117,45 @@ GenericRestReply<QList<DataClassType>, ErrorClassType>::GenericRestReply(QNetwor
 {}
 
 template<typename DataClassType, typename ErrorClassType>
-typename GenericRestReply<QList<DataClassType>, ErrorClassType> &GenericRestReply<QList<DataClassType>, ErrorClassType>::onSucceeded(std::function<bool (RestReply *, int, QList<DataClassType*>)> handler)
+typename GenericRestReply<QList<DataClassType>, ErrorClassType> &GenericRestReply<QList<DataClassType>, ErrorClassType>::onSucceeded(std::function<void (RestReply *, int, QList<DataClassType*>)> handler)
 {
+	if(!handler)
+		return *this;
 	connect(this, &RestReply::succeeded, this, [=](int code, const QJsonValue &value){
 		QList<DataClassType*> ptrLst;
 		try {
 			if(!value.isArray())
 				throw SerializerException(QStringLiteral("Expected JSON object but got %1").arg(value.type()), true);
 			ptrLst = serializer->deserialize<DataClassType>(value.toArray());
-			if(handler(this, code, ptrLst))
-				ptrLst.clear();
+			handler(this, code, ptrLst);
 		} catch(SerializerException &e) {
 			if(exceptionHandler)
 				exceptionHandler(this, e);
 			else
 				throw;
 		}
-		foreach(auto obj, ptrLst)//TODO remove
-			obj->deleteLater();
 	});
 	return *this;
 }
 
 template<typename DataClassType, typename ErrorClassType>
-typename GenericRestReply<QList<DataClassType>, ErrorClassType> &GenericRestReply<QList<DataClassType>, ErrorClassType>::onFailed(std::function<bool (RestReply *, int, ErrorClassType *)> handler)
+typename GenericRestReply<QList<DataClassType>, ErrorClassType> &GenericRestReply<QList<DataClassType>, ErrorClassType>::onFailed(std::function<void (RestReply *, int, ErrorClassType *)> handler)
 {
+	if(!handler)
+		return *this;
 	connect(this, &RestReply::failed, this, [=](int code, const QJsonValue &value){
 		ErrorClassType *ptr = nullptr;
 		try {
 			if(!value.isObject())
 				throw SerializerException(QStringLiteral("Expected JSON object but got %1").arg(value.type()), true);
 			ptr = serializer->deserialize<ErrorClassType>(value.toObject());
-			if(handler(this, code, ptr))
-				ptr = nullptr;
+			handler(this, code, ptr);
 		} catch(SerializerException &e) {
 			if(exceptionHandler)
 				exceptionHandler(this, e);
 			else
 				throw;
 		}
-		if(ptr)//TODO remove
-			ptr->deleteLater();
 	});
 	return *this;
 }

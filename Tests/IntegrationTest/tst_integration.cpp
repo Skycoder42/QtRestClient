@@ -81,19 +81,15 @@ void IntegrationTest::testRestObjectChain()
 	reply->enableAutoDelete();
 	reply->onSucceeded([&](QtRestClient::RestReply *rep, int code, JphPost *data){
 		called = true;
-		[&](){
-			QCOMPARE(rep, reply);
-			QCOMPARE(code, 200);
-			QVERIFY(RestObject::equals(data, object));
-		}();
-		return false;
+		QCOMPARE(rep, reply);
+		QCOMPARE(code, 200);
+		QVERIFY(RestObject::equals(data, object));
+		data->deleteLater();
 	});
-	reply->onFailed([&](QtRestClient::RestReply *, int code, RestObject *){
+	reply->onFailed([&](QtRestClient::RestReply *, int code, RestObject *data){
 		called = true;
-		[&](){
-			QFAIL(QByteArray::number(code).constData());
-		}();
-		return false;
+		QFAIL(QByteArray::number(code).constData());
+		data->deleteLater();
 	});
 	reply->onError([&](QtRestClient::RestReply *, QString error, int, QtRestClient::RestReply::ErrorType){
 		called = true;
@@ -118,19 +114,15 @@ void IntegrationTest::testRestObjectListChain()
 	reply->enableAutoDelete();
 	reply->onSucceeded([&](QtRestClient::RestReply *rep, int code, QList<JphPost*> data){
 		called = true;
-		[&](){
-			QCOMPARE(rep, reply);
-			QCOMPARE(code, 200);
-			QCOMPARE(data.size(), 10);
-		}();
-		return false;
+		QCOMPARE(rep, reply);
+		QCOMPARE(code, 200);
+		QCOMPARE(data.size(), 10);
+		qDeleteAll(data);
 	});
-	reply->onFailed([&](QtRestClient::RestReply *, int code, RestObject *){
+	reply->onFailed([&](QtRestClient::RestReply *, int code, RestObject *data){
 		called = true;
-		[&](){
-			QFAIL(QByteArray::number(code).constData());
-		}();
-		return false;
+		QFAIL(QByteArray::number(code).constData());
+		data->deleteLater();
 	});
 	reply->onError([&](QtRestClient::RestReply *, QString error, int, QtRestClient::RestReply::ErrorType){
 		called = true;

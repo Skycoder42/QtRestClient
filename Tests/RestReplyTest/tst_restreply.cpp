@@ -208,25 +208,21 @@ void RestReplyTest::testGenericReplyWrapping()
 	reply->enableAutoDelete();
 	reply->onSucceeded([&](QtRestClient::RestReply *rep, int code, JphPost *data){
 		called = true;
-		[&](){//trick, because the macros return from a void function...
-			QVERIFY(succeed);
-			QVERIFY(!except);
-			QCOMPARE(rep, reply);
-			QCOMPARE(code, status);
-			QVERIFY(QtRestClient::RestObject::equals(data, result));
-		}();
-		return false;
+		QVERIFY(succeed);
+		QVERIFY(!except);
+		QCOMPARE(rep, reply);
+		QCOMPARE(code, status);
+		QVERIFY(QtRestClient::RestObject::equals(data, result));
+		data->deleteLater();
 	});
 	reply->onFailed([&](QtRestClient::RestReply *rep, int code, QtRestClient::RestObject *data){
 		called = true;
-		[&](){//trick, because the macros return from a void function...
-			QVERIFY(!succeed);
-			QVERIFY(!except);
-			QCOMPARE(rep, reply);
-			QCOMPARE(code, status);
-			QVERIFY(QtRestClient::RestObject::equals(data, result));
-		}();
-		return false;
+		QVERIFY(!succeed);
+		QVERIFY(!except);
+		QCOMPARE(rep, reply);
+		QCOMPARE(code, status);
+		QVERIFY(QtRestClient::RestObject::equals(data, result));
+		data->deleteLater();
 	});
 	reply->onError([&](QtRestClient::RestReply *, QString error, int, QtRestClient::RestReply::ErrorType){
 		called = true;
@@ -293,26 +289,22 @@ void RestReplyTest::testGenericListReplyWrapping()
 	reply->enableAutoDelete();
 	reply->onSucceeded([&](QtRestClient::RestReply *rep, int code, QList<JphPost*> data){
 		called = true;
-		[&](){//trick, because the macros return from a void function...
-			QVERIFY(succeed);
-			QVERIFY(!except);
-			QCOMPARE(rep, reply);
-			QCOMPARE(code, status);
-			QCOMPARE(data.size(), count);
-			QVERIFY(QtRestClient::RestObject::equals(data.first(), firstResult));
-		}();
-		return false;
+		QVERIFY(succeed);
+		QVERIFY(!except);
+		QCOMPARE(rep, reply);
+		QCOMPARE(code, status);
+		QCOMPARE(data.size(), count);
+		QVERIFY(QtRestClient::RestObject::equals(data.first(), firstResult));
+		qDeleteAll(data);
 	});
 	reply->onFailed([&](QtRestClient::RestReply *rep, int code, QtRestClient::RestObject *data){
 		called = true;
-		[&](){//trick, because the macros return from a void function...
-			QVERIFY(!succeed);
-			QVERIFY(!except);
-			QCOMPARE(rep, reply);
-			QCOMPARE(code, status);
-			QVERIFY(QtRestClient::RestObject::equals(data, firstResult));
-		}();
-		return false;
+		QVERIFY(!succeed);
+		QVERIFY(!except);
+		QCOMPARE(rep, reply);
+		QCOMPARE(code, status);
+		QVERIFY(QtRestClient::RestObject::equals(data, firstResult));
+		data->deleteLater();
 	});
 	reply->onError([&](QtRestClient::RestReply *, QString error, int, QtRestClient::RestReply::ErrorType){
 		called = true;

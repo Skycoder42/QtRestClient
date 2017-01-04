@@ -18,6 +18,8 @@ RestReply::RestReply(QNetworkReply *networkReply, QObject *parent) :
 
 RestReply &RestReply::onSucceeded(std::function<void (RestReply *, int, QJsonObject)> handler)
 {
+	if(!handler)
+		return *this;
 	connect(this, &RestReply::succeeded, this, [=](int code, const QJsonValue &value){
 		handler(this, code, value.toObject());
 	});
@@ -26,6 +28,8 @@ RestReply &RestReply::onSucceeded(std::function<void (RestReply *, int, QJsonObj
 
 RestReply &RestReply::onSucceeded(std::function<void (RestReply *, int, QJsonArray)> handler)
 {
+	if(!handler)
+		return *this;
 	connect(this, &RestReply::succeeded, this, [=](int code, const QJsonValue &value){
 		handler(this, code, value.toArray());
 	});
@@ -34,6 +38,8 @@ RestReply &RestReply::onSucceeded(std::function<void (RestReply *, int, QJsonArr
 
 RestReply &RestReply::onFailed(std::function<void (RestReply*, int, QJsonObject)> handler)
 {
+	if(!handler)
+		return *this;
 	connect(this, &RestReply::failed, this, [=](int code, const QJsonValue &value){
 		handler(this, code, value.toObject());
 	});
@@ -42,6 +48,8 @@ RestReply &RestReply::onFailed(std::function<void (RestReply*, int, QJsonObject)
 
 RestReply &RestReply::onFailed(std::function<void (RestReply*, int, QJsonArray)> handler)
 {
+	if(!handler)
+		return *this;
 	connect(this, &RestReply::failed, this, [=](int code, const QJsonValue &value){
 		handler(this, code, value.toArray());
 	});
@@ -50,6 +58,8 @@ RestReply &RestReply::onFailed(std::function<void (RestReply*, int, QJsonArray)>
 
 RestReply &RestReply::onError(std::function<void (RestReply*, QString, int, ErrorType)> handler)
 {
+	if(!handler)
+		return *this;
 	connect(this, &RestReply::error, this, [=](QString errorString, int error, ErrorType type){
 		handler(this, errorString, error, type);
 	});

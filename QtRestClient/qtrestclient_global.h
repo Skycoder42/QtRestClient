@@ -46,6 +46,8 @@ static inline bool registerListConverters() {
 	return ok1 && ok2 && ok3;
 }
 
+//TODO qDeleteAllLater();
+
 }
 
 #endif // QTRESTCLIENT_GLOBAL_H
