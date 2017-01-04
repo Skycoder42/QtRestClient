@@ -21,7 +21,20 @@ public:
 	static bool listEquals(const QList<T*> &left, const QList<T*> &right);
 };
 
+}
+
+Q_DECLARE_METATYPE(QtRestClient::RestObject*)
+
+#define QTRESTCLIENT_OBJECT_LIST_PROPERTY(name, type) \
+	Q_PROPERTY(int __qtrc_ro_olp_ ## name READ __qtrc_ro_olp_ ## name STORED false DESIGNABLE false CONSTANT FINAL) \
+	inline int __qtrc_ro_olp_ ## name() const { \
+		return qMetaTypeId<type>();\
+	}
+
+
 // ------------- Generic Implementation -------------
+
+namespace QtRestClient {
 
 template<typename T>
 static bool RestObject::listEquals(const QList<T*> &left, const QList<T*> &right)
@@ -39,13 +52,5 @@ static bool RestObject::listEquals(const QList<T*> &left, const QList<T*> &right
 }
 
 }
-
-Q_DECLARE_METATYPE(QtRestClient::RestObject*)
-
-#define QTRESTCLIENT_OBJECT_LIST_PROPERTY(name, type) \
-	Q_PROPERTY(int __qtrc_ro_olp_ ## name READ __qtrc_ro_olp_ ## name STORED false DESIGNABLE false CONSTANT FINAL) \
-	inline int __qtrc_ro_olp_ ## name() const { \
-		return qMetaTypeId<type>();\
-	}
 
 #endif // RESTOBJECT_H
