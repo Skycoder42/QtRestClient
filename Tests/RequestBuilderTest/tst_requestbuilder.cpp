@@ -11,6 +11,9 @@ private Q_SLOTS:
 	void testBuilding_data();
 	void testBuilding();
 
+	void testBuildingRelative_data();
+	void testBuildingRelative();
+
 	void testSending_data();
 	void testSending();
 
@@ -244,6 +247,82 @@ void RequestBuilderTest::testBuilding()
 	QCOMPARE(request.sslConfiguration(), sslConfig);
 	if(attributeValue.isValid())
 		QCOMPARE(request.attribute(attributeKey), attributeValue);
+}
+
+void RequestBuilderTest::testBuildingRelative_data()
+{
+	QTest::addColumn<QUrl>("url");
+	QTest::addColumn<QUrl>("relative");
+	QTest::addColumn<bool>("mergeQuery");
+	QTest::addColumn<bool>("keepFragment");
+	QTest::addColumn<QUrl>("resultUrl");
+
+	QTest::newRow("currentDir") << QUrl("https://user:password@api.example.com/basic/v4.2/examples/exampleStuff?p1=baum&p2=42#example")
+								<< QUrl(".")
+								<< false
+								<< false
+								<< QUrl("https://user:password@api.example.com/basic/v4.2/examples");
+
+	QTest::newRow("relativePath") << QUrl("https://user:password@api.example.com/basic/v4.2/examples/exampleStuff?p1=baum&p2=42#example")
+								  << QUrl("../baum/42")
+								  << false
+								  << false
+								  << QUrl("https://user:password@api.example.com/basic/v4.2/baum/42");
+
+	QTest::newRow("keepQuery") << QUrl("https://user:password@api.example.com/basic/v4.2/examples/exampleStuff?p1=baum&p2=42#example")
+							   << QUrl("./path")
+							   << true
+							   << false
+							   << QUrl("https://user:password@api.example.com/basic/v4.2/examples/path?p1=baum&p2=42");
+
+	QTest::newRow("customQuery") << QUrl("https://user:password@api.example.com/basic/v4.2/examples/exampleStuff?p1=baum&p2=42#example")
+								 << QUrl("./path?baum=42")
+								 << false
+								 << false
+								 << QUrl("https://user:password@api.example.com/basic/v4.2/examples/path?baum=42");
+
+	QTest::newRow("mergedQuery") << QUrl("https://user:password@api.example.com/basic/v4.2/examples/exampleStuff?p1=baum&p2=42#example")
+								 << QUrl("./path?baum=42")
+								 << true
+								 << false
+								 << QUrl("https://user:password@api.example.com/basic/v4.2/examples/path?p1=baum&p2=42&baum=42");
+
+	QTest::newRow("customFragment") << QUrl("https://user:password@api.example.com/basic/v4.2/examples/exampleStuff?p1=baum&p2=42#example")
+									<< QUrl("./path#fragment")
+									<< false
+									<< false
+									<< QUrl("https://user:password@api.example.com/basic/v4.2/examples/path#fragment");
+
+	QTest::newRow("keepFragment") << QUrl("https://user:password@api.example.com/basic/v4.2/examples/exampleStuff?p1=baum&p2=42#example")
+								  << QUrl("./path#fragment")
+								  << false
+								  << true
+								  << QUrl("https://user:password@api.example.com/basic/v4.2/examples/path#example");
+
+	QTest::newRow("newHost") << QUrl("https://user:password@api.example.com/basic/v4.2/examples/exampleStuff?p1=baum&p2=42#example")
+							 << QUrl("//api.google.de/lists")
+							 << false
+							 << false
+							 << QUrl("https://api.google.de/lists");
+
+	QTest::newRow("newHostKeepStuff") << QUrl("https://user:password@api.example.com/basic/v4.2/examples/exampleStuff?p1=baum&p2=42#example")
+									  << QUrl("//api.google.de/lists")
+									  << true
+									  << true
+									  << QUrl("https://api.google.de/lists?p1=baum&p2=42#example");
+}
+
+void RequestBuilderTest::testBuildingRelative()
+{
+	QFETCH(QUrl, url);
+	QFETCH(QUrl, relative);
+	QFETCH(bool, mergeQuery);
+	QFETCH(bool, keepFragment);
+	QFETCH(QUrl, resultUrl);
+
+	auto builder = QtRestClient::RequestBuilder(nullptr, url);
+	builder.updateFromRelativeUrl(relative, mergeQuery, keepFragment);
+	QCOMPARE(builder.buildUrl(), resultUrl);
 }
 
 void RequestBuilderTest::testSending_data()

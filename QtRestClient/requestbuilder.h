@@ -33,6 +33,8 @@ public:
 	RequestBuilder &addHeader(const QByteArray &name, const QByteArray &value);
 	RequestBuilder &addHeaders(const HeaderHash &headers);
 
+	RequestBuilder &updateFromRelativeUrl(const QUrl &url, bool mergeQuery = false, bool keepFragment = false);
+
 	RequestBuilder &setAttribute(QNetworkRequest::Attribute attribute, const QVariant &value);
 	RequestBuilder &setSslConfig(QSslConfiguration sslConfig);
 
@@ -41,6 +43,7 @@ public:
 	RequestBuilder &setBody(const QJsonArray &body);
 	RequestBuilder &setVerb(const QByteArray &verb);
 
+	QUrl buildUrl() const;
 	QNetworkRequest build() const;
 	QNetworkReply *send() const;
 

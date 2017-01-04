@@ -32,12 +32,12 @@ struct RequestBuilderPrivate : public QSharedData
 		nam(nam),
 		base(baseUrl),
 		version(),
-		user(),
-		pass(),
+		user(baseUrl.userName()),
+		pass(baseUrl.password()),
 		path(),
 		trailingSlash(false),
-		query(),
-		fragment(),
+		query(baseUrl.query()),
+		fragment(baseUrl.fragment()),
 		headers(),
 		attributes({{QNetworkRequest::FollowRedirectsAttribute, true}}),
 		sslConfig(QSslConfiguration::defaultConfiguration()),
@@ -103,6 +103,32 @@ RequestBuilder &RequestBuilder::addHeaders(const HeaderHash &headers)
 {
 	for(auto it = headers.constBegin(); it != headers.constEnd(); it++)
 		d->headers.insert(it.key(), it.value());
+	return *this;
+}
+
+RequestBuilder &RequestBuilder::updateFromRelativeUrl(const QUrl &url, bool mergeQuery, bool keepFragment)
+{
+	auto cUrl = buildUrl();
+	d->base = cUrl.resolved(url);
+	if(d->base.host() != cUrl.host()) {
+		qWarning() << "URL host changed from"
+				   << cUrl.host()
+				   << "to"
+				   << d->base.host();
+	}
+	//clear all the rest
+	d->version = QVersionNumber();
+	d->user.clear();
+	d->pass.clear();
+	d->path.clear();
+	if(mergeQuery) {
+		QUrlQuery query(url.query());
+		foreach(auto item, query.queryItems())
+			d->query.addQueryItem(item.first, item.second);
+	} else
+		d->query.clear();
+	if(!keepFragment)
+		d->fragment.clear();
 	return *this;
 }
 
@@ -182,7 +208,7 @@ RequestBuilder &RequestBuilder::setVerb(const QByteArray &verb)
 	return *this;
 }
 
-QNetworkRequest RequestBuilder::build() const
+QUrl RequestBuilder::buildUrl() const
 {
 	auto url = d->base;
 
@@ -196,10 +222,17 @@ QNetworkRequest RequestBuilder::build() const
 		url.setUserName(d->user);
 	if(!d->pass.isNull())
 		url.setPassword(d->pass);
-	url.setQuery(d->query);
-	url.setFragment(d->fragment);
+	if(!d->query.isEmpty())
+		url.setQuery(d->query);
+	if(!d->fragment.isNull())
+		url.setFragment(d->fragment);
 
-	QNetworkRequest request(url);
+	return url;
+}
+
+QNetworkRequest RequestBuilder::build() const
+{
+	QNetworkRequest request(buildUrl());
 	for(auto it = d->headers.constBegin(); it != d->headers.constEnd(); it++)
 		request.setRawHeader(it.key(), it.value());
 	for(auto it = d->attributes.constBegin(); it != d->attributes.constEnd(); it++)
