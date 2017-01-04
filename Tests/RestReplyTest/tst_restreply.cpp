@@ -6,6 +6,9 @@ class RestReplyTest : public QObject
 {
 	Q_OBJECT
 
+signals:
+	void testPagingIterate_unlock();
+
 private Q_SLOTS:
 	void initTestCase();
 	void cleanupTestCase();
@@ -22,6 +25,9 @@ private Q_SLOTS:
 
 	void testGenericPagingReplyWrapping_data();
 	void testGenericPagingReplyWrapping();
+	void testPagingNext();
+	void testPagingPrevious();
+	void testPagingIterate();
 
 private:
 	QNetworkAccessManager *nam;
@@ -33,6 +39,7 @@ void RestReplyTest::initTestCase()
 	initTestJsonServer("./RestReplyTest/reply-test-db.js");
 	nam = new QNetworkAccessManager(this);
 	client = new QtRestClient::RestClient(this);
+	client->setBaseUrl(QStringLiteral("http://localhost:3000"));
 }
 
 void RestReplyTest::cleanupTestCase()
@@ -418,6 +425,195 @@ void RestReplyTest::testGenericPagingReplyWrapping()
 	QSignalSpy deleteSpy(reply, &QtRestClient::RestReply::destroyed);
 	QVERIFY(deleteSpy.wait());
 	QVERIFY(called);
+}
+
+void RestReplyTest::testPagingNext()
+{
+	QNetworkRequest request(QStringLiteral("http://localhost:3000/pages/0"));
+	request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
+
+	bool called = false;
+	QtRestClient::Paging<JphPost> firstPaging;
+
+	auto reply = new QtRestClient::GenericRestReply<QtRestClient::Paging<JphPost>>(nam->get(request), client);
+	reply->enableAutoDelete();
+	reply->onSucceeded([&](QtRestClient::RestReply *rep, int code, QtRestClient::Paging<JphPost> data){
+		called = true;
+		QCOMPARE(rep, reply);
+		QCOMPARE(code, 200);
+		QVERIFY(data.isValid());
+		QVERIFY(!data.hasPrevious());
+		QVERIFY(data.hasNext());
+		QCOMPARE(data.offset(), 0);
+		QCOMPARE(data.limit(), 10);
+		QCOMPARE(data.total(), 100);
+		data.deleteAllItems();
+		firstPaging = data;
+	});
+	reply->onFailed([&](QtRestClient::RestReply *, int, QtRestClient::RestObject *data){
+		called = true;
+		QFAIL("onFailed");
+		data->deleteLater();
+	});
+	reply->onError([&](QtRestClient::RestReply *, QString error, int, QtRestClient::RestReply::ErrorType){
+		called = true;
+		QFAIL(qUtf8Printable(error));
+	});
+	reply->onSerializeException([&](QtRestClient::RestReply *, QtRestClient::SerializerException &e){
+		called = true;
+		QFAIL(e.what());
+	});
+
+	QSignalSpy deleteSpy(reply, &QtRestClient::RestReply::destroyed);
+	QVERIFY(deleteSpy.wait());
+	QVERIFY(called);
+
+	QVERIFY(firstPaging.isValid());
+	called = false;
+	auto nextReply = firstPaging.next();
+	nextReply->enableAutoDelete();
+	nextReply->onSucceeded([&](QtRestClient::RestReply *rep, int code, QtRestClient::Paging<JphPost> data){
+		called = true;
+		QCOMPARE(rep, nextReply);
+		QCOMPARE(code, 200);
+		QVERIFY(data.isValid());
+		QCOMPARE(data.offset(), 10);
+		QCOMPARE(data.limit(), 20);
+		QCOMPARE(data.total(), 100);
+		data.deleteAllItems();
+	});
+	nextReply->onFailed([&](QtRestClient::RestReply *, int, QtRestClient::RestObject *data){
+		called = true;
+		QFAIL("onFailed");
+		data->deleteLater();
+	});
+	nextReply->onError([&](QtRestClient::RestReply *, QString error, int, QtRestClient::RestReply::ErrorType){
+		called = true;
+		QFAIL(qUtf8Printable(error));
+	});
+	nextReply->onSerializeException([&](QtRestClient::RestReply *, QtRestClient::SerializerException &e){
+		called = true;
+		QFAIL(e.what());
+	});
+
+	QSignalSpy deleteNextSpy(nextReply, &QtRestClient::RestReply::destroyed);
+	QVERIFY(deleteNextSpy.wait());
+	QVERIFY(called);
+}
+
+void RestReplyTest::testPagingPrevious()
+{
+	QNetworkRequest request(QStringLiteral("http://localhost:3000/pages/9"));
+	request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
+
+	bool called = false;
+	QtRestClient::Paging<JphPost> lastPaging;
+
+	auto reply = new QtRestClient::GenericRestReply<QtRestClient::Paging<JphPost>>(nam->get(request), client);
+	reply->enableAutoDelete();
+	reply->onSucceeded([&](QtRestClient::RestReply *rep, int code, QtRestClient::Paging<JphPost> data){
+		called = true;
+		QCOMPARE(rep, reply);
+		QCOMPARE(code, 200);
+		QVERIFY(data.isValid());
+		QVERIFY(data.hasPrevious());
+		QVERIFY(!data.hasNext());
+		QCOMPARE(data.offset(), 90);
+		QCOMPARE(data.limit(), 100);
+		QCOMPARE(data.total(), 100);
+		data.deleteAllItems();
+		lastPaging = data;
+	});
+	reply->onFailed([&](QtRestClient::RestReply *, int, QtRestClient::RestObject *data){
+		called = true;
+		QFAIL("onFailed");
+		data->deleteLater();
+	});
+	reply->onError([&](QtRestClient::RestReply *, QString error, int, QtRestClient::RestReply::ErrorType){
+		called = true;
+		QFAIL(qUtf8Printable(error));
+	});
+	reply->onSerializeException([&](QtRestClient::RestReply *, QtRestClient::SerializerException &e){
+		called = true;
+		QFAIL(e.what());
+	});
+
+	QSignalSpy deleteSpy(reply, &QtRestClient::RestReply::destroyed);
+	QVERIFY(deleteSpy.wait());
+	QVERIFY(called);
+
+	QVERIFY(lastPaging.isValid());
+	called = false;
+	auto prevReply = lastPaging.previous();
+	prevReply->enableAutoDelete();
+	prevReply->onSucceeded([&](QtRestClient::RestReply *rep, int code, QtRestClient::Paging<JphPost> data){
+		called = true;
+		QCOMPARE(rep, prevReply);
+		QCOMPARE(code, 200);
+		QVERIFY(data.isValid());
+		QCOMPARE(data.offset(), 80);
+		QCOMPARE(data.limit(), 90);
+		QCOMPARE(data.total(), 100);
+		data.deleteAllItems();
+	});
+	prevReply->onFailed([&](QtRestClient::RestReply *, int, QtRestClient::RestObject *data){
+		called = true;
+		QFAIL("onFailed");
+		data->deleteLater();
+	});
+	prevReply->onError([&](QtRestClient::RestReply *, QString error, int, QtRestClient::RestReply::ErrorType){
+		called = true;
+		QFAIL(qUtf8Printable(error));
+	});
+	prevReply->onSerializeException([&](QtRestClient::RestReply *, QtRestClient::SerializerException &e){
+		called = true;
+		QFAIL(e.what());
+	});
+
+	QSignalSpy deletePrevSpy(prevReply, &QtRestClient::RestReply::destroyed);
+	QVERIFY(deletePrevSpy.wait());
+	QVERIFY(called);
+}
+
+void RestReplyTest::testPagingIterate()
+{
+	QNetworkRequest request(QStringLiteral("http://localhost:3000/pages/0"));
+	request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
+
+	auto count = 0;
+	auto reply = new QtRestClient::GenericRestReply<QtRestClient::Paging<JphPost>>(nam->get(request), client);
+	reply->enableAutoDelete();
+	reply->iterate([&](QtRestClient::Paging<JphPost> *paging, JphPost *data, int index){
+		auto ok = false;
+		[&](){
+			QCOMPARE(index, count++);
+			QVERIFY(paging->isValid());
+			QCOMPARE(data->id, count);//validating the id is enough
+			ok = true;
+		}();
+		if(!ok || count == 100)
+			emit testPagingIterate_unlock();
+		return ok;
+	});
+	reply->onFailed([&](QtRestClient::RestReply *, int, QtRestClient::RestObject *data){
+		count = 110;
+		QFAIL("onFailed");
+		data->deleteLater();
+	});
+	reply->onError([&](QtRestClient::RestReply *, QString error, int, QtRestClient::RestReply::ErrorType){
+		count = 120;
+		QFAIL(qUtf8Printable(error));
+	});
+	reply->onSerializeException([&](QtRestClient::RestReply *, QtRestClient::SerializerException &e){
+		count = 130;
+		QFAIL(e.what());
+	});
+
+	QSignalSpy completedSpy(this, &RestReplyTest::testPagingIterate_unlock);
+	QVERIFY(completedSpy.wait(15000));
+	QCOMPARE(count, 100);
+
+	QCoreApplication::processEvents();//to ensure all deleteLaters have been called!
 }
 
 QTEST_MAIN(RestReplyTest)

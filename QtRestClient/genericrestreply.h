@@ -11,6 +11,7 @@
 
 namespace QtRestClient {
 
+//TODO return type self with base class is not really good, override ALL methods!
 template <typename DataClassType, typename ErrorClassType = RestObject>
 class GenericRestReply : public RestReply
 {
@@ -63,8 +64,11 @@ public:
 	GenericRestReply<Paging<DataClassType>, ErrorClassType> &onFailed(std::function<void(RestReply*, int, ErrorClassType*)> handler);
 	GenericRestReply<Paging<DataClassType>, ErrorClassType> &onSerializeException(std::function<void(RestReply*, SerializerException &)> handler);
 
+	GenericRestReply<Paging<DataClassType>, ErrorClassType> &iterate(std::function<bool(Paging<DataClassType>*, DataClassType*, int)> iterator, int to = -1, int from = 0);
+
 private:
 	RestClient *client;
+	std::function<void(RestReply*, int, ErrorClassType*)> failureHandler;
 	std::function<void(RestReply*, SerializerException &)> exceptionHandler;
 };
 
@@ -217,6 +221,7 @@ typename GenericRestReply<Paging<DataClassType>, ErrorClassType> &GenericRestRep
 template<typename DataClassType, typename ErrorClassType>
 typename GenericRestReply<Paging<DataClassType>, ErrorClassType> &GenericRestReply<Paging<DataClassType>, ErrorClassType>::onFailed(std::function<void (RestReply *, int, ErrorClassType *)> handler)
 {
+	failureHandler = handler;
 	if(!handler)
 		return *this;
 	connect(this, &RestReply::failed, this, [=](int code, const QJsonValue &value){
@@ -239,6 +244,14 @@ typename GenericRestReply<Paging<DataClassType>, ErrorClassType> &GenericRestRep
 {
 	exceptionHandler = handler;
 	return *this;
+}
+
+template<typename DataClassType, typename ErrorClassType>
+GenericRestReply<Paging<DataClassType>, ErrorClassType> &GenericRestReply<Paging<DataClassType>, ErrorClassType>::iterate(std::function<bool (Paging<DataClassType>*, DataClassType*, int)> iterator, int to, int from)
+{
+	return onSucceeded([=](RestReply*, int, Paging<DataClassType> paging){
+		paging.iterate(iterator, failureHandler, exceptionHandler, to, from);
+	});
 }
 
 }

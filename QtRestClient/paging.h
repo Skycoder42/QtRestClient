@@ -66,7 +66,7 @@ GenericRestReply<Paging<T>, EO> *Paging<T>::next() const
 		auto reply = client->builder()
 				.updateFromRelativeUrl(iPaging->next())
 				.send();
-		return new GenericRestReply<Paging<T>, EO>(reply, client->serializer(), client);
+		return new GenericRestReply<Paging<T>, EO>(reply, client, client);
 	} else
 		return {};
 }
@@ -91,7 +91,7 @@ GenericRestReply<Paging<T>, EO> *Paging<T>::previous() const
 		auto reply = client->builder()
 				.updateFromRelativeUrl(iPaging->previous())
 				.send();
-		return new GenericRestReply<Paging<T>, EO>(reply, client->serializer(), client);
+		return new GenericRestReply<Paging<T>, EO>(reply, client, client);
 	} else
 		return {};
 }
@@ -114,7 +114,7 @@ void Paging<T>::iterate(std::function<bool(Paging<T>*, T*, int)> iterator, std::
 {
 	Q_ASSERT(from >= iPaging->offset());
 
-	auto index = internalIterate(iterator, from ,to);
+	auto index = internalIterate(iterator, to ,from);
 	if(index < 0)
 		return;
 
@@ -125,12 +125,12 @@ void Paging<T>::iterate(std::function<bool(Paging<T>*, T*, int)> iterator, std::
 	else
 		max = iPaging->total();
 	if(index < max && iPaging->hasNext()) {
-		next()->enableAutoDelete()
-			  ->onFailed(errorHandler)
-			  ->onSerializeException(exceptionHandler)
-			  ->onSucceeded([=](RestReply *, int, Paging<T> paging) {
-			paging.iterate(iterator, index, to);
-		});
+		next()->onFailed(errorHandler)//TODO wreorder
+			  .onSerializeException(exceptionHandler)
+			  .onSucceeded([=](RestReply *, int, Paging<T> paging) {
+				  paging.iterate(iterator, to, index);
+			  })
+			  .enableAutoDelete();
 	}
 }
 
@@ -142,7 +142,7 @@ void Paging<T>::deleteAllItems()
 }
 
 template<typename T>
-int Paging<T>::internalIterate(std::function<bool (Paging<T>*, T*, int)> iterator, int from, int to)
+int Paging<T>::internalIterate(std::function<bool (Paging<T>*, T*, int)> iterator, int to, int from)
 {
 	//handle all items in this paging
 	int i, max;

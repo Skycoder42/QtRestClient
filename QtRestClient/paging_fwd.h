@@ -43,7 +43,7 @@ public:
 	template<typename EO = RestObject>
 	void iterate(std::function<bool(Paging<T>*, T*, int)> iterator,
 				 std::function<void(RestReply*, int, EO*)> errorHandler,
-				 std::function<void(RestReply*, SerializerException &)> exceptionHandler,
+				 std::function<void(RestReply*, SerializerException &)> exceptionHandler,//TODO errorHandler vs FailureHandler
 				 int to = -1,
 				 int from = 0);
 
