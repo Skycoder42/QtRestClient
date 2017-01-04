@@ -23,6 +23,7 @@ private:
 	QNetworkAccessManager *nam;
 	RestClass *rootClass;
 	JsonSerializer *serializer;
+	QScopedPointer<PagingFactory> pagingFactory;
 
 	RestClientPrivate(RestClient *q_ptr);
 };

@@ -25,6 +25,8 @@ StandardPaging::StandardPaging(const QJsonObject &object) :
 	d_ptr(new StandardPagingPrivate(object))
 {}
 
+StandardPaging::~StandardPaging() {}
+
 QJsonArray StandardPaging::items() const
 {
 	return d->items;

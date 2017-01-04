@@ -12,6 +12,7 @@ class QTRESTCLIENTSHARED_EXPORT StandardPaging : public IPaging
 {
 public:
 	StandardPaging(const QJsonObject &object);
+	~StandardPaging();
 
 	QJsonArray items() const override;
 	int total() const override;

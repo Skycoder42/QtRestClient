@@ -1,6 +1,7 @@
 #include "restclient.h"
 #include "restclient_p.h"
 #include "restclass.h"
+#include "standardpaging.h"
 using namespace QtRestClient;
 
 #define d d_ptr
@@ -25,6 +26,11 @@ RestClass *RestClient::rootClass() const
 JsonSerializer *RestClient::serializer() const
 {
 	return d->serializer;
+}
+
+PagingFactory *RestClient::pagingFactory() const
+{
+	return d->pagingFactory.data();
 }
 
 QUrl RestClient::baseUrl() const
@@ -145,5 +151,6 @@ RestClientPrivate::RestClientPrivate(RestClient *q_ptr) :
 	sslConfig(QSslConfiguration::defaultConfiguration()),
 	nam(new QNetworkAccessManager(q_ptr)),
 	rootClass(new RestClass(q_ptr, {}, q_ptr)),
-	serializer(new JsonSerializer(q_ptr))
+	serializer(new JsonSerializer(q_ptr)),
+	pagingFactory(new StandardPagingFactory())
 {}

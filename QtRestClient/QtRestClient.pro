@@ -50,7 +50,8 @@ HEADERS +=\
     genericrestreply.h \
     ipaging.h \
     standardpaging.h \
-    paging.h
+    paging.h \
+    paging_fwd.h
 
 unix {
     target.path = /usr/lib

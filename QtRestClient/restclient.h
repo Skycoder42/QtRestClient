@@ -14,6 +14,7 @@ namespace QtRestClient {
 
 class RestClass;
 class JsonSerializer;
+class PagingFactory;
 
 class RestClientPrivate;
 class QTRESTCLIENTSHARED_EXPORT RestClient : public QObject
@@ -35,6 +36,8 @@ public:
 	RestClass *rootClass() const;
 
 	JsonSerializer *serializer() const;
+
+	PagingFactory *pagingFactory() const;
 
 	QUrl baseUrl() const;
 	QVersionNumber apiVersion() const;	
