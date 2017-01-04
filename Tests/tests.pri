@@ -20,6 +20,7 @@ SOURCES += \
 
 DISTFILES += \
     $$PWD/rest-db-setup.bat \
-    $$PWD/default-test-db.js
+    $$PWD/default-test-db.js \
+    $$PWD/paging-test-db.js
 
 DEFINES += "TEST_SRC_DIR=\\\"$$PWD\\\""

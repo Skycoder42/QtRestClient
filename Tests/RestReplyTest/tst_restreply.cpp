@@ -36,7 +36,7 @@ private:
 
 void RestReplyTest::initTestCase()
 {
-	initTestJsonServer("./RestReplyTest/reply-test-db.js");
+	initTestJsonServer("./paging-test-db.js");
 	nam = new QNetworkAccessManager(this);
 	client = new QtRestClient::RestClient(this);
 	client->setBaseUrl(QStringLiteral("http://localhost:3000"));
@@ -593,6 +593,7 @@ void RestReplyTest::testPagingIterate()
 		}();
 		if(!ok || count == 100)
 			emit testPagingIterate_unlock();
+		data->deleteLater();
 		return ok;
 	});
 	reply->onFailed([&](QtRestClient::RestReply *, int, QtRestClient::RestObject *data){

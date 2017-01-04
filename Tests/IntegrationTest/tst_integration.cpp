@@ -13,6 +13,7 @@ private Q_SLOTS:
 	void testJsonChain();
 	void testRestObjectChain();
 	void testRestObjectListChain();
+	void testRestObjectPagingChain();
 
 private:
 	RestClient *client;
@@ -20,7 +21,7 @@ private:
 
 void IntegrationTest::initTestCase()
 {
-	initTestJsonServer();
+	initTestJsonServer("./paging-test-db.js");
 	client = new RestClient(this);
 	client->setBaseUrl(QStringLiteral("http://localhost:3000"));
 }
@@ -46,23 +47,23 @@ void IntegrationTest::testJsonChain()
 
 	auto reply = postClass->callJson(RestClass::PutVerb, "1", object);
 	reply->enableAutoDelete();
-	reply->onSucceeded([&](QtRestClient::RestReply *rep, int code, QJsonObject data){
+	reply->onSucceeded([&](RestReply *rep, int code, QJsonObject data){
 		called = true;
 		QCOMPARE(rep, reply);
 		QCOMPARE(code, 200);
 		QCOMPARE(data, object);
 	});
-	reply->onFailed([&](QtRestClient::RestReply *, int code, QJsonObject){
+	reply->onFailed([&](RestReply *, int code, QJsonObject){
 		called = true;
 		QFAIL(QByteArray::number(code).constData());
 	});
-	reply->onError([&](QtRestClient::RestReply *, QString error, int, QtRestClient::RestReply::ErrorType){
+	reply->onError([&](RestReply *, QString error, int, RestReply::ErrorType){
 		called = true;
 		QFAIL(qUtf8Printable(error));
 	});
 
 	object["id"] = 1;
-	QSignalSpy deleteSpy(reply, &QtRestClient::RestReply::destroyed);
+	QSignalSpy deleteSpy(reply, &RestReply::destroyed);
 	QVERIFY(deleteSpy.wait());
 	QVERIFY(called);
 
@@ -79,24 +80,28 @@ void IntegrationTest::testRestObjectChain()
 
 	auto reply = postClass->put<JphPost>("2", object);
 	reply->enableAutoDelete();
-	reply->onSucceeded([&](QtRestClient::RestReply *rep, int code, JphPost *data){
+	reply->onSucceeded([&](RestReply *rep, int code, JphPost *data){
 		called = true;
 		QCOMPARE(rep, reply);
 		QCOMPARE(code, 200);
 		QVERIFY(RestObject::equals(data, object));
 		data->deleteLater();
 	});
-	reply->onFailed([&](QtRestClient::RestReply *, int code, RestObject *data){
+	reply->onFailed([&](RestReply *, int code, RestObject *data){
 		called = true;
 		QFAIL(QByteArray::number(code).constData());
 		data->deleteLater();
 	});
-	reply->onError([&](QtRestClient::RestReply *, QString error, int, QtRestClient::RestReply::ErrorType){
+	reply->onError([&](RestReply *, QString error, int, RestReply::ErrorType){
 		called = true;
 		QFAIL(qUtf8Printable(error));
 	});
+	reply->onSerializeException([&](RestReply *, SerializerException &e){
+		called = true;
+		QFAIL(e.what());
+	});
 
-	QSignalSpy deleteSpy(reply, &QtRestClient::RestReply::destroyed);
+	QSignalSpy deleteSpy(reply, &RestReply::destroyed);
 	QVERIFY(deleteSpy.wait());
 	QVERIFY(called);
 
@@ -112,28 +117,71 @@ void IntegrationTest::testRestObjectListChain()
 
 	auto reply = postClass->get<QList<JphPost>>();
 	reply->enableAutoDelete();
-	reply->onSucceeded([&](QtRestClient::RestReply *rep, int code, QList<JphPost*> data){
+	reply->onSucceeded([&](RestReply *rep, int code, QList<JphPost*> data){
 		called = true;
 		QCOMPARE(rep, reply);
 		QCOMPARE(code, 200);
 		QCOMPARE(data.size(), 100);
 		qDeleteAll(data);
 	});
-	reply->onFailed([&](QtRestClient::RestReply *, int code, RestObject *data){
+	reply->onFailed([&](RestReply *, int code, RestObject *data){
 		called = true;
 		QFAIL(QByteArray::number(code).constData());
 		data->deleteLater();
 	});
-	reply->onError([&](QtRestClient::RestReply *, QString error, int, QtRestClient::RestReply::ErrorType){
+	reply->onError([&](RestReply *, QString error, int, RestReply::ErrorType){
 		called = true;
 		QFAIL(qUtf8Printable(error));
 	});
+	reply->onSerializeException([&](RestReply *, SerializerException &e){
+		called = true;
+		QFAIL(e.what());
+	});
 
-	QSignalSpy deleteSpy(reply, &QtRestClient::RestReply::destroyed);
+	QSignalSpy deleteSpy(reply, &RestReply::destroyed);
 	QVERIFY(deleteSpy.wait());
 	QVERIFY(called);
 
 	postClass->deleteLater();
+}
+
+void IntegrationTest::testRestObjectPagingChain()
+{
+	auto pagingClass = client->createClass("pages", client);
+
+	int count = 0;
+
+	auto reply = pagingClass->get<Paging<JphPost>>("0");
+	reply->enableAutoDelete();
+	reply->iterate([&](Paging<JphPost> *, JphPost* data, int index){
+		auto ok = false;
+		[&](){
+			QCOMPARE(index, count++);
+			QCOMPARE(data->id, count);
+			ok = true;
+		}();
+		data->deleteLater();
+		return ok;
+	});
+	reply->onFailed([&](RestReply *, int code, RestObject *data){
+		count = 110;
+		QFAIL(QByteArray::number(code).constData());
+		data->deleteLater();
+	});
+	reply->onError([&](RestReply *, QString error, int, RestReply::ErrorType){
+		count = 120;
+		QFAIL(qUtf8Printable(error));
+	});
+	reply->onSerializeException([&](RestReply *, SerializerException &e){
+		count = 130;
+		QFAIL(e.what());
+	});
+
+	while(count < 100)
+		QCoreApplication::processEvents();
+	QCoreApplication::processEvents();
+
+	pagingClass->deleteLater();
 }
 
 static void DO_NOT_CALL_compilation_test()
