@@ -4,9 +4,7 @@
 #include "paging_fwd.h"
 #include "genericrestreply.h"
 
-// ------------- Generic Implementation -------------
-
-
+// ------------- Generic Implementation -------------s
 
 template<typename T>
 Paging<T>::Paging() :
@@ -105,12 +103,12 @@ QUrl Paging<T>::previousUrl() const
 template<typename T>
 void Paging<T>::iterate(std::function<bool (Paging<T> *, T *, int)> iterator, int to, int from)
 {
-	return iterate(iterator, {}, {}, to, from);
+	return iterate(iterator, {}, {}, {}, to, from);
 }
 
 template<typename T>
 template<typename EO>
-void Paging<T>::iterate(std::function<bool(Paging<T>*, T*, int)> iterator, std::function<void(RestReply *, int, EO*)> errorHandler, std::function<void(RestReply *, SerializerException &)> exceptionHandler, int to, int from)
+void Paging<T>::iterate(std::function<bool(Paging<T>*, T*, int)> iterator, std::function<void(RestReply *, int, EO*)> failureHandler, std::function<void(RestReply*, QString, int, RestReply::ErrorType)> errorHandler, std::function<void(RestReply *, SerializerException &)> exceptionHandler, int to, int from)
 {
 	Q_ASSERT(from >= iPaging->offset());
 
@@ -125,12 +123,13 @@ void Paging<T>::iterate(std::function<bool(Paging<T>*, T*, int)> iterator, std::
 	else
 		max = iPaging->total();
 	if(index < max && iPaging->hasNext()) {
-		next()->onFailed(errorHandler)//TODO wreorder
-			  .onSerializeException(exceptionHandler)
+		next()->enableAutoDelete()
 			  .onSucceeded([=](RestReply *, int, Paging<T> paging) {
-				  paging.iterate(iterator, to, index);
+				  paging.iterate(iterator, failureHandler, errorHandler, exceptionHandler, to, index);
 			  })
-			  .enableAutoDelete();
+			  .onFailed(failureHandler)
+			  .onError(errorHandler)
+			  .onSerializeException(exceptionHandler);
 	}
 }
 

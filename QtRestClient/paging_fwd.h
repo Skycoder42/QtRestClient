@@ -5,6 +5,7 @@
 
 #include "ipaging.h"
 #include "restclient.h"
+#include "restreply.h"
 
 #include <functional>
 
@@ -42,8 +43,9 @@ public:
 	void iterate(std::function<bool(Paging<T>*, T*, int)> iterator, int to = -1, int from = 0);
 	template<typename EO = RestObject>
 	void iterate(std::function<bool(Paging<T>*, T*, int)> iterator,
-				 std::function<void(RestReply*, int, EO*)> errorHandler,
-				 std::function<void(RestReply*, SerializerException &)> exceptionHandler,//TODO errorHandler vs FailureHandler
+				 std::function<void(RestReply*, int, EO*)> failureHandler,
+				 std::function<void(RestReply*, QString, int, RestReply::ErrorType)> errorHandler = {},
+				 std::function<void(RestReply*, SerializerException &)> exceptionHandler = {},
 				 int to = -1,
 				 int from = 0);
 

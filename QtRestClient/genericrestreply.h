@@ -11,7 +11,6 @@
 
 namespace QtRestClient {
 
-//TODO return type self with base class is not really good, override ALL methods!
 template <typename DataClassType, typename ErrorClassType = RestObject>
 class GenericRestReply : public RestReply
 {
@@ -25,6 +24,10 @@ public:
 	GenericRestReply<DataClassType, ErrorClassType> &onSucceeded(std::function<void(RestReply*, int, DataClassType*)> handler);
 	GenericRestReply<DataClassType, ErrorClassType> &onFailed(std::function<void(RestReply*, int, ErrorClassType*)> handler);
 	GenericRestReply<DataClassType, ErrorClassType> &onSerializeException(std::function<void(RestReply*, SerializerException &)> handler);
+
+	//overshadowing, for the right return type only...
+	inline GenericRestReply<DataClassType, ErrorClassType> &onError(std::function<void(RestReply*, QString, int, ErrorType)> handler);
+	GenericRestReply<DataClassType, ErrorClassType> &enableAutoDelete();
 
 private:
 	JsonSerializer *serializer;
@@ -44,6 +47,10 @@ public:
 	GenericRestReply<QList<DataClassType>, ErrorClassType> &onSucceeded(std::function<void(RestReply*, int, QList<DataClassType*>)> handler);
 	GenericRestReply<QList<DataClassType>, ErrorClassType> &onFailed(std::function<void(RestReply*, int, ErrorClassType*)> handler);
 	GenericRestReply<QList<DataClassType>, ErrorClassType> &onSerializeException(std::function<void(RestReply*, SerializerException &)> handler);
+
+	//overshadowing, for the right return type only...
+	GenericRestReply<QList<DataClassType>, ErrorClassType> &onError(std::function<void(RestReply*, QString, int, ErrorType)> handler);
+	GenericRestReply<QList<DataClassType>, ErrorClassType> &enableAutoDelete();
 
 private:
 	JsonSerializer *serializer;
@@ -66,9 +73,14 @@ public:
 
 	GenericRestReply<Paging<DataClassType>, ErrorClassType> &iterate(std::function<bool(Paging<DataClassType>*, DataClassType*, int)> iterator, int to = -1, int from = 0);
 
+	//overshadowing, for the right return type only...
+	GenericRestReply<Paging<DataClassType>, ErrorClassType> &onError(std::function<void(RestReply*, QString, int, ErrorType)> handler);
+	GenericRestReply<Paging<DataClassType>, ErrorClassType> &enableAutoDelete();
+
 private:
 	RestClient *client;
 	std::function<void(RestReply*, int, ErrorClassType*)> failureHandler;
+	std::function<void(RestReply*, QString, int, ErrorType)> errorHandler;
 	std::function<void(RestReply*, SerializerException &)> exceptionHandler;
 };
 
@@ -131,6 +143,20 @@ typename GenericRestReply<DataClassType, ErrorClassType> &GenericRestReply<DataC
 	return *this;
 }
 
+template<typename DataClassType, typename ErrorClassType>
+typename GenericRestReply<DataClassType, ErrorClassType> &GenericRestReply<DataClassType, ErrorClassType>::onError(std::function<void (RestReply *, QString, int, RestReply::ErrorType)> handler)
+{
+	RestReply::onError(handler);
+	return *this;
+}
+
+template<typename DataClassType, typename ErrorClassType>
+typename GenericRestReply<DataClassType, ErrorClassType> &GenericRestReply<DataClassType, ErrorClassType>::enableAutoDelete()
+{
+	RestReply::enableAutoDelete();
+	return *this;
+}
+
 // ------------- Implementation List of Elements -------------
 
 template<typename DataClassType, typename ErrorClassType>
@@ -184,6 +210,20 @@ template<typename DataClassType, typename ErrorClassType>
 typename GenericRestReply<QList<DataClassType>, ErrorClassType> &GenericRestReply<QList<DataClassType>, ErrorClassType>::onSerializeException(std::function<void (RestReply *, SerializerException &)> handler)
 {
 	exceptionHandler = handler;
+	return *this;
+}
+
+template<typename DataClassType, typename ErrorClassType>
+typename GenericRestReply<QList<DataClassType>, ErrorClassType> &GenericRestReply<QList<DataClassType>, ErrorClassType>::onError(std::function<void (RestReply *, QString, int, RestReply::ErrorType)> handler)
+{
+	RestReply::onError(handler);
+	return *this;
+}
+
+template<typename DataClassType, typename ErrorClassType>
+typename GenericRestReply<QList<DataClassType>, ErrorClassType> &GenericRestReply<QList<DataClassType>, ErrorClassType>::enableAutoDelete()
+{
+	RestReply::enableAutoDelete();
 	return *this;
 }
 
@@ -250,8 +290,23 @@ template<typename DataClassType, typename ErrorClassType>
 GenericRestReply<Paging<DataClassType>, ErrorClassType> &GenericRestReply<Paging<DataClassType>, ErrorClassType>::iterate(std::function<bool (Paging<DataClassType>*, DataClassType*, int)> iterator, int to, int from)
 {
 	return onSucceeded([=](RestReply*, int, Paging<DataClassType> paging){
-		paging.iterate(iterator, failureHandler, exceptionHandler, to, from);
+		paging.iterate(iterator, failureHandler, errorHandler, exceptionHandler, to, from);
 	});
+}
+
+template<typename DataClassType, typename ErrorClassType>
+typename GenericRestReply<Paging<DataClassType>, ErrorClassType> &GenericRestReply<Paging<DataClassType>, ErrorClassType>::onError(std::function<void (RestReply *, QString, int, RestReply::ErrorType)> handler)
+{
+	errorHandler = handler;
+	RestReply::onError(handler);
+	return *this;
+}
+
+template<typename DataClassType, typename ErrorClassType>
+typename GenericRestReply<Paging<DataClassType>, ErrorClassType> &GenericRestReply<Paging<DataClassType>, ErrorClassType>::enableAutoDelete()
+{
+	RestReply::enableAutoDelete();
+	return *this;
 }
 
 }
