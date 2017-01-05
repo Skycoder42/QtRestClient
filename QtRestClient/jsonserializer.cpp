@@ -155,7 +155,7 @@ QVariant JsonSerializerPrivate::doDeserialize(const QMetaProperty &property, con
 		variant = q_ptr->deserializeValue(value);
 
 	if(property.isValid()) {
-		auto vType = variant.typeName();
+		auto vType = variant.typeName();//TODO allow invalid qvariant as optional property of the serializer
 		if(variant.canConvert(property.userType()) && variant.convert(property.userType()))
 			return variant;
 		else {
