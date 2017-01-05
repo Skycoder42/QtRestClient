@@ -150,6 +150,12 @@ RestReplyPrivate::RestReplyPrivate(QNetworkReply *networkReply, RestReply *q_ptr
 	q_ptr(q_ptr)
 {}
 
+RestReplyPrivate::~RestReplyPrivate()
+{
+	if(networkReply)
+		networkReply->deleteLater();
+}
+
 void RestReplyPrivate::connectReply(QNetworkReply *reply)
 {
 	connect(reply, &QNetworkReply::finished,
@@ -225,6 +231,7 @@ void RestReplyPrivate::retryReply()
 	if(buffer)
 		buffer = cloneDevice(buffer);
 
-	networkReply.reset(compatSend(nam, request, verb, buffer));
-	connectReply(networkReply.data());
+	networkReply->deleteLater();
+	networkReply = compatSend(nam, request, verb, buffer);
+	connectReply(networkReply);
 }

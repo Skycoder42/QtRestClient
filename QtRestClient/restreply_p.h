@@ -3,6 +3,8 @@
 
 #include "restreply.h"
 
+#include <QPointer>
+
 namespace QtRestClient {
 
 class RestReplyPrivate : public QObject
@@ -16,11 +18,12 @@ public:
 	static QIODevice *cloneDevice(QIODevice *device);
 	static QNetworkReply *compatSend(QNetworkAccessManager *nam, QNetworkRequest request, QByteArray verb, QIODevice *buffer);
 
-	QScopedPointer<QNetworkReply, QScopedPointerDeleteLater> networkReply;
+	QPointer<QNetworkReply> networkReply;
 	bool autoDelete;
 	int retryDelay;
 
 	RestReplyPrivate(QNetworkReply *networkReply, RestReply *q_ptr);
+	~RestReplyPrivate();
 
 	void connectReply(QNetworkReply *reply);
 
