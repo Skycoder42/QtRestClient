@@ -16,54 +16,54 @@ RestReply::RestReply(QNetworkReply *networkReply, QObject *parent) :
 	d->connectReply(networkReply);
 }
 
-RestReply &RestReply::onSucceeded(std::function<void (RestReply *, int, QJsonObject)> handler)
+RestReply *RestReply::onSucceeded(std::function<void (RestReply *, int, QJsonObject)> handler)
 {
 	if(!handler)
-		return *this;
+		return this;
 	connect(this, &RestReply::succeeded, this, [=](int code, const QJsonValue &value){
 		handler(this, code, value.toObject());
 	});
-	return *this;
+	return this;
 }
 
-RestReply &RestReply::onSucceeded(std::function<void (RestReply *, int, QJsonArray)> handler)
+RestReply *RestReply::onSucceeded(std::function<void (RestReply *, int, QJsonArray)> handler)
 {
 	if(!handler)
-		return *this;
+		return this;
 	connect(this, &RestReply::succeeded, this, [=](int code, const QJsonValue &value){
 		handler(this, code, value.toArray());
 	});
-	return *this;
+	return this;
 }
 
-RestReply &RestReply::onFailed(std::function<void (RestReply*, int, QJsonObject)> handler)
+RestReply *RestReply::onFailed(std::function<void (RestReply*, int, QJsonObject)> handler)
 {
 	if(!handler)
-		return *this;
+		return this;
 	connect(this, &RestReply::failed, this, [=](int code, const QJsonValue &value){
 		handler(this, code, value.toObject());
 	});
-	return *this;
+	return this;
 }
 
-RestReply &RestReply::onFailed(std::function<void (RestReply*, int, QJsonArray)> handler)
+RestReply *RestReply::onFailed(std::function<void (RestReply*, int, QJsonArray)> handler)
 {
 	if(!handler)
-		return *this;
+		return this;
 	connect(this, &RestReply::failed, this, [=](int code, const QJsonValue &value){
 		handler(this, code, value.toArray());
 	});
-	return *this;
+	return this;
 }
 
-RestReply &RestReply::onError(std::function<void (RestReply*, QString, int, ErrorType)> handler)
+RestReply *RestReply::onError(std::function<void (RestReply*, QString, int, ErrorType)> handler)
 {
 	if(!handler)
-		return *this;
+		return this;
 	connect(this, &RestReply::error, this, [=](QString errorString, int error, ErrorType type){
 		handler(this, errorString, error, type);
 	});
-	return *this;
+	return this;
 }
 
 bool RestReply::autoDelete() const

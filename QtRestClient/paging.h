@@ -124,12 +124,12 @@ void Paging<T>::iterate(std::function<bool(Paging<T>*, T*, int)> iterator, std::
 		max = iPaging->total();
 	if(index < max && iPaging->hasNext()) {
 		next()->enableAutoDelete()
-			  .onSucceeded([=](RestReply *, int, Paging<T> paging) {
+			  ->onSucceeded([=](RestReply *, int, Paging<T> paging) {
 				  paging.iterate(iterator, failureHandler, errorHandler, exceptionHandler, to, index);
 			  })
-			  .onFailed(failureHandler)
-			  .onError(errorHandler)
-			  .onSerializeException(exceptionHandler);
+			  ->onFailed(failureHandler)
+			  ->onError(errorHandler)
+			  ->onSerializeException(exceptionHandler);
 	}
 }
 

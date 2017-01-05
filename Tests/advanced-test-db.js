@@ -1,7 +1,8 @@
 var fn = function(){
 	var data = {
 		posts: [],
-		pages: []
+		pages: [],
+		postlets: []
 	}
 	for (var i = 1; i <= 100; i++) {
 		data.posts.push({
@@ -10,6 +11,11 @@ var fn = function(){
 							title: "Title" + i,
 							body: "Body" + i
 						})
+		data.postlets.push({
+							   id: i,
+							   title: "Title" + i,
+							   href: "/posts/" + i
+						   })
 	}
 	for (var i = 0; i < 10; i++) {
 		var page = {

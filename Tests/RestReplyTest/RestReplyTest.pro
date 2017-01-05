@@ -27,5 +27,9 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 include(../tests.pri)
 
-SOURCES += tst_restreply.cpp
+SOURCES += tst_restreply.cpp \
+    simplejphpost.cpp
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
+
+HEADERS += \
+    simplejphpost.h

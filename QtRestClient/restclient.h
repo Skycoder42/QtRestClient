@@ -35,8 +35,8 @@ public:
 	RestClass *createClass(QString path, QObject *parent = nullptr);
 	RestClass *rootClass() const;
 
+	QNetworkAccessManager *manager() const;
 	JsonSerializer *serializer() const;
-
 	PagingFactory *pagingFactory() const;
 
 	QUrl baseUrl() const;

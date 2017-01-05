@@ -32,8 +32,7 @@ SOURCES += \
     restobject.cpp \
     jsonserializer.cpp \
     restexception.cpp \
-    standardpaging.cpp \
-    simplebase.cpp
+    standardpaging.cpp
 
 HEADERS +=\
         qtrestclient_global.h \
@@ -53,7 +52,7 @@ HEADERS +=\
     standardpaging.h \
     paging.h \
     paging_fwd.h \
-    simplebase.h
+    simple.h
 
 unix {
     target.path = /usr/lib

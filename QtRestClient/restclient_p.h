@@ -21,9 +21,10 @@ private:
 	QSslConfiguration sslConfig;
 
 	QNetworkAccessManager *nam;
-	RestClass *rootClass;
 	JsonSerializer *serializer;
 	QScopedPointer<PagingFactory> pagingFactory;
+
+	RestClass *rootClass;
 
 	RestClientPrivate(RestClient *q_ptr);
 };

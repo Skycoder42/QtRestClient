@@ -23,6 +23,11 @@ RestClass *RestClient::rootClass() const
 	return d->rootClass;
 }
 
+QNetworkAccessManager *RestClient::manager() const
+{
+	return d->nam;
+}
+
 JsonSerializer *RestClient::serializer() const
 {
 	return d->serializer;
@@ -150,7 +155,7 @@ RestClientPrivate::RestClientPrivate(RestClient *q_ptr) :
 	query(),
 	sslConfig(QSslConfiguration::defaultConfiguration()),
 	nam(new QNetworkAccessManager(q_ptr)),
-	rootClass(new RestClass(q_ptr, {}, q_ptr)),
 	serializer(new JsonSerializer(q_ptr)),
-	pagingFactory(new StandardPagingFactory())
+	pagingFactory(new StandardPagingFactory()),
+	rootClass(new RestClass(q_ptr, {}, q_ptr))
 {}

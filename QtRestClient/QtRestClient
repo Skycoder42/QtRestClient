@@ -1,9 +1,11 @@
+#include "qtrestclient_global.h"
+#include "restexception.h"
 #include "restclient.h"
 #include "restclass.h"
 #include "requestbuilder.h"
 #include "restreply.h"
 #include "genericrestreply.h"
 #include "paging.h"
-
-#include "restobject.h"
 #include "jsonserializer.h"
+#include "restobject.h"
+#include "simple.h"

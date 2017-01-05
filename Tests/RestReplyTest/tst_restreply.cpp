@@ -1,3 +1,4 @@
+#include "simplejphpost.h"
 #include "tst_global.h"
 
 #include <jphpost.h>
@@ -7,7 +8,7 @@ class RestReplyTest : public QObject
 	Q_OBJECT
 
 signals:
-	void testPagingIterate_unlock();
+	void test_unlock();
 
 private Q_SLOTS:
 	void initTestCase();
@@ -29,6 +30,8 @@ private Q_SLOTS:
 	void testPagingPrevious();
 	void testPagingIterate();
 
+	void testSimpleExtension();
+
 private:
 	QNetworkAccessManager *nam;
 	QtRestClient::RestClient *client;
@@ -36,7 +39,7 @@ private:
 
 void RestReplyTest::initTestCase()
 {
-	initTestJsonServer("./paging-test-db.js");
+	initTestJsonServer("./advanced-test-db.js");
 	nam = new QNetworkAccessManager(this);
 	client = new QtRestClient::RestClient(this);
 	client->setBaseUrl(QStringLiteral("http://localhost:3000"));
@@ -592,7 +595,7 @@ void RestReplyTest::testPagingIterate()
 			ok = true;
 		}();
 		if(!ok || count == 100)
-			emit testPagingIterate_unlock();
+			emit test_unlock();
 		data->deleteLater();
 		return ok;
 	});
@@ -610,11 +613,90 @@ void RestReplyTest::testPagingIterate()
 		QFAIL(e.what());
 	});
 
-	QSignalSpy completedSpy(this, &RestReplyTest::testPagingIterate_unlock);
+	QSignalSpy completedSpy(this, &RestReplyTest::test_unlock);
 	QVERIFY(completedSpy.wait(15000));
 	QCOMPARE(count, 100);
 
 	QCoreApplication::processEvents();//to ensure all deleteLaters have been called!
+}
+
+void RestReplyTest::testSimpleExtension()
+{
+	auto simple = new SimpleJphPost(1, "Title1", QStringLiteral("/posts/1"), this);
+	auto full = JphPost::createDefault(this);
+
+	QVERIFY(simple->hasExtension());
+	QCOMPARE(simple->extensionHref(), simple->href);
+	QVERIFY(!simple->currentExtended());
+
+	bool called = false;
+	//extend first try
+	simple->onExtended<QtRestClient::RestObject>(client, [&](JphPost *data, bool networkLoaded){
+		called = true;
+		QVERIFY(networkLoaded);
+		QVERIFY(full->equals(data));
+		emit test_unlock();
+	}, [&](QtRestClient::RestReply *, int, QtRestClient::RestObject *data){
+		called = true;
+		QFAIL("onFailed");
+		data->deleteLater();
+	}, [&](QtRestClient::RestReply *, QString error, int, QtRestClient::RestReply::ErrorType){
+		called = true;
+		QFAIL(qUtf8Printable(error));
+	}, [&](QtRestClient::RestReply *, QtRestClient::SerializerException &e){
+		called = true;
+		QFAIL(e.what());
+	});
+
+	QSignalSpy completedSpy(this, &RestReplyTest::test_unlock);
+	QVERIFY(completedSpy.wait());
+	QVERIFY(called);
+	QVERIFY(full->equals(simple->currentExtended()));
+
+	//test already loaded extension
+	called = false;
+	simple->onExtended(client, [&](JphPost *data, bool networkLoaded){
+		called = true;
+		QVERIFY(!networkLoaded);
+		QVERIFY(full->equals(data));
+	});
+	QVERIFY(called);
+
+	delete simple->currentExtended();
+	QVERIFY(!simple->currentExtended());
+
+	//network load
+	called = false;
+	auto reply = simple->extend(client);
+	reply->enableAutoDelete();
+	reply->onSucceeded([&](QtRestClient::RestReply *rep, int code, JphPost *data){
+		called = true;
+		QCOMPARE(rep, reply);
+		QCOMPARE(code, 200);
+		QVERIFY(full->equals(data));
+		data->deleteLater();
+	});
+	reply->onFailed([&](QtRestClient::RestReply *, int, QtRestClient::RestObject *data){
+		called = true;
+		QFAIL("onFailed");
+		data->deleteLater();
+	});
+	reply->onError([&](QtRestClient::RestReply *, QString error, int, QtRestClient::RestReply::ErrorType){
+		called = true;
+		QFAIL(qUtf8Printable(error));
+	});
+	reply->onSerializeException([&](QtRestClient::RestReply *, QtRestClient::SerializerException &e){
+		called = true;
+		QFAIL(e.what());
+	});
+
+	QSignalSpy deleteSpy(reply, &QtRestClient::RestReply::destroyed);
+	QVERIFY(deleteSpy.wait());
+	QVERIFY(called);
+	QVERIFY(full->equals(simple->currentExtended()));
+
+	simple->deleteLater();
+	full->deleteLater();
 }
 
 QTEST_MAIN(RestReplyTest)

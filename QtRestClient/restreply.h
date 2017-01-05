@@ -27,15 +27,15 @@ public:
 
 	RestReply(QNetworkReply *networkReply, QObject *parent = nullptr);
 
-	RestReply &onSucceeded(std::function<void(RestReply*, int, QJsonObject)> handler);
-	RestReply &onSucceeded(std::function<void(RestReply*, int, QJsonArray)> handler);
-	RestReply &onFailed(std::function<void(RestReply*, int, QJsonObject)> handler);
-	RestReply &onFailed(std::function<void(RestReply*, int, QJsonArray)> handler);
-	RestReply &onError(std::function<void(RestReply*, QString, int, ErrorType)> handler);
+	RestReply *onSucceeded(std::function<void(RestReply*, int, QJsonObject)> handler);
+	RestReply *onSucceeded(std::function<void(RestReply*, int, QJsonArray)> handler);
+	RestReply *onFailed(std::function<void(RestReply*, int, QJsonObject)> handler);
+	RestReply *onFailed(std::function<void(RestReply*, int, QJsonArray)> handler);
+	RestReply *onError(std::function<void(RestReply*, QString, int, ErrorType)> handler);
 
-	inline RestReply &enableAutoDelete() {
+	inline RestReply *enableAutoDelete() {
 		setAutoDelete(true);
-		return *this;
+		return this;
 	}
 
 	bool autoDelete() const;

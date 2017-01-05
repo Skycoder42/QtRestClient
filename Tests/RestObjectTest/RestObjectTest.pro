@@ -29,9 +29,10 @@ include(../tests.pri)
 
 SOURCES += tst_restobject.cpp \
     testobject.cpp \
-    brokentestobject.cpp
+	brokentestobject.cpp
+
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
 HEADERS += \
     testobject.h \
-    brokentestobject.h
+	brokentestobject.h

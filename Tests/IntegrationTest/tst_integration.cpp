@@ -21,7 +21,7 @@ private:
 
 void IntegrationTest::initTestCase()
 {
-	initTestJsonServer("./paging-test-db.js");
+	initTestJsonServer("./advanced-test-db.js");
 	client = new RestClient(this);
 	client->setBaseUrl(QStringLiteral("http://localhost:3000"));
 }
