@@ -202,7 +202,7 @@ public:
 
 	RequestBuilder builder() const;
 
-	static inline QVariantHash concatParameters() {return {};}
+	static inline QVariantHash concatParameters() {return {};}//TODO rename concat (with #define?)
 	template<typename... Args>
 	static QVariantHash concatParameters(QString key, QVariant value, Args... parameters);
 
