@@ -40,6 +40,8 @@ public:
 
 	bool autoDelete() const;
 
+	QNetworkReply *networkReply() const;
+
 	//TODO add getters usw
 
 public slots:

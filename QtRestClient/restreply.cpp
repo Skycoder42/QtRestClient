@@ -71,6 +71,11 @@ bool RestReply::autoDelete() const
 	return d->autoDelete;
 }
 
+QNetworkReply *RestReply::networkReply() const
+{
+	return d->networkReply.data();
+}
+
 void RestReply::abort()
 {
 	d->networkReply->abort();

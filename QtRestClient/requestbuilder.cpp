@@ -126,7 +126,7 @@ RequestBuilder &RequestBuilder::updateFromRelativeUrl(const QUrl &url, bool merg
 		foreach(auto item, query.queryItems())
 			d->query.addQueryItem(item.first, item.second);
 	} else
-		d->query.clear();
+		d->query = QUrlQuery(url.query());
 	if(!keepFragment)
 		d->fragment.clear();
 	return *this;
