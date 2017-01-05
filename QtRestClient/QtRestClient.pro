@@ -1,28 +1,34 @@
-#-------------------------------------------------
-#
-# Project created by QtCreator 2016-12-29T23:23:49
-#
-#-------------------------------------------------
+TEMPLATE = lib
 
 QT       += network
-
 QT       -= gui
 
 TARGET = QtRestClient
-TEMPLATE = lib
+VERSION = 0.1.0
+
+win32 {
+	QMAKE_TARGET_COMPANY = "Skycoder42"
+	QMAKE_TARGET_PRODUCT = "QtRestClient"
+	QMAKE_TARGET_DESCRIPTION = $$QMAKE_TARGET_PRODUCT
+	QMAKE_TARGET_COPYRIGHT = "Felix Barz"
+
+	CONFIG += skip_target_version_ext
+	LIBS += -lUser32
+} else:mac {
+	QMAKE_TARGET_BUNDLE_PREFIX = "com.Skycoder42."
+	QMAKE_FRAMEWORK_BUNDLE_NAME = "QtRestClient"
+
+	CONFIG += lib_bundle
+	QMAKE_LFLAGS_SONAME = '-Wl,-install_name,@rpath/'
+	QMAKE_LFLAGS += '-Wl,-rpath,\'@executable_path/../Frameworks\''
+} else:unix {
+	QMAKE_LFLAGS += '-Wl,-rpath,\'.\''
+	QMAKE_LFLAGS += '-Wl,-rpath,\'\$$ORIGIN/../lib\''
+	QMAKE_LFLAGS += '-Wl,-rpath,\'\$$ORIGIN/lib\''
+}
 
 DEFINES += QTRESTCLIENT_LIBRARY
-
-# The following define makes your compiler emit warnings if you use
-# any feature of Qt which as been marked as deprecated (the exact warnings
-# depend on your compiler). Please consult the documentation of the
-# deprecated API in order to know how to port your code away from it.
 DEFINES += QT_DEPRECATED_WARNINGS
-
-# You can also make your code fail to compile if you use deprecated APIs.
-# In order to do so, uncomment the following line.
-# You can also select to disable deprecated APIs only up to a certain version of Qt.
-#DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
     restclient.cpp \
