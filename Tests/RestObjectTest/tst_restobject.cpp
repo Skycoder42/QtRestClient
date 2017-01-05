@@ -32,7 +32,6 @@ private:
 
 void RestObjectTest::initTestCase()
 {
-	QtRestClient::registerListConverters<bool>();
 	QtRestClient::registerListConverters<TestObject*>();
 	ser = new QtRestClient::JsonSerializer(this);
 }
