@@ -53,13 +53,9 @@ void IntegrationTest::testJsonChain()
 		QCOMPARE(code, 200);
 		QCOMPARE(data, object);
 	});
-	reply->onFailed([&](RestReply *, int code, QJsonObject){
+	reply->onAllErrors([&](RestReply *, QString error, int code, RestReply::ErrorType){
 		called = true;
-		QFAIL(QByteArray::number(code).constData());
-	});
-	reply->onError([&](RestReply *, QString error, int, RestReply::ErrorType){
-		called = true;
-		QFAIL(qUtf8Printable(error));
+		QFAIL(qUtf8Printable(error.isEmpty() ? QString::number(code) : error));
 	});
 
 	object["id"] = 1;
@@ -87,18 +83,9 @@ void IntegrationTest::testRestObjectChain()
 		QVERIFY(RestObject::equals(data, object));
 		data->deleteLater();
 	});
-	reply->onFailed([&](RestReply *, int code, RestObject *data){
+	reply->onAllErrors([&](RestReply *, QString error, int code, RestReply::ErrorType){
 		called = true;
-		QFAIL(QByteArray::number(code).constData());
-		data->deleteLater();
-	});
-	reply->onError([&](RestReply *, QString error, int, RestReply::ErrorType){
-		called = true;
-		QFAIL(qUtf8Printable(error));
-	});
-	reply->onSerializeException([&](RestReply *, SerializerException &e){
-		called = true;
-		QFAIL(e.what());
+		QFAIL(qUtf8Printable(error.isEmpty() ? QString::number(code) : error));
 	});
 
 	QSignalSpy deleteSpy(reply, &RestReply::destroyed);
@@ -124,18 +111,9 @@ void IntegrationTest::testRestObjectListChain()
 		QCOMPARE(data.size(), 100);
 		qDeleteAll(data);
 	});
-	reply->onFailed([&](RestReply *, int code, RestObject *data){
+	reply->onAllErrors([&](RestReply *, QString error, int code, RestReply::ErrorType){
 		called = true;
-		QFAIL(QByteArray::number(code).constData());
-		data->deleteLater();
-	});
-	reply->onError([&](RestReply *, QString error, int, RestReply::ErrorType){
-		called = true;
-		QFAIL(qUtf8Printable(error));
-	});
-	reply->onSerializeException([&](RestReply *, SerializerException &e){
-		called = true;
-		QFAIL(e.what());
+		QFAIL(qUtf8Printable(error.isEmpty() ? QString::number(code) : error));
 	});
 
 	QSignalSpy deleteSpy(reply, &RestReply::destroyed);
@@ -163,18 +141,9 @@ void IntegrationTest::testRestObjectPagingChain()
 		data->deleteLater();
 		return ok;
 	});
-	reply->onFailed([&](RestReply *, int code, RestObject *data){
-		count = 110;
-		QFAIL(QByteArray::number(code).constData());
-		data->deleteLater();
-	});
-	reply->onError([&](RestReply *, QString error, int, RestReply::ErrorType){
-		count = 120;
-		QFAIL(qUtf8Printable(error));
-	});
-	reply->onSerializeException([&](RestReply *, SerializerException &e){
-		count = 130;
-		QFAIL(e.what());
+	reply->onAllErrors([&](RestReply *, QString error, int code, RestReply::ErrorType){
+		count = 142;
+		QFAIL(qUtf8Printable(error.isEmpty() ? QString::number(code) : error));
 	});
 
 	while(count < 100)

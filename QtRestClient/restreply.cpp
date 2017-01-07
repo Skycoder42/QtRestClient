@@ -66,6 +66,30 @@ RestReply *RestReply::onError(std::function<void (RestReply*, QString, int, Erro
 	return this;
 }
 
+RestReply *RestReply::onAllErrors(std::function<void (RestReply *, QString, int, RestReply::ErrorType)> handler, std::function<QString (QJsonObject, int)> failureTransformer)
+{
+	this->onFailed([=](RestReply *rep, int code, QJsonObject obj){
+		if(failureTransformer)
+			handler(rep, failureTransformer(obj, code), code, FailureError);
+		else
+			handler(rep, QString(), code, FailureError);
+	});
+	this->onError(handler);
+	return this;
+}
+
+RestReply *RestReply::onAllErrors(std::function<void (RestReply *, QString, int, RestReply::ErrorType)> handler, std::function<QString (QJsonArray, int)> failureTransformer)
+{
+	this->onFailed([=](RestReply *rep, int code, QJsonArray array){
+		if(failureTransformer)
+			handler(rep, failureTransformer(array, code), code, FailureError);
+		else
+			handler(rep, QString(), code, FailureError);
+	});
+	this->onError(handler);
+	return this;
+}
+
 bool RestReply::autoDelete() const
 {
 	return d->autoDelete;

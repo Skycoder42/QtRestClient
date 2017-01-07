@@ -98,16 +98,12 @@ void RestReplyTest::testReplyWrapping()
 		QCOMPARE(code, status);
 		QCOMPARE(data, result);
 	});
-	reply->onFailed([&](QtRestClient::RestReply *rep, int code, QJsonObject data){
+	reply->onAllErrors([&](QtRestClient::RestReply *rep, QString error, int code, QtRestClient::RestReply::ErrorType type){
 		called = true;
-		QVERIFY(!succeed);
+		QVERIFY2(!succeed, qUtf8Printable(error));
 		QCOMPARE(rep, reply);
+		QCOMPARE(type, QtRestClient::RestReply::FailureError);
 		QCOMPARE(code, status);
-		QCOMPARE(data, result);
-	});
-	reply->onError([&](QtRestClient::RestReply *, QString error, int, QtRestClient::RestReply::ErrorType){
-		called = true;
-		QFAIL(qUtf8Printable(error));
 	});
 
 	QSignalSpy deleteSpy(reply, &QtRestClient::RestReply::destroyed);
@@ -124,19 +120,11 @@ void RestReplyTest::testReplyError()
 
 	auto reply = new QtRestClient::RestReply(nam->get(request));
 	reply->enableAutoDelete();
-	reply->onSucceeded([&](QtRestClient::RestReply *, int, QJsonObject){
-		called = true;
-		QFAIL("succeed with non existant domain");
-	});
-	reply->onFailed([&](QtRestClient::RestReply *, int, QJsonObject){
-		called = true;
-		QFAIL("succeed with non existant domain");
-	});
-	reply->onError([&](QtRestClient::RestReply *rep, QString, int code, QtRestClient::RestReply::ErrorType type) {
+	reply->onAllErrors([&](QtRestClient::RestReply *rep, QString, int code, QtRestClient::RestReply::ErrorType type){
 		called = true;
 		QCOMPARE(rep, reply);
-		QCOMPARE(code, (int)QNetworkReply::HostNotFoundError);
 		QCOMPARE(type, QtRestClient::RestReply::NetworkError);
+		QCOMPARE(code, (int)QNetworkReply::HostNotFoundError);
 	});
 
 	QSignalSpy deleteSpy(reply, &QtRestClient::RestReply::destroyed);
@@ -153,19 +141,11 @@ void RestReplyTest::testReplyRetry()
 
 	auto reply = new QtRestClient::RestReply(nam->get(request));
 	reply->enableAutoDelete();
-	reply->onSucceeded([&](QtRestClient::RestReply *, int, QJsonObject){
-		retryCount = 42;
-		QFAIL("succeed with non existant domain");
-	});
-	reply->onFailed([&](QtRestClient::RestReply *, int, QJsonObject){
-		retryCount = 42;
-		QFAIL("succeed with non existant domain");
-	});
-	reply->onError([&](QtRestClient::RestReply *rep, QString, int code, QtRestClient::RestReply::ErrorType type) {
+	reply->onAllErrors([&](QtRestClient::RestReply *rep, QString, int code, QtRestClient::RestReply::ErrorType type){
 		retryCount++;
 		QCOMPARE(rep, reply);
-		QCOMPARE(code, (int)QNetworkReply::HostNotFoundError);
 		QCOMPARE(type, QtRestClient::RestReply::NetworkError);
+		QCOMPARE(code, (int)QNetworkReply::HostNotFoundError);
 		if(retryCount < 3)
 			rep->retryAfter((retryCount - 1) * 1500);//first 0, the 1500
 	});
@@ -228,29 +208,23 @@ void RestReplyTest::testGenericReplyWrapping()
 		QVERIFY(QtRestClient::RestObject::equals(data, result));
 		data->deleteLater();
 	});
-	reply->onFailed([&](QtRestClient::RestReply *rep, int code, QtRestClient::RestObject *data){
+	reply->onAllErrors([&](QtRestClient::RestReply *rep, QString, int code, QtRestClient::RestReply::ErrorType type){
 		called = true;
 		QVERIFY(!succeed);
-		QVERIFY(!except);
 		QCOMPARE(rep, reply);
-		QCOMPARE(code, status);
-		QVERIFY(QtRestClient::RestObject::equals(data, result));
-		data->deleteLater();
-	});
-	reply->onError([&](QtRestClient::RestReply *, QString error, int, QtRestClient::RestReply::ErrorType){
-		called = true;
-		QFAIL(qUtf8Printable(error));
-	});
-	reply->onSerializeException([&](QtRestClient::RestReply *rep, QtRestClient::SerializerException &){
-		called = true;
-		QVERIFY(!succeed);
-		QVERIFY(except);
-		QCOMPARE(rep, reply);
+		if(except)
+			QCOMPARE(type, QtRestClient::RestReply::DeserializationError);
+		else {
+			QCOMPARE(type, QtRestClient::RestReply::FailureError);
+			QCOMPARE(code, status);
+		}
 	});
 
 	QSignalSpy deleteSpy(reply, &QtRestClient::RestReply::destroyed);
 	QVERIFY(deleteSpy.wait());
 	QVERIFY(called);
+
+	result->deleteLater();
 }
 
 void RestReplyTest::testGenericListReplyWrapping_data()
@@ -310,29 +284,23 @@ void RestReplyTest::testGenericListReplyWrapping()
 		QVERIFY(QtRestClient::RestObject::equals(data.first(), firstResult));
 		qDeleteAll(data);
 	});
-	reply->onFailed([&](QtRestClient::RestReply *rep, int code, QtRestClient::RestObject *data){
+	reply->onAllErrors([&](QtRestClient::RestReply *rep, QString, int code, QtRestClient::RestReply::ErrorType type){
 		called = true;
 		QVERIFY(!succeed);
-		QVERIFY(!except);
 		QCOMPARE(rep, reply);
-		QCOMPARE(code, status);
-		QVERIFY(QtRestClient::RestObject::equals(data, firstResult));
-		data->deleteLater();
-	});
-	reply->onError([&](QtRestClient::RestReply *, QString error, int, QtRestClient::RestReply::ErrorType){
-		called = true;
-		QFAIL(qUtf8Printable(error));
-	});
-	reply->onSerializeException([&](QtRestClient::RestReply *rep, QtRestClient::SerializerException &){
-		called = true;
-		QVERIFY(!succeed);
-		QVERIFY(except);
-		QCOMPARE(rep, reply);
+		if(except)
+			QCOMPARE(type, QtRestClient::RestReply::DeserializationError);
+		else {
+			QCOMPARE(type, QtRestClient::RestReply::FailureError);
+			QCOMPARE(code, status);
+		}
 	});
 
 	QSignalSpy deleteSpy(reply, &QtRestClient::RestReply::destroyed);
 	QVERIFY(deleteSpy.wait());
 	QVERIFY(called);
+
+	firstResult->deleteLater();
 }
 
 void RestReplyTest::testGenericPagingReplyWrapping_data()
@@ -405,29 +373,23 @@ void RestReplyTest::testGenericPagingReplyWrapping()
 		QVERIFY(QtRestClient::RestObject::equals(data.items().first(), firstResult));
 		data.deleteAllItems();
 	});
-	reply->onFailed([&](QtRestClient::RestReply *rep, int code, QtRestClient::RestObject *data){
+	reply->onAllErrors([&](QtRestClient::RestReply *rep, QString, int code, QtRestClient::RestReply::ErrorType type){
 		called = true;
 		QVERIFY(!succeed);
-		QVERIFY(!except);
 		QCOMPARE(rep, reply);
-		QCOMPARE(code, status);
-		QVERIFY(QtRestClient::RestObject::equals(data, firstResult));
-		data->deleteLater();
-	});
-	reply->onError([&](QtRestClient::RestReply *, QString error, int, QtRestClient::RestReply::ErrorType){
-		called = true;
-		QFAIL(qUtf8Printable(error));
-	});
-	reply->onSerializeException([&](QtRestClient::RestReply *rep, QtRestClient::SerializerException &){
-		called = true;
-		QVERIFY(!succeed);
-		QVERIFY(except);
-		QCOMPARE(rep, reply);
+		if(except)
+			QCOMPARE(type, QtRestClient::RestReply::DeserializationError);
+		else {
+			QCOMPARE(type, QtRestClient::RestReply::FailureError);
+			QCOMPARE(code, status);
+		}
 	});
 
 	QSignalSpy deleteSpy(reply, &QtRestClient::RestReply::destroyed);
 	QVERIFY(deleteSpy.wait());
 	QVERIFY(called);
+
+	firstResult->deleteLater();
 }
 
 void RestReplyTest::testPagingNext()
@@ -453,18 +415,9 @@ void RestReplyTest::testPagingNext()
 		data.deleteAllItems();
 		firstPaging = data;
 	});
-	reply->onFailed([&](QtRestClient::RestReply *, int, QtRestClient::RestObject *data){
-		called = true;
-		QFAIL("onFailed");
-		data->deleteLater();
-	});
-	reply->onError([&](QtRestClient::RestReply *, QString error, int, QtRestClient::RestReply::ErrorType){
+	reply->onAllErrors([&](QtRestClient::RestReply *, QString error, int, QtRestClient::RestReply::ErrorType){
 		called = true;
 		QFAIL(qUtf8Printable(error));
-	});
-	reply->onSerializeException([&](QtRestClient::RestReply *, QtRestClient::SerializerException &e){
-		called = true;
-		QFAIL(e.what());
 	});
 
 	QSignalSpy deleteSpy(reply, &QtRestClient::RestReply::destroyed);
@@ -485,18 +438,9 @@ void RestReplyTest::testPagingNext()
 		QCOMPARE(data.total(), 100);
 		data.deleteAllItems();
 	});
-	nextReply->onFailed([&](QtRestClient::RestReply *, int, QtRestClient::RestObject *data){
-		called = true;
-		QFAIL("onFailed");
-		data->deleteLater();
-	});
-	nextReply->onError([&](QtRestClient::RestReply *, QString error, int, QtRestClient::RestReply::ErrorType){
+	nextReply->onAllErrors([&](QtRestClient::RestReply *, QString error, int, QtRestClient::RestReply::ErrorType){
 		called = true;
 		QFAIL(qUtf8Printable(error));
-	});
-	nextReply->onSerializeException([&](QtRestClient::RestReply *, QtRestClient::SerializerException &e){
-		called = true;
-		QFAIL(e.what());
 	});
 
 	QSignalSpy deleteNextSpy(nextReply, &QtRestClient::RestReply::destroyed);
@@ -527,18 +471,9 @@ void RestReplyTest::testPagingPrevious()
 		data.deleteAllItems();
 		lastPaging = data;
 	});
-	reply->onFailed([&](QtRestClient::RestReply *, int, QtRestClient::RestObject *data){
-		called = true;
-		QFAIL("onFailed");
-		data->deleteLater();
-	});
-	reply->onError([&](QtRestClient::RestReply *, QString error, int, QtRestClient::RestReply::ErrorType){
+	reply->onAllErrors([&](QtRestClient::RestReply *, QString error, int, QtRestClient::RestReply::ErrorType){
 		called = true;
 		QFAIL(qUtf8Printable(error));
-	});
-	reply->onSerializeException([&](QtRestClient::RestReply *, QtRestClient::SerializerException &e){
-		called = true;
-		QFAIL(e.what());
 	});
 
 	QSignalSpy deleteSpy(reply, &QtRestClient::RestReply::destroyed);
@@ -559,18 +494,9 @@ void RestReplyTest::testPagingPrevious()
 		QCOMPARE(data.total(), 100);
 		data.deleteAllItems();
 	});
-	prevReply->onFailed([&](QtRestClient::RestReply *, int, QtRestClient::RestObject *data){
-		called = true;
-		QFAIL("onFailed");
-		data->deleteLater();
-	});
-	prevReply->onError([&](QtRestClient::RestReply *, QString error, int, QtRestClient::RestReply::ErrorType){
+	prevReply->onAllErrors([&](QtRestClient::RestReply *, QString error, int, QtRestClient::RestReply::ErrorType){
 		called = true;
 		QFAIL(qUtf8Printable(error));
-	});
-	prevReply->onSerializeException([&](QtRestClient::RestReply *, QtRestClient::SerializerException &e){
-		called = true;
-		QFAIL(e.what());
 	});
 
 	QSignalSpy deletePrevSpy(prevReply, &QtRestClient::RestReply::destroyed);
@@ -599,18 +525,9 @@ void RestReplyTest::testPagingIterate()
 		data->deleteLater();
 		return ok;
 	});
-	reply->onFailed([&](QtRestClient::RestReply *, int, QtRestClient::RestObject *data){
-		count = 110;
-		QFAIL("onFailed");
-		data->deleteLater();
-	});
-	reply->onError([&](QtRestClient::RestReply *, QString error, int, QtRestClient::RestReply::ErrorType){
-		count = 120;
+	reply->onAllErrors([&](QtRestClient::RestReply *, QString error, int, QtRestClient::RestReply::ErrorType){
+		count = 142;
 		QFAIL(qUtf8Printable(error));
-	});
-	reply->onSerializeException([&](QtRestClient::RestReply *, QtRestClient::SerializerException &e){
-		count = 130;
-		QFAIL(e.what());
 	});
 
 	QSignalSpy completedSpy(this, &RestReplyTest::test_unlock);
@@ -636,16 +553,9 @@ void RestReplyTest::testSimpleExtension()
 		QVERIFY(networkLoaded);
 		QVERIFY(full->equals(data));
 		emit test_unlock();
-	}, [&](QtRestClient::RestReply *, int, QtRestClient::RestObject *data){
-		called = true;
-		QFAIL("onFailed");
-		data->deleteLater();
 	}, [&](QtRestClient::RestReply *, QString error, int, QtRestClient::RestReply::ErrorType){
 		called = true;
 		QFAIL(qUtf8Printable(error));
-	}, [&](QtRestClient::RestReply *, QtRestClient::SerializerException &e){
-		called = true;
-		QFAIL(e.what());
 	});
 
 	QSignalSpy completedSpy(this, &RestReplyTest::test_unlock);
@@ -676,18 +586,9 @@ void RestReplyTest::testSimpleExtension()
 		QVERIFY(full->equals(data));
 		data->deleteLater();
 	});
-	reply->onFailed([&](QtRestClient::RestReply *, int, QtRestClient::RestObject *data){
-		called = true;
-		QFAIL("onFailed");
-		data->deleteLater();
-	});
-	reply->onError([&](QtRestClient::RestReply *, QString error, int, QtRestClient::RestReply::ErrorType){
+	reply->onAllErrors([&](QtRestClient::RestReply *, QString error, int, QtRestClient::RestReply::ErrorType){
 		called = true;
 		QFAIL(qUtf8Printable(error));
-	});
-	reply->onSerializeException([&](QtRestClient::RestReply *, QtRestClient::SerializerException &e){
-		called = true;
-		QFAIL(e.what());
 	});
 
 	QSignalSpy deleteSpy(reply, &QtRestClient::RestReply::destroyed);

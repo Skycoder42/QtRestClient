@@ -43,6 +43,12 @@ public:
 	void iterate(std::function<bool(Paging<T>*, T*, int)> iterator, int to = -1, int from = 0);
 	template<typename EO = RestObject>
 	void iterate(std::function<bool(Paging<T>*, T*, int)> iterator,
+				 std::function<void(RestReply*, QString, int, RestReply::ErrorType)> errorHandler,
+				 std::function<QString(EO*, int)> failureTransformer = {},
+				 int to = -1,
+				 int from = 0);
+	template<typename EO = RestObject>
+	void iterate(std::function<bool(Paging<T>*, T*, int)> iterator,
 				 std::function<void(RestReply*, int, EO*)> failureHandler,
 				 std::function<void(RestReply*, QString, int, RestReply::ErrorType)> errorHandler = {},
 				 std::function<void(RestReply*, SerializerException &)> exceptionHandler = {},

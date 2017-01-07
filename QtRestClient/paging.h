@@ -108,6 +108,31 @@ void Paging<T>::iterate(std::function<bool (Paging<T> *, T *, int)> iterator, in
 
 template<typename T>
 template<typename EO>
+void Paging<T>::iterate(std::function<bool(Paging<T>*, T*, int)> iterator, std::function<void(RestReply*, QString, int, RestReply::ErrorType)> errorHandler, std::function<QString (QtRestClient::Paging::EO *, int)> failureTransformer, int to, int from)
+{
+	Q_ASSERT(from >= iPaging->offset());
+
+	auto index = internalIterate(iterator, to ,from);
+	if(index < 0)
+		return;
+
+	//continue to the next one
+	int max;
+	if(to >= 0)
+		max = qMin(to, iPaging->total());
+	else
+		max = iPaging->total();
+	if(index < max && iPaging->hasNext()) {
+		next()->enableAutoDelete()
+			  ->onSucceeded([=](RestReply *, int, Paging<T> paging) {
+				  paging.iterate(iterator, failureHandler, errorHandler, exceptionHandler, to, index);
+			  })
+			  ->onAllErrors(errorHandlerc, failureTransformer);
+	}
+}
+
+template<typename T>
+template<typename EO>
 void Paging<T>::iterate(std::function<bool(Paging<T>*, T*, int)> iterator, std::function<void(RestReply *, int, EO*)> failureHandler, std::function<void(RestReply*, QString, int, RestReply::ErrorType)> errorHandler, std::function<void(RestReply *, SerializerException &)> exceptionHandler, int to, int from)
 {
 	Q_ASSERT(from >= iPaging->offset());

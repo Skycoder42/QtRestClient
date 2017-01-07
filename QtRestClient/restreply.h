@@ -20,8 +20,13 @@ class QTRESTCLIENTSHARED_EXPORT RestReply : public QObject
 
 public:
 	enum ErrorType {
+		//default error types
 		NetworkError,
-		JsonParseError
+		JsonParseError,
+
+		//extended error types
+		FailureError,
+		DeserializationError
 	};
 	Q_ENUM(ErrorType)
 
@@ -31,7 +36,11 @@ public:
 	RestReply *onSucceeded(std::function<void(RestReply*, int, QJsonArray)> handler);
 	RestReply *onFailed(std::function<void(RestReply*, int, QJsonObject)> handler);
 	RestReply *onFailed(std::function<void(RestReply*, int, QJsonArray)> handler);
-	RestReply *onError(std::function<void(RestReply*, QString, int, ErrorType)> handler);//TODO add param to catch ALL error types
+	RestReply *onError(std::function<void(RestReply*, QString, int, ErrorType)> handler);
+	RestReply *onAllErrors(std::function<void(RestReply*, QString, int, ErrorType)> handler,
+						   std::function<QString(QJsonObject, int)> failureTransformer = {});
+	RestReply *onAllErrors(std::function<void(RestReply*, QString, int, ErrorType)> handler,
+						   std::function<QString(QJsonArray, int)> failureTransformer);
 
 	inline RestReply *enableAutoDelete() {
 		setAutoDelete(true);
