@@ -24,9 +24,13 @@ class QTRESTCLIENTSHARED_EXPORT JsonSerializer : public QObject
 	Q_OBJECT
 	friend class JsonSerializerPrivate;
 
+	Q_PROPERTY(bool allowDefaultNull READ allowDefaultNull WRITE setAllowDefaultNull)
+
 public:
 	explicit JsonSerializer(QObject *parent = nullptr);
 	~JsonSerializer();
+
+	bool allowDefaultNull() const;
 
 	virtual QJsonObject serialize(const RestObject *restObject) const;
 	template<typename T>
@@ -38,6 +42,9 @@ public:
 	QList<RestObject*> deserialize(QJsonArray jsonArray, const QMetaObject *metaObject, QObject *parent = nullptr) const;
 	template<typename T>
 	QList<T*> deserialize(QJsonArray jsonArray, QObject *parent = nullptr) const;
+
+public slots:
+	void setAllowDefaultNull(bool allowDefaultNull);
 
 protected:
 	virtual QJsonValue serializeValue(QVariant value);

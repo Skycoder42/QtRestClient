@@ -25,6 +25,8 @@ private Q_SLOTS:
 	void testDeserialization();
 	void testListDeserialization();
 	void testGenericListDeserialization();
+	void testDeserializationProperties_data();
+	void testDeserializationProperties();
 
 private:
 	QtRestClient::JsonSerializer *ser;
@@ -577,6 +579,60 @@ void RestObjectTest::testGenericListDeserialization()
 
 	auto oList = ser->deserialize<TestObject>(jList, this);
 	QVERIFY(QtRestClient::RestObject::listEquals(oList, resList));
+}
+
+void RestObjectTest::testDeserializationProperties_data()
+{
+	QTest::addColumn<QJsonObject>("data");
+	QTest::addColumn<bool>("allowNull");
+	QTest::addColumn<TestObject*>("result");
+	QTest::addColumn<bool>("shouldFail");
+
+	QTest::newRow("defaultRules") << QJsonObject({
+													 {"id", QJsonValue::Null},
+													 {"name", QJsonValue::Null},
+													 {"stateMap", QJsonArray()},
+													 {"child", QJsonValue::Null},
+													 {"relatives", QJsonArray()}
+												 })
+								  << false
+								  << new TestObject(this)
+								  << true;
+
+	QTest::newRow("allowNull") << QJsonObject({
+												  {"id", QJsonValue::Null},
+												  {"name", QJsonValue::Null},
+												  {"stateMap", QJsonArray()},
+												  {"child", QJsonValue::Null},
+												  {"relatives", QJsonArray()}
+											  })
+							   << true
+							   << new TestObject(0, QString(), {}, -1, this)
+							   << false;
+}
+
+void RestObjectTest::testDeserializationProperties()
+{
+	QFETCH(QJsonObject, data);
+	QFETCH(bool, allowNull);
+	QFETCH(TestObject*, result);
+	QFETCH(bool, shouldFail);
+
+	ser->setAllowDefaultNull(allowNull);
+
+	if(shouldFail)
+		QVERIFY_EXCEPTION_THROWN(ser->deserialize(data, result->metaObject(), this), QtRestClient::SerializerException);//to allow broken type
+	else {
+		auto obj = ser->deserialize<TestObject>(data, this);
+		QVERIFY(obj);
+		QVERIFY(result->equals(obj));
+		obj->deleteLater();
+	}
+
+	result->deleteLater();
+
+	//restore default
+	ser->setAllowDefaultNull(false);
 }
 
 QTEST_MAIN(RestObjectTest)

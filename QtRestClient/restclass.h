@@ -202,9 +202,9 @@ public:
 
 	RequestBuilder builder() const;
 
-	static inline QVariantHash concatParameters() {return {};}//TODO rename concat (with #define?)
+	static inline QVariantHash concatParams() {return {};}
 	template<typename... Args>
-	static QVariantHash concatParameters(QString key, QVariant value, Args... parameters);
+	static QVariantHash concatParams(QString key, QVariant value, Args... parameters);
 
 private:
 	QScopedPointer<RestClassPrivate> d_ptr;
@@ -221,6 +221,8 @@ private:
 	QNetworkReply *create(QByteArray verb, const QUrl &relativeUrl, QJsonObject body, const QVariantHash &parameters, const HeaderHash & headers);
 	QNetworkReply *create(QByteArray verb, const QUrl &relativeUrl, QJsonArray body, const QVariantHash &parameters, const HeaderHash & headers);
 };
+
+#define CONCAT_PARAMS QtRestClient::RestClass::concatParams
 
 // ------------- Generic Implementation -------------
 
@@ -327,9 +329,9 @@ GenericRestReply<DT, ET> *RestClass::call(QByteArray verb, const QUrl &relativeU
 }
 
 template<typename... Args>
-static QVariantHash RestClass::concatParameters(QString key, QVariant value, Args... parameters)
+static QVariantHash RestClass::concatParams(QString key, QVariant value, Args... parameters)
 {
-	auto hash = concatParameters(parameters...);
+	auto hash = concatParams(parameters...);
 	hash.insert(key, value);
 	return hash;
 }

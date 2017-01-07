@@ -10,6 +10,8 @@ class JsonSerializerPrivate
 public:
 	JsonSerializerPrivate(JsonSerializer *q_ptr);
 
+	bool allowNull;
+
 	QJsonValue doSerialize(const QMetaProperty &property, const QVariant &value);
 	QJsonObject serializeObject(const RestObject *restObject);
 
@@ -30,6 +32,11 @@ JsonSerializer::JsonSerializer(QObject *parent) :
 {}
 
 JsonSerializer::~JsonSerializer() {}
+
+bool JsonSerializer::allowDefaultNull() const
+{
+	return d->allowNull;
+}
 
 QJsonObject JsonSerializer::serialize(const RestObject *restObject) const
 {
@@ -57,6 +64,11 @@ QList<RestObject *> JsonSerializer::deserialize(QJsonArray jsonArray, const QMet
 	return list;
 }
 
+void JsonSerializer::setAllowDefaultNull(bool allowDefaultNull)
+{
+	d->allowNull = allowDefaultNull;
+}
+
 QJsonValue JsonSerializer::serializeValue(QVariant value)
 {
 	if(!value.isValid())
@@ -78,6 +90,7 @@ QVariant JsonSerializer::deserializeValue(QJsonValue value)
 // ------------- Private Implementation -------------
 
 JsonSerializerPrivate::JsonSerializerPrivate(JsonSerializer *q_ptr) :
+	allowNull(false),
 	q_ptr(q_ptr)
 {}
 
@@ -155,8 +168,9 @@ QVariant JsonSerializerPrivate::doDeserialize(const QMetaProperty &property, con
 		variant = q_ptr->deserializeValue(value);
 
 	if(property.isValid()) {
-		auto vType = variant.typeName();//TODO allow invalid qvariant as optional property of the serializer
-		if(variant.canConvert(property.userType()) && variant.convert(property.userType()))
+		auto vType = variant.typeName();
+		if((allowNull && !variant.isValid() && value.isNull()) ||//allowed null conversion
+		   (variant.canConvert(property.userType()) && variant.convert(property.userType())))
 			return variant;
 		else {
 			throw SerializerException(QStringLiteral("Failed to convert deserialized variant of type %1 to property type %2")
