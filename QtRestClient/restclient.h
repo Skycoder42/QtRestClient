@@ -32,7 +32,7 @@ public:
 	explicit RestClient(QObject *parent = nullptr);
 	~RestClient();
 
-	RestClass *createClass(QString path, QObject *parent = nullptr);
+	RestClass *createClass(const QString &path, QObject *parent = nullptr);
 	RestClass *rootClass() const;
 
 	QNetworkAccessManager *manager() const;
@@ -46,6 +46,13 @@ public:
 	QSslConfiguration sslConfiguration() const;
 
 	RequestBuilder builder() const;
+
+	//global access
+	static bool addGlobalApi(const QString &name, RestClient *client);
+	static void removeGlobalApi(const QString &name, bool deleteClient = true);
+	static RestClient *apiClient(const QString &name);
+	static RestClass *apiRootClass(const QString &name);
+	static RestClass *createApiClass(const QString &name, const QString &path, QObject *parent = nullptr);
 
 public slots:
 	void setBaseUrl(QUrl baseUrl);

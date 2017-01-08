@@ -27,6 +27,8 @@ private:
 	RestClass *rootClass;
 
 	RestClientPrivate(RestClient *q_ptr);
+
+	static QHash<QString, RestClient*> globalApis;
 };
 
 }
