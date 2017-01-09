@@ -31,9 +31,9 @@ static inline bool registerListConverters() {
 			if(v.convert(qMetaTypeId<T>()))
 				l.append(v.value<T>());
 			else {
-				qWarning() << "Conversion to"
+				qWarning() << QByteArray("Conversion to")
 						   << QMetaType::typeName(qMetaTypeId<QList<T>>())
-						   << "failed, could not convert element of type"
+						   << QByteArray("failed, could not convert element of type")
 						   << QMetaType::typeName(vt);
 				l.append(T());
 			}

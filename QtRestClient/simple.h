@@ -58,7 +58,7 @@ bool Simple<T>::hasExtension() const
 }
 
 template<typename T>
-typename T *Simple<T>::currentExtended() const
+T *Simple<T>::currentExtended() const
 {
 	return cExt;
 }

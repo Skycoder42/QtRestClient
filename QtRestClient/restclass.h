@@ -329,7 +329,7 @@ GenericRestReply<DT, ET> *RestClass::call(QByteArray verb, const QUrl &relativeU
 }
 
 template<typename... Args>
-static QVariantHash RestClass::concatParams(QString key, QVariant value, Args... parameters)
+QVariantHash RestClass::concatParams(QString key, QVariant value, Args... parameters)
 {
 	auto hash = concatParams(parameters...);
 	hash.insert(key, value);

@@ -6,6 +6,7 @@
 #include "restexception.h"
 
 #include <QJsonObject>
+#include <QJsonArray>
 #include <QMetaProperty>
 #include <QObject>
 #include <type_traits>
@@ -67,7 +68,7 @@ QJsonArray JsonSerializer::serialize(const QList<T*> restObjects) const
 }
 
 template<typename T>
-typename T *JsonSerializer::deserialize(QJsonObject jsonObject, QObject *parent) const
+T *JsonSerializer::deserialize(QJsonObject jsonObject, QObject *parent) const
 {
 	static_assert(std::is_base_of<RestObject, T>::value, "T must inherit RestObject!");
 	return static_cast<T*>(deserialize(jsonObject, &T::staticMetaObject, parent));
