@@ -18,8 +18,8 @@ public:
 
 	static JphPost *createDefault(QObject *parent);
 
-	int userId;
 	int id;
+	int userId;
 	QString title;
 	QString body;
 };
