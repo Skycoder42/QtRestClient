@@ -139,7 +139,7 @@ QVariant JsonSerializerPrivate::doDeserialize(const QMetaProperty &property, con
 		//check for a registered list object type
 		auto oTypeId = -1;
 		if(property.isValid()) {
-			auto ok = false;
+			auto ok = false;//TODO parse type name instead
 			oTypeId = parent->property((QByteArray("__qtrc_ro_olp_") + property.name()).constData()).toInt(&ok);
 			if(!ok)
 				oTypeId = -1;
@@ -169,9 +169,10 @@ QVariant JsonSerializerPrivate::doDeserialize(const QMetaProperty &property, con
 
 	if(property.isValid()) {
 		auto vType = variant.typeName();
-		if((allowNull && !variant.isValid() && value.isNull()) ||//allowed null conversion
-		   (variant.canConvert(property.userType()) && variant.convert(property.userType())))
+		if(variant.canConvert(property.userType()) && variant.convert(property.userType()))
 			return variant;
+		else if(allowNull && value.isNull())
+			return QVariant();
 		else {
 			throw SerializerException(QStringLiteral("Failed to convert deserialized variant of type %1 to property type %2")
 									  .arg(vType ? vType : "<unknown>")
