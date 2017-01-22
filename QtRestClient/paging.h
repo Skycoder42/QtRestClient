@@ -108,7 +108,7 @@ void Paging<T>::iterate(std::function<bool (Paging<T> *, T *, int)> iterator, in
 
 template<typename T>
 template<typename EO>
-void Paging<T>::iterate(std::function<bool(Paging<T>*, T*, int)> iterator, std::function<void(RestReply*, QString, int, RestReply::ErrorType)> errorHandler, std::function<QString (QtRestClient::Paging::EO *, int)> failureTransformer, int to, int from)
+void Paging<T>::iterate(std::function<bool(Paging<T>*, T*, int)> iterator, std::function<void(RestReply*, QString, int, RestReply::ErrorType)> errorHandler, std::function<QString (EO *, int)> failureTransformer, int to, int from)
 {
 	Q_ASSERT(from >= iPaging->offset());
 
@@ -125,9 +125,9 @@ void Paging<T>::iterate(std::function<bool(Paging<T>*, T*, int)> iterator, std::
 	if(index < max && iPaging->hasNext()) {
 		next()->enableAutoDelete()
 			  ->onSucceeded([=](RestReply *, int, Paging<T> paging) {
-				  paging.iterate(iterator, failureHandler, errorHandler, exceptionHandler, to, index);
+				  paging.iterate(iterator, errorHandler, failureTransformer, to, index);
 			  })
-			  ->onAllErrors(errorHandlerc, failureTransformer);
+			  ->onAllErrors(errorHandler, failureTransformer);
 	}
 }
 
