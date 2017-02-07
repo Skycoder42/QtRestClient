@@ -1,9 +1,9 @@
 TEMPLATE = lib
 
-QT       += network
+QT       += network jsonserializer
 QT       -= gui
 
-TARGET = QtRestClient
+TARGET = Qt5RestClient
 VERSION = 0.2.0
 
 win32 {
@@ -22,8 +22,6 @@ win32 {
 	QMAKE_LFLAGS_SONAME = '-Wl,-install_name,@rpath/'
 	QMAKE_LFLAGS += '-Wl,-rpath,\'@executable_path/../Frameworks\''
 }
-
-include(../QJsonSerializer/qjsonserializer.pri)
 
 DEFINES += QTRESTCLIENT_LIBRARY
 DEFINES += QT_DEPRECATED_WARNINGS
