@@ -3,7 +3,7 @@
 
 #include <QtRestClient>
 
-class JphPost : public QtRestClient::RestObject
+class JphPost : public QObject
 {
 	Q_OBJECT
 
@@ -16,6 +16,12 @@ public:
 	Q_INVOKABLE JphPost(QObject *parent = nullptr);
 	JphPost(int id, int userId, QString title, QString body, QObject *parent = nullptr);
 
+	static bool equals(const JphPost *left, const QObject *right);
+	virtual bool equals(const QObject *other) const;
+
+	template<typename T>
+	static bool listEquals(const QList<T*> &left, const QList<T*> &right);
+
 	static JphPost *createDefault(QObject *parent);
 
 	int id;
@@ -23,5 +29,21 @@ public:
 	QString title;
 	QString body;
 };
+
+template<typename T>
+bool JphPost::listEquals(const QList<T*> &left, const QList<T*> &right)
+{
+	static_assert(std::is_base_of<QObject, T>::value, "T must inherit QObject!");
+	if(left.size() != right.size())
+		return false;
+	else {
+		for(auto i = 0; i < left.size(); i++) {
+			if(!equals(left[i], right[i]))
+				return false;
+		}
+		return true;
+	}
+}
+
 
 #endif // JPHPOST_H

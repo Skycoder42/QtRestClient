@@ -51,8 +51,6 @@ public:
 
 	QNetworkReply *networkReply() const;
 
-	//TODO add getters usw
-
 public slots:
 	void abort();
 	void retry();

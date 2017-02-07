@@ -3,7 +3,6 @@
 
 #include <QJsonSerializer>
 #include "restclient.h"
-#include "restobject.h"
 #include "restreply.h"
 #include "paging_fwd.h"
 
@@ -11,11 +10,11 @@
 
 namespace QtRestClient {
 
-template <typename DataClassType, typename ErrorClassType = RestObject>
+template <typename DataClassType, typename ErrorClassType = QObject>
 class GenericRestReply : public RestReply
 {
-	static_assert(std::is_base_of<RestObject, DataClassType>::value, "DataClassType must inherit RestObject!");
-	static_assert(std::is_base_of<RestObject, ErrorClassType>::value, "ErrorClassType must inherit RestObject!");
+	static_assert(std::is_base_of<QObject, DataClassType>::value, "DataClassType must inherit QObject!");
+	static_assert(std::is_base_of<QObject, ErrorClassType>::value, "ErrorClassType must inherit QObject!");
 public:
 	GenericRestReply(QNetworkReply *networkReply,
 					 RestClient *client,
@@ -39,8 +38,8 @@ private:
 template <typename DataClassType, typename ErrorClassType>
 class GenericRestReply<QList<DataClassType>, ErrorClassType> : public RestReply
 {
-	static_assert(std::is_base_of<RestObject, DataClassType>::value, "DataClassType must inherit RestObject!");
-	static_assert(std::is_base_of<RestObject, ErrorClassType>::value, "ErrorClassType must inherit RestObject!");
+	static_assert(std::is_base_of<QObject, DataClassType>::value, "DataClassType must inherit QObject!");
+	static_assert(std::is_base_of<QObject, ErrorClassType>::value, "ErrorClassType must inherit QObject!");
 public:
 	GenericRestReply(QNetworkReply *networkReply,
 					 RestClient *client,
@@ -64,8 +63,8 @@ private:
 template <typename DataClassType, typename ErrorClassType>
 class GenericRestReply<Paging<DataClassType>, ErrorClassType> : public RestReply
 {
-	static_assert(std::is_base_of<RestObject, DataClassType>::value, "DataClassType must inherit RestObject!");
-	static_assert(std::is_base_of<RestObject, ErrorClassType>::value, "ErrorClassType must inherit RestObject!");
+	static_assert(std::is_base_of<QObject, DataClassType>::value, "DataClassType must inherit QObject!");
+	static_assert(std::is_base_of<QObject, ErrorClassType>::value, "ErrorClassType must inherit QObject!");
 public:
 	GenericRestReply(QNetworkReply *networkReply,
 					 RestClient *client,

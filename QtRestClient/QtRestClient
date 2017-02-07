@@ -6,5 +6,4 @@
 #include "restreply.h"
 #include "genericrestreply.h"
 #include "paging.h"
-#include "restobject.h"
 #include "simple.h"

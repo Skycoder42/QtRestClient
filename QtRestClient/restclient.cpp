@@ -10,9 +10,6 @@ using namespace QtRestClient;
 
 #define d d_ptr
 
-static void qtRestClientStartup();
-Q_COREAPP_STARTUP_FUNCTION(qtRestClientStartup)
-
 RestClient::RestClient(QObject *parent) :
 	QObject(parent),
 	d_ptr(new RestClientPrivate(this))
@@ -212,30 +209,3 @@ RestClientPrivate::RestClientPrivate(RestClient *q_ptr) :
 	pagingFactory(new StandardPagingFactory()),
 	rootClass(new RestClass(q_ptr, {}, q_ptr))
 {}
-
-// ------------- Startup function implementation -------------
-
-static void qtRestClientStartup()
-{
-	registerListConverters<bool>();
-	registerListConverters<int>();
-	registerListConverters<unsigned int>();
-	registerListConverters<double>();
-	registerListConverters<QChar>();
-	registerListConverters<QString>();
-	registerListConverters<long long>();
-	registerListConverters<short>();
-	registerListConverters<char>();
-	registerListConverters<unsigned long>();
-	registerListConverters<unsigned long long>();
-	registerListConverters<unsigned short>();
-	registerListConverters<signed char>();
-	registerListConverters<unsigned char>();
-	registerListConverters<float>();
-	registerListConverters<QDate>();
-	registerListConverters<QTime>();
-	registerListConverters<QUrl>();
-	registerListConverters<QDateTime>();
-	registerListConverters<QUuid>();
-	registerListConverters<RestObject*>();
-}

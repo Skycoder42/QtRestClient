@@ -15,39 +15,6 @@ namespace QtRestClient {
 
 typedef QHash<QByteArray, QByteArray> HeaderHash;
 
-template<typename T>
-static inline bool registerListConverters() {
-	auto ok1 = QMetaType::registerConverter<QList<T>, QVariantList>([](const QList<T> &list) -> QVariantList {
-		QVariantList l;
-		foreach(auto v, list)
-			l.append(QVariant::fromValue(v));
-		return l;
-	});
-
-	auto ok2 = QMetaType::registerConverter<QVariantList, QList<T>>([](const QVariantList &list) -> QList<T> {
-		QList<T> l;
-		foreach(auto v, list) {
-			auto vt = v.type();
-			if(v.convert(qMetaTypeId<T>()))
-				l.append(v.value<T>());
-			else {
-				qWarning() << QByteArray("Conversion to")
-						   << QMetaType::typeName(qMetaTypeId<QList<T>>())
-						   << QByteArray("failed, could not convert element of type")
-						   << QMetaType::typeName(vt);
-				l.append(T());
-			}
-		}
-		return l;
-	});
-
-	auto ok3 = QMetaType::registerComparators<QList<T>>();
-
-	return ok1 && ok2 && ok3;
-}
-
-//TODO qDeleteAllLater();
-
 }
 
 #endif // QTRESTCLIENT_GLOBAL_H

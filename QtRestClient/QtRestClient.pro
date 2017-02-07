@@ -34,7 +34,6 @@ SOURCES += \
 	requestbuilder.cpp \
 	restclass.cpp \
 	restreply.cpp \
-	restobject.cpp \
 	restexception.cpp \
 	standardpaging.cpp
 
@@ -48,7 +47,6 @@ HEADERS +=\
 	restclass_p.h \
 	restreply.h \
 	restreply_p.h \
-	restobject.h \
 	restexception.h \
 	genericrestreply.h \
 	ipaging.h \

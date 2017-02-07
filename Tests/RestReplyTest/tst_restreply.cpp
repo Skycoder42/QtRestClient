@@ -163,25 +163,25 @@ void RestReplyTest::testGenericReplyWrapping_data()
 	QTest::addColumn<QUrl>("url");
 	QTest::addColumn<bool>("succeed");
 	QTest::addColumn<int>("status");
-	QTest::addColumn<QtRestClient::RestObject*>("result");
+	QTest::addColumn<QObject*>("result");
 	QTest::addColumn<bool>("except");
 
 	QTest::newRow("get") << QUrl("http://localhost:3000/posts/1")
 						 << true
 						 << 200
-						 << (QtRestClient::RestObject*)JphPost::createDefault(this)
+						 << (QObject*)JphPost::createDefault(this)
 						 << false;
 
 	QTest::newRow("notFound") << QUrl("http://localhost:3000/posts/baum")
 							  << false
 							  << 404
-							  << new QtRestClient::RestObject(this)
+							  << new QObject(this)
 							  << false;
 
 	QTest::newRow("serExcept") << QUrl("http://localhost:3000/posts")
 							   << false
 							   << 0
-							   << new QtRestClient::RestObject(this)
+							   << new QObject(this)
 							   << true;
 }
 
@@ -190,7 +190,7 @@ void RestReplyTest::testGenericReplyWrapping()
 	QFETCH(QUrl, url);
 	QFETCH(bool, succeed);
 	QFETCH(int, status);
-	QFETCH(QtRestClient::RestObject*, result);
+	QFETCH(QObject*, result);
 	QFETCH(bool, except);
 
 	QNetworkRequest request(url);
@@ -206,7 +206,7 @@ void RestReplyTest::testGenericReplyWrapping()
 		QVERIFY(!except);
 		QCOMPARE(rep, reply);
 		QCOMPARE(code, status);
-		QVERIFY(QtRestClient::RestObject::equals(data, result));
+		QVERIFY(JphPost::equals(data, result));
 		data->deleteLater();
 	});
 	reply->onAllErrors([&](QtRestClient::RestReply *rep, QString error, int code, QtRestClient::RestReply::ErrorType type){
@@ -234,28 +234,28 @@ void RestReplyTest::testGenericListReplyWrapping_data()
 	QTest::addColumn<bool>("succeed");
 	QTest::addColumn<int>("status");
 	QTest::addColumn<int>("count");
-	QTest::addColumn<QtRestClient::RestObject*>("firstResult");
+	QTest::addColumn<QObject*>("firstResult");
 	QTest::addColumn<bool>("except");
 
 	QTest::newRow("get") << QUrl("http://localhost:3000/posts")
 						 << true
 						 << 200
 						 << 100
-						 << (QtRestClient::RestObject*)JphPost::createDefault(this)
+						 << (QObject*)JphPost::createDefault(this)
 						 << false;
 
 	QTest::newRow("notFound") << QUrl("http://localhost:3000/postses")
 							  << false
 							  << 404
 							  << 0
-							  << new QtRestClient::RestObject(this)
+							  << new QObject(this)
 							  << false;
 
 	QTest::newRow("serExcept") << QUrl("http://localhost:3000/posts/1")
 							   << false
 							   << 0
 							   << 0
-							   << new QtRestClient::RestObject(this)
+							   << new QObject(this)
 							   << true;
 }
 
@@ -265,7 +265,7 @@ void RestReplyTest::testGenericListReplyWrapping()
 	QFETCH(bool, succeed);
 	QFETCH(int, status);
 	QFETCH(int, count);
-	QFETCH(QtRestClient::RestObject*, firstResult);
+	QFETCH(QObject*, firstResult);
 	QFETCH(bool, except);
 
 	QNetworkRequest request(url);
@@ -282,7 +282,7 @@ void RestReplyTest::testGenericListReplyWrapping()
 		QCOMPARE(rep, reply);
 		QCOMPARE(code, status);
 		QCOMPARE(data.size(), count);
-		QVERIFY(QtRestClient::RestObject::equals(data.first(), firstResult));
+		QVERIFY(JphPost::equals(data.first(), firstResult));
 		qDeleteAll(data);
 	});
 	reply->onAllErrors([&](QtRestClient::RestReply *rep, QString error, int code, QtRestClient::RestReply::ErrorType type){
@@ -312,7 +312,7 @@ void RestReplyTest::testGenericPagingReplyWrapping_data()
 	QTest::addColumn<int>("offset");
 	QTest::addColumn<int>("limit");
 	QTest::addColumn<int>("total");
-	QTest::addColumn<QtRestClient::RestObject*>("firstResult");
+	QTest::addColumn<QObject*>("firstResult");
 	QTest::addColumn<bool>("except");
 
 	QTest::newRow("get") << QUrl("http://localhost:3000/pages/0")
@@ -321,7 +321,7 @@ void RestReplyTest::testGenericPagingReplyWrapping_data()
 						 << 0
 						 << 10
 						 << 100
-						 << (QtRestClient::RestObject*)JphPost::createDefault(this)
+						 << (QObject*)JphPost::createDefault(this)
 						 << false;
 
 	QTest::newRow("notFound") << QUrl("http://localhost:3000/pageses")
@@ -330,7 +330,7 @@ void RestReplyTest::testGenericPagingReplyWrapping_data()
 							  << 0
 							  << 0
 							  << 0
-							  << new QtRestClient::RestObject(this)
+							  << new QObject(this)
 							  << false;
 
 	QTest::newRow("serExcept") << QUrl("http://localhost:3000/posts/1")
@@ -339,7 +339,7 @@ void RestReplyTest::testGenericPagingReplyWrapping_data()
 							   << 0
 							   << 0
 							   << 0
-							   << new QtRestClient::RestObject(this)
+							   << new QObject(this)
 							   << true;
 }
 
@@ -351,7 +351,7 @@ void RestReplyTest::testGenericPagingReplyWrapping()
 	QFETCH(int, offset);
 	QFETCH(int, limit);
 	QFETCH(int, total);
-	QFETCH(QtRestClient::RestObject*, firstResult);
+	QFETCH(QObject*, firstResult);
 	QFETCH(bool, except);
 
 	QNetworkRequest request(url);
@@ -371,7 +371,7 @@ void RestReplyTest::testGenericPagingReplyWrapping()
 		QCOMPARE(data.offset(), offset);
 		QCOMPARE(data.limit(), limit);
 		QCOMPARE(data.total(), total);
-		QVERIFY(QtRestClient::RestObject::equals(data.items().first(), firstResult));
+		QVERIFY(JphPost::equals(data.items().first(), firstResult));
 		data.deleteAllItems();
 	});
 	reply->onAllErrors([&](QtRestClient::RestReply *rep, QString error, int code, QtRestClient::RestReply::ErrorType type){
@@ -549,7 +549,7 @@ void RestReplyTest::testSimpleExtension()
 
 	bool called = false;
 	//extend first try
-	simple->onExtended<QtRestClient::RestObject>(client, [&](JphPost *data, bool networkLoaded){
+	simple->onExtended<QObject>(client, [&](JphPost *data, bool networkLoaded){
 		called = true;
 		QVERIFY(networkLoaded);
 		QVERIFY(full->equals(data));

@@ -11,9 +11,9 @@ private Q_SLOTS:
 	void cleanupTestCase();
 
 	void testJsonChain();
-	void testRestObjectChain();
-	void testRestObjectListChain();
-	void testRestObjectPagingChain();
+	void testQObjectChain();
+	void testQObjectListChain();
+	void testQObjectPagingChain();
 
 private:
 	RestClient *client;
@@ -67,9 +67,9 @@ void IntegrationTest::testJsonChain()
 	postClass->deleteLater();
 }
 
-void IntegrationTest::testRestObjectChain()
+void IntegrationTest::testQObjectChain()
 {
-	RestObject *object = new JphPost(2, 42, "baum", "baum", this);
+	QObject *object = new JphPost(2, 42, "baum", "baum", this);
 
 	auto postClass = client->createClass("posts", client);
 
@@ -81,7 +81,7 @@ void IntegrationTest::testRestObjectChain()
 		called = true;
 		QCOMPARE(rep, reply);
 		QCOMPARE(code, 200);
-		QVERIFY(RestObject::equals(data, object));
+		QVERIFY(JphPost::equals(data, object));
 		data->deleteLater();
 	});
 	reply->onAllErrors([&](RestReply *, QString error, int code, RestReply::ErrorType){
@@ -97,7 +97,7 @@ void IntegrationTest::testRestObjectChain()
 	object->deleteLater();
 }
 
-void IntegrationTest::testRestObjectListChain()
+void IntegrationTest::testQObjectListChain()
 {
 	auto postClass = client->createClass("posts", client);
 
@@ -124,7 +124,7 @@ void IntegrationTest::testRestObjectListChain()
 	postClass->deleteLater();
 }
 
-void IntegrationTest::testRestObjectPagingChain()
+void IntegrationTest::testQObjectPagingChain()
 {
 	auto pagingClass = client->createClass("pages", client);
 

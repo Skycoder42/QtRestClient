@@ -12,9 +12,9 @@
 namespace QtRestClient {
 
 template<typename T>
-class Simple : public RestObject
+class Simple : public QObject
 {
-	static_assert(std::is_base_of<RestObject, T>::value, "T must inherit RestObject!");
+	static_assert(std::is_base_of<QObject, T>::value, "T must inherit QObject!");
 public:
 	Simple(QObject *parent = nullptr);
 
@@ -22,10 +22,10 @@ public:
 	bool hasExtension() const;
 	T *currentExtended() const;
 
-	template<typename ET = RestObject>
+	template<typename ET = QObject>
 	GenericRestReply<T, ET> *extend(RestClient *client);
 
-	template<typename ET = RestObject>
+	template<typename ET = QObject>
 	void onExtended(RestClient *client,
 					std::function<void(T*, bool)> extensionHandler,
 					std::function<void(RestReply*, QString, int, RestReply::ErrorType)> errorHandler = {},
@@ -48,7 +48,7 @@ namespace QtRestClient {
 
 template<typename T>
 Simple<T>::Simple(QObject *parent) :
-	RestObject(parent)
+	QObject(parent)
 {}
 
 template<typename T>
