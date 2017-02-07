@@ -1,7 +1,7 @@
 #ifndef QRESTCLIENT_P_H
 #define QRESTCLIENT_P_H
 
-#include "jsonserializer.h"
+#include <QJsonSerializer>
 #include "restclient.h"
 
 namespace QtRestClient {
@@ -21,7 +21,7 @@ private:
 	QSslConfiguration sslConfig;
 
 	QNetworkAccessManager *nam;
-	JsonSerializer *serializer;
+	QJsonSerializer *serializer;
 	QScopedPointer<PagingFactory> pagingFactory;
 
 	RestClass *rootClass;

@@ -1,4 +1,4 @@
-#include "jsonserializer.h"
+#include <QJsonSerializer>
 #include "standardpaging.h"
 using namespace QtRestClient;
 

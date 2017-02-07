@@ -25,12 +25,6 @@ public:
 
 Q_DECLARE_METATYPE(QtRestClient::RestObject*)
 
-#define QTRESTCLIENT_OBJECT_LIST_PROPERTY(name, type) \
-	Q_PROPERTY(int __qtrc_ro_olp_ ## name READ __qtrc_ro_olp_ ## name STORED false DESIGNABLE false CONSTANT FINAL) \
-	inline int __qtrc_ro_olp_ ## name() const { \
-		return qMetaTypeId<type>();\
-	}
-
 
 // ------------- Generic Implementation -------------
 

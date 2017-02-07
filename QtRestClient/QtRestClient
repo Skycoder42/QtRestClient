@@ -6,6 +6,5 @@
 #include "restreply.h"
 #include "genericrestreply.h"
 #include "paging.h"
-#include "jsonserializer.h"
 #include "restobject.h"
 #include "simple.h"

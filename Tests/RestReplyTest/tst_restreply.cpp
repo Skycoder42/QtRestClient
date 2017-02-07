@@ -39,6 +39,7 @@ private:
 
 void RestReplyTest::initTestCase()
 {
+	QJsonSerializer::registerListConverters<JphPost*>();
 	initTestJsonServer("./advanced-test-db.js");
 	nam = new QNetworkAccessManager(this);
 	client = new QtRestClient::RestClient(this);
@@ -208,9 +209,9 @@ void RestReplyTest::testGenericReplyWrapping()
 		QVERIFY(QtRestClient::RestObject::equals(data, result));
 		data->deleteLater();
 	});
-	reply->onAllErrors([&](QtRestClient::RestReply *rep, QString, int code, QtRestClient::RestReply::ErrorType type){
+	reply->onAllErrors([&](QtRestClient::RestReply *rep, QString error, int code, QtRestClient::RestReply::ErrorType type){
 		called = true;
-		QVERIFY(!succeed);
+		QVERIFY2(!succeed, qUtf8Printable(error));
 		QCOMPARE(rep, reply);
 		if(except)
 			QCOMPARE(type, QtRestClient::RestReply::DeserializationError);
@@ -284,9 +285,9 @@ void RestReplyTest::testGenericListReplyWrapping()
 		QVERIFY(QtRestClient::RestObject::equals(data.first(), firstResult));
 		qDeleteAll(data);
 	});
-	reply->onAllErrors([&](QtRestClient::RestReply *rep, QString, int code, QtRestClient::RestReply::ErrorType type){
+	reply->onAllErrors([&](QtRestClient::RestReply *rep, QString error, int code, QtRestClient::RestReply::ErrorType type){
 		called = true;
-		QVERIFY(!succeed);
+		QVERIFY2(!succeed, qUtf8Printable(error));
 		QCOMPARE(rep, reply);
 		if(except)
 			QCOMPARE(type, QtRestClient::RestReply::DeserializationError);
@@ -373,9 +374,9 @@ void RestReplyTest::testGenericPagingReplyWrapping()
 		QVERIFY(QtRestClient::RestObject::equals(data.items().first(), firstResult));
 		data.deleteAllItems();
 	});
-	reply->onAllErrors([&](QtRestClient::RestReply *rep, QString, int code, QtRestClient::RestReply::ErrorType type){
+	reply->onAllErrors([&](QtRestClient::RestReply *rep, QString error, int code, QtRestClient::RestReply::ErrorType type){
 		called = true;
-		QVERIFY(!succeed);
+		QVERIFY2(!succeed, qUtf8Printable(error));
 		QCOMPARE(rep, reply);
 		if(except)
 			QCOMPARE(type, QtRestClient::RestReply::DeserializationError);

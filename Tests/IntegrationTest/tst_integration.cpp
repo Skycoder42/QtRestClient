@@ -21,6 +21,7 @@ private:
 
 void IntegrationTest::initTestCase()
 {
+	QJsonSerializer::registerListConverters<JphPost*>();
 	initTestJsonServer("./advanced-test-db.js");
 	client = new RestClient(this);
 	client->setBaseUrl(QStringLiteral("http://localhost:3000"));

@@ -9,11 +9,11 @@
 #include <QUrl>
 #include <QUrlQuery>
 #include <QVersionNumber>
+class QJsonSerializer;
 
 namespace QtRestClient {
 
 class RestClass;
-class JsonSerializer;
 class PagingFactory;
 
 class RestClientPrivate;
@@ -36,13 +36,13 @@ public:
 	RestClass *rootClass() const;
 
 	QNetworkAccessManager *manager() const;
-	JsonSerializer *serializer() const;
+	QJsonSerializer *serializer() const;
 	PagingFactory *pagingFactory() const;
 
 	QUrl baseUrl() const;
-	QVersionNumber apiVersion() const;	
+	QVersionNumber apiVersion() const;
 	HeaderHash globalHeaders() const;
-	QUrlQuery globalParameters() const;	
+	QUrlQuery globalParameters() const;
 	QSslConfiguration sslConfiguration() const;
 
 	RequestBuilder builder() const;
@@ -56,7 +56,7 @@ public:
 
 public slots:
 	void setBaseUrl(QUrl baseUrl);
-	void setApiVersion(QVersionNumber apiVersion);	
+	void setApiVersion(QVersionNumber apiVersion);
 	void setGlobalHeaders(HeaderHash globalHeaders);
 	void setGlobalParameters(QUrlQuery globalParameters);
 	void setSslConfiguration(QSslConfiguration sslConfiguration);

@@ -24,7 +24,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+		mainwindow.cpp
 
 HEADERS  += mainwindow.h
 
@@ -35,5 +35,7 @@ else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../QtRestClient/deb
 else:mac: LIBS += -F$$OUT_PWD/../QtRestClient/ -framework QtRestClient
 else:unix: LIBS += -L$$OUT_PWD/../QtRestClient/ -lQtRestClient
 
+DEFINES += QJSONSERIALIZER_AS_DLL
+INCLUDEPATH += $$PWD/../QJsonSerializer/src
 INCLUDEPATH += $$PWD/../QtRestClient
 DEPENDPATH += $$PWD/../QtRestClient

@@ -1,8 +1,7 @@
 TEMPLATE = subdirs
 
 SUBDIRS += \
-    RequestBuilderTest \
-    RestClientTest \
-    RestReplyTest \
-	IntegrationTest \
-    RestObjectTest
+	RequestBuilderTest \
+	RestClientTest \
+	RestReplyTest \
+	IntegrationTest

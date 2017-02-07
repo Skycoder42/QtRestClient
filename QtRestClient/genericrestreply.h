@@ -1,7 +1,7 @@
 #ifndef GENERICRESTREPLY_H
 #define GENERICRESTREPLY_H
 
-#include "jsonserializer.h"
+#include <QJsonSerializer>
 #include "restclient.h"
 #include "restobject.h"
 #include "restreply.h"
@@ -32,7 +32,7 @@ public:
 	GenericRestReply<DataClassType, ErrorClassType> *enableAutoDelete();
 
 private:
-	JsonSerializer *serializer;
+	QJsonSerializer *serializer;
 	std::function<void(RestReply*, SerializerException &)> exceptionHandler;
 };
 
@@ -57,7 +57,7 @@ public:
 	GenericRestReply<QList<DataClassType>, ErrorClassType> *enableAutoDelete();
 
 private:
-	JsonSerializer *serializer;
+	QJsonSerializer *serializer;
 	std::function<void(RestReply*, SerializerException &)> exceptionHandler;
 };
 
@@ -111,7 +111,7 @@ GenericRestReply<DataClassType, ErrorClassType> *GenericRestReply<DataClassType,
 		try {
 			if(!value.isObject())
 				throw SerializerException(QStringLiteral("Expected JSON object but got %1").arg(value.type()), true);
-			handler(this, code, serializer->deserialize<DataClassType>(value.toObject()));
+			handler(this, code, serializer->deserialize<DataClassType>(value.toObject(), nullptr));
 		} catch(SerializerException &e) {
 			if(exceptionHandler)
 				exceptionHandler(this, e);
@@ -131,7 +131,7 @@ GenericRestReply<DataClassType, ErrorClassType> *GenericRestReply<DataClassType,
 		try {
 			if(!value.isObject())
 				throw SerializerException(QStringLiteral("Expected JSON object but got %1").arg(value.type()), true);
-			handler(this, code, serializer->deserialize<ErrorClassType>(value.toObject()));
+			handler(this, code, serializer->deserialize<ErrorClassType>(value.toObject(), nullptr));
 		} catch(SerializerException &e) {
 			if(exceptionHandler)
 				exceptionHandler(this, e);
@@ -161,7 +161,7 @@ GenericRestReply<DataClassType, ErrorClassType> *GenericRestReply<DataClassType,
 	});
 	this->onError(handler);
 	this->onSerializeException([=](RestReply *rep, SerializerException exception){
-		handler(rep, exception.qWhat(), exception.code(), DeserializationError);
+		handler(rep, exception.qWhat(), 0, DeserializationError);
 	});
 	return this;
 }
@@ -198,7 +198,7 @@ GenericRestReply<QList<DataClassType>, ErrorClassType> *GenericRestReply<QList<D
 		try {
 			if(!value.isArray())
 				throw SerializerException(QStringLiteral("Expected JSON object but got %1").arg(value.type()), true);
-			handler(this, code, serializer->deserialize<DataClassType>(value.toArray()));
+			handler(this, code, serializer->deserialize<DataClassType>(value.toArray(), nullptr));
 		} catch(SerializerException &e) {
 			if(exceptionHandler)
 				exceptionHandler(this, e);
@@ -218,7 +218,7 @@ GenericRestReply<QList<DataClassType>, ErrorClassType> *GenericRestReply<QList<D
 		try {
 			if(!value.isObject())
 				throw SerializerException(QStringLiteral("Expected JSON object but got %1").arg(value.type()), true);
-			handler(this, code, serializer->deserialize<ErrorClassType>(value.toObject()));
+			handler(this, code, serializer->deserialize<ErrorClassType>(value.toObject(), nullptr));
 		} catch(SerializerException &e) {
 			if(exceptionHandler)
 				exceptionHandler(this, e);
@@ -248,7 +248,7 @@ GenericRestReply<QList<DataClassType>, ErrorClassType> *GenericRestReply<QList<D
 	});
 	this->onError(handler);
 	this->onSerializeException([=](RestReply *rep, SerializerException exception){
-		handler(rep, exception.qWhat(), exception.code(), DeserializationError);
+		handler(rep, exception.qWhat(), 0, DeserializationError);
 	});
 	return this;
 }
@@ -286,7 +286,7 @@ GenericRestReply<Paging<DataClassType>, ErrorClassType> *GenericRestReply<Paging
 			if(!value.isObject())
 				throw SerializerException(QStringLiteral("Expected JSON object but got %1").arg(value.type()), true);
 			auto iPaging = client->pagingFactory()->createPaging(value.toObject());
-			auto data = client->serializer()->deserialize<DataClassType>(iPaging->items());
+			auto data = client->serializer()->deserialize<DataClassType>(iPaging->items(), nullptr);
 			handler(this, code, Paging<DataClassType>(iPaging, data, client));
 		} catch(SerializerException &e) {
 			if(exceptionHandler)
@@ -308,7 +308,7 @@ GenericRestReply<Paging<DataClassType>, ErrorClassType> *GenericRestReply<Paging
 		try {
 			if(!value.isObject())
 				throw SerializerException(QStringLiteral("Expected JSON object but got %1").arg(value.type()), true);
-			handler(this, code, client->serializer()->deserialize<ErrorClassType>(value.toObject()));
+			handler(this, code, client->serializer()->deserialize<ErrorClassType>(value.toObject(), nullptr));
 		} catch(SerializerException &e) {
 			if(exceptionHandler)
 				exceptionHandler(this, e);
@@ -338,7 +338,7 @@ GenericRestReply<Paging<DataClassType>, ErrorClassType> *GenericRestReply<Paging
 	});
 	this->onError(handler);
 	this->onSerializeException([=](RestReply *rep, SerializerException exception){
-		handler(rep, exception.qWhat(), exception.code(), DeserializationError);
+		handler(rep, exception.qWhat(), 0, DeserializationError);
 	});
 	return this;
 }

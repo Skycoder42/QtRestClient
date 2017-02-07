@@ -5,22 +5,24 @@ else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../../QtRestClient/
 else:mac: LIBS += -F$$OUT_PWD/../../QtRestClient/ -framework QtRestClient
 else:unix: LIBS += -L$$OUT_PWD/../../QtRestClient/ -lQtRestClient
 
+DEFINES += QJSONSERIALIZER_AS_DLL
+INCLUDEPATH += $$PWD/../QJsonSerializer/src
 INCLUDEPATH += $$PWD/../QtRestClient
 DEPENDPATH += $$PWD/../QtRestClient
 
 HEADERS += \
-    $$PWD/tst_global.h \
-    $$PWD/jphpost.h
+	$$PWD/tst_global.h \
+	$$PWD/jphpost.h
 
 INCLUDEPATH += $$PWD
 
 SOURCES += \
-    $$PWD/jphpost.cpp \
-    $$PWD/tst_global.cpp
+	$$PWD/jphpost.cpp \
+	$$PWD/tst_global.cpp
 
 DISTFILES += \
-    $$PWD/rest-db-setup.bat \
-    $$PWD/default-test-db.js \
-    $$PWD/advanced-test-db.js
+	$$PWD/rest-db-setup.bat \
+	$$PWD/default-test-db.js \
+	$$PWD/advanced-test-db.js
 
 DEFINES += "TEST_SRC_DIR=\\\"$$PWD\\\""
