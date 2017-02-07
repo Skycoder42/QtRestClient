@@ -23,7 +23,6 @@ win32 {
 	QMAKE_LFLAGS += '-Wl,-rpath,\'@executable_path/../Frameworks\''
 }
 
-CONFIG += qjs_as_lib
 include(../QJsonSerializer/qjsonserializer.pri)
 
 DEFINES += QTRESTCLIENT_LIBRARY
