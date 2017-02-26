@@ -25,10 +25,10 @@ public:
 	GenericRestReply<T, ET> *extend(RestClient *client);
 
 	template<typename ET = QObject>
-	void onExtended(RestClient *client,
-					std::function<void(T*, bool)> extensionHandler,
-					std::function<void(RestReply*, QString, int, RestReply::ErrorType)> errorHandler = {},
-					std::function<QString(ET*, int)> failureTransformer = {});
+	void extend(RestClient *client,
+				std::function<void(T*, bool)> extensionHandler,
+				std::function<void(RestReply*, QString, int, RestReply::ErrorType)> errorHandler = {},
+				std::function<QString(ET*, int)> failureTransformer = {});
 
 private:
 	QPointer<T> cExt;
@@ -74,7 +74,7 @@ GenericRestReply<T, ET> *Simple<T>::extend(RestClient *client)
 
 template<typename T>
 template<typename ET>
-void Simple<T>::onExtended(RestClient *client, std::function<void (T *, bool)> extensionHandler, std::function<void (RestReply *, QString, int, RestReply::ErrorType)> errorHandler, std::function<QString (ET *, int)> failureTransformer)
+void Simple<T>::extend(RestClient *client, std::function<void (T *, bool)> extensionHandler, std::function<void (RestReply *, QString, int, RestReply::ErrorType)> errorHandler, std::function<QString (ET *, int)> failureTransformer)
 {
 	if(cExt)
 		extensionHandler(cExt, false);

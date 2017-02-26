@@ -21,13 +21,13 @@ PUBLIC_HEADERS += \
 	restclass.h \
 	restclient.h \
 	restreply.h \
-	simple.h
+	simple.h \
+	standardpaging.h
 
 PRIVATE_HEADERS += \
 	restclass_p.h \
 	restclient_p.h \
-	restreply_p.h \
-	standardpaging_p.h
+	restreply_p.h
 
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 

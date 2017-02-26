@@ -1,5 +1,5 @@
 #include <QtJsonSerializer/QJsonSerializer>
-#include "standardpaging_p.h"
+#include "standardpaging.h"
 using namespace QtRestClient;
 
 namespace QtRestClient {

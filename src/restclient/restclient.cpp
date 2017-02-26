@@ -1,7 +1,7 @@
 #include "restclient.h"
 #include "restclient_p.h"
 #include "restclass.h"
-#include "standardpaging_p.h"
+#include "standardpaging.h"
 #include <QtCore/QBitArray>
 #include <QtCore/QCoreApplication>
 #include <QtCore/QRegularExpression>

@@ -549,7 +549,7 @@ void RestReplyTest::testSimpleExtension()
 
 	bool called = false;
 	//extend first try
-	simple->onExtended<QObject>(client, [&](JphPost *data, bool networkLoaded){
+	simple->extend<QObject>(client, [&](JphPost *data, bool networkLoaded){
 		called = true;
 		QVERIFY(networkLoaded);
 		QVERIFY(full->equals(data));
@@ -566,7 +566,7 @@ void RestReplyTest::testSimpleExtension()
 
 	//test already loaded extension
 	called = false;
-	simple->onExtended(client, [&](JphPost *data, bool networkLoaded){
+	simple->extend(client, [&](JphPost *data, bool networkLoaded){
 		called = true;
 		QVERIFY(!networkLoaded);
 		QVERIFY(full->equals(data));
