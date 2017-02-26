@@ -16,7 +16,7 @@ target.path = $$[QT_INSTALL_EXAMPLES]/restclient/SimpleRestClientApp
 INSTALLS += target
 
 #not found by linker?
-unix {
+unix:!mac {
 	LIBS += -L$$[QT_INSTALL_LIBS] -licudata
 	LIBS += -L$$[QT_INSTALL_LIBS] -licui18n
 	LIBS += -L$$[QT_INSTALL_LIBS] -licuuc

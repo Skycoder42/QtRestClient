@@ -2,6 +2,8 @@
 #define QRESTCLIENT_H
 
 #include <QtCore/qglobal.h>
+#include <QtCore/qhash.h>
+#include <QtCore/qbytearray.h>
 
 #if defined(QT_BUILD_RESTCLIENT_LIB)
 #	define Q_RESTCLIENT_EXPORT Q_DECL_EXPORT

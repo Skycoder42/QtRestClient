@@ -161,7 +161,7 @@ GenericRestReply<DataClassType, ErrorClassType> *GenericRestReply<DataClassType,
 	});
 	this->onError(handler);
 	this->onSerializeException([=](RestReply *rep, QJsonSerializerException exception){
-		handler(rep, exception.what(), 0, DeserializationError);
+		handler(rep, QString::fromUtf8(exception.what()), 0, DeserializationError);
 	});
 	return this;
 }
@@ -248,7 +248,7 @@ GenericRestReply<QList<DataClassType>, ErrorClassType> *GenericRestReply<QList<D
 	});
 	this->onError(handler);
 	this->onSerializeException([=](RestReply *rep, QJsonSerializerException exception){
-		handler(rep, exception.what(), 0, DeserializationError);
+		handler(rep, QString::fromUtf8(exception.what()), 0, DeserializationError);
 	});
 	return this;
 }
@@ -338,7 +338,7 @@ GenericRestReply<Paging<DataClassType>, ErrorClassType> *GenericRestReply<Paging
 	});
 	this->onError(handler);
 	this->onSerializeException([=](RestReply *rep, QJsonSerializerException exception){
-		handler(rep, exception.what(), 0, DeserializationError);
+		handler(rep, QString::fromUtf8(exception.what()), 0, DeserializationError);
 	});
 	return this;
 }

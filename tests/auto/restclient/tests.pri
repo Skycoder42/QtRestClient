@@ -1,4 +1,4 @@
-QT += network qml jsonserializer restclient
+QT += core network qml jsonserializer restclient
 
 HEADERS += \
 	$$PWD/tst_global.h \
