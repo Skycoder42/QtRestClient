@@ -79,7 +79,7 @@
       <item>
        <widget class="QTabWidget" name="tabWidget">
         <property name="currentIndex">
-         <number>2</number>
+         <number>0</number>
         </property>
         <property name="movable">
          <bool>true</bool>
@@ -322,7 +322,7 @@
             <item row="2" column="0">
              <widget class="QLabel" name="networkErrorLabel">
               <property name="text">
-               <string>Network Error:</string>
+               <string>Network error:</string>
               </property>
              </widget>
             </item>
@@ -407,7 +407,7 @@
      <x>0</x>
      <y>0</y>
      <width>697</width>
-     <height>20</height>
+     <height>23</height>
     </rect>
    </property>
   </widget>
