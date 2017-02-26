@@ -51,14 +51,14 @@ public:
 
 	QNetworkReply *networkReply() const;
 
-public slots:
+public Q_SLOTS:
 	void abort();
 	void retry();
 	void retryAfter(int mSecs);
 
 	void setAutoDelete(bool autoDelete);
 
-signals:
+Q_SIGNALS:
 	void succeeded(int httpStatus, const QJsonValue &reply, QPrivateSignal);
 	void failed(int httpStatus, const QJsonValue &reason, QPrivateSignal);
 	void error(const QString &errorString, int error, ErrorType errorType, QPrivateSignal);

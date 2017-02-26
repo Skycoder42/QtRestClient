@@ -54,7 +54,7 @@ public:
 	static RestClass *apiRootClass(const QString &name);
 	static RestClass *createApiClass(const QString &name, const QString &path, QObject *parent = nullptr);
 
-public slots:
+public Q_SLOTS:
 	void setBaseUrl(QUrl baseUrl);
 	void setApiVersion(QVersionNumber apiVersion);
 	void setGlobalHeaders(HeaderHash globalHeaders);
@@ -67,7 +67,7 @@ public slots:
 	void addGlobalParameter(QString name, QString value);
 	void removeGlobalParameter(QString name);
 
-signals:
+Q_SIGNALS:
 	void baseUrlChanged(QUrl baseUrl, QPrivateSignal);
 	void apiVersionChanged(QVersionNumber apiVersion, QPrivateSignal);
 	void globalHeadersChanged(HeaderHash globalHeaders, QPrivateSignal);

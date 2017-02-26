@@ -73,6 +73,8 @@ void MainWindow::on_pushButton_clicked()
 	QJsonDocument body;
 	if(!ui->bodyJsonEdit->toPlainText().isEmpty())
 		body = QJsonDocument::fromJson(ui->bodyJsonEdit->toPlainText().toUtf8(), &error);
+	else
+		error.error = QJsonParseError::NoError;
 	RestReply *reply;
 	if(error.error != QJsonParseError::NoError) {
 		ui->codeLineEdit->setText(QString::number(error.error));

@@ -27,11 +27,11 @@ public:
 
 	void connectReply(QNetworkReply *reply);
 
-public slots:
+public Q_SLOTS:
 	void replyFinished();
 	void handleSslErrors(const QList<QSslError> &errors);
 
-private slots:
+private Q_SLOTS:
 	void retryReply();
 
 private:

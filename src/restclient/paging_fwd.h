@@ -19,6 +19,7 @@ template<typename T>
 class Paging
 {
 	static_assert(std::is_base_of<QObject, T>::value, "T must inherit QObject!");
+
 public:
 	Paging();
 	Paging(IPaging *iPaging, const QList<T*> &data, RestClient *client);
@@ -56,7 +57,6 @@ public:
 				 int to = -1,
 				 int from = 0);
 
-public slots:
 	void deleteAllItems();
 
 private:
