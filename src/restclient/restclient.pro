@@ -2,15 +2,6 @@ TARGET = QtRestClient
 
 QT = core network jsonserializer
 
-win32 {
-	QMAKE_TARGET_COMPANY = "Skycoder42"
-	QMAKE_TARGET_PRODUCT = $$TARGET
-	QMAKE_TARGET_DESCRIPTION = $$QMAKE_TARGET_PRODUCT
-	QMAKE_TARGET_COPYRIGHT = "Felix Barz"
-} else:mac {
-	QMAKE_TARGET_BUNDLE_PREFIX = "de.skycoder42."
-}
-
 PUBLIC_HEADERS += \
 	qrestclient_global.h \
 	genericrestreply.h \
@@ -39,3 +30,11 @@ SOURCES += \
 	standardpaging.cpp
 
 load(qt_module)
+
+win32 {
+	QMAKE_TARGET_COMPANY = "Skycoder42"
+	QMAKE_TARGET_PRODUCT = "QtRestClient"
+	QMAKE_TARGET_COPYRIGHT = "Felix Barz"
+} else:mac {
+	QMAKE_TARGET_BUNDLE_PREFIX = "de.skycoder42."
+}
