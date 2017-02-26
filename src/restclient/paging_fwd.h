@@ -1,13 +1,13 @@
 #ifndef PAGING_FWD_H
 #define PAGING_FWD_H
 
-#include "qtrestclient_global.h"
+#include "QtRestClient/qrestclient_global.h"
 
-#include "ipaging.h"
-#include "restclient.h"
-#include "restreply.h"
+#include "QtRestClient/ipaging.h"
+#include "QtRestClient/restclient.h"
+#include "QtRestClient/restreply.h"
 
-#include <QJsonSerializerException>
+#include <QtJsonSerializer/qjsonserializerexception.h>
 #include <functional>
 
 namespace QtRestClient {

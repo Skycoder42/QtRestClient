@@ -1,5 +1,5 @@
-#include <QJsonSerializer>
-#include "standardpaging.h"
+#include <QtJsonSerializer/QJsonSerializer>
+#include "standardpaging_p.h"
 using namespace QtRestClient;
 
 namespace QtRestClient {
@@ -71,12 +71,12 @@ QUrl StandardPaging::previous() const
 
 IPaging *StandardPagingFactory::createPaging(const QJsonObject &data) const
 {
-	if(!data["total"].isDouble() ||
-	   !data["offset"].isDouble() ||
-	   !data["limit"].isDouble() ||
-	   !validateUrl(data["previous"]) ||
-	   !validateUrl(data["next"]) ||
-	   !data["items"].isArray())
+	if(!data[QLatin1String("total")].isDouble() ||
+	   !data[QLatin1String("offset")].isDouble() ||
+	   !data[QLatin1String("limit")].isDouble() ||
+	   !validateUrl(data[QLatin1String("previous")]) ||
+	   !validateUrl(data[QLatin1String("next")]) ||
+	   !data[QLatin1String("items")].isArray())
 		throw QJsonDeserializationException("Given JSON is not a default paging object!");
 	return new StandardPaging(data);
 }
@@ -94,10 +94,10 @@ bool StandardPagingFactory::validateUrl(const QJsonValue &value)
 // ------------- Private Implementation -------------
 
 StandardPagingPrivate::StandardPagingPrivate(const QJsonObject &object) :
-	total(object["total"].toInt()),
-	offset(object["offset"].toInt()),
-	limit(object["limit"].toInt()),
-	prev(object["previous"].isNull() ? QUrl() : object["previous"].toString()),
-	next(object["next"].isNull() ? QUrl() : object["next"].toString()),
-	items(object["items"].toArray())
+	total(object[QLatin1String("total")].toInt()),
+	offset(object[QLatin1String("offset")].toInt()),
+	limit(object[QLatin1String("limit")].toInt()),
+	prev(object[QLatin1String("previous")].isNull() ? QUrl() : object[QLatin1String("previous")].toString()),
+	next(object[QLatin1String("next")].isNull() ? QUrl() : object[QLatin1String("next")].toString()),
+	items(object[QLatin1String("items")].toArray())
 {}

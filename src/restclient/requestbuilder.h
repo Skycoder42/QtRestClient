@@ -1,21 +1,21 @@
 #ifndef REQUESTBUILDER_H
 #define REQUESTBUILDER_H
 
-#include "qtrestclient_global.h"
+#include "QtRestClient/qrestclient_global.h"
 
-#include <QJsonArray>
-#include <QJsonObject>
-#include <QNetworkReply>
-#include <QNetworkRequest>
-#include <QUrl>
-#include <QUrlQuery>
-#include <QVersionNumber>
-#include <QSharedDataPointer>
+#include <QtCore/qjsonarray.h>
+#include <QtCore/qjsonobject.h>
+#include <QtNetwork/qnetworkreply.h>
+#include <QtNetwork/qnetworkrequest.h>
+#include <QtCore/qurl.h>
+#include <QtCore/qurlquery.h>
+#include <QtCore/qversionnumber.h>
+#include <QtCore/qshareddata.h>
 
 namespace QtRestClient {
 
 struct RequestBuilderPrivate;
-class QTRESTCLIENTSHARED_EXPORT RequestBuilder
+class Q_RESTCLIENT_EXPORT RequestBuilder
 {
 public:
 	RequestBuilder(QNetworkAccessManager *nam, QUrl baseUrl);

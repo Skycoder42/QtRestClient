@@ -1,12 +1,12 @@
 #ifndef QRESTCLIENT_P_H
 #define QRESTCLIENT_P_H
 
-#include <QJsonSerializer>
+#include <QtJsonSerializer/QJsonSerializer>
 #include "restclient.h"
 
 namespace QtRestClient {
 
-class RestClientPrivate
+class Q_RESTCLIENT_EXPORT RestClientPrivate
 {
 	friend class RestClient;
 

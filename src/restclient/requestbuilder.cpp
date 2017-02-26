@@ -1,8 +1,8 @@
 #include "requestbuilder.h"
 #include "restreply_p.h"
 
-#include <QBuffer>
-#include <QJsonDocument>
+#include <QtCore/QBuffer>
+#include <QtCore/QJsonDocument>
 using namespace QtRestClient;
 
 namespace QtRestClient {

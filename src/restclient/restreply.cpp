@@ -1,9 +1,9 @@
 #include "restreply.h"
 #include "restreply_p.h"
 
-#include <QBuffer>
-#include <QJsonDocument>
-#include <QTimer>
+#include <QtCore/QBuffer>
+#include <QtCore/QJsonDocument>
+#include <QtCore/QTimer>
 
 using namespace QtRestClient;
 

@@ -1,14 +1,15 @@
 #ifndef STANDARDPAGING_H
 #define STANDARDPAGING_H
 
-#include "qtrestclient_global.h"
+#include "QtRestClient/qrestclient_global.h"
+#include "QtRestClient/ipaging.h"
 
-#include "ipaging.h"
+#include <QtCore/qscopedpointer.h>
 
 namespace QtRestClient {
 
 class StandardPagingPrivate;
-class QTRESTCLIENTSHARED_EXPORT StandardPaging : public IPaging
+class Q_RESTCLIENT_EXPORT StandardPaging : public IPaging
 {
 public:
 	StandardPaging(const QJsonObject &object);
@@ -27,7 +28,7 @@ private:
 	QScopedPointer<StandardPagingPrivate> d_ptr;
 };
 
-class QTRESTCLIENTSHARED_EXPORT StandardPagingFactory : public PagingFactory
+class Q_RESTCLIENT_EXPORT StandardPagingFactory : public PagingFactory
 {
 public:
 	IPaging *createPaging(const QJsonObject &data) const override;

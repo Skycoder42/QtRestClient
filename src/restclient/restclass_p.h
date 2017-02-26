@@ -5,7 +5,7 @@
 
 namespace QtRestClient {
 
-class RestClassPrivate
+class Q_RESTCLIENT_EXPORT RestClassPrivate
 {
 public:
 	RestClient *client;

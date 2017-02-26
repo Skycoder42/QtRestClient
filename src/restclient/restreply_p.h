@@ -3,11 +3,11 @@
 
 #include "restreply.h"
 
-#include <QPointer>
+#include <QtCore/QPointer>
 
 namespace QtRestClient {
 
-class RestReplyPrivate : public QObject
+class Q_RESTCLIENT_EXPORT RestReplyPrivate : public QObject
 {
 	Q_OBJECT
 

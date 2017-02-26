@@ -1,15 +1,15 @@
 #ifndef IPAGING_H
 #define IPAGING_H
 
-#include "qtrestclient_global.h"
+#include "QtRestClient/qrestclient_global.h"
 
-#include <QJsonArray>
-#include <QJsonObject>
-#include <QUrl>
+#include <QtCore/qjsonarray.h>
+#include <QtCore/qjsonobject.h>
+#include <QtCore/qurl.h>
 
 namespace QtRestClient {
 
-class QTRESTCLIENTSHARED_EXPORT IPaging
+class Q_RESTCLIENT_EXPORT IPaging
 {
 public:
 	virtual inline ~IPaging() {}
@@ -25,7 +25,7 @@ public:
 	virtual QUrl previous() const = 0;
 };
 
-class QTRESTCLIENTSHARED_EXPORT PagingFactory
+class Q_RESTCLIENT_EXPORT PagingFactory
 {
 public:
 	virtual inline ~PagingFactory() {}

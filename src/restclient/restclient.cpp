@@ -1,11 +1,11 @@
 #include "restclient.h"
 #include "restclient_p.h"
 #include "restclass.h"
-#include "standardpaging.h"
-#include <QBitArray>
-#include <QCoreApplication>
-#include <QRegularExpression>
-#include <QUuid>
+#include "standardpaging_p.h"
+#include <QtCore/QBitArray>
+#include <QtCore/QCoreApplication>
+#include <QtCore/QRegularExpression>
+#include <QtCore/QUuid>
 using namespace QtRestClient;
 
 #define d d_ptr

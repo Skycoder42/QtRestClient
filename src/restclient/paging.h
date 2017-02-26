@@ -1,8 +1,8 @@
 #ifndef PAGING_H
 #define PAGING_H
 
-#include "paging_fwd.h"
-#include "genericrestreply.h"
+#include "QtRestClient/paging_fwd.h"
+#include "QtRestClient/genericrestreply.h"
 
 // ------------- Generic Implementation -------------s
 

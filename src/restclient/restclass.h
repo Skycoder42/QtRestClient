@@ -1,18 +1,18 @@
 #ifndef RESTCLASS_H
 #define RESTCLASS_H
 
-#include "qtrestclient_global.h"
-#include "requestbuilder.h"
-#include "restreply.h"
-#include "genericrestreply.h"
-#include "restclient.h"
+#include "QtRestClient/qrestclient_global.h"
+#include "QtRestClient/requestbuilder.h"
+#include "QtRestClient/restreply.h"
+#include "QtRestClient/genericrestreply.h"
+#include "QtRestClient/restclient.h"
 
-#include <QObject>
+#include <QtCore/qobject.h>
 
 namespace QtRestClient {
 
 class RestClassPrivate;
-class QTRESTCLIENTSHARED_EXPORT RestClass : public QObject
+class Q_RESTCLIENT_EXPORT RestClass : public QObject
 {
 	Q_OBJECT
 	friend class RestClient;

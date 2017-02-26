@@ -1,14 +1,14 @@
 #ifndef RESTCLIENT_H
 #define RESTCLIENT_H
 
-#include "qtrestclient_global.h"
-#include "requestbuilder.h"
+#include "QtRestClient/qrestclient_global.h"
+#include "QtRestClient/requestbuilder.h"
 
-#include <QNetworkRequest>
-#include <QObject>
-#include <QUrl>
-#include <QUrlQuery>
-#include <QVersionNumber>
+#include <QtNetwork/qnetworkrequest.h>
+#include <QtCore/qobject.h>
+#include <QtCore/qurl.h>
+#include <QtCore/qurlquery.h>
+#include <QtCore/qversionnumber.h>
 class QJsonSerializer;
 
 namespace QtRestClient {
@@ -17,7 +17,7 @@ class RestClass;
 class PagingFactory;
 
 class RestClientPrivate;
-class QTRESTCLIENTSHARED_EXPORT RestClient : public QObject
+class Q_RESTCLIENT_EXPORT RestClient : public QObject
 {
 	Q_OBJECT
 	friend class RestClientPrivate;

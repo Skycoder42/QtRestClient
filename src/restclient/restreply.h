@@ -1,17 +1,17 @@
 #ifndef RESTREPLY_H
 #define RESTREPLY_H
 
-#include "qtrestclient_global.h"
+#include "QtRestClient/qrestclient_global.h"
 
-#include <QJsonArray>
-#include <QJsonObject>
-#include <QNetworkReply>
+#include <QtCore/qjsonarray.h>
+#include <QtCore/qjsonobject.h>
+#include <QtNetwork/qnetworkreply.h>
 #include <functional>
 
 namespace QtRestClient {
 
 class RestReplyPrivate;
-class QTRESTCLIENTSHARED_EXPORT RestReply : public QObject
+class Q_RESTCLIENT_EXPORT RestReply : public QObject
 {
 	Q_OBJECT
 	friend class RestReplyPrivate;

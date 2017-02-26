@@ -1,12 +1,11 @@
 #ifndef SIMPLEBASE_H
 #define SIMPLEBASE_H
 
-#include "qtrestclient_global.h"
+#include "QtRestClient/qrestclient_global.h"
+#include "QtRestClient/genericrestreply.h"
+#include "QtRestClient/restclass.h"
 
-#include "genericrestreply.h"
-#include "restclass.h"
-
-#include <QPointer>
+#include <QtCore/qpointer.h>
 #include <functional>
 
 namespace QtRestClient {

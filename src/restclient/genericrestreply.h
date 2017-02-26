@@ -1,11 +1,12 @@
 #ifndef GENERICRESTREPLY_H
 #define GENERICRESTREPLY_H
 
-#include <QJsonSerializer>
-#include "restclient.h"
-#include "restreply.h"
-#include "paging_fwd.h"
+#include "QtRestClient/qrestclient_global.h"
+#include "QtRestClient/restclient.h"
+#include "QtRestClient/restreply.h"
+#include "QtRestClient/paging_fwd.h"
 
+#include <QtJsonSerializer/qjsonserializer.h>
 #include <type_traits>
 
 namespace QtRestClient {
@@ -90,7 +91,7 @@ private:
 };
 
 //include after delecation, to allow foreward declared types
-#include "paging.h"
+#include "QtRestClient/paging.h"
 
 // ------------- Implementation Single Element -------------
 
