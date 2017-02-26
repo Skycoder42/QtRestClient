@@ -1,8 +1,1 @@
-TEMPLATE = subdirs
-
-CONFIG += ordered
-
-SUBDIRS += \
-    QtRestClient \
-	SimpleRestClientApp \
-    Tests
+load(qt_parts)
