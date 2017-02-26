@@ -7,6 +7,7 @@
 #include "restclient.h"
 #include "restreply.h"
 
+#include <QJsonSerializerException>
 #include <functional>
 
 namespace QtRestClient {
@@ -51,7 +52,7 @@ public:
 	void iterate(std::function<bool(Paging<T>*, T*, int)> iterator,
 				 std::function<void(RestReply*, int, EO*)> failureHandler,
 				 std::function<void(RestReply*, QString, int, RestReply::ErrorType)> errorHandler = {},
-				 std::function<void(RestReply*, SerializerException &)> exceptionHandler = {},
+				 std::function<void(RestReply*, QJsonSerializerException &)> exceptionHandler = {},
 				 int to = -1,
 				 int from = 0);
 

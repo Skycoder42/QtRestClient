@@ -133,7 +133,7 @@ void Paging<T>::iterate(std::function<bool(Paging<T>*, T*, int)> iterator, std::
 
 template<typename T>
 template<typename EO>
-void Paging<T>::iterate(std::function<bool(Paging<T>*, T*, int)> iterator, std::function<void(RestReply *, int, EO*)> failureHandler, std::function<void(RestReply*, QString, int, RestReply::ErrorType)> errorHandler, std::function<void(RestReply *, SerializerException &)> exceptionHandler, int to, int from)
+void Paging<T>::iterate(std::function<bool(Paging<T>*, T*, int)> iterator, std::function<void(RestReply *, int, EO*)> failureHandler, std::function<void(RestReply*, QString, int, RestReply::ErrorType)> errorHandler, std::function<void(RestReply *, QJsonSerializerException &)> exceptionHandler, int to, int from)
 {
 	Q_ASSERT(from >= iPaging->offset());
 

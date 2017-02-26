@@ -77,7 +77,7 @@ IPaging *StandardPagingFactory::createPaging(const QJsonObject &data) const
 	   !validateUrl(data["previous"]) ||
 	   !validateUrl(data["next"]) ||
 	   !data["items"].isArray())
-		throw SerializerException("Given JSON is not a default paging object!", true);
+		throw QJsonDeserializationException("Given JSON is not a default paging object!");
 	return new StandardPaging(data);
 }
 
