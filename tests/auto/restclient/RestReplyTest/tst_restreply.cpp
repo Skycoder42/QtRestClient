@@ -570,6 +570,9 @@ void RestReplyTest::testSimpleExtension()
 		called = true;
 		QVERIFY(!networkLoaded);
 		QVERIFY(full->equals(data));
+	}, [&](QtRestClient::RestReply *, QString error, int, QtRestClient::RestReply::ErrorType){
+		called = true;
+		QFAIL(qUtf8Printable(error));
 	});
 	QVERIFY(called);
 
