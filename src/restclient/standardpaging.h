@@ -31,7 +31,7 @@ private:
 class Q_RESTCLIENT_EXPORT StandardPagingFactory : public PagingFactory
 {
 public:
-	IPaging *createPaging(const QJsonObject &data) const override;
+	IPaging *createPaging(QJsonSerializer *serializer, const QJsonObject &data) const override;
 
 private:
 	static bool validateUrl(const QJsonValue &value);

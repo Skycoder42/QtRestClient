@@ -6,6 +6,7 @@
 #include <QtCore/qjsonarray.h>
 #include <QtCore/qjsonobject.h>
 #include <QtCore/qurl.h>
+class QJsonSerializer;
 
 namespace QtRestClient {
 
@@ -30,7 +31,7 @@ class Q_RESTCLIENT_EXPORT PagingFactory
 public:
 	virtual inline ~PagingFactory() {}
 
-	virtual IPaging *createPaging(const QJsonObject &data) const = 0;
+	virtual IPaging *createPaging(QJsonSerializer *serializer, const QJsonObject &data) const = 0;
 };
 
 }

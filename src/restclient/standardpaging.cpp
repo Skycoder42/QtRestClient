@@ -69,7 +69,7 @@ QUrl StandardPaging::previous() const
 
 // ------------- Factory Implementation -------------
 
-IPaging *StandardPagingFactory::createPaging(const QJsonObject &data) const
+IPaging *StandardPagingFactory::createPaging(QJsonSerializer *, const QJsonObject &data) const
 {
 	if(!data[QLatin1String("total")].isDouble() ||
 	   !data[QLatin1String("offset")].isDouble() ||
