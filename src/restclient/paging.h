@@ -3,7 +3,6 @@
 
 #include "QtRestClient/paging_fwd.h"
 #include "QtRestClient/genericrestreply.h"
-#include "QtRestClient/metadelete.h"
 
 // ------------- Generic Implementation -------------s
 
@@ -163,7 +162,7 @@ template<typename T>
 void Paging<T>::deleteAllItems()
 {
 	foreach(auto obj, data)
-		MetaDelete<T>::deleteLater(obj);
+		MetaComponent<T>::deleteLater(obj);
 }
 
 template<typename T>

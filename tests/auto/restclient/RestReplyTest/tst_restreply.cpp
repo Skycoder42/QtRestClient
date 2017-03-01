@@ -549,52 +549,52 @@ void RestReplyTest::testSimpleExtension()
 	QVERIFY(!simple->currentExtended());
 
 	bool called = false;
-//	//extend first try
-//	simple->extend<QObject>(client, [&](JphPost *data, bool networkLoaded){
-//		called = true;
-//		QVERIFY(networkLoaded);
-//		QVERIFY(full->equals(data));
-//		emit test_unlock();
-//	}, [&](QtRestClient::RestReply *, QString error, int, QtRestClient::RestReply::ErrorType){
-//		called = true;
-//		QFAIL(qUtf8Printable(error));
-//	});
+	//extend first try
+	simple->extend(client, [&](JphPost *data, bool networkLoaded){
+		called = true;
+		QVERIFY(networkLoaded);
+		QVERIFY(full->equals(data));
+		emit test_unlock();
+	}, [&](QtRestClient::RestReply *, QString error, int, QtRestClient::RestReply::ErrorType){
+		called = true;
+		QFAIL(qUtf8Printable(error));
+	});
 
-//	QSignalSpy completedSpy(this, &RestReplyTest::test_unlock);
-//	QVERIFY(completedSpy.wait());
-//	QVERIFY(called);
-//	QVERIFY(full->equals(simple->currentExtended()));
+	QSignalSpy completedSpy(this, &RestReplyTest::test_unlock);
+	QVERIFY(completedSpy.wait());
+	QVERIFY(called);
+	QVERIFY(full->equals(simple->currentExtended()));
 
-//	//test already loaded extension
-//	called = false;
-//	simple->extend(client, [&](JphPost *data, bool networkLoaded){
-//		called = true;
-//		QVERIFY(!networkLoaded);
-//		QVERIFY(full->equals(data));
-//	});
-//	QVERIFY(called);
+	//test already loaded extension
+	called = false;
+	simple->extend(client, [&](JphPost *data, bool networkLoaded){
+		called = true;
+		QVERIFY(!networkLoaded);
+		QVERIFY(full->equals(data));
+	});
+	QVERIFY(called);
 
-//	delete simple->currentExtended();
-//	QVERIFY(!simple->currentExtended());
+	delete simple->currentExtended();
+	QVERIFY(!simple->currentExtended());
 
-//	//network load
-//	called = false;
-//	auto reply = simple->extend(client);
-//	reply->enableAutoDelete();
-//	reply->onSucceeded([&](QtRestClient::RestReply *rep, int code, JphPost *data){
-//		called = true;
-//		QCOMPARE(rep, reply);
-//		QCOMPARE(code, 200);
-//		QVERIFY(full->equals(data));
-//		data->deleteLater();
-//	});
-//	reply->onAllErrors([&](QtRestClient::RestReply *, QString error, int, QtRestClient::RestReply::ErrorType){
-//		called = true;
-//		QFAIL(qUtf8Printable(error));
-//	});
+	//network load
+	called = false;
+	auto reply = simple->extend(client);
+	reply->enableAutoDelete();
+	reply->onSucceeded([&](QtRestClient::RestReply *rep, int code, JphPost *data){
+		called = true;
+		QCOMPARE(rep, reply);
+		QCOMPARE(code, 200);
+		QVERIFY(full->equals(data));
+		data->deleteLater();
+	});
+	reply->onAllErrors([&](QtRestClient::RestReply *, QString error, int, QtRestClient::RestReply::ErrorType){
+		called = true;
+		QFAIL(qUtf8Printable(error));
+	});
 
-//	QSignalSpy deleteSpy(reply, &QtRestClient::RestReply::destroyed);
-//	QVERIFY(deleteSpy.wait());
+	QSignalSpy deleteSpy(reply, &QtRestClient::RestReply::destroyed);
+	QVERIFY(deleteSpy.wait());
 	QVERIFY(called);
 	QVERIFY(full->equals(simple->currentExtended()));
 

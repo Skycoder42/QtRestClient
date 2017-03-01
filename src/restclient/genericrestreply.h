@@ -5,7 +5,7 @@
 #include "QtRestClient/restclient.h"
 #include "QtRestClient/restreply.h"
 #include "QtRestClient/paging_fwd.h"
-#include "QtRestClient/metadelete.h"
+#include "QtRestClient/metacomponent.h"
 
 #include <QtJsonSerializer/qjsonserializer.h>
 #include <type_traits>
@@ -15,9 +15,8 @@ namespace QtRestClient {
 template <typename DataClassType, typename ErrorClassType = QObject*>
 class GenericRestReply : public RestReply
 {
-	//TODO type assert
-	//static_assert(std::is_base_of<QObject, DataClassType>::value, "DataClassType must inherit QObject!");
-	//static_assert(std::is_base_of<QObject, ErrorClassType>::value, "ErrorClassType must inherit QObject!");
+	static_assert(MetaComponent<DataClassType>::is_meta::value, "DataClassType must inherit QObject or have Q_GADGET!");
+	static_assert(MetaComponent<ErrorClassType>::is_meta::value, "DataClassType must inherit QObject or have Q_GADGET!");
 public:
 	GenericRestReply(QNetworkReply *networkReply,
 					 RestClient *client,
@@ -41,9 +40,8 @@ private:
 template <typename DataClassType, typename ErrorClassType>
 class GenericRestReply<QList<DataClassType>, ErrorClassType> : public RestReply
 {
-	//TODO type assert
-	//static_assert(std::is_base_of<QObject, DataClassType>::value, "DataClassType must inherit QObject!");
-	//static_assert(std::is_base_of<QObject, ErrorClassType>::value, "ErrorClassType must inherit QObject!");
+	static_assert(MetaComponent<DataClassType>::is_meta::value, "DataClassType must inherit QObject or have Q_GADGET!");
+	static_assert(MetaComponent<ErrorClassType>::is_meta::value, "DataClassType must inherit QObject or have Q_GADGET!");
 public:
 	GenericRestReply(QNetworkReply *networkReply,
 					 RestClient *client,
@@ -67,9 +65,8 @@ private:
 template <typename DataClassType, typename ErrorClassType>
 class GenericRestReply<Paging<DataClassType>, ErrorClassType> : public RestReply
 {
-	//TODO type assert
-	//static_assert(std::is_base_of<QObject, DataClassType>::value, "DataClassType must inherit QObject!");
-	//static_assert(std::is_base_of<QObject, ErrorClassType>::value, "ErrorClassType must inherit QObject!");
+	static_assert(MetaComponent<DataClassType>::is_meta::value, "DataClassType must inherit QObject or have Q_GADGET!");
+	static_assert(MetaComponent<ErrorClassType>::is_meta::value, "DataClassType must inherit QObject or have Q_GADGET!");
 public:
 	GenericRestReply(QNetworkReply *networkReply,
 					 RestClient *client,
@@ -161,7 +158,7 @@ GenericRestReply<DataClassType, ErrorClassType> *GenericRestReply<DataClassType,
 			handler(rep, failureTransformer(obj, code), code, FailureError);
 		else
 			handler(rep, QString(), code, FailureError);
-		MetaDelete<ErrorClassType>::deleteLater(obj);
+		MetaComponent<ErrorClassType>::deleteLater(obj);
 	});
 	this->onError(handler);
 	this->onSerializeException([=](RestReply *rep, QJsonSerializerException exception){
@@ -248,7 +245,7 @@ GenericRestReply<QList<DataClassType>, ErrorClassType> *GenericRestReply<QList<D
 			handler(rep, failureTransformer(obj, code), code, FailureError);
 		else
 			handler(rep, QString(), code, FailureError);
-		MetaDelete<ErrorClassType>::deleteLater(obj);
+		MetaComponent<ErrorClassType>::deleteLater(obj);
 	});
 	this->onError(handler);
 	this->onSerializeException([=](RestReply *rep, QJsonSerializerException exception){
@@ -338,7 +335,7 @@ GenericRestReply<Paging<DataClassType>, ErrorClassType> *GenericRestReply<Paging
 			handler(rep, failureTransformer(obj, code), code, FailureError);
 		else
 			handler(rep, QString(), code, FailureError);
-		MetaDelete<ErrorClassType>::deleteLater(obj);
+		MetaComponent<ErrorClassType>::deleteLater(obj);
 	});
 	this->onError(handler);
 	this->onSerializeException([=](RestReply *rep, QJsonSerializerException exception){

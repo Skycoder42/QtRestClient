@@ -5,7 +5,7 @@
 #include <QtRestClient>
 #include <jphpost.h>
 
-class SimpleJphPost : public QtRestClient::Simple<JphPost>
+class SimpleJphPost : public QtRestClient::Simple<JphPost*>
 {
 	Q_OBJECT
 

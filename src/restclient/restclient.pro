@@ -21,7 +21,7 @@ PRIVATE_HEADERS += \
 	restreply_p.h
 
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS \
-    metadelete.h
+    metacomponent.h
 
 SOURCES += \
 	requestbuilder.cpp \

@@ -6,6 +6,7 @@
 #include "QtRestClient/ipaging.h"
 #include "QtRestClient/restclient.h"
 #include "QtRestClient/restreply.h"
+#include "QtRestClient/metacomponent.h"
 
 #include <QtJsonSerializer/qjsonserializerexception.h>
 #include <functional>
@@ -18,7 +19,8 @@ class GenericRestReply;
 template<typename T>
 class Paging
 {
-	//TODO type assert
+	static_assert(MetaComponent<T>::is_meta::value, "T must inherit QObject or have Q_GADGET!");
+	static_assert(MetaComponent<T>::is_meta::value, "T must inherit QObject or have Q_GADGET!");
 public:
 	Paging();
 	Paging(IPaging *iPaging, const QList<T> &data, RestClient *client);
