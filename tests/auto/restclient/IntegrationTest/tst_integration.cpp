@@ -70,13 +70,13 @@ void IntegrationTest::testJsonChain()
 
 void IntegrationTest::testQObjectChain()
 {
-	QObject *object = new JphPost(2, 42, "baum", "baum", this);
+	auto object = new JphPost(2, 42, "baum", "baum", this);
 
 	auto postClass = client->createClass("posts", client);
 
 	bool called = false;
 
-	auto reply = postClass->put<JphPost>("2", object);
+	auto reply = postClass->put<JphPost*>("2", object);
 	reply->enableAutoDelete();
 	reply->onSucceeded([&](RestReply *rep, int code, JphPost *data){
 		called = true;
@@ -104,7 +104,7 @@ void IntegrationTest::testQObjectListChain()
 
 	bool called = false;
 
-	auto reply = postClass->get<QList<JphPost>>();
+	auto reply = postClass->get<QList<JphPost*>>();
 	reply->enableAutoDelete();
 	reply->onSucceeded([&](RestReply *rep, int code, QList<JphPost*> data){
 		called = true;
@@ -131,9 +131,9 @@ void IntegrationTest::testQObjectPagingChain()
 
 	int count = 0;
 
-	auto reply = pagingClass->get<Paging<JphPost>>("0");
+	auto reply = pagingClass->get<Paging<JphPost*>>("0");
 	reply->enableAutoDelete();
-	reply->iterate([&](Paging<JphPost> *, JphPost* data, int index){
+	reply->iterate([&](Paging<JphPost*> *, JphPost* data, int index){
 		auto ok = false;
 		[&](){
 			QCOMPARE(index, count++);

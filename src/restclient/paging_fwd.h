@@ -18,40 +18,39 @@ class GenericRestReply;
 template<typename T>
 class Paging
 {
-	static_assert(std::is_base_of<QObject, T>::value, "T must inherit QObject!");
-
+	//TODO type assert
 public:
 	Paging();
-	Paging(IPaging *iPaging, const QList<T*> &data, RestClient *client);
+	Paging(IPaging *iPaging, const QList<T> &data, RestClient *client);
 
 	bool isValid() const;
 
-	QList<T*> items() const;
+	QList<T> items() const;
 
 	int total() const;
 	int offset() const;
 	int limit() const;
 
 	bool hasNext() const;
-	template<typename EO = QObject>
+	template<typename EO = QObject*>
 	GenericRestReply<Paging<T>, EO> *next() const;
 	QUrl nextUrl() const;
 
 	bool hasPrevious() const;
-	template<typename EO = QObject>
+	template<typename EO = QObject*>
 	GenericRestReply<Paging<T>, EO> *previous() const;
 	QUrl previousUrl() const;
 
-	void iterate(std::function<bool(Paging<T>*, T*, int)> iterator, int to = -1, int from = 0);
-	template<typename EO = QObject>
-	void iterate(std::function<bool(Paging<T>*, T*, int)> iterator,
+	void iterate(std::function<bool(Paging<T>*, T, int)> iterator, int to = -1, int from = 0);
+	template<typename EO = QObject*>
+	void iterate(std::function<bool(Paging<T>*, T, int)> iterator,
 				 std::function<void(RestReply*, QString, int, RestReply::ErrorType)> errorHandler,
-				 std::function<QString(EO*, int)> failureTransformer = {},
+				 std::function<QString(EO, int)> failureTransformer = {},
 				 int to = -1,
 				 int from = 0);
-	template<typename EO = QObject>
-	void iterate(std::function<bool(Paging<T>*, T*, int)> iterator,
-				 std::function<void(RestReply*, int, EO*)> failureHandler,
+	template<typename EO = QObject*>
+	void iterate(std::function<bool(Paging<T>*, T, int)> iterator,
+				 std::function<void(RestReply*, int, EO)> failureHandler,
 				 std::function<void(RestReply*, QString, int, RestReply::ErrorType)> errorHandler = {},
 				 std::function<void(RestReply*, QJsonSerializerException &)> exceptionHandler = {},
 				 int to = -1,
@@ -61,10 +60,10 @@ public:
 
 private:
 	IPaging *iPaging;
-	QList<T*> data;
+	QList<T> data;
 	RestClient *client;
 
-	int internalIterate(std::function<bool(Paging<T>*, T*, int)> iterator, int from, int to);
+	int internalIterate(std::function<bool(Paging<T>*, T, int)> iterator, int from, int to);
 };
 
 }

@@ -20,7 +20,8 @@ PRIVATE_HEADERS += \
 	restclient_p.h \
 	restreply_p.h
 
-HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
+HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS \
+    metadelete.h
 
 SOURCES += \
 	requestbuilder.cpp \

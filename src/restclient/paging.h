@@ -3,6 +3,7 @@
 
 #include "QtRestClient/paging_fwd.h"
 #include "QtRestClient/genericrestreply.h"
+#include "QtRestClient/metadelete.h"
 
 // ------------- Generic Implementation -------------s
 
@@ -14,7 +15,7 @@ Paging<T>::Paging() :
 {}
 
 template<typename T>
-Paging<T>::Paging(IPaging *iPaging, const QList<T*> &data, RestClient *client) :
+Paging<T>::Paging(IPaging *iPaging, const QList<T> &data, RestClient *client) :
 	iPaging(iPaging),
 	data(data),
 	client(client)
@@ -27,7 +28,7 @@ bool Paging<T>::isValid() const
 }
 
 template<typename T>
-QList<T*> Paging<T>::items() const
+QList<T> Paging<T>::items() const
 {
 	return data;
 }
@@ -101,14 +102,14 @@ QUrl Paging<T>::previousUrl() const
 }
 
 template<typename T>
-void Paging<T>::iterate(std::function<bool (Paging<T> *, T *, int)> iterator, int to, int from)
+void Paging<T>::iterate(std::function<bool (Paging<T> *, T, int)> iterator, int to, int from)
 {
-	return iterate(iterator, {}, {}, {}, to, from);
+	return iterate(iterator, {}, {}, to, from);
 }
 
 template<typename T>
 template<typename EO>
-void Paging<T>::iterate(std::function<bool(Paging<T>*, T*, int)> iterator, std::function<void(RestReply*, QString, int, RestReply::ErrorType)> errorHandler, std::function<QString (EO *, int)> failureTransformer, int to, int from)
+void Paging<T>::iterate(std::function<bool(Paging<T>*, T, int)> iterator, std::function<void(RestReply*, QString, int, RestReply::ErrorType)> errorHandler, std::function<QString (EO, int)> failureTransformer, int to, int from)
 {
 	Q_ASSERT(from >= iPaging->offset());
 
@@ -133,7 +134,7 @@ void Paging<T>::iterate(std::function<bool(Paging<T>*, T*, int)> iterator, std::
 
 template<typename T>
 template<typename EO>
-void Paging<T>::iterate(std::function<bool(Paging<T>*, T*, int)> iterator, std::function<void(RestReply *, int, EO*)> failureHandler, std::function<void(RestReply*, QString, int, RestReply::ErrorType)> errorHandler, std::function<void(RestReply *, QJsonSerializerException &)> exceptionHandler, int to, int from)
+void Paging<T>::iterate(std::function<bool(Paging<T>*, T, int)> iterator, std::function<void(RestReply *, int, EO)> failureHandler, std::function<void(RestReply*, QString, int, RestReply::ErrorType)> errorHandler, std::function<void(RestReply *, QJsonSerializerException &)> exceptionHandler, int to, int from)
 {
 	Q_ASSERT(from >= iPaging->offset());
 
@@ -162,11 +163,11 @@ template<typename T>
 void Paging<T>::deleteAllItems()
 {
 	foreach(auto obj, data)
-		obj->deleteLater();
+		MetaDelete<T>::deleteLater(obj);
 }
 
 template<typename T>
-int Paging<T>::internalIterate(std::function<bool (Paging<T>*, T*, int)> iterator, int to, int from)
+int Paging<T>::internalIterate(std::function<bool (Paging<T>*, T, int)> iterator, int to, int from)
 {
 	//handle all items in this paging
 	int i, max;
