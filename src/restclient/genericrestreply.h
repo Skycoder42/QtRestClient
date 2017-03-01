@@ -1,7 +1,7 @@
 #ifndef GENERICRESTREPLY_H
 #define GENERICRESTREPLY_H
 
-#include "QtRestClient/qrestclient_global.h"
+#include "QtRestClient/qtrestclient_global.h"
 #include "QtRestClient/restclient.h"
 #include "QtRestClient/restreply.h"
 #include "QtRestClient/paging_fwd.h"

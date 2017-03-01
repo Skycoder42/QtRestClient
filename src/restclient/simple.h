@@ -1,7 +1,7 @@
 #ifndef SIMPLEBASE_H
 #define SIMPLEBASE_H
 
-#include "QtRestClient/qrestclient_global.h"
+#include "QtRestClient/qtrestclient_global.h"
 #include "QtRestClient/genericrestreply.h"
 #include "QtRestClient/restclass.h"
 

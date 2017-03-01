@@ -1,7 +1,7 @@
 #ifndef METACOMPONENT_H
 #define METACOMPONENT_H
 
-#include "QtRestClient/qrestclient_global.h"
+#include "QtRestClient/qtrestclient_global.h"
 
 #include <QtCore/qobject.h>
 

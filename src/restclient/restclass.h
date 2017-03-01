@@ -1,7 +1,7 @@
 #ifndef RESTCLASS_H
 #define RESTCLASS_H
 
-#include "QtRestClient/qrestclient_global.h"
+#include "QtRestClient/qtrestclient_global.h"
 #include "QtRestClient/requestbuilder.h"
 #include "QtRestClient/restreply.h"
 #include "QtRestClient/genericrestreply.h"

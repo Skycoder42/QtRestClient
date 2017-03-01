@@ -199,7 +199,13 @@ RestClientPrivate::RestClientPrivate(RestClient *q_ptr) :
 
 // ------------- Global header implementation -------------
 
+/*!
+@param name The name to identify the API with. Use to obtain a reference to the API later on
+@param client The RestClient to be registered
+@returns `true` if added, `false` if the name is already taken
 
+@note QtRestClient takes ownership of the `client`, do not manually delete it after adding it
+*/
 bool QtRestClient::addGlobalApi(const QString &name, RestClient *client)
 {
 	if(RestClientPrivate::globalApis.contains(name))
@@ -211,6 +217,18 @@ bool QtRestClient::addGlobalApi(const QString &name, RestClient *client)
 	}
 }
 
+/*!
+@param name The name of the API to be removed.
+@param deleteClient Specifies whether the removed client should be deleted
+
+If you don't delete the client, It will be automatically deleted together with the QCoreApplication. If you don't want this, simply retake ownership by yourself:
+
+@code{.cpp}
+auto client = QtRestClient::apiClient("name");
+QtRestClient::removeGlobalApi("name");
+client->setParent(this);
+@endcode
+*/
 void QtRestClient::removeGlobalApi(const QString &name, bool deleteClient)
 {
 	if(deleteClient) {
@@ -226,6 +244,12 @@ RestClient *QtRestClient::apiClient(const QString &name)
 	return RestClientPrivate::globalApis.value(name, nullptr);
 }
 
+/*!
+@param name The name of the root class to be returned
+@returns The root `RestClass` for the given API name, or `nullptr` if no such API exists
+
+@sa QtRestClient::RestClient::rootClass
+*/
 RestClass *QtRestClient::apiRootClass(const QString &name)
 {
 	auto client = RestClientPrivate::globalApis.value(name, nullptr);

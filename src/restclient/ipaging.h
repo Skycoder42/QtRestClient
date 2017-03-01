@@ -1,7 +1,7 @@
 #ifndef IPAGING_H
 #define IPAGING_H
 
-#include "QtRestClient/qrestclient_global.h"
+#include "QtRestClient/qtrestclient_global.h"
 
 #include <QtCore/qjsonarray.h>
 #include <QtCore/qjsonobject.h>

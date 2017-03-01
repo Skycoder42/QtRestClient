@@ -1,7 +1,7 @@
 #ifndef STANDARDPAGING_H
 #define STANDARDPAGING_H
 
-#include "QtRestClient/qrestclient_global.h"
+#include "QtRestClient/qtrestclient_global.h"
 #include "QtRestClient/ipaging.h"
 
 #include <QtCore/qscopedpointer.h>

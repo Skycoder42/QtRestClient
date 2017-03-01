@@ -1,7 +1,7 @@
 #ifndef PAGING_FWD_H
 #define PAGING_FWD_H
 
-#include "QtRestClient/qrestclient_global.h"
+#include "QtRestClient/qtrestclient_global.h"
 
 #include "QtRestClient/ipaging.h"
 #include "QtRestClient/restclient.h"

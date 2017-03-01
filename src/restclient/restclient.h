@@ -1,7 +1,7 @@
 #ifndef RESTCLIENT_H
 #define RESTCLIENT_H
 
-#include "QtRestClient/qrestclient_global.h"
+#include "QtRestClient/qtrestclient_global.h"
 #include "QtRestClient/requestbuilder.h"
 
 #include <QtNetwork/qnetworkrequest.h>

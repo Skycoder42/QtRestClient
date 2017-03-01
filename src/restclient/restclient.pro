@@ -8,7 +8,7 @@ OTHER_FILES += doc/*.dox
 OTHER_FILES += doc/snippets/*.cpp
 
 PUBLIC_HEADERS += \
-	qrestclient_global.h \
+	qtrestclient_global.h \
 	genericrestreply.h \
 	ipaging.h \
 	paging_fwd.h \

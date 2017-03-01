@@ -1,7 +1,7 @@
 #ifndef REQUESTBUILDER_H
 #define REQUESTBUILDER_H
 
-#include "QtRestClient/qrestclient_global.h"
+#include "QtRestClient/qtrestclient_global.h"
 
 #include <QtCore/qjsonarray.h>
 #include <QtCore/qjsonobject.h>
