@@ -33,8 +33,8 @@ private Q_SLOTS:
 	void testSimpleExtension();
 
 private:
-	QNetworkAccessManager *nam;
 	QtRestClient::RestClient *client;
+	QNetworkAccessManager *nam;
 };
 
 void RestReplyTest::initTestCase()
@@ -42,17 +42,16 @@ void RestReplyTest::initTestCase()
 	Q_ASSERT(qgetenv("LD_PRELOAD").contains("Qt5RestClient"));
 	QJsonSerializer::registerListConverters<JphPost*>();
 	initTestJsonServer("./advanced-test-db.js");
-	nam = new QNetworkAccessManager(this);
-	client = new QtRestClient::RestClient(this);
+	client = createClient(this);
 	client->setBaseUrl(QStringLiteral("http://localhost:3000"));
+	nam = client->manager();
 }
 
 void RestReplyTest::cleanupTestCase()
 {
-	nam->deleteLater();
-	nam = nullptr;
 	client->deleteLater();
 	client = nullptr;
+	nam = nullptr;
 }
 
 void RestReplyTest::testReplyWrapping_data()

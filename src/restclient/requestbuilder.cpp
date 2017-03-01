@@ -39,7 +39,7 @@ struct RequestBuilderPrivate : public QSharedData
 		query(baseUrl.query()),
 		fragment(baseUrl.fragment()),
 		headers(),
-		attributes({{QNetworkRequest::FollowRedirectsAttribute, true}}),
+		attributes(),
 		sslConfig(QSslConfiguration::defaultConfiguration()),
 		body(),
 		verb("GET")
@@ -172,6 +172,13 @@ RequestBuilder &RequestBuilder::trailingSlash()
 RequestBuilder &RequestBuilder::setAttribute(QNetworkRequest::Attribute attribute, const QVariant &value)
 {
 	d->attributes.insert(attribute, value);
+	return *this;
+}
+
+RequestBuilder &RequestBuilder::setAttributes(QHash<QNetworkRequest::Attribute, QVariant> attributes)
+{
+	for(auto it = attributes.constBegin(); it != attributes.constEnd(); it++)
+		d->attributes.insert(it.key(), it.value());
 	return *this;
 }
 

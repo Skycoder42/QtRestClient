@@ -9,5 +9,6 @@ Q_DECLARE_METATYPE(QUrlQuery)
 Q_DECLARE_METATYPE(QNetworkRequest::Attribute)
 
 void initTestJsonServer(QString relativeDbPath = "./default-test-db.js");
+QtRestClient::RestClient *createClient(QObject *parent = nullptr);
 
 #endif // TST_GLOBAL_H

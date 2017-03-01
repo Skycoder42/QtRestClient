@@ -24,7 +24,7 @@ void IntegrationTest::initTestCase()
 	Q_ASSERT(qgetenv("LD_PRELOAD").contains("Qt5RestClient"));
 	QJsonSerializer::registerListConverters<JphPost*>();
 	initTestJsonServer("./advanced-test-db.js");
-	client = new RestClient(this);
+	client = createClient(this);
 	client->setBaseUrl(QStringLiteral("http://localhost:3000"));
 }
 

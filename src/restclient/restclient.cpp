@@ -62,6 +62,11 @@ QUrlQuery RestClient::globalParameters() const
 	return d->query;
 }
 
+QHash<QNetworkRequest::Attribute, QVariant> RestClient::requestAttributes() const
+{
+	return d->attribs;
+}
+
 QSslConfiguration RestClient::sslConfiguration() const
 {
 	return d->sslConfig;
@@ -73,6 +78,7 @@ RequestBuilder RestClient::builder() const
 			.setVersion(d->apiVersion)
 			.addHeaders(d->headers)
 			.addParameters(d->query)
+			.setAttributes(d->attribs)
 			.setSslConfig(d->sslConfig);
 }
 
@@ -156,6 +162,24 @@ void RestClient::setGlobalParameters(QUrlQuery globalParameters)
 	emit globalParametersChanged(globalParameters, {});
 }
 
+void RestClient::setRequestAttributes(QHash<QNetworkRequest::Attribute, QVariant> requestAttributes)
+{
+	if (d->attribs == requestAttributes)
+		return;
+
+	d->attribs = requestAttributes;
+	emit requestAttributesChanged(requestAttributes, {});
+}
+
+void RestClient::setModernAttributes()
+{
+	d->attribs.insert(QNetworkRequest::FollowRedirectsAttribute, true);
+	d->attribs.insert(QNetworkRequest::HttpPipeliningAllowedAttribute, true);
+	d->attribs.insert(QNetworkRequest::SpdyAllowedAttribute, true);
+	d->attribs.insert(QNetworkRequest::HTTP2AllowedAttribute, true);
+	emit requestAttributesChanged(d->attribs, {});
+}
+
 void RestClient::setSslConfiguration(QSslConfiguration sslConfiguration)
 {
 	if (d->sslConfig == sslConfiguration)
@@ -187,6 +211,18 @@ void RestClient::removeGlobalParameter(QString name)
 {
 	d->query.removeQueryItem(name);
 	emit globalParametersChanged(d->query, {});
+}
+
+void RestClient::addRequestAttribute(QNetworkRequest::Attribute attribute, QVariant value)
+{
+	d->attribs.insert(attribute, value);
+	emit requestAttributesChanged(d->attribs, {});
+}
+
+void RestClient::removeRequestAttribute(QNetworkRequest::Attribute attribute)
+{
+	d->attribs.remove(attribute);
+	emit requestAttributesChanged(d->attribs, {});
 }
 
 // ------------- Private Implementation -------------

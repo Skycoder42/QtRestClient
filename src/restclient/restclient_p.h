@@ -18,6 +18,7 @@ private:
 	QVersionNumber apiVersion;
 	HeaderHash headers;
 	QUrlQuery query;
+	QHash<QNetworkRequest::Attribute, QVariant> attribs;
 	QSslConfiguration sslConfig;
 
 	QNetworkAccessManager *nam;

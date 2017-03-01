@@ -22,6 +22,10 @@ public:
 	static inline void deleteLater(T *obj) {
 		obj->deleteLater();
 	}
+	static inline void deleteAllLater(const QList<T*> &list) {
+		foreach(T *obj, list)
+			obj->deleteLater();
+	}
 };
 
 template <typename T>
@@ -30,6 +34,7 @@ class MetaComponent<T, typename std::enable_if<std::is_void<typename T::QtGadget
 public:
 	typedef std::true_type is_meta;
 	static inline void deleteLater(T) {}
+	static inline void deleteAllLater(const QList<T> &) {}
 };
 
 }

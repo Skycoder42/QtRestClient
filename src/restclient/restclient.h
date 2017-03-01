@@ -26,6 +26,7 @@ class Q_RESTCLIENT_EXPORT RestClient : public QObject
 	Q_PROPERTY(QVersionNumber apiVersion READ apiVersion WRITE setApiVersion NOTIFY apiVersionChanged)
 	Q_PROPERTY(HeaderHash globalHeaders READ globalHeaders WRITE setGlobalHeaders NOTIFY globalHeadersChanged)
 	Q_PROPERTY(QUrlQuery globalParameters READ globalParameters WRITE setGlobalParameters NOTIFY globalParametersChanged)
+	Q_PROPERTY(QHash<QNetworkRequest::Attribute, QVariant> requestAttributes READ requestAttributes WRITE setRequestAttributes NOTIFY requestAttributesChanged)
 	Q_PROPERTY(QSslConfiguration sslConfiguration READ sslConfiguration WRITE setSslConfiguration NOTIFY sslConfigurationChanged)
 
 public:
@@ -43,6 +44,7 @@ public:
 	QVersionNumber apiVersion() const;
 	HeaderHash globalHeaders() const;
 	QUrlQuery globalParameters() const;
+	QHash<QNetworkRequest::Attribute, QVariant> requestAttributes() const;
 	QSslConfiguration sslConfiguration() const;
 
 	RequestBuilder builder() const;
@@ -59,6 +61,8 @@ public Q_SLOTS:
 	void setApiVersion(QVersionNumber apiVersion);
 	void setGlobalHeaders(HeaderHash globalHeaders);
 	void setGlobalParameters(QUrlQuery globalParameters);
+	void setRequestAttributes(QHash<QNetworkRequest::Attribute, QVariant> requestAttributes);
+	void setModernAttributes();
 	void setSslConfiguration(QSslConfiguration sslConfiguration);
 
 	void addGlobalHeader(QByteArray name, QByteArray value);
@@ -67,11 +71,15 @@ public Q_SLOTS:
 	void addGlobalParameter(QString name, QString value);
 	void removeGlobalParameter(QString name);
 
+	void addRequestAttribute(QNetworkRequest::Attribute attribute, QVariant value);
+	void removeRequestAttribute(QNetworkRequest::Attribute attribute);
+
 Q_SIGNALS:
 	void baseUrlChanged(QUrl baseUrl, QPrivateSignal);
 	void apiVersionChanged(QVersionNumber apiVersion, QPrivateSignal);
 	void globalHeadersChanged(HeaderHash globalHeaders, QPrivateSignal);
 	void globalParametersChanged(QUrlQuery globalParameters, QPrivateSignal);
+	void requestAttributesChanged(QHash<QNetworkRequest::Attribute, QVariant> requestAttributes, QPrivateSignal);
 	void sslConfigurationChanged(QSslConfiguration sslConfiguration, QPrivateSignal);
 
 private:

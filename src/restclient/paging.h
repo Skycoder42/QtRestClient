@@ -161,8 +161,7 @@ void Paging<T>::iterate(std::function<bool(Paging<T>*, T, int)> iterator, std::f
 template<typename T>
 void Paging<T>::deleteAllItems()
 {
-	foreach(auto obj, data)
-		MetaComponent<T>::deleteLater(obj);
+	MetaComponent<T>::deleteAllLater(data);
 }
 
 template<typename T>
@@ -186,9 +185,9 @@ int Paging<T>::internalIterate(std::function<bool (Paging<T>*, T, int)> iterator
 
 	//delete all unused items
 	for(auto j = iPaging->offset(); j < from; j++)
-		data.value(j - iPaging->offset())->deleteLater();
+		MetaComponent<T>::deleteLater(data.value(j - iPaging->offset()));
 	for(auto j = i+1; j < iPaging->limit(); j++)
-		data.value(j - iPaging->offset())->deleteLater();
+		MetaComponent<T>::deleteLater(data.value(j - iPaging->offset()));
 	return canceled ? -1 : i;
 }
 

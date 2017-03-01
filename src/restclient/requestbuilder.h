@@ -36,6 +36,7 @@ public:
 	RequestBuilder &updateFromRelativeUrl(const QUrl &url, bool mergeQuery = false, bool keepFragment = false);
 
 	RequestBuilder &setAttribute(QNetworkRequest::Attribute attribute, const QVariant &value);
+	RequestBuilder &setAttributes(QHash<QNetworkRequest::Attribute, QVariant> attributes);
 	RequestBuilder &setSslConfig(QSslConfiguration sslConfig);
 
 	RequestBuilder &setBody(const QByteArray &body, const QByteArray &contentType);
