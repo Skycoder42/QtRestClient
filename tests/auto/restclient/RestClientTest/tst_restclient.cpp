@@ -5,9 +5,16 @@ class RestClientTest : public QObject
 	Q_OBJECT
 
 private Q_SLOTS:
+	void initTestCase();
+
 	void testBaseUrl_data();
 	void testBaseUrl();
 };
+
+void RestClientTest::initTestCase()
+{
+	Q_ASSERT(qgetenv("LD_PRELOAD").contains("Qt5RestClient"));
+}
 
 void RestClientTest::testBaseUrl_data()
 {

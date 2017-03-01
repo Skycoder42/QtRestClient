@@ -39,6 +39,7 @@ private:
 
 void RestReplyTest::initTestCase()
 {
+	Q_ASSERT(qgetenv("LD_PRELOAD").contains("Qt5RestClient"));
 	QJsonSerializer::registerListConverters<JphPost*>();
 	initTestJsonServer("./advanced-test-db.js");
 	nam = new QNetworkAccessManager(this);
