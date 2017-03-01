@@ -82,50 +82,6 @@ RequestBuilder RestClient::builder() const
 			.setSslConfig(d->sslConfig);
 }
 
-bool RestClient::addGlobalApi(const QString &name, RestClient *client)
-{
-	if(RestClientPrivate::globalApis.contains(name))
-		return false;
-	else {
-		client->setParent(qApp);
-		RestClientPrivate::globalApis.insert(name, client);
-		return true;
-	}
-}
-
-void RestClient::removeGlobalApi(const QString &name, bool deleteClient)
-{
-	if(deleteClient) {
-		auto client = RestClientPrivate::globalApis.take(name);
-		if(client)
-			client->deleteLater();
-	} else
-		RestClientPrivate::globalApis.remove(name);
-}
-
-RestClient *RestClient::apiClient(const QString &name)
-{
-	return RestClientPrivate::globalApis.value(name, nullptr);
-}
-
-RestClass *RestClient::apiRootClass(const QString &name)
-{
-	auto client = RestClientPrivate::globalApis.value(name, nullptr);
-	if(client)
-		return client->rootClass();
-	else
-		return nullptr;
-}
-
-RestClass *RestClient::createApiClass(const QString &name, const QString &path, QObject *parent)
-{
-	auto client = RestClientPrivate::globalApis.value(name, nullptr);
-	if(client)
-		return client->createClass(path, parent);
-	else
-		return nullptr;
-}
-
 void RestClient::setBaseUrl(QUrl baseUrl)
 {
 	if (d->baseUrl == baseUrl)
@@ -229,11 +185,6 @@ void RestClient::removeRequestAttribute(QNetworkRequest::Attribute attribute)
 
 QHash<QString, RestClient*> RestClientPrivate::globalApis;
 
-QNetworkAccessManager *RestClientPrivate::getNam(RestClient *client)
-{
-	return client->d_ptr->nam;
-}
-
 RestClientPrivate::RestClientPrivate(RestClient *q_ptr) :
 	baseUrl(),
 	apiVersion(),
@@ -245,3 +196,50 @@ RestClientPrivate::RestClientPrivate(RestClient *q_ptr) :
 	pagingFactory(new StandardPagingFactory()),
 	rootClass(new RestClass(q_ptr, {}, q_ptr))
 {}
+
+// ------------- Global header implementation -------------
+
+
+bool QtRestClient::addGlobalApi(const QString &name, RestClient *client)
+{
+	if(RestClientPrivate::globalApis.contains(name))
+		return false;
+	else {
+		client->setParent(qApp);
+		RestClientPrivate::globalApis.insert(name, client);
+		return true;
+	}
+}
+
+void QtRestClient::removeGlobalApi(const QString &name, bool deleteClient)
+{
+	if(deleteClient) {
+		auto client = RestClientPrivate::globalApis.take(name);
+		if(client)
+			client->deleteLater();
+	} else
+		RestClientPrivate::globalApis.remove(name);
+}
+
+RestClient *QtRestClient::apiClient(const QString &name)
+{
+	return RestClientPrivate::globalApis.value(name, nullptr);
+}
+
+RestClass *QtRestClient::apiRootClass(const QString &name)
+{
+	auto client = RestClientPrivate::globalApis.value(name, nullptr);
+	if(client)
+		return client->rootClass();
+	else
+		return nullptr;
+}
+
+RestClass *QtRestClient::createApiClass(const QString &name, const QString &path, QObject *parent)
+{
+	auto client = RestClientPrivate::globalApis.value(name, nullptr);
+	if(client)
+		return client->createClass(path, parent);
+	else
+		return nullptr;
+}

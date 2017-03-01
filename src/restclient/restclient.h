@@ -49,13 +49,6 @@ public:
 
 	RequestBuilder builder() const;
 
-	//global access
-	static bool addGlobalApi(const QString &name, RestClient *client);
-	static void removeGlobalApi(const QString &name, bool deleteClient = true);
-	static RestClient *apiClient(const QString &name);
-	static RestClass *apiRootClass(const QString &name);
-	static RestClass *createApiClass(const QString &name, const QString &path, QObject *parent = nullptr);
-
 public Q_SLOTS:
 	void setBaseUrl(QUrl baseUrl);
 	void setApiVersion(QVersionNumber apiVersion);

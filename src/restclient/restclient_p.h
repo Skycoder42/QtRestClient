@@ -11,9 +11,8 @@ class Q_RESTCLIENT_EXPORT RestClientPrivate
 	friend class RestClient;
 
 public:
-	static QNetworkAccessManager *getNam(RestClient *client);
+	static QHash<QString, RestClient*> globalApis;
 
-private:
 	QUrl baseUrl;
 	QVersionNumber apiVersion;
 	HeaderHash headers;
@@ -28,8 +27,6 @@ private:
 	RestClass *rootClass;
 
 	RestClientPrivate(RestClient *q_ptr);
-
-	static QHash<QString, RestClient*> globalApis;
 };
 
 }
