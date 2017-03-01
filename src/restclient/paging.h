@@ -4,7 +4,9 @@
 #include "QtRestClient/paging_fwd.h"
 #include "QtRestClient/genericrestreply.h"
 
-// ------------- Generic Implementation -------------s
+// ------------- Generic Implementation -------------
+
+namespace QtRestClient {
 
 template<typename T>
 Paging<T>::Paging() :
@@ -189,6 +191,8 @@ int Paging<T>::internalIterate(std::function<bool (Paging<T>*, T, int)> iterator
 	for(auto j = i+1; j < iPaging->limit(); j++)
 		MetaComponent<T>::deleteLater(data.value(j - iPaging->offset()));
 	return canceled ? -1 : i;
+}
+
 }
 
 #endif // PAGING_H

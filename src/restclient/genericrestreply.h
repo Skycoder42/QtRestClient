@@ -91,8 +91,12 @@ private:
 	std::function<void(RestReply*, QJsonSerializerException &)> exceptionHandler;
 };
 
+} //end namespace, because of include!
+
 //include after delecation, to allow foreward declared types
 #include "QtRestClient/paging.h"
+
+namespace QtRestClient {
 
 // ------------- Implementation Single Element -------------
 
