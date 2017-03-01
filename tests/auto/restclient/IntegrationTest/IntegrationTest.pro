@@ -27,5 +27,9 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 include(../tests.pri)
 
-SOURCES += tst_integration.cpp
+SOURCES += tst_integration.cpp \
+    jphuser.cpp
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
+
+HEADERS += \
+    jphuser.h

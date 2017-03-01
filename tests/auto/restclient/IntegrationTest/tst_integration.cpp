@@ -1,3 +1,4 @@
+#include "jphuser.h"
 #include "tst_global.h"
 
 using namespace QtRestClient;
@@ -155,101 +156,111 @@ void IntegrationTest::testQObjectPagingChain()
 	pagingClass->deleteLater();
 }
 
-static void DO_NOT_CALL_compilation_test()
+template <typename T>
+static void DO_NOT_CALL_compilation_test_template()
 {
-	JphPost *object = nullptr;
-	QList<JphPost*> list;
+	T object = T();
+	QList<T> list;
 	RestClass *postClass = nullptr;
 
-	postClass->call<JphPost*>(RestClass::GetVerb, QStringLiteral("test"));
-	postClass->call<JphPost*>(RestClass::GetVerb, QStringLiteral("test"), object);
-	postClass->call<JphPost*>(RestClass::GetVerb, QStringLiteral("test"), list);
-	postClass->call<JphPost*>(RestClass::GetVerb, QStringLiteral("test"), RestClass::concatParams("baum", 42));
-	postClass->call<JphPost*>(RestClass::GetVerb, QStringLiteral("test"), object, RestClass::concatParams("baum", 42));
-	postClass->call<JphPost*>(RestClass::GetVerb, QStringLiteral("test"), list, RestClass::concatParams("baum", 42));
-	postClass->call<JphPost*>(RestClass::GetVerb);
-	postClass->call<JphPost*>(RestClass::GetVerb, object);
-	postClass->call<JphPost*>(RestClass::GetVerb, list);
-	postClass->call<JphPost*>(RestClass::GetVerb, RestClass::concatParams("baum", 42));
-	postClass->call<JphPost*>(RestClass::GetVerb, object, RestClass::concatParams("baum", 42));
-	postClass->call<JphPost*>(RestClass::GetVerb, list, RestClass::concatParams("baum", 42));
-	postClass->call<JphPost*>(RestClass::GetVerb, QUrl("test"));
-	postClass->call<JphPost*>(RestClass::GetVerb, QUrl("test"), object);
-	postClass->call<JphPost*>(RestClass::GetVerb, QUrl("test"), list);
-	postClass->call<JphPost*>(RestClass::GetVerb, QUrl("test"), RestClass::concatParams("baum", 42));
-	postClass->call<JphPost*>(RestClass::GetVerb, QUrl("test"), object, RestClass::concatParams("baum", 42));
-	postClass->call<JphPost*>(RestClass::GetVerb, QUrl("test"), list, RestClass::concatParams("baum", 42));
+	postClass->call<T>(RestClass::GetVerb, QStringLiteral("test"));
+	postClass->call<T>(RestClass::GetVerb, QStringLiteral("test"), object);
+	postClass->call<T>(RestClass::GetVerb, QStringLiteral("test"), list);
+	postClass->call<T>(RestClass::GetVerb, QStringLiteral("test"), RestClass::concatParams("baum", 42));
+	postClass->call<T>(RestClass::GetVerb, QStringLiteral("test"), object, RestClass::concatParams("baum", 42));
+	postClass->call<T>(RestClass::GetVerb, QStringLiteral("test"), list, RestClass::concatParams("baum", 42));
+	postClass->call<T>(RestClass::GetVerb);
+	postClass->call<T>(RestClass::GetVerb, object);
+	postClass->call<T>(RestClass::GetVerb, list);
+	postClass->call<T>(RestClass::GetVerb, RestClass::concatParams("baum", 42));
+	postClass->call<T>(RestClass::GetVerb, object, RestClass::concatParams("baum", 42));
+	postClass->call<T>(RestClass::GetVerb, list, RestClass::concatParams("baum", 42));
+	postClass->call<T>(RestClass::GetVerb, QUrl("test"));
+	postClass->call<T>(RestClass::GetVerb, QUrl("test"), object);
+	postClass->call<T>(RestClass::GetVerb, QUrl("test"), list);
+	postClass->call<T>(RestClass::GetVerb, QUrl("test"), RestClass::concatParams("baum", 42));
+	postClass->call<T>(RestClass::GetVerb, QUrl("test"), object, RestClass::concatParams("baum", 42));
+	postClass->call<T>(RestClass::GetVerb, QUrl("test"), list, RestClass::concatParams("baum", 42));
 
-	postClass->get<JphPost*>(QStringLiteral("test"));
-	postClass->get<JphPost*>(QStringLiteral("test"), RestClass::concatParams("baum", 42));
-	postClass->get<JphPost*>();
-	postClass->get<JphPost*>(RestClass::concatParams("baum", 42));
-	postClass->get<JphPost*>(QUrl("test"));
-	postClass->get<JphPost*>(QUrl("test"), RestClass::concatParams("baum", 42));
+	postClass->get<T>(QStringLiteral("test"));
+	postClass->get<T>(QStringLiteral("test"), RestClass::concatParams("baum", 42));
+	postClass->get<T>();
+	postClass->get<T>(RestClass::concatParams("baum", 42));
+	postClass->get<T>(QUrl("test"));
+	postClass->get<T>(QUrl("test"), RestClass::concatParams("baum", 42));
 
-	postClass->post<JphPost*>(QStringLiteral("test"));
-	postClass->post<JphPost*>(QStringLiteral("test"), object);
-	postClass->post<JphPost*>(QStringLiteral("test"), list);
-	postClass->post<JphPost*>(QStringLiteral("test"), RestClass::concatParams("baum", 42));
-	postClass->post<JphPost*>(QStringLiteral("test"), object, RestClass::concatParams("baum", 42));
-	postClass->post<JphPost*>(QStringLiteral("test"), list, RestClass::concatParams("baum", 42));
-	postClass->post<JphPost*>();
-	postClass->post<JphPost*>(object);
-	postClass->post<JphPost*>(list);
-	postClass->post<JphPost*>(RestClass::concatParams("baum", 42));
-	postClass->post<JphPost*>(object, RestClass::concatParams("baum", 42));
-	postClass->post<JphPost*>(list, RestClass::concatParams("baum", 42));
-	postClass->post<JphPost*>(QUrl("test"));
-	postClass->post<JphPost*>(QUrl("test"), object);
-	postClass->post<JphPost*>(QUrl("test"), list);
-	postClass->post<JphPost*>(QUrl("test"), RestClass::concatParams("baum", 42));
-	postClass->post<JphPost*>(QUrl("test"), object, RestClass::concatParams("baum", 42));
-	postClass->post<JphPost*>(QUrl("test"), list, RestClass::concatParams("baum", 42));
+	postClass->post<T>(QStringLiteral("test"));
+	postClass->post<T>(QStringLiteral("test"), object);
+	postClass->post<T>(QStringLiteral("test"), list);
+	postClass->post<T>(QStringLiteral("test"), RestClass::concatParams("baum", 42));
+	postClass->post<T>(QStringLiteral("test"), object, RestClass::concatParams("baum", 42));
+	postClass->post<T>(QStringLiteral("test"), list, RestClass::concatParams("baum", 42));
+	postClass->post<T>();
+	postClass->post<T>(object);
+	postClass->post<T>(list);
+	postClass->post<T>(RestClass::concatParams("baum", 42));
+	postClass->post<T>(object, RestClass::concatParams("baum", 42));
+	postClass->post<T>(list, RestClass::concatParams("baum", 42));
+	postClass->post<T>(QUrl("test"));
+	postClass->post<T>(QUrl("test"), object);
+	postClass->post<T>(QUrl("test"), list);
+	postClass->post<T>(QUrl("test"), RestClass::concatParams("baum", 42));
+	postClass->post<T>(QUrl("test"), object, RestClass::concatParams("baum", 42));
+	postClass->post<T>(QUrl("test"), list, RestClass::concatParams("baum", 42));
 
-	postClass->put<JphPost*>(QStringLiteral("test"));
-	postClass->put<JphPost*>(QStringLiteral("test"), object);
-	postClass->put<JphPost*>(QStringLiteral("test"), list);
-	postClass->put<JphPost*>(QStringLiteral("test"), RestClass::concatParams("baum", 42));
-	postClass->put<JphPost*>(QStringLiteral("test"), object, RestClass::concatParams("baum", 42));
-	postClass->put<JphPost*>(QStringLiteral("test"), list, RestClass::concatParams("baum", 42));
-	postClass->put<JphPost*>();
-	postClass->put<JphPost*>(object);
-	postClass->put<JphPost*>(list);
-	postClass->put<JphPost*>(RestClass::concatParams("baum", 42));
-	postClass->put<JphPost*>(object, RestClass::concatParams("baum", 42));
-	postClass->put<JphPost*>(list, RestClass::concatParams("baum", 42));
-	postClass->put<JphPost*>(QUrl("test"));
-	postClass->put<JphPost*>(QUrl("test"), object);
-	postClass->put<JphPost*>(QUrl("test"), list);
-	postClass->put<JphPost*>(QUrl("test"), RestClass::concatParams("baum", 42));
-	postClass->put<JphPost*>(QUrl("test"), object, RestClass::concatParams("baum", 42));
-	postClass->put<JphPost*>(QUrl("test"), list, RestClass::concatParams("baum", 42));
+	postClass->put<T>(QStringLiteral("test"));
+	postClass->put<T>(QStringLiteral("test"), object);
+	postClass->put<T>(QStringLiteral("test"), list);
+	postClass->put<T>(QStringLiteral("test"), RestClass::concatParams("baum", 42));
+	postClass->put<T>(QStringLiteral("test"), object, RestClass::concatParams("baum", 42));
+	postClass->put<T>(QStringLiteral("test"), list, RestClass::concatParams("baum", 42));
+	postClass->put<T>();
+	postClass->put<T>(object);
+	postClass->put<T>(list);
+	postClass->put<T>(RestClass::concatParams("baum", 42));
+	postClass->put<T>(object, RestClass::concatParams("baum", 42));
+	postClass->put<T>(list, RestClass::concatParams("baum", 42));
+	postClass->put<T>(QUrl("test"));
+	postClass->put<T>(QUrl("test"), object);
+	postClass->put<T>(QUrl("test"), list);
+	postClass->put<T>(QUrl("test"), RestClass::concatParams("baum", 42));
+	postClass->put<T>(QUrl("test"), object, RestClass::concatParams("baum", 42));
+	postClass->put<T>(QUrl("test"), list, RestClass::concatParams("baum", 42));
 
-	postClass->deleteResource<JphPost*>(QStringLiteral("test"));
-	postClass->deleteResource<JphPost*>(QStringLiteral("test"), RestClass::concatParams("baum", 42));
-	postClass->deleteResource<JphPost*>();
-	postClass->deleteResource<JphPost*>(RestClass::concatParams("baum", 42));
-	postClass->deleteResource<JphPost*>(QUrl("test"));
-	postClass->deleteResource<JphPost*>(QUrl("test"), RestClass::concatParams("baum", 42));
+	postClass->deleteResource<T>(QStringLiteral("test"));
+	postClass->deleteResource<T>(QStringLiteral("test"), RestClass::concatParams("baum", 42));
+	postClass->deleteResource<T>();
+	postClass->deleteResource<T>(RestClass::concatParams("baum", 42));
+	postClass->deleteResource<T>(QUrl("test"));
+	postClass->deleteResource<T>(QUrl("test"), RestClass::concatParams("baum", 42));
 
-	postClass->patch<JphPost*>(QStringLiteral("test"));
-	postClass->patch<JphPost*>(QStringLiteral("test"), object);
-	postClass->patch<JphPost*>(QStringLiteral("test"), list);
-	postClass->patch<JphPost*>(QStringLiteral("test"), RestClass::concatParams("baum", 42));
-	postClass->patch<JphPost*>(QStringLiteral("test"), object, RestClass::concatParams("baum", 42));
-	postClass->patch<JphPost*>(QStringLiteral("test"), list, RestClass::concatParams("baum", 42));
-	postClass->patch<JphPost*>();
-	postClass->patch<JphPost*>(object);
-	postClass->patch<JphPost*>(list);
-	postClass->patch<JphPost*>(RestClass::concatParams("baum", 42));
-	postClass->patch<JphPost*>(object, RestClass::concatParams("baum", 42));
-	postClass->patch<JphPost*>(list, RestClass::concatParams("baum", 42));
-	postClass->patch<JphPost*>(QUrl("test"));
-	postClass->patch<JphPost*>(QUrl("test"), object);
-	postClass->patch<JphPost*>(QUrl("test"), list);
-	postClass->patch<JphPost*>(QUrl("test"), RestClass::concatParams("baum", 42));
-	postClass->patch<JphPost*>(QUrl("test"), object, RestClass::concatParams("baum", 42));
-	postClass->patch<JphPost*>(QUrl("test"), list, RestClass::concatParams("baum", 42));
+	postClass->patch<T>(QStringLiteral("test"));
+	postClass->patch<T>(QStringLiteral("test"), object);
+	postClass->patch<T>(QStringLiteral("test"), list);
+	postClass->patch<T>(QStringLiteral("test"), RestClass::concatParams("baum", 42));
+	postClass->patch<T>(QStringLiteral("test"), object, RestClass::concatParams("baum", 42));
+	postClass->patch<T>(QStringLiteral("test"), list, RestClass::concatParams("baum", 42));
+	postClass->patch<T>();
+	postClass->patch<T>(object);
+	postClass->patch<T>(list);
+	postClass->patch<T>(RestClass::concatParams("baum", 42));
+	postClass->patch<T>(object, RestClass::concatParams("baum", 42));
+	postClass->patch<T>(list, RestClass::concatParams("baum", 42));
+	postClass->patch<T>(QUrl("test"));
+	postClass->patch<T>(QUrl("test"), object);
+	postClass->patch<T>(QUrl("test"), list);
+	postClass->patch<T>(QUrl("test"), RestClass::concatParams("baum", 42));
+	postClass->patch<T>(QUrl("test"), object, RestClass::concatParams("baum", 42));
+	postClass->patch<T>(QUrl("test"), list, RestClass::concatParams("baum", 42));
+}
+
+static void DO_NOT_CALL_compilation_test()
+{
+	DO_NOT_CALL_compilation_test_template<JphPost*>();//object
+	DO_NOT_CALL_compilation_test_template<JphUser>();//gadget
+	DO_NOT_CALL_compilation_test_template<JphUserSimple>();//gadget
+	JphUserSimple s;
+	s.extend(nullptr);
 }
 
 QTEST_MAIN(IntegrationTest)
