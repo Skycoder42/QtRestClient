@@ -68,7 +68,7 @@ public:
 	QSslConfiguration sslConfiguration() const;
 
 	//! Creates a request build with all the settings of this client
-	RequestBuilder builder() const;
+	virtual RequestBuilder builder() const;
 
 public Q_SLOTS:
 	//! Sets the network access manager to be used by all requests for this client

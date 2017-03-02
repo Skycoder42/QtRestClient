@@ -1,0 +1,44 @@
+/*!
+@class QtRestClient::RestClient
+
+This one is the base class of the API. You typically create one instance of it for each API you
+want to access, and then register it globally using registerGlobalApi().
+
+The client is used by RestClass and other components, to get the basic request settings for all
+requests.
+*/
+
+/*!
+@property QtRestClient::RestClient::baseUrl
+
+@default{invalid <i>(default constructed)</i>}
+
+All other settings regarding URLs will be based on this one.
+
+@accessors{
+	@readAc{baseUrl()}
+	@writeAc{setBaseUrl()}
+	@notifyAc{baseUrlChanged()}
+}
+*/
+
+/*!
+@property QtRestClient::RestClient::apiVersion
+
+@default{none <i>(default constructed)</i>}
+
+The version will be directly appended to the baseUrl, if set. Trailing zeros are removed, and a
+"v" will be prepended to the number. If the version is invalid, it will not be added at all.
+
+<b>Example:</b><br/>
+Assuming the baseUrl is `https://example.com`, we get the following urls:
+- `{none} -> https://example.com/`
+- `1.0.0 -> https://example.com/v1/`
+- `0.1 -> https://example.com/v0.1/`
+
+@accessors{
+	@readAc{apiVersion()}
+	@writeAc{setApiVersion()}
+	@notifyAc{apiVersionChanged()}
+}
+*/
