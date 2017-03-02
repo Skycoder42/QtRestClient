@@ -71,8 +71,11 @@ public:
 	RequestBuilder builder() const;
 
 public Q_SLOTS:
+	//! Sets the network access manager to be used by all requests for this client
 	void setManager(QNetworkAccessManager *manager);
+	//! Sets the json serializer to be used by all requests for this client
 	void setSerializer(QJsonSerializer *serializer);
+	//! Sets the paging factory to be used by all paging requests for this client
 	void setPagingFactory(PagingFactory *factory);
 
 	//! @writeAcFn{RestClient::baseUrl}
@@ -85,6 +88,7 @@ public Q_SLOTS:
 	void setGlobalParameters(QUrlQuery globalParameters);
 	//! @writeAcFn{RestClient::requestAttributes}
 	void setRequestAttributes(QHash<QNetworkRequest::Attribute, QVariant> requestAttributes);
+	//! Sets modern attributes in RestClient::requestAttributes
 	void setModernAttributes();
 	//! @writeAcFn{RestClient::sslConfiguration}
 	void setSslConfiguration(QSslConfiguration sslConfiguration);
@@ -105,11 +109,17 @@ public Q_SLOTS:
 	void removeRequestAttribute(QNetworkRequest::Attribute attribute);
 
 Q_SIGNALS:
+	//! @notifyAcFn{RestClient::baseUrl}
 	void baseUrlChanged(QUrl baseUrl, QPrivateSignal);
+	//! @notifyAcFn{RestClient::apiVersion}
 	void apiVersionChanged(QVersionNumber apiVersion, QPrivateSignal);
+	//! @notifyAcFn{RestClient::globalHeaders}
 	void globalHeadersChanged(HeaderHash globalHeaders, QPrivateSignal);
+	//! @notifyAcFn{RestClient::globalParameters}
 	void globalParametersChanged(QUrlQuery globalParameters, QPrivateSignal);
+	//! @notifyAcFn{RestClient::requestAttributes}
 	void requestAttributesChanged(QHash<QNetworkRequest::Attribute, QVariant> requestAttributes, QPrivateSignal);
+	//! @notifyAcFn{RestClient::sslConfiguration}
 	void sslConfigurationChanged(QSslConfiguration sslConfiguration, QPrivateSignal);
 
 private:

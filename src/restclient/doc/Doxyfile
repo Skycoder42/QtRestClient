@@ -1412,7 +1412,7 @@ QCH_FILE               = ../qtrestclient.qch
 # The default value is: org.doxygen.Project.
 # This tag requires that the tag GENERATE_QHP is set to YES.
 
-QHP_NAMESPACE          = de.skycoder42.qtrestclient.110
+QHP_NAMESPACE          = 
 
 # The QHP_VIRTUAL_FOLDER tag specifies the namespace to use when generating Qt
 # Help Project output. For more information please see Qt Help Project / Virtual
@@ -1429,7 +1429,7 @@ QHP_VIRTUAL_FOLDER     = doc_qtrestclient
 # filters).
 # This tag requires that the tag GENERATE_QHP is set to YES.
 
-QHP_CUST_FILTER_NAME   = "RestClient 1.1.0"
+QHP_CUST_FILTER_NAME   = 
 
 # The QHP_CUST_FILTER_ATTRS tag specifies the list of the attributes of the
 # custom filter to add. For more information please see Qt Help Project / Custom
@@ -1437,7 +1437,7 @@ QHP_CUST_FILTER_NAME   = "RestClient 1.1.0"
 # filters).
 # This tag requires that the tag GENERATE_QHP is set to YES.
 
-QHP_CUST_FILTER_ATTRS  = "qtrestclient 1.1.0"
+QHP_CUST_FILTER_ATTRS  = 
 
 # The QHP_SECT_FILTER_ATTRS tag specifies the list of the attributes this
 # project's filter section matches. Qt Help Project / Filter Attributes (see:
@@ -2160,7 +2160,7 @@ SKIP_FUNCTION_MACROS   = YES
 # the path). If a tag file is not located in the directory in which doxygen is
 # run, you must also specify the path to the tagfile here.
 
-TAGFILES               = 
+TAGFILES               = /home/sky/Qt/Docs/Qt-5.8/qtjsonserializer/qtjsonserializer.tags=https://skycoder42.github.io/QJsonSerializer/
 
 # When a file name is specified after GENERATE_TAGFILE, doxygen will create a
 # tag file that is based on the input files it reads. See section "Linking to
