@@ -33,7 +33,7 @@ public:
 	GenericRestReply<DataClassType, ErrorClassType> *enableAutoDelete();
 
 private:
-	QJsonSerializer *serializer;
+	RestClient *client;
 	std::function<void(RestReply*, QJsonSerializerException &)> exceptionHandler;
 };
 
@@ -58,7 +58,7 @@ public:
 	GenericRestReply<QList<DataClassType>, ErrorClassType> *enableAutoDelete();
 
 private:
-	QJsonSerializer *serializer;
+	RestClient *client;
 	std::function<void(RestReply*, QJsonSerializerException &)> exceptionHandler;
 };
 
@@ -103,7 +103,7 @@ namespace QtRestClient {
 template<typename DataClassType, typename ErrorClassType>
 GenericRestReply<DataClassType, ErrorClassType>::GenericRestReply(QNetworkReply *networkReply, RestClient *client, QObject *parent) :
 	RestReply(networkReply, parent),
-	serializer(client->serializer()),
+	client(client),
 	exceptionHandler()
 {}
 
@@ -116,7 +116,7 @@ GenericRestReply<DataClassType, ErrorClassType> *GenericRestReply<DataClassType,
 		try {
 			if(!value.isObject())
 				throw QJsonDeserializationException("Expected JSON object but got " + QByteArray::number(value.type()));
-			handler(this, code, serializer->deserialize<DataClassType>(value.toObject()));
+			handler(this, code, client->serializer()->deserialize<DataClassType>(value.toObject()));
 		} catch(QJsonSerializerException &e) {
 			if(exceptionHandler)
 				exceptionHandler(this, e);
@@ -134,7 +134,7 @@ GenericRestReply<DataClassType, ErrorClassType> *GenericRestReply<DataClassType,
 		try {
 			if(!value.isObject())
 				throw QJsonDeserializationException("Expected JSON object but got " + QByteArray::number(value.type()));
-			handler(this, code, serializer->deserialize<ErrorClassType>(value.toObject()));
+			handler(this, code, client->serializer()->deserialize<ErrorClassType>(value.toObject()));
 		} catch(QJsonSerializerException &e) {
 			if(exceptionHandler)
 				exceptionHandler(this, e);
@@ -186,7 +186,7 @@ GenericRestReply<DataClassType, ErrorClassType> *GenericRestReply<DataClassType,
 template<typename DataClassType, typename ErrorClassType>
 GenericRestReply<QList<DataClassType>, ErrorClassType>::GenericRestReply(QNetworkReply *networkReply, RestClient *client, QObject *parent) :
 	RestReply(networkReply, parent),
-	serializer(client->serializer()),
+	client(client),
 	exceptionHandler()
 {}
 
@@ -199,7 +199,7 @@ GenericRestReply<QList<DataClassType>, ErrorClassType> *GenericRestReply<QList<D
 		try {
 			if(!value.isArray())
 				throw QJsonDeserializationException("Expected JSON array but got " + QByteArray::number(value.type()));
-			handler(this, code, serializer->deserialize<DataClassType>(value.toArray()));
+			handler(this, code, client->serializer()->deserialize<DataClassType>(value.toArray()));
 		} catch(QJsonSerializerException &e) {
 			if(exceptionHandler)
 				exceptionHandler(this, e);
@@ -217,7 +217,7 @@ GenericRestReply<QList<DataClassType>, ErrorClassType> *GenericRestReply<QList<D
 		try {
 			if(!value.isObject())
 				throw QJsonDeserializationException("Expected JSON object but got " + QByteArray::number(value.type()));
-			handler(this, code, serializer->deserialize<ErrorClassType>(value.toObject()));
+			handler(this, code, client->serializer()->deserialize<ErrorClassType>(value.toObject()));
 		} catch(QJsonSerializerException &e) {
 			if(exceptionHandler)
 				exceptionHandler(this, e);

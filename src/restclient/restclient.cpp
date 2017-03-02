@@ -82,6 +82,25 @@ RequestBuilder RestClient::builder() const
 			.setSslConfig(d->sslConfig);
 }
 
+void RestClient::setManager(QNetworkAccessManager *manager)
+{
+	d->nam->deleteLater();
+	d->nam = manager;
+	manager->setParent(this);
+}
+
+void RestClient::setSerializer(QJsonSerializer *serializer)
+{
+	d->serializer->deleteLater();
+	d->serializer = serializer;
+	serializer->setParent(this);
+}
+
+void RestClient::setPagingFactory(PagingFactory *factory)
+{
+	d->pagingFactory.reset(factory);
+}
+
 void RestClient::setBaseUrl(QUrl baseUrl)
 {
 	if (d->baseUrl == baseUrl)
@@ -239,6 +258,10 @@ void QtRestClient::removeGlobalApi(const QString &name, bool deleteClient)
 		RestClientPrivate::globalApis.remove(name);
 }
 
+/*!
+@param name The name of the root class to be returned
+@returns The `RestClient` for the given API name, or `nullptr` if no such API exists
+*/
 RestClient *QtRestClient::apiClient(const QString &name)
 {
 	return RestClientPrivate::globalApis.value(name, nullptr);
@@ -248,7 +271,7 @@ RestClient *QtRestClient::apiClient(const QString &name)
 @param name The name of the root class to be returned
 @returns The root `RestClass` for the given API name, or `nullptr` if no such API exists
 
-@sa QtRestClient::RestClient::rootClass
+@sa RestClient::rootClass
 */
 RestClass *QtRestClient::apiRootClass(const QString &name)
 {
@@ -259,6 +282,14 @@ RestClass *QtRestClient::apiRootClass(const QString &name)
 		return nullptr;
 }
 
+/*!
+@param name The name of the root class to be returned
+@param path The path to be used for the `RestClass`
+@param parent The parent object for the created class
+@returns A newly created `RestClass` for the given API name, or `nullptr` if no such API exists
+
+@sa RestClient::createClass
+*/
 RestClass *QtRestClient::createApiClass(const QString &name, const QString &path, QObject *parent)
 {
 	auto client = RestClientPrivate::globalApis.value(name, nullptr);
