@@ -103,14 +103,14 @@ QUrl Paging<T>::previousUrl() const
 }
 
 template<typename T>
-void Paging<T>::iterate(std::function<bool (Paging<T> *, T, int)> iterator, int to, int from)
+void Paging<T>::iterate(std::function<bool (T, int)> iterator, int to, int from)
 {
 	return iterate(iterator, {}, {}, to, from);
 }
 
 template<typename T>
 template<typename EO>
-void Paging<T>::iterate(std::function<bool(Paging<T>*, T, int)> iterator, std::function<void(RestReply*, QString, int, RestReply::ErrorType)> errorHandler, std::function<QString (EO, int)> failureTransformer, int to, int from)
+void Paging<T>::iterate(std::function<bool(T, int)> iterator, std::function<void(QString, int, RestReply::ErrorType)> errorHandler, std::function<QString (EO, int)> failureTransformer, int to, int from)
 {
 	Q_ASSERT(from >= iPaging->offset());
 
@@ -126,7 +126,7 @@ void Paging<T>::iterate(std::function<bool(Paging<T>*, T, int)> iterator, std::f
 		max = iPaging->total();
 	if(index < max && iPaging->hasNext()) {
 		next()->enableAutoDelete()
-			  ->onSucceeded([=](RestReply *, int, Paging<T> paging) {
+			  ->onSucceeded([=](int, Paging<T> paging) {
 				  paging.iterate(iterator, errorHandler, failureTransformer, to, index);
 			  })
 			  ->onAllErrors(errorHandler, failureTransformer);
@@ -135,7 +135,7 @@ void Paging<T>::iterate(std::function<bool(Paging<T>*, T, int)> iterator, std::f
 
 template<typename T>
 template<typename EO>
-void Paging<T>::iterate(std::function<bool(Paging<T>*, T, int)> iterator, std::function<void(RestReply *, int, EO)> failureHandler, std::function<void(RestReply*, QString, int, RestReply::ErrorType)> errorHandler, std::function<void(RestReply *, QJsonSerializerException &)> exceptionHandler, int to, int from)
+void Paging<T>::iterate(std::function<bool(T, int)> iterator, std::function<void(int, EO)> failureHandler, std::function<void(QString, int, RestReply::ErrorType)> errorHandler, std::function<void(QJsonSerializerException &)> exceptionHandler, int to, int from)
 {
 	Q_ASSERT(from >= iPaging->offset());
 
@@ -151,7 +151,7 @@ void Paging<T>::iterate(std::function<bool(Paging<T>*, T, int)> iterator, std::f
 		max = iPaging->total();
 	if(index < max && iPaging->hasNext()) {
 		next()->enableAutoDelete()
-			  ->onSucceeded([=](RestReply *, int, Paging<T> paging) {
+			  ->onSucceeded([=](int, Paging<T> paging) {
 				  paging.iterate(iterator, failureHandler, errorHandler, exceptionHandler, to, index);
 			  })
 			  ->onFailed(failureHandler)
@@ -167,7 +167,7 @@ void Paging<T>::deleteAllItems()
 }
 
 template<typename T>
-int Paging<T>::internalIterate(std::function<bool (Paging<T>*, T, int)> iterator, int to, int from)
+int Paging<T>::internalIterate(std::function<bool (T, int)> iterator, int to, int from)
 {
 	//handle all items in this paging
 	int i, max;
@@ -179,7 +179,7 @@ int Paging<T>::internalIterate(std::function<bool (Paging<T>*, T, int)> iterator
 	auto canceled = false;
 	for(i = qMax(from, iPaging->offset()); i < max; i++) {
 		auto item = data.value(i - iPaging->offset());
-		if(!iterator(this, item, i)) {
+		if(!iterator(item, i)) {
 			canceled = true;
 			break;
 		}

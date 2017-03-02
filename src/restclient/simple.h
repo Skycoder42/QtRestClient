@@ -29,7 +29,7 @@ public:
 	template<typename ET = QObject*>
 	void extend(RestClient *client,
 				std::function<void(T*, bool)> extensionHandler,
-				std::function<void(RestReply*, QString, int, RestReply::ErrorType)> errorHandler = {},
+				std::function<void(QString, int, RestReply::ErrorType)> errorHandler = {},
 				std::function<QString(ET, int)> failureTransformer = {});
 
 private:
@@ -92,21 +92,21 @@ template<typename ET>
 GenericRestReply<T*, ET> *Simple<T*, typename std::enable_if<std::is_base_of<QObject, T>::value>::type>::extend(RestClient *client)
 {
 	return client->rootClass()->get<T*, ET>(extensionHref())
-			->onSucceeded([=](RestReply *, int, T *data){
+			->onSucceeded([=](int, T *data){
 				cExt = data;
 			});
 }
 
 template<typename T>
 template<typename ET>
-void Simple<T*, typename std::enable_if<std::is_base_of<QObject, T>::value>::type>::extend(RestClient *client, std::function<void (T *, bool)> extensionHandler, std::function<void (RestReply *, QString, int, RestReply::ErrorType)> errorHandler, std::function<QString (ET, int)> failureTransformer)
+void Simple<T*, typename std::enable_if<std::is_base_of<QObject, T>::value>::type>::extend(RestClient *client, std::function<void (T *, bool)> extensionHandler, std::function<void (QString, int, RestReply::ErrorType)> errorHandler, std::function<QString (ET, int)> failureTransformer)
 {
 	if(cExt)
 		extensionHandler(cExt, false);
 	else {
 		client->rootClass()->get<T*, ET>(extensionHref())
 				->enableAutoDelete()
-				->onSucceeded([=](RestReply *, int, T *data){
+				->onSucceeded([=](int, T *data){
 					cExt = data;
 					extensionHandler(data, true);
 				})
@@ -136,7 +136,7 @@ template<typename ET>
 GenericRestReply<T, ET> *Simple<T, typename std::enable_if<std::is_void<typename T::QtGadgetHelper>::value>::type>::extend(RestClient *client)
 {
 	return client->rootClass()->get<T, ET>(extensionHref())
-			->onSucceeded([=](RestReply *, int, T data){
+			->onSucceeded([=](int, T data){
 				cExt = data;
 			});
 }
@@ -150,7 +150,7 @@ void Simple<T, typename std::enable_if<std::is_void<typename T::QtGadgetHelper>:
 	else {
 		client->rootClass()->get<T, ET>(extensionHref())
 				->enableAutoDelete()
-				->onSucceeded([=](RestReply *, int, T data){
+				->onSucceeded([=](int, T data){
 					cExt = data;
 					extensionHandler(data, true);
 				})

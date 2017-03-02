@@ -16,75 +16,75 @@ RestReply::RestReply(QNetworkReply *networkReply, QObject *parent) :
 	d->connectReply(networkReply);
 }
 
-RestReply *RestReply::onSucceeded(std::function<void (RestReply *, int, QJsonObject)> handler)
+RestReply *RestReply::onSucceeded(std::function<void (int, QJsonObject)> handler)
 {
 	if(!handler)
 		return this;
 	connect(this, &RestReply::succeeded, this, [=](int code, const QJsonValue &value){
-		handler(this, code, value.toObject());
+		handler(code, value.toObject());
 	});
 	return this;
 }
 
-RestReply *RestReply::onSucceeded(std::function<void (RestReply *, int, QJsonArray)> handler)
+RestReply *RestReply::onSucceeded(std::function<void (int, QJsonArray)> handler)
 {
 	if(!handler)
 		return this;
 	connect(this, &RestReply::succeeded, this, [=](int code, const QJsonValue &value){
-		handler(this, code, value.toArray());
+		handler(code, value.toArray());
 	});
 	return this;
 }
 
-RestReply *RestReply::onFailed(std::function<void (RestReply*, int, QJsonObject)> handler)
+RestReply *RestReply::onFailed(std::function<void (int, QJsonObject)> handler)
 {
 	if(!handler)
 		return this;
 	connect(this, &RestReply::failed, this, [=](int code, const QJsonValue &value){
-		handler(this, code, value.toObject());
+		handler(code, value.toObject());
 	});
 	return this;
 }
 
-RestReply *RestReply::onFailed(std::function<void (RestReply*, int, QJsonArray)> handler)
+RestReply *RestReply::onFailed(std::function<void (int, QJsonArray)> handler)
 {
 	if(!handler)
 		return this;
 	connect(this, &RestReply::failed, this, [=](int code, const QJsonValue &value){
-		handler(this, code, value.toArray());
+		handler(code, value.toArray());
 	});
 	return this;
 }
 
-RestReply *RestReply::onError(std::function<void (RestReply*, QString, int, ErrorType)> handler)
+RestReply *RestReply::onError(std::function<void (QString, int, ErrorType)> handler)
 {
 	if(!handler)
 		return this;
 	connect(this, &RestReply::error, this, [=](QString errorString, int error, ErrorType type){
-		handler(this, errorString, error, type);
+		handler(errorString, error, type);
 	});
 	return this;
 }
 
-RestReply *RestReply::onAllErrors(std::function<void (RestReply *, QString, int, RestReply::ErrorType)> handler, std::function<QString (QJsonObject, int)> failureTransformer)
+RestReply *RestReply::onAllErrors(std::function<void (QString, int, RestReply::ErrorType)> handler, std::function<QString (QJsonObject, int)> failureTransformer)
 {
-	this->onFailed([=](RestReply *rep, int code, QJsonObject obj){
+	this->onFailed([=](int code, QJsonObject obj){
 		if(failureTransformer)
-			handler(rep, failureTransformer(obj, code), code, FailureError);
+			handler(failureTransformer(obj, code), code, FailureError);
 		else
-			handler(rep, QString(), code, FailureError);
+			handler(QString(), code, FailureError);
 	});
 	this->onError(handler);
 	return this;
 }
 
-RestReply *RestReply::onAllErrors(std::function<void (RestReply *, QString, int, RestReply::ErrorType)> handler, std::function<QString (QJsonArray, int)> failureTransformer)
+RestReply *RestReply::onAllErrors(std::function<void (QString, int, RestReply::ErrorType)> handler, std::function<QString (QJsonArray, int)> failureTransformer)
 {
-	this->onFailed([=](RestReply *rep, int code, QJsonArray array){
+	this->onFailed([=](int code, QJsonArray array){
 		if(failureTransformer)
-			handler(rep, failureTransformer(array, code), code, FailureError);
+			handler(failureTransformer(array, code), code, FailureError);
 		else
-			handler(rep, QString(), code, FailureError);
+			handler(QString(), code, FailureError);
 	});
 	this->onError(handler);
 	return this;

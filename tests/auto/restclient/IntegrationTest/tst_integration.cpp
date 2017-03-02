@@ -50,13 +50,12 @@ void IntegrationTest::testJsonChain()
 
 	auto reply = postClass->callJson(RestClass::PutVerb, "1", object);
 	reply->enableAutoDelete();
-	reply->onSucceeded([&](RestReply *rep, int code, QJsonObject data){
+	reply->onSucceeded([&](int code, QJsonObject data){
 		called = true;
-		QCOMPARE(rep, reply);
 		QCOMPARE(code, 200);
 		QCOMPARE(data, object);
 	});
-	reply->onAllErrors([&](RestReply *, QString error, int code, RestReply::ErrorType){
+	reply->onAllErrors([&](QString error, int code, RestReply::ErrorType){
 		called = true;
 		QFAIL(qUtf8Printable(error.isEmpty() ? QString::number(code) : error));
 	});
@@ -79,14 +78,13 @@ void IntegrationTest::testQObjectChain()
 
 	auto reply = postClass->put<JphPost*>("2", object);
 	reply->enableAutoDelete();
-	reply->onSucceeded([&](RestReply *rep, int code, JphPost *data){
+	reply->onSucceeded([&](int code, JphPost *data){
 		called = true;
-		QCOMPARE(rep, reply);
 		QCOMPARE(code, 200);
 		QVERIFY(JphPost::equals(data, object));
 		data->deleteLater();
 	});
-	reply->onAllErrors([&](RestReply *, QString error, int code, RestReply::ErrorType){
+	reply->onAllErrors([&](QString error, int code, RestReply::ErrorType){
 		called = true;
 		QFAIL(qUtf8Printable(error.isEmpty() ? QString::number(code) : error));
 	});
@@ -107,14 +105,13 @@ void IntegrationTest::testQObjectListChain()
 
 	auto reply = postClass->get<QList<JphPost*>>();
 	reply->enableAutoDelete();
-	reply->onSucceeded([&](RestReply *rep, int code, QList<JphPost*> data){
+	reply->onSucceeded([&](int code, QList<JphPost*> data){
 		called = true;
-		QCOMPARE(rep, reply);
 		QCOMPARE(code, 200);
 		QCOMPARE(data.size(), 100);
 		qDeleteAll(data);
 	});
-	reply->onAllErrors([&](RestReply *, QString error, int code, RestReply::ErrorType){
+	reply->onAllErrors([&](QString error, int code, RestReply::ErrorType){
 		called = true;
 		QFAIL(qUtf8Printable(error.isEmpty() ? QString::number(code) : error));
 	});
@@ -134,7 +131,7 @@ void IntegrationTest::testQObjectPagingChain()
 
 	auto reply = pagingClass->get<Paging<JphPost*>>("0");
 	reply->enableAutoDelete();
-	reply->iterate([&](Paging<JphPost*> *, JphPost* data, int index){
+	reply->iterate([&](JphPost* data, int index){
 		auto ok = false;
 		[&](){
 			QCOMPARE(index, count++);
@@ -144,7 +141,7 @@ void IntegrationTest::testQObjectPagingChain()
 		data->deleteLater();
 		return ok;
 	});
-	reply->onAllErrors([&](RestReply *, QString error, int code, RestReply::ErrorType){
+	reply->onAllErrors([&](QString error, int code, RestReply::ErrorType){
 		count = 142;
 		QFAIL(qUtf8Printable(error.isEmpty() ? QString::number(code) : error));
 	});

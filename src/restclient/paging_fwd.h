@@ -43,18 +43,18 @@ public:
 	GenericRestReply<Paging<T>, EO> *previous() const;
 	QUrl previousUrl() const;
 
-	void iterate(std::function<bool(Paging<T>*, T, int)> iterator, int to = -1, int from = 0);
+	void iterate(std::function<bool(T, int)> iterator, int to = -1, int from = 0);
 	template<typename EO = QObject*>
-	void iterate(std::function<bool(Paging<T>*, T, int)> iterator,
-				 std::function<void(RestReply*, QString, int, RestReply::ErrorType)> errorHandler,
+	void iterate(std::function<bool(T, int)> iterator,
+				 std::function<void(QString, int, RestReply::ErrorType)> errorHandler,
 				 std::function<QString(EO, int)> failureTransformer = {},
 				 int to = -1,
 				 int from = 0);
 	template<typename EO = QObject*>
-	void iterate(std::function<bool(Paging<T>*, T, int)> iterator,
-				 std::function<void(RestReply*, int, EO)> failureHandler,
-				 std::function<void(RestReply*, QString, int, RestReply::ErrorType)> errorHandler = {},
-				 std::function<void(RestReply*, QJsonSerializerException &)> exceptionHandler = {},
+	void iterate(std::function<bool(T, int)> iterator,
+				 std::function<void(int, EO)> failureHandler,
+				 std::function<void(QString, int, RestReply::ErrorType)> errorHandler = {},
+				 std::function<void(QJsonSerializerException &)> exceptionHandler = {},
 				 int to = -1,
 				 int from = 0);
 
@@ -65,7 +65,7 @@ private:
 	QList<T> data;
 	RestClient *client;
 
-	int internalIterate(std::function<bool(Paging<T>*, T, int)> iterator, int from, int to);
+	int internalIterate(std::function<bool(T, int)> iterator, int from, int to);
 };
 
 }
