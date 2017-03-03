@@ -6,6 +6,8 @@ want to access, and then register it globally using registerGlobalApi().
 
 The client is used by RestClass and other components, to get the basic request settings for all
 requests.
+
+@sa RestClass, QtRestClient::addGlobalApi
 */
 
 /*!
@@ -20,6 +22,8 @@ All other settings regarding URLs will be based on this one.
 	@writeAc{setBaseUrl()}
 	@notifyAc{baseUrlChanged()}
 }
+
+@sa RequestBuilder
 */
 
 /*!
@@ -41,4 +45,228 @@ Assuming the baseUrl is `https://example.com`, we get the following urls:
 	@writeAc{setApiVersion()}
 	@notifyAc{apiVersionChanged()}
 }
+
+@sa RequestBuilder::setVersion
+*/
+
+/*!
+@property QtRestClient::RestClient::globalHeaders
+
+@default{empty <i>(default constructed)</i>}
+
+Those headers are added for example to the HTTP-Requests as additional HTTP headers. Can be
+overwritten by the RestClass doing the request.
+
+@accessors{
+	@readAc{globalHeaders()}
+	@writeAc{setGlobalHeaders()}
+	@writeAc{addGlobalHeader() <i>(indirectly)</i>}
+	@writeAc{removeGlobalHeader() <i>(indirectly)</i>}
+	@notifyAc{globalHeadersChanged()}
+}
+
+@sa QNetworkRequest::setRawHeader, QNetworkRequest::KnownHeaders, RequestBuilder::addHeaders,
+RestClass
+*/
+
+/*!
+@property QtRestClient::RestClient::globalParameters
+
+@default{empty <i>(default constructed)</i>}
+
+Can be overwritten by the RestClass doing the request.
+
+@accessors{
+	@readAc{globalParameters()}
+	@writeAc{setGlobalParameters()}
+	@writeAc{addGlobalParameter() <i>(indirectly)</i>}
+	@writeAc{removeGlobalParameter() <i>(indirectly)</i>}
+	@notifyAc{globalParametersChanged()}
+}
+
+@sa QUrl::setQuery(const QUrlQuery &), RequestBuilder::addParameters, RestClass
+*/
+
+/*!
+@property QtRestClient::RestClient::requestAttributes
+
+@default{empty <i>(default constructed)</i>}
+
+Can be overwritten by the RestClass doing the request. To use the recommended ones, call
+setModernAttributes()
+
+@accessors{
+	@readAc{requestAttributes()}
+	@writeAc{setRequestAttributes()}
+	@writeAc{addRequestAttribute() <i>(indirectly)</i>}
+	@writeAc{removeRequestAttribute() <i>(indirectly)</i>}
+	@notifyAc{requestAttributesChanged()}
+}
+
+@sa RestClient::setModernAttributes, QNetworkRequest::setAttribute,
+RequestBuilder::setAttributes
+*/
+
+/*!
+@property QtRestClient::RestClient::sslConfiguration
+
+@default{QSslConfiguration::defaultConfiguration()}
+
+Can be overwritten by the RestClass doing the request. If you modify the applications default
+configuration after creating the rest client, those changes will **not** be applied to the
+existing client.
+
+@accessors{
+	@readAc{sslConfiguration()}
+	@writeAc{setSslConfiguration()}
+	@notifyAc{sslConfigurationChanged()}
+}
+
+@sa QSslConfiguration::setDefaultConfiguration, RequestBuilder::setSslConfig
+*/
+
+/*!
+@fn QtRestClient::RestClient::createClass
+
+@param path The path to be appended to the base path
+@param parent The parent for the created rest class
+@returns A newly created RestClass for the given path
+
+The path will be appended to one created by the client. Please not that for all requests the
+request will be recreated. If you change any property of the RestClient, this will affect all
+RestClass instances that have been created by this client.
+
+The following example shows how this affects the RestClass:
+@code{.cpp}
+//client is configured as
+client->setBaseUrl("https://api.example.com/default/");
+client->addGlobalParameter("id", "42");
+
+//class was created using
+auto rClass = client->createClass("stuff/important", this);
+
+//doing the following request
+rClass->get<MyType>("test");
+//will make a request to the URL: https://api.example.com/default/stuff/important/test?id=42
+
+//after modifying the client and doing it again
+client->setApiVersion(QVersionNumber(1));
+rClass->get<MyType>("test");
+//the URL becomes: https://api.example.com/default/v1/stuff/important/test?id=42
+@endcode
+
+@sa RestClient::rootClass, QtRestClient::createApiClass
+*/
+
+/*!
+@fn QtRestClient::RestClient::rootClass
+
+@returns The root class of this client
+
+The root class is an instance of a RestClass, created with no extra path, parented to the client.
+You can use it to make requests, but you do not own it. You can create an equivalent copy of this
+instance, owned by you, by calling:
+
+@code{.cpp}
+auto myRootClass = client->createClass(QString(), this);
+@endcode
+
+@sa RestClient::createClass, QtRestClient::apiRootClass
+*/
+
+/*!
+@fn QtRestClient::RestClient::manager
+
+@returns The network access manager used by the client
+
+@sa RestClient::setManager
+*/
+
+/*!
+@fn QtRestClient::RestClient::serializer
+
+@returns The json serializer used by the client
+
+@sa RestClient::setSerializer, https://skycoder42.github.io/QJsonSerializer
+*/
+
+/*!
+@fn QtRestClient::RestClient::pagingFactory
+
+@returns The paging factory used by the client
+
+@sa RestClient::setPagingFactory, IPaging, Paging
+*/
+
+/*!
+@fn QtRestClient::RestClient::builder
+
+@returns A request builder, prepared with all the settings of the rest client
+
+If you need to set additional properties on the builder, that are not provided by the rest client
+itself, you can override this function. To preserve all the properties override as follows:
+
+@code{.cpp}
+RequestBuilder MyClient::builder() const override {
+	return RestClient::builder()
+		.set...
+}
+@endcode
+*/
+
+/*!
+@fn QtRestClient::RestClient::setManager
+
+@param manager The network access manager to be used by the client
+
+The client will take ownership of the manager. You must not delete it after setting it. All
+RestClass instances, requests, replies and more will use this new manager.
+
+@sa RestClient::manager
+*/
+
+/*!
+@fn QtRestClient::RestClient::setSerializer
+
+@param serializer The json serializer to be used by the client
+
+The client will take ownership of the serializer. You must not delete it after setting it. All
+RestClass instances, requests, replies and more will use this new serializer.
+
+@sa RestClient::serializer, https://skycoder42.github.io/QJsonSerializer
+*/
+
+/*!
+@fn QtRestClient::RestClient::setPagingFactory
+
+@param factory The paging factory to be used by the client
+
+The client will take ownership of the factory. You must not delete it after setting it. All
+RestClass instances, requests, replies and more will use this new factory.
+
+@sa RestClient::pagingFactory, IPaging, Paging, StandardPagingFactory
+*/
+
+/*!
+@fn QtRestClient::RestClient::setModernAttributes
+
+The following attributes will be set on the client
+
+Attribute										| Value
+------------------------------------------------|--------
+QNetworkRequest::FollowRedirectsAttribute		| `true`
+QNetworkRequest::HttpPipeliningAllowedAttribute	| `true`
+QNetworkRequest::SpdyAllowedAttribute			| `true`
+QNetworkRequest::HTTP2AllowedAttribute			| `true`
+
+@note While it is recommended to use these attributes, they may not all work for every backend.
+Older servers, for example, may have problems with HTTP2 requests, and will fail to even reply.
+In such cases, you can still use these attributes, and simply overwrite the problematic one again:
+
+@code{.cpp}
+client->setModernAttributes()
+client->addRequestAttribute(QNetworkRequest::HTTP2AllowedAttribute, false);
+@endcode
+
+@sa RestClient::requestAttributes, QNetworkRequest::Attribute
 */

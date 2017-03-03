@@ -33,7 +33,7 @@ class Q_RESTCLIENT_EXPORT RestClient : public QObject
 	Q_PROPERTY(QUrlQuery globalParameters READ globalParameters WRITE setGlobalParameters NOTIFY globalParametersChanged)
 	//! A collection of attributes to be set on every request
 	Q_PROPERTY(QHash<QNetworkRequest::Attribute, QVariant> requestAttributes READ requestAttributes WRITE setRequestAttributes NOTIFY requestAttributesChanged)
-	//! The SSL configuration to be used for https
+	//! The SSL configuration to be used for HTTPS
 	Q_PROPERTY(QSslConfiguration sslConfiguration READ sslConfiguration WRITE setSslConfiguration NOTIFY sslConfigurationChanged)
 
 public:

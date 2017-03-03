@@ -1,0 +1,5 @@
+/*!
+@typedef QtRestClient::HeaderHash
+
+@sa RestClient::globalHeaders, RequestBuilder::addHeaders, QNetworkRequest::setRawHeader
+*/

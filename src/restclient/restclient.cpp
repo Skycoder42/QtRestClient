@@ -209,6 +209,7 @@ RestClientPrivate::RestClientPrivate(RestClient *q_ptr) :
 	apiVersion(),
 	headers(),
 	query(),
+	attribs(),
 	sslConfig(QSslConfiguration::defaultConfiguration()),
 	nam(new QNetworkAccessManager(q_ptr)),
 	serializer(new QJsonSerializer(q_ptr)),
@@ -223,7 +224,9 @@ RestClientPrivate::RestClientPrivate(RestClient *q_ptr) :
 @param client The RestClient to be registered
 @returns `true` if added, `false` if the name is already taken
 
-@note QtRestClient takes ownership of the `client`, do not manually delete it after adding it
+@Attention QtRestClient takes ownership of the `client`, do not delete it after adding it
+
+@sa RestClient, QtRestClient::apiClient, QtRestClient::removeGlobalApi
 */
 bool QtRestClient::addGlobalApi(const QString &name, RestClient *client)
 {
@@ -247,6 +250,8 @@ auto client = QtRestClient::apiClient("name");
 QtRestClient::removeGlobalApi("name");
 client->setParent(this);
 @endcode
+
+@sa QtRestClient::addGlobalApi
 */
 void QtRestClient::removeGlobalApi(const QString &name, bool deleteClient)
 {
@@ -261,6 +266,8 @@ void QtRestClient::removeGlobalApi(const QString &name, bool deleteClient)
 /*!
 @param name The name of the root class to be returned
 @returns The `RestClient` for the given API name, or `nullptr` if no such API exists
+
+@sa QtRestClient::addGlobalApi
 */
 RestClient *QtRestClient::apiClient(const QString &name)
 {
@@ -271,7 +278,7 @@ RestClient *QtRestClient::apiClient(const QString &name)
 @param name The name of the root class to be returned
 @returns The root `RestClass` for the given API name, or `nullptr` if no such API exists
 
-@sa RestClient::rootClass
+@sa RestClient::rootClass, QtRestClient::createApiClass, QtRestClient::addGlobalApi
 */
 RestClass *QtRestClient::apiRootClass(const QString &name)
 {
@@ -288,7 +295,7 @@ RestClass *QtRestClient::apiRootClass(const QString &name)
 @param parent The parent object for the created class
 @returns A newly created `RestClass` for the given API name, or `nullptr` if no such API exists
 
-@sa RestClient::createClass
+@sa RestClient::createClass, QtRestClient::apiRootClass, QtRestClient::addGlobalApi
 */
 RestClass *QtRestClient::createApiClass(const QString &name, const QString &path, QObject *parent)
 {
