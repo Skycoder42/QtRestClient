@@ -1,0 +1,53 @@
+/*!
+@class QtRestClient::IPaging
+
+Implement this interface, as well as a custom PagingFactory, if you need to parse a non standard
+paging object. You should implement all of the methods correctly. However, you can still use the
+paging if you can't provide all of them. Simply return default values in that case. However, if
+you want to use the iterate functionality of the paging, you will have to implement all of them.
+
+@sa PagingFactory, StandardPaging, Paging
+*/
+
+/*!
+@class QtRestClient::PagingFactory
+
+In order to use paging, you need a factory to create those. By default, StandardPagingFactory
+is used to do so. However, if you need to reimplement IPaging, you need to create a factory
+as well.
+
+@sa IPaging, StandardPagingFactory, Paging, RestClient::pagingFactory
+*/
+
+/*!
+@fn QtRestClient::PagingFactory::createPaging
+
+@param serializer A json serializer, if you want to use it for deserialization
+@param data The paging json object to be loaded into a IPaging interface
+@return A new paging interface instance
+@throws QJsonDeserializationException Will be thrown if the passed json data is not a valid
+paging object
+
+When reimplementing this function, make shure to not return `nullptr`, if the creation failed.
+throw an exception instead, as specified by this documenation
+*/
+
+/*!
+@class QtRestClient::StandardPaging
+
+This class expects JSON data of the following format:
+@code{.json}
+{
+	"total": int,
+	"offset": int,
+	"limit": int,
+	"previous": url|null,
+	"next": url|null,
+	"items": array
+}
+@endcode
+
+Additional field will be ignored, but are still a valid paging objects. Missing fields or
+incompatibale types are not allowed, but wont create an error here. Validation is done by
+StandardPagingFactory::createPaging
+*/

@@ -9,9 +9,11 @@
 namespace QtRestClient {
 
 class StandardPagingPrivate;
+//! The standard implementation of IPaging
 class Q_RESTCLIENT_EXPORT StandardPaging : public IPaging
 {
 public:
+	//! Creates a standard paging from a valid json object
 	StandardPaging(const QJsonObject &object);
 	~StandardPaging();
 
@@ -28,6 +30,7 @@ private:
 	QScopedPointer<StandardPagingPrivate> d_ptr;
 };
 
+//! The factory that creates StandardPaging pagings
 class Q_RESTCLIENT_EXPORT StandardPagingFactory : public PagingFactory
 {
 public:
