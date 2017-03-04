@@ -67,7 +67,7 @@ public:
 	//! @readAcFn{RestClient::sslConfiguration}
 	QSslConfiguration sslConfiguration() const;
 
-	//! Creates a request build with all the settings of this client
+	//! Creates a request builder with all the settings of this client
 	virtual RequestBuilder builder() const;
 
 public Q_SLOTS:

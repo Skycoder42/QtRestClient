@@ -212,6 +212,8 @@ RequestBuilder MyClient::builder() const override {
 		.set...
 }
 @endcode
+
+@sa RestClass::builder
 */
 
 /*!
