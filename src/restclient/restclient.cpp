@@ -74,7 +74,7 @@ QSslConfiguration RestClient::sslConfiguration() const
 
 RequestBuilder RestClient::builder() const
 {
-	return RequestBuilder(d->nam, d->baseUrl)
+	return RequestBuilder(d->baseUrl, d->nam)
 			.setVersion(d->apiVersion)
 			.addHeaders(d->headers)
 			.addParameters(d->query)

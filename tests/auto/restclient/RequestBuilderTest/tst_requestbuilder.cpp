@@ -227,7 +227,7 @@ void RequestBuilderTest::testBuilding()
 	QFETCH(QSslConfiguration, sslConfig);
 	QFETCH(QUrl, resultUrl);
 
-	auto builder = QtRestClient::RequestBuilder(nullptr, base)
+	auto builder = QtRestClient::RequestBuilder(base)
 				   .setCredentials(user, pass)
 				   .setVersion(version)
 				   .addPath(path)
@@ -321,7 +321,7 @@ void RequestBuilderTest::testBuildingRelative()
 	QFETCH(bool, keepFragment);
 	QFETCH(QUrl, resultUrl);
 
-	auto builder = QtRestClient::RequestBuilder(nullptr, url);
+	auto builder = QtRestClient::RequestBuilder(url);
 	builder.updateFromRelativeUrl(relative, mergeQuery, keepFragment);
 	QCOMPARE(builder.buildUrl(), resultUrl);
 }
@@ -373,7 +373,7 @@ void RequestBuilderTest::testSending()
 	QFETCH(QNetworkReply::NetworkError, error);
 	QFETCH(QJsonObject, object);
 
-	auto builder = QtRestClient::RequestBuilder(nam, url);
+	auto builder = QtRestClient::RequestBuilder(url, nam);
 	builder.setAttribute(QNetworkRequest::HTTP2AllowedAttribute, false);
 	if(!verb.isEmpty())
 		builder.setVerb(verb);

@@ -27,7 +27,7 @@ struct RequestBuilderPrivate : public QSharedData
 	QByteArray body;
 	QByteArray verb;
 
-	inline RequestBuilderPrivate(QNetworkAccessManager *nam = nullptr, QUrl baseUrl = QUrl()) :
+	inline RequestBuilderPrivate(QUrl baseUrl = QUrl(), QNetworkAccessManager *nam = nullptr) :
 		QSharedData(),
 		nam(nam),
 		base(baseUrl),
@@ -70,8 +70,8 @@ QByteArray RequestBuilderPrivate::ContentTypeJson = "application/json";
 
 #define d d_ptr
 
-RequestBuilder::RequestBuilder(QNetworkAccessManager *nam, QUrl baseUrl) :
-	d_ptr(new RequestBuilderPrivate(nam, baseUrl))
+RequestBuilder::RequestBuilder(const QUrl &baseUrl, QNetworkAccessManager *nam) :
+	d_ptr(new RequestBuilderPrivate(baseUrl, nam))
 {}
 
 RequestBuilder::RequestBuilder(const RequestBuilder &other) :
@@ -151,21 +151,21 @@ RequestBuilder &RequestBuilder::setFragment(const QString &fragment)
 	return *this;
 }
 
-RequestBuilder &RequestBuilder::addPath(QString pathSegment)
+RequestBuilder &RequestBuilder::addPath(const QString &pathSegment)
 {
 	d->path.append(pathSegment.split(QLatin1Char('/'), QString::SkipEmptyParts));
 	return *this;
 }
 
-RequestBuilder &RequestBuilder::addPath(QStringList pathSegment)
+RequestBuilder &RequestBuilder::addPath(const QStringList &pathSegment)
 {
 	d->path.append(pathSegment);
 	return *this;
 }
 
-RequestBuilder &RequestBuilder::trailingSlash()
+RequestBuilder &RequestBuilder::trailingSlash(bool enable)
 {
-	d->trailingSlash = true;
+	d->trailingSlash = enable;
 	return *this;
 }
 
@@ -175,14 +175,14 @@ RequestBuilder &RequestBuilder::setAttribute(QNetworkRequest::Attribute attribut
 	return *this;
 }
 
-RequestBuilder &RequestBuilder::setAttributes(QHash<QNetworkRequest::Attribute, QVariant> attributes)
+RequestBuilder &RequestBuilder::setAttributes(const QHash<QNetworkRequest::Attribute, QVariant> &attributes)
 {
 	for(auto it = attributes.constBegin(); it != attributes.constEnd(); it++)
 		d->attributes.insert(it.key(), it.value());
 	return *this;
 }
 
-RequestBuilder &RequestBuilder::setSslConfig(QSslConfiguration sslConfig)
+RequestBuilder &RequestBuilder::setSslConfig(const QSslConfiguration &sslConfig)
 {
 	d->sslConfig = sslConfig;
 	return *this;
