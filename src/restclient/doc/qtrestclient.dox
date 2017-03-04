@@ -3,3 +3,16 @@
 
 @sa RestClient::globalHeaders, RequestBuilder::addHeaders, QNetworkRequest::setRawHeader
 */
+
+/*!
+@class QtRestClient::MetaComponent
+
+The specializations all define the following methods:
+- deleteLater
+- deleteAllLater
+
+The component can be used to check if a type fullfills the requirements to be used with the
+rest client, and perform deletion operations, if possible.
+
+@sa Specializations
+*/
