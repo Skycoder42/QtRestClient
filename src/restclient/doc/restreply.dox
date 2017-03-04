@@ -1,0 +1,125 @@
+/*!
+@class QtRestClient::RestReply
+
+This class is used as base class for kinds of replies. Extending classes simply wrap it's
+functionality.
+
+# Definition of "Failure"
+When using the replies, you will see a FailureError and onFailure methods. THose are **not**
+network errors or json errors. A failure means that the server sent a valid reply, but with
+a HTTP-Statuscode, that is not positive (2XX), the result is treated as a failure. In most
+cases, those are 4XX errors, like 400 or 404. In some cases, the servers still send some kind
+of JSON as a reply. Those can be retrieved as "error objects"
+
+@sa GenericRestReply, RestClass
+*/
+
+/*!
+@property QtRestClient::RestReply::autoDelete
+
+@default{`false`}
+
+If set to true, the reply will de deleted automatically, right after all handlers have been
+called. While it is recommended to use this property, you must be aware that qeued connections
+will not work if enabled. And of couse this means, that you should not access the reply outside
+of the handlers after returning to the event loop once.
+
+@accessors{
+	@readAc{autoDelete()}
+	@writeAc{setAutoDelete()}
+	@writeAc{enableAutoDelete() <i>(indirect)</i>}
+	@notifyAc{autoDeleteChanged()}
+}
+*/
+
+/*!
+@fn QtRestClient::RestReply::onSucceeded(std::function<void(int, QJsonObject)>)
+
+@param handler The function to be called on success
+@returns A reference to this reply
+
+The handlers arguments are:
+- The HTTP-Status code (int)
+- The JSON Content of the reply (json)
+
+@sa RestReply::onFailed, GenericRestReply
+*/
+
+/*!
+@fn QtRestClient::RestReply::onFailed(std::function<void(int, QJsonObject)>)
+
+@param handler The function to be called on failure
+@returns A reference to this reply
+
+The handlers arguments are:
+- The HTTP-Status code (int)
+- The JSON Content of the reply (json)
+
+@sa RestReply::onAllErrors, RestReply::onSucceeded, GenericRestReply
+*/
+
+/*!
+@fn QtRestClient::RestReply::onError
+
+@param handler The function to be called on a network/json error
+@returns A reference to this reply
+
+The handlers arguments are:
+- The error string (QString)
+  - For network error: QNetworkReply::errorString
+  - For json error: QJsonParseError::errorString
+- The error code (int)
+  - For network error: QNetworkReply::error
+  - For json error: QJsonParseError::error
+- The error type (RestReply::ErrorType,
+either RestReply::NetworkError or RestReply::JsonParseError)
+
+@sa RestReply::onAllErrors, GenericRestReply
+*/
+
+/*!
+@fn QtRestClient::RestReply::onAllErrors(std::function<void(QString, int, ErrorType)>, std::function<QString(QJsonObject, int)>)
+
+@param handler The function to be called on any error
+@param failureTransformer A function to be called to extract an error string from the failure JSON
+@returns A reference to this reply
+
+The handlers arguments are:
+- The error string (QString)
+  - For network error: QNetworkReply::errorString
+  - For json error: QJsonParseError::errorString
+  - For failure error: `failureTransformer`
+- The error code (int)
+  - For network error: QNetworkReply::error
+  - For json error: QJsonParseError::error
+  - For failure error: The HTTP-Status code
+- The error type (RestReply::ErrorType,
+either RestReply::NetworkError, RestReply::JsonParseError or RestReply::FailureError)
+
+The failureTransformer arguments are
+- The JSON Content of the reply (json)
+- The HTTP-Status code (int)
+- _return:_ A string describing the error (QString)
+
+@sa RestReply::onAllErrors, GenericRestReply
+*/
+
+/*!
+@fn QtRestClient::RestReply::retry
+
+This function simply resends the request. Internally, the network reply is exchanged with the
+new one. This means after a retry the reply will not be deleted. Please not that retry will
+not immediatly perform the retry, but instead wait for the request to finish, call all handlers,
+and at the very end check if it should retry. This means you can safely call this method
+from any handler.
+
+@sa RestReply::abort
+*/
+
+/*!
+@fn QtRestClient::RestReply::retryAfter
+
+@param mSecs The delay, in milliseconds, to wait before retrying to send
+
+@copydetails QtRestClient::RestReply::retry
+*/
