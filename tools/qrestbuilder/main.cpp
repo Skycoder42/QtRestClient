@@ -9,6 +9,7 @@ int main(int argc, char *argv[])
 	QCoreApplication::setOrganizationName(COMPANY);
 	QCoreApplication::setOrganizationDomain(DOMAIN);
 
-	std::cerr << a.arguments().join(", ").toStdString();
+	std::cerr << a.arguments().join(", ").toStdString()
+			  << std::endl;
 	return 0;
 }
