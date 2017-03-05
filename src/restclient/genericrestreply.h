@@ -12,24 +12,32 @@
 
 namespace QtRestClient {
 
+//! A class to handle generic replies for generic requests
 template <typename DataClassType, typename ErrorClassType = QObject*>
 class GenericRestReply : public RestReply
 {
 	static_assert(MetaComponent<DataClassType>::is_meta::value, "DataClassType must inherit QObject or have Q_GADGET!");
-	static_assert(MetaComponent<ErrorClassType>::is_meta::value, "DataClassType must inherit QObject or have Q_GADGET!");
+	static_assert(MetaComponent<ErrorClassType>::is_meta::value, "ErrorClassType must inherit QObject or have Q_GADGET!");
 public:
+	//! Creates a generic reply based on a network reply and for a client
 	GenericRestReply(QNetworkReply *networkReply,
 					 RestClient *client,
 					 QObject *parent = nullptr);
 
+	//! @copybrief RestReply::onSucceeded(std::function<void(int, QJsonObject)>)
 	GenericRestReply<DataClassType, ErrorClassType> *onSucceeded(std::function<void(int, DataClassType)> handler);
+	//! @copybrief RestReply::onFailed(std::function<void(int, QJsonObject)>)
 	GenericRestReply<DataClassType, ErrorClassType> *onFailed(std::function<void(int, ErrorClassType)> handler);
+	//! Set a handler to be called on deserialization exceptions
 	GenericRestReply<DataClassType, ErrorClassType> *onSerializeException(std::function<void(QJsonSerializerException &)> handler);
+	//! @copybrief onAllErrors(std::function<void(QString, int, ErrorType)>, std::function<QString(QJsonObject, int)>)
 	GenericRestReply<DataClassType, ErrorClassType> *onAllErrors(std::function<void(QString, int, ErrorType)> handler,
 																 std::function<QString(ErrorClassType, int)> failureTransformer = {});
 
 	//overshadowing, for the right return type only...
+	//! @copydoc RestReply::onError
 	GenericRestReply<DataClassType, ErrorClassType> *onError(std::function<void(QString, int, ErrorType)> handler);
+	//! @copydoc RestReply::enableAutoDelete
 	GenericRestReply<DataClassType, ErrorClassType> *enableAutoDelete();
 
 private:
@@ -37,24 +45,35 @@ private:
 	std::function<void(QJsonSerializerException &)> exceptionHandler;
 };
 
+//! @note This class is a simple specialization for paging types. It behaves the same as a normal GenericRestReply, however,
+//! it allows you to create requests and replies with lists (using QList<>). Of cause, the DataClassType, as generic parameter
+//! for the QList, must fullfill the same restrictions as for the normal one
+//! @copydoc QtRestClient::GenericRestReply
 template <typename DataClassType, typename ErrorClassType>
 class GenericRestReply<QList<DataClassType>, ErrorClassType> : public RestReply
 {
 	static_assert(MetaComponent<DataClassType>::is_meta::value, "DataClassType must inherit QObject or have Q_GADGET!");
 	static_assert(MetaComponent<ErrorClassType>::is_meta::value, "DataClassType must inherit QObject or have Q_GADGET!");
 public:
+	//! @copydoc GenericRestReply::GenericRestReply
 	GenericRestReply(QNetworkReply *networkReply,
 					 RestClient *client,
 					 QObject *parent = nullptr);
 
+	//! @copydoc GenericRestReply::onSucceeded
 	GenericRestReply<QList<DataClassType>, ErrorClassType> *onSucceeded(std::function<void(int, QList<DataClassType>)> handler);
+	//! @copydoc GenericRestReply::onFailed
 	GenericRestReply<QList<DataClassType>, ErrorClassType> *onFailed(std::function<void(int, ErrorClassType)> handler);
+	//! @copydoc GenericRestReply::onSerializeException
 	GenericRestReply<QList<DataClassType>, ErrorClassType> *onSerializeException(std::function<void(QJsonSerializerException &)> handler);
+	//! @copydoc GenericRestReply::onAllErrors
 	GenericRestReply<QList<DataClassType>, ErrorClassType> *onAllErrors(std::function<void(QString, int, ErrorType)> handler,
 																		std::function<QString(ErrorClassType, int)> failureTransformer = {});
 
 	//overshadowing, for the right return type only...
+	//! @copydoc GenericRestReply::onError
 	GenericRestReply<QList<DataClassType>, ErrorClassType> *onError(std::function<void(QString, int, ErrorType)> handler);
+	//! @copydoc GenericRestReply::enableAutoDelete
 	GenericRestReply<QList<DataClassType>, ErrorClassType> *enableAutoDelete();
 
 private:
@@ -62,26 +81,39 @@ private:
 	std::function<void(QJsonSerializerException &)> exceptionHandler;
 };
 
+//! @note This class is a simple specialization for paging types. It behaves the same as a normal GenericRestReply, however,
+//! it allows you to create replies with paging logic (using Paging<>). Of cause, the DataClassType, as generic parameter
+//! for the Paging, must fullfill the same restrictions as for the normal one. Paging allows you to only get a part of a
+//! list form the server, and allows you to iterate over those results.
+//! @copydoc QtRestClient::GenericRestReply
 template <typename DataClassType, typename ErrorClassType>
 class GenericRestReply<Paging<DataClassType>, ErrorClassType> : public RestReply
 {
 	static_assert(MetaComponent<DataClassType>::is_meta::value, "DataClassType must inherit QObject or have Q_GADGET!");
 	static_assert(MetaComponent<ErrorClassType>::is_meta::value, "DataClassType must inherit QObject or have Q_GADGET!");
 public:
+	//! @copydoc GenericRestReply::GenericRestReply
 	GenericRestReply(QNetworkReply *networkReply,
 					 RestClient *client,
 					 QObject *parent = nullptr);
 
+	//! @copydoc GenericRestReply::onSucceeded
 	GenericRestReply<Paging<DataClassType>, ErrorClassType> *onSucceeded(std::function<void(int, Paging<DataClassType>)> handler);
+	//! @copydoc GenericRestReply::onFailed
 	GenericRestReply<Paging<DataClassType>, ErrorClassType> *onFailed(std::function<void(int, ErrorClassType)> handler);
+	//! @copydoc GenericRestReply::onSerializeException
 	GenericRestReply<Paging<DataClassType>, ErrorClassType> *onSerializeException(std::function<void(QJsonSerializerException &)> handler);
+	//! @copydoc GenericRestReply::onAllErrors
 	GenericRestReply<Paging<DataClassType>, ErrorClassType> *onAllErrors(std::function<void(QString, int, ErrorType)> handler,
 																		 std::function<QString(ErrorClassType, int)> failureTransformer = {});
 
+	//! shortcut to iterate over all elements via paging objects
 	GenericRestReply<Paging<DataClassType>, ErrorClassType> *iterate(std::function<bool(DataClassType, int)> iterator, int to = -1, int from = 0);
 
 	//overshadowing, for the right return type only...
+	//! @copydoc GenericRestReply::onError
 	GenericRestReply<Paging<DataClassType>, ErrorClassType> *onError(std::function<void(QString, int, ErrorType)> handler);
+	//! @copydoc GenericRestReply::enableAutoDelete
 	GenericRestReply<Paging<DataClassType>, ErrorClassType> *enableAutoDelete();
 
 private:
@@ -336,6 +368,20 @@ GenericRestReply<Paging<DataClassType>, ErrorClassType> *GenericRestReply<Paging
 	return this;
 }
 
+/*!
+@param iterator The iterator to be used by the Paging objects to iterate over the results
+@param to The upper limit of how far the iteration should go (-1 means no limit)
+@param from The lower limit from where the iteration should start
+
+This method is a shortcut that waits for the reply to succeed and then performs the iteration on the paging object.
+One advantage of this method is, that it automatically passes the error handlers of this reply onto the iteration.
+
+The iterators parameters are:
+- One element of the deserialized Content of the paging replies (DataClassType)
+- The index of the current element (int)
+
+@sa Paging::iterate
+*/
 template<typename DataClassType, typename ErrorClassType>
 GenericRestReply<Paging<DataClassType>, ErrorClassType> *GenericRestReply<Paging<DataClassType>, ErrorClassType>::iterate(std::function<bool (DataClassType, int)> iterator, int to, int from)
 {

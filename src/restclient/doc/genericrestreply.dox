@@ -1,0 +1,79 @@
+/*!
+@class QtRestClient::GenericRestReply
+
+@tparam DataClassType The type of the positive result
+@tparam ErrorClassType The type of the negative result
+
+This class is an extension to the RestReply, that includes deserialization into the reply. This
+way, you can directly use them without ever caring about the JSON in the background.
+
+@sa RestReply, RestClass
+*/
+
+/*!
+@fn QtRestClient::GenericRestReply::onSucceeded
+
+@param handler The function to be called on success
+@returns A reference to this reply
+
+The handlers arguments are:
+- The HTTP-Status code (int)
+- The deserialized Content of the reply (DataClassType)
+
+@sa GenericRestReply::onFailed, RestReply::onSucceeded
+*/
+
+/*!
+@fn QtRestClient::GenericRestReply::onFailed
+
+@param handler The function to be called on failure
+@returns A reference to this reply
+
+The handlers arguments are:
+- The HTTP-Status code (int)
+- The deserialized Content of the reply (ErrorClassType)
+
+@sa GenericRestReply::onAllErrors, GenericRestReply::onSucceeded, RestReply::onFailed
+*/
+
+
+/*!
+@fn QtRestClient::GenericRestReply::onSerializeException
+
+@param handler The function to be called on an exception
+@returns A reference to this reply
+
+The handlers arguments are:
+- The exception thrown by the QJsonSerializer (QJsonSerializerException)
+
+@sa GenericRestReply::onAllErrors
+*/
+
+/*!
+@fn QtRestClient::GenericRestReply::onAllErrors
+
+@param handler The function to be called on any error
+@param failureTransformer A function to be called to extract an error string from the failure data
+@returns A reference to this reply
+
+The handlers arguments are:
+- The error string (QString)
+  - For network error: QNetworkReply::errorString
+  - For json error: QJsonParseError::errorString
+  - For failure error: `failureTransformer`
+  - For serializer error: QJsonSerializerException::what
+- The error code (int)
+  - For network error: QNetworkReply::error
+  - For json error: QJsonParseError::error
+  - For failure error: The HTTP-Status code
+  - For serializer error: 0 (unused)
+- The error type (RestReply::ErrorType)
+
+The failureTransformer arguments are
+- The deserialized Content of the reply (ErrorClassType)
+- The HTTP-Status code (int)
+- _return:_ A string describing the error (QString)
+
+@sa GenericRestReply::onError, GenericRestReply::onFailed,
+GenericRestReply::onSerializeException, RestReply::onAllErrors
+*/

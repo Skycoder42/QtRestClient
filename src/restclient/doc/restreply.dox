@@ -42,7 +42,7 @@ The handlers arguments are:
 - The HTTP-Status code (int)
 - The JSON Content of the reply (json)
 
-@sa RestReply::onFailed, GenericRestReply
+@sa RestReply::onFailed, GenericRestReply::onSucceeded
 */
 
 /*!
@@ -55,7 +55,7 @@ The handlers arguments are:
 - The HTTP-Status code (int)
 - The JSON Content of the reply (json)
 
-@sa RestReply::onAllErrors, RestReply::onSucceeded, GenericRestReply
+@sa RestReply::onAllErrors, RestReply::onSucceeded, GenericRestReply::onFailed
 */
 
 /*!
@@ -101,7 +101,7 @@ The failureTransformer arguments are
 - The HTTP-Status code (int)
 - _return:_ A string describing the error (QString)
 
-@sa RestReply::onAllErrors, GenericRestReply
+@sa RestReply::onError, RestReply::onFailed, GenericRestReply::onAllErrors
 */
 
 /*!

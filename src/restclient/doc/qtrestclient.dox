@@ -7,6 +7,8 @@
 /*!
 @class QtRestClient::MetaComponent
 
+@tparam T The type to be checked for QObject/Q_GADGET
+
 The specializations all define the following methods:
 - deleteLater
 - deleteAllLater
