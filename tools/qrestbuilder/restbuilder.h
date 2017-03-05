@@ -1,6 +1,7 @@
 #ifndef RESTBUILDER_H
 #define RESTBUILDER_H
 
+#include <QJsonObject>
 #include <QObject>
 
 class RestBuilder : public QObject
@@ -9,7 +10,15 @@ class RestBuilder : public QObject
 public:
 	explicit RestBuilder(QObject *parent = nullptr);
 
-	int build(const QString &in, const QString &hOut, const QString &cppOut);
+	void buildClass(const QString &in, const QString &hOut, const QString &cppOut);
+	void buildObject(const QString &in, const QString &hOut, const QString &cppOut);
+
+private:
+	QJsonObject readJson(const QString &fileName);
+
+	void generateApiObject(const QString &name, const QJsonObject &obj);
+	void generateApiGadget(const QString &name, const QJsonObject &obj);
+
 };
 
 #endif // RESTBUILDER_H

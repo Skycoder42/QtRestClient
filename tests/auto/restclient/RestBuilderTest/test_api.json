@@ -1,10 +1,14 @@
 {
-	"apiDir": ".",
 	"name": "TestApi",
+	"baseUrl": "http://localhost:3000",
+	"apiVersion": "1.0.0",
+	"parameters": {},
+	"headers": {},
 
 	"definition": {
 		"posts": {
 			"type": "class",
+			"name": "PostClass",
 			"path": "posts",
 
 			"definition": {

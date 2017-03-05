@@ -1,5 +1,6 @@
 {
-	"$type": "gadget",
+	"$type": "object",
+	"$parent": "QObject",
 	"id": "int",
 	"name": "QString"
 }

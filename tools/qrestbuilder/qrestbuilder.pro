@@ -38,3 +38,6 @@ unix:!mac {
 
 HEADERS += \
     restbuilder.h
+
+RESOURCES += \
+    qrestbuilder.qrc

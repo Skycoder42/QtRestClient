@@ -19,20 +19,46 @@ int main(int argc, char *argv[])
 	parser.addHelpOption();
 
 	parser.addOption({
+						 "class",
+						 "Set the builders mode to build an api class"
+					 });
+	parser.addOption({
+						 "object",
+						 "Set the builders mode to build an api object"
+					 });
+	parser.addOption({
 						 "in",
-						 "The input JSON file containing the API definition"
+						 "The input JSON <file> containing the API definition",
+						 "file"
 					 });
 	parser.addOption({
 						 "header",
-						 "The name of the header file to generate"
+						 "The <name> of the header file to generate",
+						 "name"
 					 });
 	parser.addOption({
 						 "impl",
-						 "The name of the implementation file to generate"
+						 "The <name> of the implementation file to generate",
+						 "name"
 					 });
 
 	parser.process(a);
 
-	RestBuilder builder;
-	return builder.build(parser.value("in"), parser.value("header"), parser.value("impl"));
+	try {
+		RestBuilder builder;
+		if(parser.isSet("class")) {
+			builder.buildClass(parser.value("in"),
+							   parser.value("header"),
+							   parser.value("impl"));
+		} else if(parser.isSet("object")) {
+			builder.buildObject(parser.value("in"),
+								parser.value("header"),
+								parser.value("impl"));
+		} else
+			throw QStringLiteral("Invalid mode! You must specify either --class or --object");
+		return EXIT_SUCCESS;
+	} catch (QString &str) {
+		std::cerr << str.toStdString() << std::endl;
+		return EXIT_FAILURE;
+	}
 }
