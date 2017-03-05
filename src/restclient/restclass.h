@@ -375,3 +375,4 @@ QVariantHash RestClass::concatParams(QString key, QVariant value, Args... parame
 }
 
 #endif // RESTCLASS_H
+//! @file

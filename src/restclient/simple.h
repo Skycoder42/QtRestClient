@@ -23,7 +23,7 @@ public:
 	//! Constructor
 	Simple(QObject *parent = nullptr);
 
-	//! Returns the link to the extended version of this object
+	//! Returns the link to the extended version of this object. @sa #QTRESTCLIENT_EXT_HREF_PROP
 	virtual QUrl extensionHref() const = 0;
 	//! Returns true, if the object has an extension
 	bool hasExtension() const;
@@ -70,7 +70,7 @@ public:
 	//! Constructor
 	Simple();
 
-	//! Returns the link to the extended version of this object
+	//! Returns the link to the extended version of this object. @sa #QTRESTCLIENT_EXT_HREF_PROP
 	virtual QUrl extensionHref() const = 0;
 	//! Returns true, if the object has an extension
 	bool hasExtension() const;
@@ -110,6 +110,7 @@ private:
 
 }
 
+//! A simple macro to implement Simple::extensionHref by reading the property with the name x
 #define QTRESTCLIENT_EXT_HREF_PROP(x) \
 	inline QUrl extensionHref() const override { \
 		return property(x).toUrl();\
@@ -234,3 +235,4 @@ void Simple<T, typename std::enable_if<std::is_void<typename T::QtGadgetHelper>:
 }
 
 #endif // SIMPLEBASE_H
+//! @file

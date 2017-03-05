@@ -224,7 +224,7 @@ RestClientPrivate::RestClientPrivate(RestClient *q_ptr) :
 @param client The RestClient to be registered
 @returns `true` if added, `false` if the name is already taken
 
-@Attention QtRestClient takes ownership of the `client`, do not delete it after adding it
+@attention QtRestClient takes ownership of the `client`, do not delete it after adding it
 
 @sa RestClient, QtRestClient::apiClient, QtRestClient::removeGlobalApi
 */
