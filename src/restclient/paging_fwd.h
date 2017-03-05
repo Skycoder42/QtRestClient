@@ -43,8 +43,6 @@ public:
 	int total() const;
 	//! @copybrief IPaging::offset
 	int offset() const;
-	//! @copybrief IPaging::limit
-	int limit() const;
 
 	//! @copybrief IPaging::hasNext
 	bool hasNext() const;

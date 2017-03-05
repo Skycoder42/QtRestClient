@@ -20,7 +20,6 @@ public:
 	QJsonArray items() const override;
 	int total() const override;
 	int offset() const override;
-	int limit() const override;
 	bool hasNext() const override;
 	QUrl next() const override;
 	bool hasPrevious() const override;

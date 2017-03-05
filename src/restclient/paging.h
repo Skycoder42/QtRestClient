@@ -65,12 +65,6 @@ int Paging<T>::offset() const
 }
 
 template<typename T>
-int Paging<T>::limit() const
-{
-	return d->iPaging->limit();
-}
-
-template<typename T>
 bool Paging<T>::hasNext() const
 {
 	return d->iPaging->hasNext();
@@ -136,12 +130,16 @@ void Paging<T>::iterate(std::function<bool(T, int)> iterator, std::function<void
 	if(index < 0)
 		return;
 
+	//calc total limit -> only if supports indexes
+	int max = INT_MAX;
+	if(d->iPaging->offset() >= 0) {
+		if(to >= 0)
+			max = qMin(to, d->iPaging->total());
+		else
+			max = d->iPaging->total();
+	}
+
 	//continue to the next one
-	int max;
-	if(to >= 0)
-		max = qMin(to, d->iPaging->total());
-	else
-		max = d->iPaging->total();
 	if(index < max && d->iPaging->hasNext()) {
 		next()->enableAutoDelete()
 			  ->onSucceeded([=](int, Paging<T> paging) {
@@ -161,12 +159,16 @@ void Paging<T>::iterate(std::function<bool(T, int)> iterator, std::function<void
 	if(index < 0)
 		return;
 
+	//calc total limit -> only if supports indexes
+	int max = INT_MAX;
+	if(d->iPaging->offset() >= 0) {
+		if(to >= 0)
+			max = qMin(to, d->iPaging->total());
+		else
+			max = d->iPaging->total();
+	}
+
 	//continue to the next one
-	int max;
-	if(to >= 0)
-		max = qMin(to, d->iPaging->total());
-	else
-		max = d->iPaging->total();
 	if(index < max && d->iPaging->hasNext()) {
 		next()->enableAutoDelete()
 			  ->onSucceeded([=](int, Paging<T> paging) {
@@ -188,27 +190,45 @@ template<typename T>
 int Paging<T>::internalIterate(std::function<bool (T, int)> iterator, int to, int from) const
 {
 	//handle all items in this paging
-	int i, max;
-	if(to >= 0)
-		max = qMin(to, d->iPaging->limit());
-	else
-		max = d->iPaging->limit();
 
+	auto offset = d->iPaging->offset();
+	auto count = d->data.size();
+	auto start = 0;
+	auto max = count;
+	if(offset >= 0) {// has indexes
+		//from
+		start = qMax(from, offset) - offset;
+		//to
+		if(to >= 0)
+			max = qMin(to, max + offset) - offset;
+	}
+
+	//delete unused items caused by from
+	for(auto j = 0; j < start; j++)
+		MetaComponent<T>::deleteLater(d->data.value(j));
+
+	//iterate over used items
+	int i;
 	auto canceled = false;
-	for(i = qMax(from, d->iPaging->offset()); i < max; i++) {
-		auto item = d->data.value(i - d->iPaging->offset());
-		if(!iterator(item, i)) {
+	for(i = start; i < max; i++) {
+		auto item = d->data.value(i);
+		auto index = offset >= 0 ? i + offset : -1;
+		if(!iterator(item, index)) {
 			canceled = true;
 			break;
 		}
 	}
 
-	//delete all unused items
-	for(auto j = d->iPaging->offset(); j < from; j++)
-		MetaComponent<T>::deleteLater(d->data.value(j - d->iPaging->offset()));
-	for(auto j = i+1; j < d->iPaging->limit(); j++)
-		MetaComponent<T>::deleteLater(d->data.value(j - d->iPaging->offset()));
-	return canceled ? -1 : i;
+	//delete all unused items caused by to
+	for(auto j = i; j < count; j++)
+		MetaComponent<T>::deleteLater(d->data.value(j));
+
+	if(canceled)
+		return -1;
+	else if(offset >= 0)
+		return offset + i;
+	else
+		return 0;
 }
 
 template<typename T>

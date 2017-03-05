@@ -10,6 +10,30 @@ you want to use the iterate functionality of the paging, you will have to implem
 */
 
 /*!
+@fn QtRestClient::IPaging::total
+
+@returns The total amount of items for this request, or `INT_MAX` if not available
+
+If you implement total, please note that total means total independently of the paging, and **not**
+the number of elements in the paging. It's the maximum number of items that exist for this request on
+the server.
+*/
+
+/*!
+@fn QtRestClient::IPaging::offset
+
+@returns The offset of the first item in the paging, or `-1` if not available
+
+Typically, pagings have indexes. However, since next() alone is sufficient to use a paging, not
+all may support it. Indexes means, that any item in a paging has a logical index, to identify it
+idependently of the paging object it is in. It's the real item index on the server. To do so,
+the offset of the first item in the paging must be known.
+
+If your paging does support indexes, you must implement the offset() method to return the offset
+of the first element in the paging.
+*/
+
+/*!
 @class QtRestClient::PagingFactory
 
 In order to use paging, you need a factory to create those. By default, StandardPagingFactory

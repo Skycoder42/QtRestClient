@@ -31,6 +31,7 @@ private Q_SLOTS:
 	void testPagingIterate();
 
 	void testSimpleExtension();
+	void testSimplePagingIterate();
 
 private:
 	QtRestClient::RestClient *client;
@@ -41,6 +42,7 @@ void RestReplyTest::initTestCase()
 {
 	Q_ASSERT(qgetenv("LD_PRELOAD").contains("Qt5RestClient"));
 	QJsonSerializer::registerListConverters<JphPost*>();
+	QJsonSerializer::registerListConverters<SimpleJphPost*>();
 	initTestJsonServer("./advanced-test-db.js");
 	client = createClient(this);
 	client->setBaseUrl(QStringLiteral("http://localhost:3000"));
@@ -302,7 +304,6 @@ void RestReplyTest::testGenericPagingReplyWrapping_data()
 	QTest::addColumn<bool>("succeed");
 	QTest::addColumn<int>("status");
 	QTest::addColumn<int>("offset");
-	QTest::addColumn<int>("limit");
 	QTest::addColumn<int>("total");
 	QTest::addColumn<QObject*>("firstResult");
 	QTest::addColumn<bool>("except");
@@ -311,7 +312,6 @@ void RestReplyTest::testGenericPagingReplyWrapping_data()
 						 << true
 						 << 200
 						 << 0
-						 << 10
 						 << 100
 						 << (QObject*)JphPost::createDefault(this)
 						 << false;
@@ -321,13 +321,11 @@ void RestReplyTest::testGenericPagingReplyWrapping_data()
 							  << 404
 							  << 0
 							  << 0
-							  << 0
 							  << new QObject(this)
 							  << false;
 
 	QTest::newRow("serExcept") << QUrl("http://localhost:3000/posts/1")
 							   << false
-							   << 0
 							   << 0
 							   << 0
 							   << 0
@@ -341,7 +339,6 @@ void RestReplyTest::testGenericPagingReplyWrapping()
 	QFETCH(bool, succeed);
 	QFETCH(int, status);
 	QFETCH(int, offset);
-	QFETCH(int, limit);
 	QFETCH(int, total);
 	QFETCH(QObject*, firstResult);
 	QFETCH(bool, except);
@@ -360,7 +357,6 @@ void RestReplyTest::testGenericPagingReplyWrapping()
 		QCOMPARE(code, status);
 		QVERIFY(data.isValid());
 		QCOMPARE(data.offset(), offset);
-		QCOMPARE(data.limit(), limit);
 		QCOMPARE(data.total(), total);
 		QVERIFY(JphPost::equals(data.items().first(), firstResult));
 		data.deleteAllItems();
@@ -400,7 +396,6 @@ void RestReplyTest::testPagingNext()
 		QVERIFY(!data.hasPrevious());
 		QVERIFY(data.hasNext());
 		QCOMPARE(data.offset(), 0);
-		QCOMPARE(data.limit(), 10);
 		QCOMPARE(data.total(), 100);
 		data.deleteAllItems();
 		firstPaging = data;
@@ -423,7 +418,6 @@ void RestReplyTest::testPagingNext()
 		QCOMPARE(code, 200);
 		QVERIFY(data.isValid());
 		QCOMPARE(data.offset(), 10);
-		QCOMPARE(data.limit(), 20);
 		QCOMPARE(data.total(), 100);
 		data.deleteAllItems();
 	});
@@ -454,7 +448,6 @@ void RestReplyTest::testPagingPrevious()
 		QVERIFY(data.hasPrevious());
 		QVERIFY(!data.hasNext());
 		QCOMPARE(data.offset(), 90);
-		QCOMPARE(data.limit(), 100);
 		QCOMPARE(data.total(), 100);
 		data.deleteAllItems();
 		lastPaging = data;
@@ -477,7 +470,6 @@ void RestReplyTest::testPagingPrevious()
 		QCOMPARE(code, 200);
 		QVERIFY(data.isValid());
 		QCOMPARE(data.offset(), 80);
-		QCOMPARE(data.limit(), 90);
 		QCOMPARE(data.total(), 100);
 		data.deleteAllItems();
 	});
@@ -514,6 +506,7 @@ void RestReplyTest::testPagingIterate()
 	reply->onAllErrors([&](QString error, int, QtRestClient::RestReply::ErrorType){
 		count = 142;
 		QFAIL(qUtf8Printable(error));
+		emit test_unlock();
 	});
 
 	QSignalSpy completedSpy(this, &RestReplyTest::test_unlock);
@@ -542,6 +535,7 @@ void RestReplyTest::testSimpleExtension()
 	}, [&](QString error, int, QtRestClient::RestReply::ErrorType){
 		called = true;
 		QFAIL(qUtf8Printable(error));
+		emit test_unlock();
 	});
 
 	QSignalSpy completedSpy(this, &RestReplyTest::test_unlock);
@@ -586,6 +580,39 @@ void RestReplyTest::testSimpleExtension()
 
 	simple->deleteLater();
 	full->deleteLater();
+}
+
+void RestReplyTest::testSimplePagingIterate()
+{
+	QNetworkRequest request(QStringLiteral("http://localhost:3000/pagelets/0"));
+	request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
+
+	auto count = 0;
+	auto reply = new QtRestClient::GenericRestReply<QtRestClient::Paging<SimpleJphPost*>>(nam->get(request), client);
+	reply->enableAutoDelete();
+	reply->iterate([&](SimpleJphPost *data, int index){
+		auto ok = false;
+		[&](){
+			QCOMPARE(index, -1);
+			QCOMPARE(data->id, ++count);//validating the id is enough
+			ok = true;
+		}();
+		if(!ok || count == 100)
+			emit test_unlock();
+		data->deleteLater();
+		return ok;
+	});
+	reply->onAllErrors([&](QString error, int, QtRestClient::RestReply::ErrorType){
+		count = 142;
+		QFAIL(qUtf8Printable(error));
+		emit test_unlock();
+	});
+
+	QSignalSpy completedSpy(this, &RestReplyTest::test_unlock);
+	QVERIFY(completedSpy.wait(15000));
+	QCOMPARE(count, 100);
+
+	QCoreApplication::processEvents();//to ensure all deleteLaters have been called!
 }
 
 QTEST_MAIN(RestReplyTest)

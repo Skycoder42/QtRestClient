@@ -33,7 +33,8 @@ SOURCES += \
 	restclass.cpp \
 	restclient.cpp \
 	restreply.cpp \
-	standardpaging.cpp
+	standardpaging.cpp \
+    ipaging.cpp
 
 load(qt_module)
 
