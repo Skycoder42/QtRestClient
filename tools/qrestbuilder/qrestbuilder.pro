@@ -18,7 +18,8 @@ load(qt_tool)
 load(resources)
 
 SOURCES += \
-	main.cpp
+	main.cpp \
+    restbuilder.cpp
 
 win32 {
 	QMAKE_TARGET_PRODUCT = "Qt Rest API Builder"
@@ -34,3 +35,6 @@ unix:!mac {
 	LIBS += -L$$[QT_INSTALL_LIBS] -licui18n
 	LIBS += -L$$[QT_INSTALL_LIBS] -licuuc
 }
+
+HEADERS += \
+    restbuilder.h

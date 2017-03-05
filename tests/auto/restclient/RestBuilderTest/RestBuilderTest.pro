@@ -6,7 +6,7 @@
 
 CONFIG += qrestbuilder
 
-QT       += testlib jsonserializer restclient
+QT       += testlib
 
 QT       -= gui
 
@@ -18,10 +18,14 @@ TEMPLATE = app
 
 DEFINES += QT_DEPRECATED_WARNINGS
 
+include(../tests.pri)
+
 SOURCES += tst_restbuilder.cpp
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
 REST_API_DEFINITONS += test_api.json
 
 DISTFILES += \
-	test_api.json
+	test_api.json \
+    Post.json \
+    User.json

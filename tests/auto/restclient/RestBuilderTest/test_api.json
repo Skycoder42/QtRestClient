@@ -1,0 +1,41 @@
+{
+	"apiDir": ".",
+	"name": "TestApi",
+
+	"definition": {
+		"posts": {
+			"type": "class",
+			"path": "posts",
+
+			"definition": {
+				"listPosts": {
+					"type": "method",
+					"verb": "GET",
+					"pathParams": {
+						"id": "int"
+					},
+					"returns": "$Post"
+				},
+				"addPost": {
+					"type": "method",
+					"verb": "POST",
+					"body": "$Post"
+				}
+			}
+		},
+
+		"findUser": {
+			"type": "method",
+			"path": "user",
+			"verb": "GET",
+			"parameters": {
+				"id": "int"
+			},
+			"headers": {
+				"Request-Style": "babaric"
+			},
+			"returns": "$User",
+			"except": "QObject*"
+		}
+	}
+}
