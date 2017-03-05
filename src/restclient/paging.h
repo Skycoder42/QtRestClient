@@ -181,6 +181,12 @@ void Paging<T>::iterate(std::function<bool(T, int)> iterator, std::function<void
 }
 
 template<typename T>
+QVariantMap Paging<T>::properties() const
+{
+	return d->iPaging->properties();
+}
+
+template<typename T>
 void Paging<T>::deleteAllItems() const
 {
 	MetaComponent<T>::deleteAllLater(d->data);

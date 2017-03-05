@@ -24,6 +24,7 @@ public:
 	QUrl next() const override;
 	bool hasPrevious() const override;
 	QUrl previous() const override;
+	QVariantMap properties() const override;
 
 private:
 	QScopedPointer<StandardPagingPrivate> d_ptr;

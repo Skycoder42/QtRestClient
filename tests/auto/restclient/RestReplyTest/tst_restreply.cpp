@@ -393,6 +393,8 @@ void RestReplyTest::testPagingNext()
 		called = true;
 		QCOMPARE(code, 200);
 		QVERIFY(data.isValid());
+		QVERIFY(data.properties().contains("id"));
+		QCOMPARE(data.properties()["id"].toInt(), 0);
 		QVERIFY(!data.hasPrevious());
 		QVERIFY(data.hasNext());
 		QCOMPARE(data.offset(), 0);
@@ -417,6 +419,8 @@ void RestReplyTest::testPagingNext()
 		called = true;
 		QCOMPARE(code, 200);
 		QVERIFY(data.isValid());
+		QVERIFY(data.properties().contains("id"));
+		QCOMPARE(data.properties()["id"].toInt(), 1);
 		QCOMPARE(data.offset(), 10);
 		QCOMPARE(data.total(), 100);
 		data.deleteAllItems();
@@ -445,6 +449,8 @@ void RestReplyTest::testPagingPrevious()
 		called = true;
 		QCOMPARE(code, 200);
 		QVERIFY(data.isValid());
+		QVERIFY(data.properties().contains("id"));
+		QCOMPARE(data.properties()["id"].toInt(), 9);
 		QVERIFY(data.hasPrevious());
 		QVERIFY(!data.hasNext());
 		QCOMPARE(data.offset(), 90);
@@ -469,6 +475,8 @@ void RestReplyTest::testPagingPrevious()
 		called = true;
 		QCOMPARE(code, 200);
 		QVERIFY(data.isValid());
+		QVERIFY(data.properties().contains("id"));
+		QCOMPARE(data.properties()["id"].toInt(), 8);
 		QCOMPARE(data.offset(), 80);
 		QCOMPARE(data.total(), 100);
 		data.deleteAllItems();

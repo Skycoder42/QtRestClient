@@ -78,6 +78,9 @@ public:
 				 int to = -1,
 				 int from = 0) const;
 
+	//! @copybrief IPaging::properties
+	QVariantMap properties() const;
+
 	//! Deletes all items this paging object is holding (QObjects only)
 	void deleteAllItems() const;
 

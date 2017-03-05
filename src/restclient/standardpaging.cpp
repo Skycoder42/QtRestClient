@@ -13,6 +13,7 @@ public:
 	QUrl prev;
 	QUrl next;
 	QJsonArray items;
+	QVariantMap properties;
 };
 
 }
@@ -61,6 +62,11 @@ QUrl StandardPaging::previous() const
 	return d->prev;
 }
 
+QVariantMap StandardPaging::properties() const
+{
+	return d->properties;
+}
+
 // ------------- Factory Implementation -------------
 
 IPaging *StandardPagingFactory::createPaging(QJsonSerializer *, const QJsonObject &data) const
@@ -89,5 +95,6 @@ StandardPagingPrivate::StandardPagingPrivate(const QJsonObject &object) :
 	offset(object[QLatin1String("offset")].toInt(-1)),
 	prev(object[QLatin1String("previous")].isNull() ? QUrl() : object[QLatin1String("previous")].toString()),
 	next(object[QLatin1String("next")].isNull() ? QUrl() : object[QLatin1String("next")].toString()),
-	items(object[QLatin1String("items")].toArray())
+	items(object[QLatin1String("items")].toArray()),
+	properties(QJsonValue(object).toVariant().toMap())
 {}
