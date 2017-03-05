@@ -9,15 +9,21 @@
 
 namespace QtRestClient {
 
+//! shared data container for Paging
 template <typename T>
 class PagingData : public QSharedData
 {
 public:
+	//! Constructor
 	PagingData();
+	//! Copy Constructor
 	PagingData(const PagingData &other);
 
+	//! iPaging interface
 	QSharedPointer<IPaging> iPaging;
+	//! paging data
 	QList<T> data;
+	//! rest client
 	RestClient *client;
 };
 

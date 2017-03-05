@@ -252,10 +252,6 @@ ALIASES                = "accessors{1}=<table><tr><th colspan= 2>Accessors</th><
                          "constantAc=<tr><td colspan= 2><b>CONSTANT</b></td></tr>" \
                          "finalAc=<tr><td colspan= 2><b>FINAL</b></td></tr>" \
                          "default{1}=<b>Default:</b> \1 <br>" \
-                         overloads{1}=<b>Overloads:</b><ul>\1</ul> \
-                         ovElem{1}=<li>\1</li> \
-                         "overload=<i>This is an overloaded function.</i>" \
-                         "povElem{1}=<li>\1 <i>(primary, check for more details)</i></li>" \
                          "readAcFn{1}=READ accessor for \1" \
                          "writeAcFn{1}=WRITE accessor for \1" \
                          "notifyAcFn{1}=NOTIFY accessor for \1" \
@@ -812,8 +808,9 @@ WARN_LOGFILE           =
 # spaces. See also FILE_PATTERNS and EXTENSION_MAPPING
 # Note: If this tag is empty the current directory is searched.
 
-INPUT                  = ../../../README.md \
-                         ..
+INPUT                  = ../README.md \
+                         ../src \
+                         .
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses
@@ -945,7 +942,7 @@ EXCLUDE_SYMBOLS        = QAbstractAspect \
 # that contain example code fragments that are included (see the \include
 # command).
 
-EXAMPLE_PATH           = ../../../examples \
+EXAMPLE_PATH           = ../examples \
                          ./snippets
 
 # If the value of the EXAMPLE_PATH tag contains directories, you can use the
@@ -1022,7 +1019,7 @@ FILTER_SOURCE_PATTERNS =
 # (index.html). This can be useful if you have a project on for instance GitHub
 # and want to reuse the introduction page also for the doxygen output.
 
-USE_MDFILE_AS_MAINPAGE = ../../../README.md
+USE_MDFILE_AS_MAINPAGE = ../README.md
 
 #---------------------------------------------------------------------------
 # Configuration options related to source browsing

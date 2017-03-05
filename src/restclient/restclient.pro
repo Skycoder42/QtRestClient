@@ -2,11 +2,6 @@ TARGET = QtRestClient
 
 QT = core network jsonserializer
 
-OTHER_FILES += doc/Doxyfile
-OTHER_FILES += doc/makedoc.sh
-OTHER_FILES += doc/*.dox
-OTHER_FILES += doc/snippets/*.cpp
-
 PUBLIC_HEADERS += \
 	qtrestclient_global.h \
 	genericrestreply.h \
@@ -45,7 +40,3 @@ win32 {
 } else:mac {
 	QMAKE_TARGET_BUNDLE_PREFIX = "de.skycoder42."
 }
-
-docTarget.target = doxygen
-docTarget.commands = chmod u+x $$PWD/doc/makedoc.sh && $$PWD/doc/makedoc.sh "$$PWD" "$$VERSION" "$$[QT_INSTALL_BINS]" "$$[QT_INSTALL_HEADERS]" "$$[QT_INSTALL_DOCS]"
-QMAKE_EXTRA_TARGETS += docTarget

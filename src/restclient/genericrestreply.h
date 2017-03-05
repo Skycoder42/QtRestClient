@@ -37,7 +37,7 @@ public:
 	//overshadowing, for the right return type only...
 	//! @copydoc RestReply::onError
 	GenericRestReply<DataClassType, ErrorClassType> *onError(std::function<void(QString, int, ErrorType)> handler);
-	//! @copydoc RestReply::enableAutoDelete
+	//! @copydoc RestReply::disableAutoDelete
 	GenericRestReply<DataClassType, ErrorClassType> *disableAutoDelete();
 
 private:
@@ -73,7 +73,7 @@ public:
 	//overshadowing, for the right return type only...
 	//! @copydoc GenericRestReply::onError
 	GenericRestReply<QList<DataClassType>, ErrorClassType> *onError(std::function<void(QString, int, ErrorType)> handler);
-	//! @copydoc GenericRestReply::enableAutoDelete
+	//! @copydoc GenericRestReply::disableAutoDelete
 	GenericRestReply<QList<DataClassType>, ErrorClassType> *disableAutoDelete();
 
 private:
@@ -113,7 +113,7 @@ public:
 	//overshadowing, for the right return type only...
 	//! @copydoc GenericRestReply::onError
 	GenericRestReply<Paging<DataClassType>, ErrorClassType> *onError(std::function<void(QString, int, ErrorType)> handler);
-	//! @copydoc GenericRestReply::enableAutoDelete
+	//! @copydoc GenericRestReply::disableAutoDelete
 	GenericRestReply<Paging<DataClassType>, ErrorClassType> *disableAutoDelete();
 
 private:
