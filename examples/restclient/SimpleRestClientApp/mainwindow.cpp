@@ -100,7 +100,6 @@ void MainWindow::on_pushButton_clicked()
 											  headers);
 	}
 
-	reply->enableAutoDelete();
 	connect(reply, &RestReply::succeeded, this, [=](int status, QJsonValue value){
 		ui->codeLineEdit->setText(QString::number(status));
 		ui->networkErrorLineEdit->clear();

@@ -38,7 +38,7 @@ public:
 	//! @copydoc RestReply::onError
 	GenericRestReply<DataClassType, ErrorClassType> *onError(std::function<void(QString, int, ErrorType)> handler);
 	//! @copydoc RestReply::enableAutoDelete
-	GenericRestReply<DataClassType, ErrorClassType> *enableAutoDelete();
+	GenericRestReply<DataClassType, ErrorClassType> *disableAutoDelete();
 
 private:
 	RestClient *client;
@@ -74,7 +74,7 @@ public:
 	//! @copydoc GenericRestReply::onError
 	GenericRestReply<QList<DataClassType>, ErrorClassType> *onError(std::function<void(QString, int, ErrorType)> handler);
 	//! @copydoc GenericRestReply::enableAutoDelete
-	GenericRestReply<QList<DataClassType>, ErrorClassType> *enableAutoDelete();
+	GenericRestReply<QList<DataClassType>, ErrorClassType> *disableAutoDelete();
 
 private:
 	RestClient *client;
@@ -114,7 +114,7 @@ public:
 	//! @copydoc GenericRestReply::onError
 	GenericRestReply<Paging<DataClassType>, ErrorClassType> *onError(std::function<void(QString, int, ErrorType)> handler);
 	//! @copydoc GenericRestReply::enableAutoDelete
-	GenericRestReply<Paging<DataClassType>, ErrorClassType> *enableAutoDelete();
+	GenericRestReply<Paging<DataClassType>, ErrorClassType> *disableAutoDelete();
 
 private:
 	RestClient *client;
@@ -207,9 +207,9 @@ GenericRestReply<DataClassType, ErrorClassType> *GenericRestReply<DataClassType,
 }
 
 template<typename DataClassType, typename ErrorClassType>
-GenericRestReply<DataClassType, ErrorClassType> *GenericRestReply<DataClassType, ErrorClassType>::enableAutoDelete()
+GenericRestReply<DataClassType, ErrorClassType> *GenericRestReply<DataClassType, ErrorClassType>::disableAutoDelete()
 {
-	RestReply::enableAutoDelete();
+	RestReply::disableAutoDelete();
 	return this;
 }
 
@@ -290,9 +290,9 @@ GenericRestReply<QList<DataClassType>, ErrorClassType> *GenericRestReply<QList<D
 }
 
 template<typename DataClassType, typename ErrorClassType>
-GenericRestReply<QList<DataClassType>, ErrorClassType> *GenericRestReply<QList<DataClassType>, ErrorClassType>::enableAutoDelete()
+GenericRestReply<QList<DataClassType>, ErrorClassType> *GenericRestReply<QList<DataClassType>, ErrorClassType>::disableAutoDelete()
 {
-	RestReply::enableAutoDelete();
+	RestReply::disableAutoDelete();
 	return this;
 }
 
@@ -401,9 +401,9 @@ GenericRestReply<Paging<DataClassType>, ErrorClassType> *GenericRestReply<Paging
 }
 
 template<typename DataClassType, typename ErrorClassType>
-GenericRestReply<Paging<DataClassType>, ErrorClassType> *GenericRestReply<Paging<DataClassType>, ErrorClassType>::enableAutoDelete()
+GenericRestReply<Paging<DataClassType>, ErrorClassType> *GenericRestReply<Paging<DataClassType>, ErrorClassType>::disableAutoDelete()
 {
-	RestReply::enableAutoDelete();
+	RestReply::disableAutoDelete();
 	return this;
 }
 

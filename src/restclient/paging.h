@@ -141,8 +141,7 @@ void Paging<T>::iterate(std::function<bool(T, int)> iterator, std::function<void
 
 	//continue to the next one
 	if(index < max && d->iPaging->hasNext()) {
-		next()->enableAutoDelete()
-			  ->onSucceeded([=](int, Paging<T> paging) {
+		next()->onSucceeded([=](int, Paging<T> paging) {
 				  paging.iterate(iterator, errorHandler, failureTransformer, to, index);
 			  })
 			  ->onAllErrors(errorHandler, failureTransformer);
@@ -170,8 +169,7 @@ void Paging<T>::iterate(std::function<bool(T, int)> iterator, std::function<void
 
 	//continue to the next one
 	if(index < max && d->iPaging->hasNext()) {
-		next()->enableAutoDelete()
-			  ->onSucceeded([=](int, Paging<T> paging) {
+		next()->onSucceeded([=](int, Paging<T> paging) {
 				  paging.iterate(iterator, failureHandler, errorHandler, exceptionHandler, to, index);
 			  })
 			  ->onFailed(failureHandler)

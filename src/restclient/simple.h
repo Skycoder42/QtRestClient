@@ -165,7 +165,6 @@ void Simple<T*, typename std::enable_if<std::is_base_of<QObject, T>::value>::typ
 		extensionHandler(cExt, false);
 	else if(hasExtension()) {
 		client->rootClass()->get<T*, ET>(extensionHref())
-				->enableAutoDelete()
 				->onSucceeded([=](int, T *data){
 					cExt = data;
 					extensionHandler(data, true);
@@ -223,7 +222,6 @@ void Simple<T, typename std::enable_if<std::is_void<typename T::QtGadgetHelper>:
 		extensionHandler(*cExt, false);
 	else if(hasExtension()) {
 		client->rootClass()->get<T, ET>(extensionHref())
-				->enableAutoDelete()
 				->onSucceeded([=](int, T data){
 					cExt.reset(new T(data));
 					extensionHandler(data, true);

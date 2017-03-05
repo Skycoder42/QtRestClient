@@ -54,8 +54,8 @@ public:
 						   std::function<QString(QJsonArray, int)> failureTransformer);
 
 	//! @writeAcFn{RestReply::autoDelete}
-	inline RestReply *enableAutoDelete() {
-		setAutoDelete(true);
+	inline RestReply *disableAutoDelete() {
+		setAutoDelete(false);
 		return this;
 	}
 

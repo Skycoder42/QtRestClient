@@ -49,7 +49,6 @@ void IntegrationTest::testJsonChain()
 	bool called = false;
 
 	auto reply = postClass->callJson(RestClass::PutVerb, "1", object);
-	reply->enableAutoDelete();
 	reply->onSucceeded([&](int code, QJsonObject data){
 		called = true;
 		QCOMPARE(code, 200);
@@ -77,7 +76,6 @@ void IntegrationTest::testQObjectChain()
 	bool called = false;
 
 	auto reply = postClass->put<JphPost*>("2", object);
-	reply->enableAutoDelete();
 	reply->onSucceeded([&](int code, JphPost *data){
 		called = true;
 		QCOMPARE(code, 200);
@@ -104,7 +102,6 @@ void IntegrationTest::testQObjectListChain()
 	bool called = false;
 
 	auto reply = postClass->get<QList<JphPost*>>();
-	reply->enableAutoDelete();
 	reply->onSucceeded([&](int code, QList<JphPost*> data){
 		called = true;
 		QCOMPARE(code, 200);
@@ -130,7 +127,6 @@ void IntegrationTest::testQObjectPagingChain()
 	int count = 0;
 
 	auto reply = pagingClass->get<Paging<JphPost*>>("0");
-	reply->enableAutoDelete();
 	reply->iterate([&](JphPost* data, int index){
 		auto ok = false;
 		[&](){

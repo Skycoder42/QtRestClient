@@ -93,7 +93,6 @@ void RestReplyTest::testReplyWrapping()
 	bool called = false;
 
 	auto reply = new QtRestClient::RestReply(nam->get(request));
-	reply->enableAutoDelete();
 	reply->onSucceeded([&](int code, QJsonObject data){
 		called = true;
 		QVERIFY(succeed);
@@ -120,7 +119,6 @@ void RestReplyTest::testReplyError()
 	bool called = false;
 
 	auto reply = new QtRestClient::RestReply(nam->get(request));
-	reply->enableAutoDelete();
 	reply->onAllErrors([&](QString, int code, QtRestClient::RestReply::ErrorType type){
 		called = true;
 		QCOMPARE(type, QtRestClient::RestReply::NetworkError);
@@ -140,7 +138,6 @@ void RestReplyTest::testReplyRetry()
 	auto retryCount = 0;
 
 	auto reply = new QtRestClient::RestReply(nam->get(request));
-	reply->enableAutoDelete();
 	reply->onAllErrors([&](QString, int code, QtRestClient::RestReply::ErrorType type){
 		retryCount++;
 		QCOMPARE(type, QtRestClient::RestReply::NetworkError);
@@ -197,7 +194,6 @@ void RestReplyTest::testGenericReplyWrapping()
 	bool called = false;
 
 	auto reply = new QtRestClient::GenericRestReply<JphPost*>(nam->get(request), client);
-	reply->enableAutoDelete();
 	reply->onSucceeded([&](int code, JphPost *data){
 		called = true;
 		QVERIFY(succeed);
@@ -270,7 +266,6 @@ void RestReplyTest::testGenericListReplyWrapping()
 	bool called = false;
 
 	auto reply = new QtRestClient::GenericRestReply<QList<JphPost*>>(nam->get(request), client);
-	reply->enableAutoDelete();
 	reply->onSucceeded([&](int code, QList<JphPost*> data){
 		called = true;
 		QVERIFY(succeed);
@@ -349,7 +344,6 @@ void RestReplyTest::testGenericPagingReplyWrapping()
 	bool called = false;
 
 	auto reply = new QtRestClient::GenericRestReply<QtRestClient::Paging<JphPost*>>(nam->get(request), client);
-	reply->enableAutoDelete();
 	reply->onSucceeded([&](int code, QtRestClient::Paging<JphPost*> data){
 		called = true;
 		QVERIFY(succeed);
@@ -388,7 +382,6 @@ void RestReplyTest::testPagingNext()
 	QtRestClient::Paging<JphPost*> firstPaging;
 
 	auto reply = new QtRestClient::GenericRestReply<QtRestClient::Paging<JphPost*>>(nam->get(request), client);
-	reply->enableAutoDelete();
 	reply->onSucceeded([&](int code, QtRestClient::Paging<JphPost*> data){
 		called = true;
 		QCOMPARE(code, 200);
@@ -414,7 +407,6 @@ void RestReplyTest::testPagingNext()
 	QVERIFY(firstPaging.isValid());
 	called = false;
 	auto nextReply = firstPaging.next();
-	nextReply->enableAutoDelete();
 	nextReply->onSucceeded([&](int code, QtRestClient::Paging<JphPost*> data){
 		called = true;
 		QCOMPARE(code, 200);
@@ -444,7 +436,6 @@ void RestReplyTest::testPagingPrevious()
 	QtRestClient::Paging<JphPost*> lastPaging;
 
 	auto reply = new QtRestClient::GenericRestReply<QtRestClient::Paging<JphPost*>>(nam->get(request), client);
-	reply->enableAutoDelete();
 	reply->onSucceeded([&](int code, QtRestClient::Paging<JphPost*> data){
 		called = true;
 		QCOMPARE(code, 200);
@@ -470,7 +461,6 @@ void RestReplyTest::testPagingPrevious()
 	QVERIFY(lastPaging.isValid());
 	called = false;
 	auto prevReply = lastPaging.previous();
-	prevReply->enableAutoDelete();
 	prevReply->onSucceeded([&](int code, QtRestClient::Paging<JphPost*> data){
 		called = true;
 		QCOMPARE(code, 200);
@@ -498,7 +488,6 @@ void RestReplyTest::testPagingIterate()
 
 	auto count = 0;
 	auto reply = new QtRestClient::GenericRestReply<QtRestClient::Paging<JphPost*>>(nam->get(request), client);
-	reply->enableAutoDelete();
 	reply->iterate([&](JphPost *data, int index){
 		auto ok = false;
 		[&](){
@@ -569,7 +558,6 @@ void RestReplyTest::testSimpleExtension()
 	//network load
 	called = false;
 	auto reply = simple->extend(client);
-	reply->enableAutoDelete();
 	reply->onSucceeded([&](int code, JphPost *data){
 		called = true;
 		QCOMPARE(code, 200);
@@ -597,7 +585,6 @@ void RestReplyTest::testSimplePagingIterate()
 
 	auto count = 0;
 	auto reply = new QtRestClient::GenericRestReply<QtRestClient::Paging<SimpleJphPost*>>(nam->get(request), client);
-	reply->enableAutoDelete();
 	reply->iterate([&](SimpleJphPost *data, int index){
 		auto ok = false;
 		[&](){

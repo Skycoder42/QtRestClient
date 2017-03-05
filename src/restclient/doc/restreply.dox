@@ -17,7 +17,7 @@ of JSON as a reply. Those can be retrieved as "error objects"
 /*!
 @property QtRestClient::RestReply::autoDelete
 
-@default{`false`}
+@default{`true`}
 
 If set to true, the reply will de deleted automatically, right after all handlers have been
 called. While it is recommended to use this property, you must be aware that qeued connections
@@ -27,7 +27,7 @@ of the handlers after returning to the event loop once.
 @accessors{
 	@readAc{autoDelete()}
 	@writeAc{setAutoDelete()}
-	@writeAc{enableAutoDelete() <i>(indirect)</i>}
+	@writeAc{disableAutoDelete() <i>(indirect)</i>}
 	@notifyAc{autoDeleteChanged()}
 }
 */
