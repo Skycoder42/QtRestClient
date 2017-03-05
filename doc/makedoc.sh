@@ -34,7 +34,7 @@ fi
 for tagFile in $(find "$qtDocs" -name *.tags); do
 	if [ $(basename "$tagFile") !=  "qtjsonserializer.tags" ]; then
 		echo "TAGFILES += \"$tagFile=https://doc.qt.io/qt-5\"" >> Doxyfile
-	else
+	elif [ $(basename "$tagFile") !=  "qtrestclient.tags" ]; then
 		echo "SKIPPED $tagFile!"
 	fi
 done
