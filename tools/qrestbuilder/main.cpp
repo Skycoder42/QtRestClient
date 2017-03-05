@@ -1,4 +1,5 @@
 #include <QCoreApplication>
+#include <iostream>
 
 int main(int argc, char *argv[])
 {
@@ -8,5 +9,6 @@ int main(int argc, char *argv[])
 	QCoreApplication::setOrganizationName(COMPANY);
 	QCoreApplication::setOrganizationDomain(DOMAIN);
 
-	return a.exec();
+	std::cerr << a.arguments().join(", ").toStdString();
+	return 0;
 }

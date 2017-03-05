@@ -4,4 +4,5 @@ SUBDIRS += \
 	RequestBuilderTest \
 	RestClientTest \
 	RestReplyTest \
-	IntegrationTest
+	IntegrationTest \
+    RestBuilderTest
