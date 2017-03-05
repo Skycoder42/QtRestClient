@@ -9,12 +9,16 @@
 #include "QtRestClient/metacomponent.h"
 
 #include <QtJsonSerializer/qjsonserializerexception.h>
+#include <QtCore/qshareddata.h>
 #include <functional>
 
 namespace QtRestClient {
 
 template<typename DO, typename EO>
 class GenericRestReply;
+
+template<typename T>
+class PagingData;
 
 //! A class to access generic paging objects
 template<typename T>
@@ -24,6 +28,8 @@ class Paging
 public:
 	//! Default Constructor
 	Paging();
+	//! Copy Constructor
+	Paging(const Paging<T> &other);
 	//! Constructs a paging from the interface, the data and a client
 	Paging(IPaging *iPaging, const QList<T> &data, RestClient *client);
 
@@ -57,14 +63,14 @@ public:
 	QUrl previousUrl() const;
 
 	//! Iterates over all paging objects
-	void iterate(std::function<bool(T, int)> iterator, int to = -1, int from = 0);
+	void iterate(std::function<bool(T, int)> iterator, int to = -1, int from = 0) const;
 	//! Iterates over all paging objects, with error handling
 	template<typename EO = QObject*>
 	void iterate(std::function<bool(T, int)> iterator,
 				 std::function<void(QString, int, RestReply::ErrorType)> errorHandler,
 				 std::function<QString(EO, int)> failureTransformer = {},
 				 int to = -1,
-				 int from = 0);
+				 int from = 0) const;
 	//! Iterates over all paging objects, with error handling
 	template<typename EO = QObject*>
 	void iterate(std::function<bool(T, int)> iterator,
@@ -72,17 +78,15 @@ public:
 				 std::function<void(QString, int, RestReply::ErrorType)> errorHandler = {},
 				 std::function<void(QJsonSerializerException &)> exceptionHandler = {},
 				 int to = -1,
-				 int from = 0);
+				 int from = 0) const;
 
 	//! Deletes all items this paging object is holding (QObjects only)
-	void deleteAllItems();
+	void deleteAllItems() const;
 
 private:
-	IPaging *iPaging;
-	QList<T> data;
-	RestClient *client;
+	QSharedDataPointer<PagingData<T>> d;
 
-	int internalIterate(std::function<bool(T, int)> iterator, int from, int to);
+	int internalIterate(std::function<bool(T, int)> iterator, int from, int to) const;
 };
 
 }

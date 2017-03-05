@@ -3,70 +3,88 @@
 
 #include "QtRestClient/paging_fwd.h"
 #include "QtRestClient/genericrestreply.h"
+#include <QtCore/qsharedpointer.h>
 
 // ------------- Generic Implementation -------------
 
 namespace QtRestClient {
 
+template <typename T>
+class PagingData : public QSharedData
+{
+public:
+	PagingData();
+	PagingData(const PagingData &other);
+
+	QSharedPointer<IPaging> iPaging;
+	QList<T> data;
+	RestClient *client;
+};
+
 template<typename T>
 Paging<T>::Paging() :
-	iPaging(nullptr),
-	data(),
-	client(nullptr)
+	d(new PagingData<T>())
+{}
+
+template<typename T>
+Paging<T>::Paging(const Paging<T> &other) :
+	d(other.d)
 {}
 
 template<typename T>
 Paging<T>::Paging(IPaging *iPaging, const QList<T> &data, RestClient *client) :
-	iPaging(iPaging),
-	data(data),
-	client(client)
-{}
+	d(new PagingData<T>())
+{
+	d->iPaging.reset(iPaging);
+	d->data = data;
+	d->client = client;
+}
 
 template<typename T>
 bool Paging<T>::isValid() const
 {
-	return iPaging;
+	return d->iPaging;
 }
 
 template<typename T>
 QList<T> Paging<T>::items() const
 {
-	return data;
+	return d->data;
 }
 
 template<typename T>
 int Paging<T>::total() const
 {
-	return iPaging->total();
+	return d->iPaging->total();
 }
 
 template<typename T>
 int Paging<T>::offset() const
 {
-	return iPaging->offset();
+	return d->iPaging->offset();
 }
 
 template<typename T>
 int Paging<T>::limit() const
 {
-	return iPaging->limit();
+	return d->iPaging->limit();
 }
 
 template<typename T>
 bool Paging<T>::hasNext() const
 {
-	return iPaging->hasNext();
+	return d->iPaging->hasNext();
 }
 
 template<typename T>
 template<typename EO>
 GenericRestReply<Paging<T>, EO> *Paging<T>::next() const
 {
-	if(iPaging->hasNext()) {
-		auto reply = client->builder()
-				.updateFromRelativeUrl(iPaging->next(), true)
+	if(d->iPaging->hasNext()) {
+		auto reply = d->client->builder()
+				.updateFromRelativeUrl(d->iPaging->next(), true)
 				.send();
-		return new GenericRestReply<Paging<T>, EO>(reply, client, client);
+		return new GenericRestReply<Paging<T>, EO>(reply, d->client, d->client);
 	} else
 		return nullptr;
 }
@@ -74,24 +92,24 @@ GenericRestReply<Paging<T>, EO> *Paging<T>::next() const
 template<typename T>
 QUrl Paging<T>::nextUrl() const
 {
-	return iPaging->next();
+	return d->iPaging->next();
 }
 
 template<typename T>
 bool Paging<T>::hasPrevious() const
 {
-	return iPaging->hasPrevious();
+	return d->iPaging->hasPrevious();
 }
 
 template<typename T>
 template<typename EO>
 GenericRestReply<Paging<T>, EO> *Paging<T>::previous() const
 {
-	if(iPaging->hasPrevious()) {
-		auto reply = client->builder()
-				.updateFromRelativeUrl(iPaging->previous(), true)
+	if(d->iPaging->hasPrevious()) {
+		auto reply = d->client->builder()
+				.updateFromRelativeUrl(d->iPaging->previous(), true)
 				.send();
-		return new GenericRestReply<Paging<T>, EO>(reply, client, client);
+		return new GenericRestReply<Paging<T>, EO>(reply, d->client, d->client);
 	} else
 		return nullptr;
 }
@@ -99,20 +117,20 @@ GenericRestReply<Paging<T>, EO> *Paging<T>::previous() const
 template<typename T>
 QUrl Paging<T>::previousUrl() const
 {
-	return iPaging->previous();
+	return d->iPaging->previous();
 }
 
 template<typename T>
-void Paging<T>::iterate(std::function<bool (T, int)> iterator, int to, int from)
+void Paging<T>::iterate(std::function<bool (T, int)> iterator, int to, int from) const
 {
 	return iterate(iterator, {}, {}, to, from);
 }
 
 template<typename T>
 template<typename EO>
-void Paging<T>::iterate(std::function<bool(T, int)> iterator, std::function<void(QString, int, RestReply::ErrorType)> errorHandler, std::function<QString (EO, int)> failureTransformer, int to, int from)
+void Paging<T>::iterate(std::function<bool(T, int)> iterator, std::function<void(QString, int, RestReply::ErrorType)> errorHandler, std::function<QString (EO, int)> failureTransformer, int to, int from) const
 {
-	Q_ASSERT(from >= iPaging->offset());
+	Q_ASSERT(from >= d->iPaging->offset());
 
 	auto index = internalIterate(iterator, to ,from);
 	if(index < 0)
@@ -121,10 +139,10 @@ void Paging<T>::iterate(std::function<bool(T, int)> iterator, std::function<void
 	//continue to the next one
 	int max;
 	if(to >= 0)
-		max = qMin(to, iPaging->total());
+		max = qMin(to, d->iPaging->total());
 	else
-		max = iPaging->total();
-	if(index < max && iPaging->hasNext()) {
+		max = d->iPaging->total();
+	if(index < max && d->iPaging->hasNext()) {
 		next()->enableAutoDelete()
 			  ->onSucceeded([=](int, Paging<T> paging) {
 				  paging.iterate(iterator, errorHandler, failureTransformer, to, index);
@@ -135,9 +153,9 @@ void Paging<T>::iterate(std::function<bool(T, int)> iterator, std::function<void
 
 template<typename T>
 template<typename EO>
-void Paging<T>::iterate(std::function<bool(T, int)> iterator, std::function<void(int, EO)> failureHandler, std::function<void(QString, int, RestReply::ErrorType)> errorHandler, std::function<void(QJsonSerializerException &)> exceptionHandler, int to, int from)
+void Paging<T>::iterate(std::function<bool(T, int)> iterator, std::function<void(int, EO)> failureHandler, std::function<void(QString, int, RestReply::ErrorType)> errorHandler, std::function<void(QJsonSerializerException &)> exceptionHandler, int to, int from) const
 {
-	Q_ASSERT(from >= iPaging->offset());
+	Q_ASSERT(from >= d->iPaging->offset());
 
 	auto index = internalIterate(iterator, to ,from);
 	if(index < 0)
@@ -146,10 +164,10 @@ void Paging<T>::iterate(std::function<bool(T, int)> iterator, std::function<void
 	//continue to the next one
 	int max;
 	if(to >= 0)
-		max = qMin(to, iPaging->total());
+		max = qMin(to, d->iPaging->total());
 	else
-		max = iPaging->total();
-	if(index < max && iPaging->hasNext()) {
+		max = d->iPaging->total();
+	if(index < max && d->iPaging->hasNext()) {
 		next()->enableAutoDelete()
 			  ->onSucceeded([=](int, Paging<T> paging) {
 				  paging.iterate(iterator, failureHandler, errorHandler, exceptionHandler, to, index);
@@ -161,24 +179,24 @@ void Paging<T>::iterate(std::function<bool(T, int)> iterator, std::function<void
 }
 
 template<typename T>
-void Paging<T>::deleteAllItems()
+void Paging<T>::deleteAllItems() const
 {
-	MetaComponent<T>::deleteAllLater(data);
+	MetaComponent<T>::deleteAllLater(d->data);
 }
 
 template<typename T>
-int Paging<T>::internalIterate(std::function<bool (T, int)> iterator, int to, int from)
+int Paging<T>::internalIterate(std::function<bool (T, int)> iterator, int to, int from) const
 {
 	//handle all items in this paging
 	int i, max;
 	if(to >= 0)
-		max = qMin(to, iPaging->limit());
+		max = qMin(to, d->iPaging->limit());
 	else
-		max = iPaging->limit();
+		max = d->iPaging->limit();
 
 	auto canceled = false;
-	for(i = qMax(from, iPaging->offset()); i < max; i++) {
-		auto item = data.value(i - iPaging->offset());
+	for(i = qMax(from, d->iPaging->offset()); i < max; i++) {
+		auto item = d->data.value(i - d->iPaging->offset());
 		if(!iterator(item, i)) {
 			canceled = true;
 			break;
@@ -186,12 +204,28 @@ int Paging<T>::internalIterate(std::function<bool (T, int)> iterator, int to, in
 	}
 
 	//delete all unused items
-	for(auto j = iPaging->offset(); j < from; j++)
-		MetaComponent<T>::deleteLater(data.value(j - iPaging->offset()));
-	for(auto j = i+1; j < iPaging->limit(); j++)
-		MetaComponent<T>::deleteLater(data.value(j - iPaging->offset()));
+	for(auto j = d->iPaging->offset(); j < from; j++)
+		MetaComponent<T>::deleteLater(d->data.value(j - d->iPaging->offset()));
+	for(auto j = i+1; j < d->iPaging->limit(); j++)
+		MetaComponent<T>::deleteLater(d->data.value(j - d->iPaging->offset()));
 	return canceled ? -1 : i;
 }
+
+template<typename T>
+PagingData<T>::PagingData() :
+	QSharedData(),
+	iPaging(nullptr),
+	data(),
+	client(nullptr)
+{}
+
+template<typename T>
+PagingData<T>::PagingData(const PagingData &other) :
+	QSharedData(other),
+	iPaging(other.iPaging),
+	data(other.data),
+	client(other.client)
+{}
 
 }
 
