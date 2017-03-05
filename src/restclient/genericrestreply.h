@@ -375,10 +375,12 @@ GenericRestReply<Paging<DataClassType>, ErrorClassType> *GenericRestReply<Paging
 
 This method is a shortcut that waits for the reply to succeed and then performs the iteration on the paging object.
 One advantage of this method is, that it automatically passes the error handlers of this reply onto the iteration.
+Check the Paging::iterate method for more details
 
 The iterators parameters are:
 - One element of the deserialized Content of the paging replies (DataClassType)
 - The index of the current element (int)
+- _returns:_ `true` if the iteration should continue, `false` to cancel it prematurely
 
 @sa Paging::iterate
 */

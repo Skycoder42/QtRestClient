@@ -68,7 +68,7 @@ GenericRestReply<Paging<T>, EO> *Paging<T>::next() const
 				.send();
 		return new GenericRestReply<Paging<T>, EO>(reply, client, client);
 	} else
-		return {};
+		return nullptr;
 }
 
 template<typename T>
@@ -93,7 +93,7 @@ GenericRestReply<Paging<T>, EO> *Paging<T>::previous() const
 				.send();
 		return new GenericRestReply<Paging<T>, EO>(reply, client, client);
 	} else
-		return {};
+		return nullptr;
 }
 
 template<typename T>
