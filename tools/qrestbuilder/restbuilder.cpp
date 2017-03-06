@@ -5,7 +5,7 @@
 #include <QFile>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include <QRegularExpression>
+#include <QJsonArray>
 
 RestBuilder::RestBuilder() :
 	QObject()
@@ -13,8 +13,11 @@ RestBuilder::RestBuilder() :
 
 void RestBuilder::build(const QString &in, const QString &hOut, const QString &cppOut)
 {
-	inFile = in;
 	root = readJson(in);
+
+	QFileInfo inInfo(in);
+	fileName = inInfo.baseName();
+	className = root[specialPrefix() + "name"].toString(fileName);
 
 	auto headerFile = new QFile(hOut, this);
 	if(!headerFile->open(QIODevice::WriteOnly | QIODevice::Text))
@@ -56,37 +59,18 @@ void RestBuilder::throwFile(const QFile &file)
 	throw QString(file.fileName() + ": " + file.errorString());
 }
 
-RestBuilder::TypeInfo RestBuilder::readType(const QString &type)
+QStringList RestBuilder::readIncludes()
 {
-	static QRegularExpression regex(QStringLiteral(R"__(^([^\$]*)(?:(\$)([^\$]*))?$)__"),
-									QRegularExpression::OptimizeOnFirstUsageOption);
-
-	auto match = regex.match(type);
-	TypeInfo res;
-	if(match.hasMatch()) {
-		res.name = match.captured(1);
-		res.isPointer = res.name.endsWith("*");
-		if(!match.captured(2).isEmpty()) {
-			res.include = match.captured(3);
-			if(res.include.isEmpty()) {
-				res.include = res.name;
-				res.include.replace('*', QString());
-				res.include += ".h";
-			}
-		} else {
-			if(res.name.at(0).isUpper()) {
-				res.include = res.name;
-				res.include.replace('*', QString());
-			}
-		}
-	}
-
+	QStringList res;
+	auto includes = root[specialPrefix() + "includes"].toArray();
+	foreach(auto include, includes)
+		res.append(include.toString());
 	return res;
 }
 
 void RestBuilder::writeIncGuardBegin()
 {
-	QString guard = inFile.baseName().toUpper() + "_H";
+	QString guard = fileName.toUpper() + "_H";
 	header << "#ifndef "
 		   << guard
 		   << '\n'
@@ -97,7 +81,7 @@ void RestBuilder::writeIncGuardBegin()
 
 void RestBuilder::writeIncGuardEnd()
 {
-	QString guard = inFile.baseName().toUpper() + "_H";
+	QString guard = fileName.toUpper() + "_H";
 	header << "#endif //"
 		   << guard
 		   << '\n';
@@ -112,9 +96,3 @@ void RestBuilder::writeIncludes(QTextStream &stream, const QStringList &includes
 	}
 	stream << '\n';
 }
-
-RestBuilder::TypeInfo::TypeInfo(const QString &name, bool isPointer, const QString &include) :
-	name(name),
-	isPointer(isPointer),
-	include(include)
-{}

@@ -2,8 +2,10 @@
 #include <QtTest>
 #include <QCoreApplication>
 
-#include <User.h>
-#include <Post.h>
+#include <user.h>
+#include <post.h>
+#include <api_posts.h>
+#include <test_api.h>
 
 class RestBuilderTest : public QObject
 {

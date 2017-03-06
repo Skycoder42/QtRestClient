@@ -9,14 +9,13 @@ public:
 	explicit ObjectBuilder();
 
 private:
-	TypeInfo parentType;
-	QHash<QString, QString> includes;
-	QHash<QString, TypeInfo> members;
+	QHash<QString, QString> members;
 
 	void build() override;
+	QString specialPrefix() override;
 
-	void generateApiObject(const QString &name);
-	void generateApiGadget(const QString &name);
+	void generateApiObject();
+	void generateApiGadget();
 	void readMembers();
 
 	QString setter(const QString &name);
@@ -26,9 +25,9 @@ private:
 	void writeWriteDeclarations();
 	void writeNotifyDeclarations();
 	void writeMemberDefinitions(QTextStream &stream);
-	void writeReadDefinitions(const QString &className, bool asGadget);
-	void writeWriteDefinitions(const QString &className, bool asGadget);
-	void writeDataClass(const QString &className);
+	void writeReadDefinitions(bool asGadget);
+	void writeWriteDefinitions(bool asGadget);
+	void writeDataClass();
 	void writeMemberCopyDefinitions(QTextStream &stream);
 };
 

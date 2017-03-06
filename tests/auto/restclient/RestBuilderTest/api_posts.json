@@ -1,0 +1,24 @@
+{
+	"type": "class",
+	"name": "PostClass",
+	"includes": [
+		"post.h"
+	],
+	"path": "posts",
+
+	"methods": {
+		"listPosts": {
+			"type": "method",
+			"verb": "GET",
+			"pathParams": {
+				"id": "int"
+			},
+			"returns": "Post"
+		},
+		"addPost": {
+			"type": "method",
+			"verb": "POST",
+			"body": "Post"
+		}
+	}
+}

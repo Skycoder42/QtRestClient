@@ -10,6 +10,10 @@ public:
 
 private:
 	void build() override;
+	QString specialPrefix() override;
+
+	void generateClass();
+	void generateApi();
 };
 
 #endif // CLASSBUILDER_H

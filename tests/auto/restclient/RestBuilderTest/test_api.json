@@ -1,45 +1,32 @@
 {
+	"type": "api",
 	"name": "TestApi",
+	"includes": [
+		"post.h",
+		"user.h"
+	],
+	"globalName": "localhost",
 	"baseUrl": "http://localhost:3000",
-	"apiVersion": "1.0.0",
+	"apiVersion": "",
 	"parameters": {},
 	"headers": {},
 
-	"definition": {
-		"posts": {
-			"type": "class",
-			"name": "PostClass",
-			"path": "posts",
+	"classes": {
+		"posts": "api_posts"
+	},
 
-			"definition": {
-				"listPosts": {
-					"type": "method",
-					"verb": "GET",
-					"pathParams": {
-						"id": "int"
-					},
-					"returns": "Post$"
-				},
-				"addPost": {
-					"type": "method",
-					"verb": "POST",
-					"body": "Post$"
-				}
-			}
-		},
-
+	"methods": {
 		"findUser": {
-			"type": "method",
 			"path": "user",
 			"verb": "GET",
 			"parameters": {
 				"id": "int"
 			},
 			"headers": {
-				"Request-Style": "babaric"
+				"Request-Style": "barbaric"
 			},
-			"returns": "User*$",
-			"except": "QObject*$"
+			"returns": "User*",
+			"except": "QObject*"
 		}
 	}
 }

@@ -1,7 +1,11 @@
 {
 	"$type": "gadget",
+	"$name": "Post",
+	"$includes": [
+		"user.h"
+	],
 	"id": "int",
 	"title": "QString",
 	"body": "QString",
-	"user": "User*$"
+	"user": "User*"
 }
