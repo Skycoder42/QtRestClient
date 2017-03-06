@@ -1,8 +1,11 @@
 #ifndef RESTBUILDER_H
 #define RESTBUILDER_H
 
+#include <QFile>
+#include <QIODevice>
 #include <QJsonObject>
 #include <QObject>
+#include <QTextStream>
 
 class RestBuilder : public QObject
 {
@@ -16,8 +19,10 @@ public:
 private:
 	QJsonObject readJson(const QString &fileName);
 
-	void generateApiObject(const QString &name, const QJsonObject &obj);
-	void generateApiGadget(const QString &name, const QJsonObject &obj);
+	void generateApiObject(const QString &name, const QJsonObject &obj, QTextStream &header, QTextStream &source);
+	void generateApiGadget(const QString &name, const QJsonObject &obj, QTextStream &header, QTextStream &source);
+
+	void throwFile(const QFile &file);
 
 };
 
