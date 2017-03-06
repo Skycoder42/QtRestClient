@@ -11,6 +11,7 @@ public:
 private:
 	struct MethodInfo {
 		QString path;
+		QString url;
 		QString verb;
 		QList<QPair<QString, QString>> pathParams;
 		QList<QPair<QString, QString>> parameters;
@@ -34,10 +35,18 @@ private:
 	void readClasses();
 	void readMethods();
 
-	void generateFactory();
+	void generateFactoryDeclaration();
 	void writeFactoryDeclarations();
 	void writeClassDeclarations();
+	void writeMethodDeclarations();
 	void writeMemberDeclarations();
+	void generateFactoryDefinition();
+	void writeFactoryDefinitions();
+	void writeClassDefinitions();
+	void writeMethodDefinitions();
+	void writeMemberDefinitions();
+
+	bool writeMethodPath(const MethodInfo &info);
 };
 
 #endif // CLASSBUILDER_H
