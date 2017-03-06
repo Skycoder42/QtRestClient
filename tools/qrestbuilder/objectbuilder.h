@@ -25,9 +25,11 @@ private:
 	void writeReadDeclarations();
 	void writeWriteDeclarations();
 	void writeNotifyDeclarations();
-	void writeMemberDefinitions();
-	void writeReadDefinitions(const QString &className);
-	void writeWriteDefinitions(const QString &className, bool withNotify);
+	void writeMemberDefinitions(QTextStream &stream);
+	void writeReadDefinitions(const QString &className, bool asGadget);
+	void writeWriteDefinitions(const QString &className, bool asGadget);
+	void writeDataClass(const QString &className);
+	void writeMemberCopyDefinitions(QTextStream &stream);
 };
 
 #endif // OBJECTBUILDER_H

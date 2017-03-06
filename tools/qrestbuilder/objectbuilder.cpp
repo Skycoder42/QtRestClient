@@ -35,7 +35,7 @@ void ObjectBuilder::generateApiObject(const QString &name)
 	header << "\nQ_SIGNALS:\n";
 	writeNotifyDeclarations();
 	header << "\nprivate:\n";
-	writeMemberDefinitions();
+	writeMemberDefinitions(header);
 	header << "};\n\n";
 
 	//write source
@@ -43,8 +43,8 @@ void ObjectBuilder::generateApiObject(const QString &name)
 		   << name << "::" << name << "(QObject *parent) :\n"
 		   << "\tQObject(parent)\n"
 		   << "{}\n";
-	writeReadDefinitions(name);
-	writeWriteDefinitions(name, true);
+	writeReadDefinitions(name, false);
+	writeWriteDefinitions(name, false);
 }
 
 void ObjectBuilder::generateApiGadget(const QString &name)
@@ -55,7 +55,39 @@ void ObjectBuilder::generateApiGadget(const QString &name)
 	parentType = {};
 	readMembers();
 
+	//write header
 	writeIncludes(header, includes.values());
+	header << "class " << name << "Data;\n";
+	if(parentType.name.isEmpty())
+		header << "class " << name << "\n";
+	else
+		header << "class " << name << " : public " << parentType.name << "\n";
+	header << "{\n"
+		   << "\tQ_GADGET\n\n";
+	writeProperties(false);
+	header << "\npublic:\n"
+		   << "\t" << name << "();\n"
+		   << "\t" << name << "(const " << name << " &other);\n"
+		   << "\t~" << name << "();\n\n";
+	writeReadDeclarations();
+	header << "\n";
+	writeWriteDeclarations();
+	header << "\nprivate:\n"
+		   << "\t QSharedDataPointer<" << name << "Data> d;\n"
+		   << "};\n\n";
+
+	//write source
+	source << "#include \"" << name << ".h\"\n\n";
+	writeDataClass(name + "Data");
+	source << name << "::" << name << "() :\n"
+		   << "\td(new " << name << "Data())\n"
+		   << "{}\n\n"
+		   << name << "::" << name << "(const " << name << " &other) :\n"
+		   << "\td(other.d)\n"
+		   << "{}\n\n"
+		   << name << "::~" << name << "() {}\n";
+	writeReadDefinitions(name, true);
+	writeWriteDefinitions(name, true);
 }
 
 void ObjectBuilder::readMembers()
@@ -112,32 +144,58 @@ void ObjectBuilder::writeNotifyDeclarations()
 		header << "\tvoid " << it.key() << "Changed(" << it->name << " " << it.key() << ");\n";
 }
 
-void ObjectBuilder::writeMemberDefinitions()
+void ObjectBuilder::writeMemberDefinitions(QTextStream &stream)
 {
 	for(auto it = members.constBegin(); it != members.constEnd(); it++)
-		header << "\t" << it->name << " _" << it.key() << ";\n";
+		stream << "\t" << it->name << " _" << it.key() << ";\n";
 }
 
-void ObjectBuilder::writeReadDefinitions(const QString &className)
+void ObjectBuilder::writeReadDefinitions(const QString &className, bool asGadget)
 {
+	auto prefix = asGadget ? QStringLiteral("d->_") : QStringLiteral("_");
 	for(auto it = members.constBegin(); it != members.constEnd(); it++) {
 		source << "\n" << it->name << " " << className << "::" << it.key() << "() const\n"
 			   << "{\n"
-			   << "\treturn _" << it.key() << ";\n"
+			   << "\treturn " << prefix << it.key() << ";\n"
 			   << "}\n";
 	}
 }
 
-void ObjectBuilder::writeWriteDefinitions(const QString &className, bool withNotify)
+void ObjectBuilder::writeWriteDefinitions(const QString &className, bool asGadget)
 {
+	auto prefix = asGadget ? QStringLiteral("d->_") : QStringLiteral("_");
 	for(auto it = members.constBegin(); it != members.constEnd(); it++) {
 		source << "\nvoid " << className << "::" << setter(it.key()) << "(" << it->name << " " << it.key() << ")\n"
 			   << "{\n"
-			   << "\tif(_" << it.key() << " == " << it.key() << ")\n"
+			   << "\tif(" << prefix << it.key() << " == " << it.key() << ")\n"
 			   << "\t\treturn;\n\n"
-			   << "\t_" << it.key() << " = " << it.key() <<";\n";
-		if(withNotify)
+			   << "\t" << prefix << it.key() << " = " << it.key() <<";\n";
+		if(!asGadget)
 			source << "\temit " << it.key() << "Changed(" << it.key() << ");\n";
 		source << "}\n";
 	}
+}
+
+void ObjectBuilder::writeDataClass(const QString &className)
+{
+	source << "class " << className << " : public QSharedData\n"
+		   << "{\n"
+		   << "public:\n"
+		   << "\t" << className << "();\n"
+		   << "\t" << className << "(const " << className << " &other);\n\n";
+	writeMemberDefinitions(source);
+	source << "};\n\n"
+		   << className << "::" << className << "() :\n"
+		   << "\tQSharedData()\n"
+		   << "{}\n\n"
+		   << className << "::" << className << "(const " << className << " &other) :\n"
+		   << "\tQSharedData(other)\n";
+	writeMemberCopyDefinitions(source);
+	source << "{}\n\n";
+}
+
+void ObjectBuilder::writeMemberCopyDefinitions(QTextStream &stream)
+{
+	for(auto it = members.constBegin(); it != members.constEnd(); it++)
+		stream << "\t,_" << it.key() << "(other._" << it.key() << ")\n";
 }

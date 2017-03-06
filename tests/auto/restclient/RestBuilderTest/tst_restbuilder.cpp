@@ -51,6 +51,12 @@ void RestBuilderTest::testCustomCompiledObject()
 
 void RestBuilderTest::testCustomCompiledGadget()
 {
+	Post post;
+
+	post.setId(42);
+	post.setTitle("baum");
+	post.setBody("baum == 42");
+	QCOMPARE(post.user(), nullptr);
 }
 
 QTEST_MAIN(RestBuilderTest)
