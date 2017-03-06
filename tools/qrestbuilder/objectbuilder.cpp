@@ -22,7 +22,20 @@ void ObjectBuilder::generateApiObject(const QString &name)
 
 	writeIncGuardBegin();
 	writeInclude(header, includes.values());
+
+	header << "class " << name << " : public QObject\n"
+		   << "{\n"
+		   << "\tQ_OBJECT\n\n"
+		   << "public:\n"
+		   << "\tQ_INVOKABLE " << name << "(QObject *parent = nullptr);\n"
+		   << "};\n\n";
+
 	writeIncGuardEnd();
+
+	source << "#include \"" << name << ".h\"\n\n"
+		   << name << "::" << name << "(QObject *parent) :\n"
+		   << "\tQObject(parent)\n"
+		   << "{}\n\n";
 }
 
 void ObjectBuilder::generateApiGadget(const QString &name)

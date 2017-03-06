@@ -30,14 +30,24 @@ qrestbuilder_o.depends += $$QMAKE_QRESTBUILDER_EXE
 
 QMAKE_EXTRA_COMPILERS += qrestbuilder_o
 
-#qrestbuilder_s.name = QRESTBUILDER ${QMAKE_FILE_IN}.cpp
-#qrestbuilder_s.input = QRESTBUILDER_HEADERS
-#qrestbuilder_s.variable_out = GENERATED_SOURCES
-#qrestbuilder_s.commands = $$escape_expand(\\n) # force creation of rule
-#qrestbuilder_s.output = $$QRESTBUILDER_DIR/${QMAKE_FILE_BASE}$${first(QMAKE_EXT_CPP)}
-#qrestbuilder_s.CONFIG += target_predeps
+qrestbuilder_m.name = QRESTBUILDER ${QMAKE_FILE_IN}.moc
+qrestbuilder_m.input = QRESTBUILDER_HEADERS
+qrestbuilder_m.variable_out = GENERATED_SOURCES
+qrestbuilder_m.commands = moc $(DEFINES) $(INCPATH) ${QMAKE_FILE_IN} -o $$QRESTBUILDER_DIR/.moc/moc_${QMAKE_FILE_BASE}$${first(QMAKE_EXT_CPP)}
+qrestbuilder_m.output = $$QRESTBUILDER_DIR/.moc/moc_${QMAKE_FILE_BASE}$${first(QMAKE_EXT_CPP)}
+qrestbuilder_m.CONFIG += target_predeps
+qrestbuilder_m.depends += $$QMAKE_QRESTBUILDER_EXE
 
-#QMAKE_EXTRA_COMPILERS += qrestbuilder_s
+QMAKE_EXTRA_COMPILERS += qrestbuilder_m
+
+qrestbuilder_s.name = QRESTBUILDER ${QMAKE_FILE_IN}.cpp
+qrestbuilder_s.input = QRESTBUILDER_HEADERS
+qrestbuilder_s.variable_out = GENERATED_SOURCES
+qrestbuilder_s.commands = $$escape_expand(\\n) # force creation of rule
+qrestbuilder_s.output = $$QRESTBUILDER_DIR/${QMAKE_FILE_BASE}$${first(QMAKE_EXT_CPP)}
+qrestbuilder_s.CONFIG += target_predeps
+
+QMAKE_EXTRA_COMPILERS += qrestbuilder_s
 }
 
 !isEmpty(REST_API_DEFINITONS) {

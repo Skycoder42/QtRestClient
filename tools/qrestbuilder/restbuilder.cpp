@@ -95,7 +95,7 @@ void RestBuilder::writeIncGuardBegin()
 void RestBuilder::writeIncGuardEnd()
 {
 	QString guard = inFile.baseName().toUpper() + "_H";
-	header << QLatin1String("\n#endif //")
+	header << QLatin1String("#endif //")
 		   << guard
 		   << QLatin1Char('\n');
 }
@@ -107,4 +107,5 @@ void RestBuilder::writeInclude(QTextStream &stream, const QStringList &includes)
 			   << inc
 			   << QLatin1String(">\n");
 	}
+	stream << QLatin1Char('\n');
 }
