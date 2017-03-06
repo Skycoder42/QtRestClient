@@ -29,6 +29,7 @@ RestBuilderTest::RestBuilderTest()
 void RestBuilderTest::initTestCase()
 {
 	Q_ASSERT(qgetenv("LD_PRELOAD").contains("Qt5RestClient"));
+	QCoreApplication::processEvents();
 }
 
 void RestBuilderTest::cleanupTestCase()
@@ -68,6 +69,7 @@ void RestBuilderTest::testCustomCompiledApi()
 	auto api = new TestApi(this);
 	QVERIFY(api->restClient());
 	QVERIFY(api->restClass());
+	QVERIFY(api->posts());
 }
 
 QTEST_MAIN(RestBuilderTest)
