@@ -26,7 +26,9 @@ void RestBuilder::build(const QString &in, const QString &hOut, const QString &c
 		throwFile(*sourceFile);
 	source.setDevice(sourceFile);
 
+	writeIncGuardBegin();
 	build();
+	writeIncGuardEnd();
 
 	header.flush();
 	header.device()->close();
@@ -54,26 +56,27 @@ void RestBuilder::throwFile(const QFile &file)
 	throw QString(file.fileName() + ": " + file.errorString());
 }
 
-QPair<QString, QString> RestBuilder::splitType(const QString &type)
+RestBuilder::TypeInfo RestBuilder::readType(const QString &type)
 {
 	static QRegularExpression regex(QStringLiteral(R"__(^([^\$]*)(?:(\$)([^\$]*))?$)__"),
 									QRegularExpression::OptimizeOnFirstUsageOption);
 
 	auto match = regex.match(type);
-	QPair<QString, QString> res;
+	TypeInfo res;
 	if(match.hasMatch()) {
-		res.first = match.captured(1);
+		res.name = match.captured(1);
+		res.isPointer = res.name.endsWith("*");
 		if(!match.captured(2).isEmpty()) {
-			res.second = match.captured(3);
-			if(res.second.isEmpty()) {
-				res.second = res.first;
-				res.second.replace(QLatin1Char('*'), QString());
-				res.second += ".h";
+			res.include = match.captured(3);
+			if(res.include.isEmpty()) {
+				res.include = res.name;
+				res.include.replace('*', QString());
+				res.include += ".h";
 			}
 		} else {
-			if(res.first.at(0).isUpper()) {
-				res.second = res.first;
-				res.second.replace(QLatin1Char('*'), QString());
+			if(res.name.at(0).isUpper()) {
+				res.include = res.name;
+				res.include.replace('*', QString());
 			}
 		}
 	}
@@ -84,28 +87,34 @@ QPair<QString, QString> RestBuilder::splitType(const QString &type)
 void RestBuilder::writeIncGuardBegin()
 {
 	QString guard = inFile.baseName().toUpper() + "_H";
-	header << QLatin1String("#ifndef ")
+	header << "#ifndef "
 		   << guard
-		   << QLatin1Char('\n')
-		   << QLatin1String("#define ")
+		   << '\n'
+		   << "#define "
 		   << guard
-		   << QLatin1String("\n\n");
+		   << "\n\n";
 }
 
 void RestBuilder::writeIncGuardEnd()
 {
 	QString guard = inFile.baseName().toUpper() + "_H";
-	header << QLatin1String("#endif //")
+	header << "#endif //"
 		   << guard
-		   << QLatin1Char('\n');
+		   << '\n';
 }
 
-void RestBuilder::writeInclude(QTextStream &stream, const QStringList &includes)
+void RestBuilder::writeIncludes(QTextStream &stream, const QStringList &includes)
 {
 	foreach (auto inc, includes) {
-		stream << QLatin1String("#include <")
+		stream << "#include <"
 			   << inc
-			   << QLatin1String(">\n");
+			   << ">\n";
 	}
-	stream << QLatin1Char('\n');
+	stream << '\n';
 }
+
+RestBuilder::TypeInfo::TypeInfo(const QString &name, bool isPointer, const QString &include) :
+	name(name),
+	isPointer(isPointer),
+	include(include)
+{}

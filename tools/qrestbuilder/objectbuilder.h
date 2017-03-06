@@ -9,14 +9,17 @@ public:
 	explicit ObjectBuilder();
 
 private:
+	TypeInfo parentType;
 	QHash<QString, QString> includes;
-	QHash<QString, QString> members;
+	QHash<QString, TypeInfo> members;
 
 	void build() override;
 
 	void generateApiObject(const QString &name);
 	void generateApiGadget(const QString &name);
 	void readMembers();
+
+	void writeProperties(bool withNotify);
 };
 
 #endif // OBJECTBUILDER_H
