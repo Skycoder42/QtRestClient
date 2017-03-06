@@ -146,6 +146,8 @@ void ClassBuilder::writeMethodDeclarations()
 	for(auto it = methods.constBegin(); it != methods.constEnd(); it++) {
 		header << "\tQtRestClient::GenericRestReply<" << it->returns << "," << it->except << "> *" << it.key() << "(";
 		QStringList parameters;
+		if(!it->body.isEmpty())
+			parameters.append(it->body + " __body");
 		foreach(auto path, it->pathParams)
 			parameters.append(path.second + " " + path.first);
 		foreach(auto param, it->parameters)
@@ -201,8 +203,10 @@ void ClassBuilder::writeClassDefinitions()
 void ClassBuilder::writeMethodDefinitions()
 {
 	for(auto it = methods.constBegin(); it != methods.constEnd(); it++) {
-		source << "\nQtRestClient::GenericRestReply<" << it->returns << "," << it->except << "> *" << className << "::" << it.key() << "(";
+		source << "\nQtRestClient::GenericRestReply<" << it->returns << ", " << it->except << "> *" << className << "::" << it.key() << "(";
 		QStringList parameters;
+		if(!it->body.isEmpty())
+			parameters.append(it->body + " __body");
 		foreach(auto path, it->pathParams)
 			parameters.append(path.second + " " + path.first);
 		foreach(auto param, it->parameters)
@@ -210,9 +214,26 @@ void ClassBuilder::writeMethodDefinitions()
 		source << parameters.join(", ") << ") const\n"
 			   << "{\n";
 
-		//build path
+		//create parameters
 		auto hasPath = writeMethodPath(it.value());
+		source << "\tQVariantHash __params;\n";
+		foreach(auto param, it->parameters)
+			source << "\t__params.insert(\"" << param.first << "\", " << param.first << ");\n";
+		source << "\tHeaderHash __headers;\n";
+		for(auto jt = it->headers.constBegin(); jt != it->headers.constEnd(); jt++)
+			source << "\t__headers.insert(\"" << jt.key() << "\", \"" << jt.value() << "\");\n";
 
+		//make call
+		source << "\n\treturn restClass->call<" << it->returns << ", " << it->except << ">(\"" << it->verb << "\", ";
+		if(hasPath) {
+			if(!it->url.isEmpty())
+				source << "QUrl(__path), ";
+			else
+				source << "__path, ";
+		}
+		if(!it->body.isEmpty())
+			source << "__body, ";
+		source << "__params, __headers);\n";
 		source << "}\n";
 	}
 }
@@ -226,18 +247,17 @@ void ClassBuilder::writeMemberDefinitions()
 bool ClassBuilder::writeMethodPath(const MethodInfo &info)
 {
 	if(!info.path.isEmpty())
-		source << "\tQString path = \"" << info.path << "\";";
+		source << "\tQString __path = \"" << info.path << "\";\n";
 	else if(!info.url.isEmpty())
-		source << "\tQString path = \"" << info.url << "\";";
+		source << "\tQString __path = \"" << info.url << "\";\n";
 	else if(!info.pathParams.isEmpty())
-		source << "\tQString path;";
+		source << "\tQString __path;\n";
 	else
 		return false;
 
-	foreach(auto param, info.pathParams) {
-
-	}
-
+	foreach(auto param, info.pathParams)
+		source << "\t__path.append(QVariant::fromValue(" << param.first << ").toString());\n";
+	source << "\n";
 	return true;
 }
 
