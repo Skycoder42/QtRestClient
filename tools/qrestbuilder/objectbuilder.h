@@ -19,7 +19,15 @@ private:
 	void generateApiGadget(const QString &name);
 	void readMembers();
 
+	QString setter(const QString &name);
+
 	void writeProperties(bool withNotify);
+	void writeReadDeclarations();
+	void writeWriteDeclarations();
+	void writeNotifyDeclarations();
+	void writeMemberDefinitions();
+	void writeReadDefinitions(const QString &className);
+	void writeWriteDefinitions(const QString &className, bool withNotify);
 };
 
 #endif // OBJECTBUILDER_H
