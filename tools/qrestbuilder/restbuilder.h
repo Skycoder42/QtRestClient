@@ -15,11 +15,17 @@ public:
 	void build(const QString &in, const QString &hOut, const QString &cppOut);
 
 protected:
-	virtual void build(const QFileInfo &inFile) = 0;
+	virtual void build() = 0;
 
 	QJsonObject readJson(const QString &fileName);
 	void throwFile(const QFile &file);
 
+	QPair<QString, QString> splitType(const QString &type);
+	void writeIncGuardBegin();
+	void writeIncGuardEnd();
+	void writeInclude(QTextStream &stream, const QStringList &includes);
+
+	QFileInfo inFile;
 	QJsonObject root;
 	QTextStream header;
 	QTextStream source;

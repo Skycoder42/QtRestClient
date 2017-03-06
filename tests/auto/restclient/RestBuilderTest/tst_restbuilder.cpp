@@ -2,6 +2,9 @@
 #include <QtTest>
 #include <QCoreApplication>
 
+#include <User.h>
+#include <Post.h>
+
 class RestBuilderTest : public QObject
 {
 	Q_OBJECT

@@ -9,7 +9,7 @@ public:
 	ClassBuilder();
 
 private:
-	void build(const QFileInfo &inFile) override;
+	void build() override;
 };
 
 #endif // CLASSBUILDER_H

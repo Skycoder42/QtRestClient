@@ -5,7 +5,7 @@
 
 ObjectBuilder::ObjectBuilder() {}
 
-void ObjectBuilder::build(const QFileInfo &inFile)
+void ObjectBuilder::build()
 {
 	if(root["$type"].toString("object") == "object")
 		generateApiObject(inFile.baseName());
@@ -15,14 +15,34 @@ void ObjectBuilder::build(const QFileInfo &inFile)
 
 void ObjectBuilder::generateApiObject(const QString &name)
 {
-	header << "test3";
-	source << "test4";
-	qDebug() << "object:" << name;
+	qInfo() << "generating object:" << name;
+
+	includes.insert(QLatin1String("QObject"), QLatin1String("QObject"));
+	readMembers();
+
+	writeIncGuardBegin();
+	writeInclude(header, includes.values());
+	writeIncGuardEnd();
 }
 
 void ObjectBuilder::generateApiGadget(const QString &name)
 {
-	header << "test1";
-	source << "test2";
-	qDebug() << "gadget:" << name;
+	qInfo() << "generating gadget:" << name;
+
+	includes.insert(QLatin1String("QSharedDataPointer"), QLatin1String("QSharedDataPointer"));
+	readMembers();
+
+	writeIncGuardBegin();
+	writeInclude(header, includes.values());
+	writeIncGuardEnd();
+}
+
+void ObjectBuilder::readMembers()
+{
+	for(auto it = root.constBegin(); it != root.constEnd(); it++) {
+		auto type = splitType(it.value().toString());
+		if(!type.second.isEmpty())
+			includes.insert(type.first, type.second);
+		members.insert(it.key(), type.first);
+	}
 }

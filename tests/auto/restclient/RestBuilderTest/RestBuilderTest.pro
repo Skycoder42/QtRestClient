@@ -26,8 +26,3 @@ DEFINES += SRCDIR=\\\"$$PWD/\\\"
 REST_API_CLASSES += test_api.json
 REST_API_OBJECTS += Post.json \
 	User.json
-
-DISTFILES += \
-	test_api.json \
-	Post.json \
-	User.json
