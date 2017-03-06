@@ -4,15 +4,16 @@
 	"includes": [
 		"post.h"
 	],
+	"parent": "QObject",
 	"path": "posts",
 
 	"methods": {
 		"listPosts": {
 			"type": "method",
 			"verb": "GET",
-			"pathParams": {
-				"id": "int"
-			},
+			"pathParams": [
+				"id,int"
+			],
 			"returns": "Post"
 		},
 		"addPost": {

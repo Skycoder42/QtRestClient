@@ -3,7 +3,8 @@
 	"name": "TestApi",
 	"includes": [
 		"post.h",
-		"user.h"
+		"user.h",
+		"api_posts.h"
 	],
 	"globalName": "localhost",
 	"baseUrl": "http://localhost:3000",
@@ -12,16 +13,16 @@
 	"headers": {},
 
 	"classes": {
-		"posts": "api_posts"
+		"posts": "PostClass"
 	},
 
 	"methods": {
 		"findUser": {
 			"path": "user",
 			"verb": "GET",
-			"parameters": {
-				"id": "int"
-			},
+			"parameters": [
+				"id,int"
+			],
 			"headers": {
 				"Request-Style": "barbaric"
 			},

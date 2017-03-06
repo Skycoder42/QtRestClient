@@ -26,6 +26,7 @@ void ObjectBuilder::generateApiObject()
 
 	auto includes = readIncludes();
 	includes.append("QObject");
+	includes.append("QString");
 	readMembers();
 	auto parent = root["$parent"].toString("QObject");
 
@@ -61,6 +62,7 @@ void ObjectBuilder::generateApiGadget()
 
 	auto includes = readIncludes();
 	includes.append("QSharedDataPointer");
+	includes.append("QString");
 	readMembers();
 	auto parent = root["$parent"].toString();
 
