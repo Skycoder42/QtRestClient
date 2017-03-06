@@ -60,7 +60,7 @@ void ClassBuilder::generateApi()
 		   << "\treturn " << className << "::Factory(generateClient(), {});\n"
 		   << "}\n";
 	source << "\n" << className << "::" << className << "(QObject *parent) :\n"
-		   << "\t" << className << "(generateClient()->createClass(QString(), this), parent)\n"
+		   << "\t" << className << "(generateClient()->createClass(QString()), parent)\n"
 		   << "{}\n";
 	writeClassMainDefinition(parent);
 
@@ -88,11 +88,13 @@ void ClassBuilder::writeClassBeginDeclaration(const QString &parent)
 
 void ClassBuilder::writeClassMainDeclaration()
 {
-	header << "\t" << className << "(QtRestClient::RestClass *restClass, QObject *parent);\n\n";
+	header << "\t" << className << "(QtRestClient::RestClass *restClass, QObject *parent);\n\n"
+		   << "\tQtRestClient::RestClient *restClient() const;\n"
+		   << "\tQtRestClient::RestClass *restClass() const;\n\n";
 	writeClassDeclarations();
 	writeMethodDeclarations();
 	header << "private:\n"
-		   << "\tQtRestClient::RestClass *restClass;\n";
+		   << "\tQtRestClient::RestClass *_restClass;\n";
 	writeMemberDeclarations();
 }
 
@@ -108,10 +110,18 @@ void ClassBuilder::writeClassMainDefinition(const QString &parent)
 {
 	source << "\n" << className << "::" << className << "(RestClass *restClass, QObject *parent) :\n"
 		   << "\t" << parent << "(parent)\n"
-		   << "\t,restClass(restClass)\n";
+		   << "\t,_restClass(restClass)\n";
 	writeMemberDefinitions();
 	source << "{\n"
-		   << "\trestClass->setParent(this);\n"
+		   << "\t_restClass->setParent(this);\n"
+		   << "}\n";
+	source << "\nRestClient *" << className << "::restClient() const\n"
+		   << "{\n"
+		   << "\treturn _restClass->client();\n"
+		   << "}\n";
+	source << "\nRestClass *" << className << "::restClass() const\n"
+		   << "{\n"
+		   << "\treturn _restClass;\n"
 		   << "}\n";
 	writeClassDefinitions();
 	writeMethodDefinitions();
@@ -272,7 +282,7 @@ void ClassBuilder::writeMethodDefinitions()
 			source << "\t__headers.insert(\"" << jt.key() << "\", \"" << jt.value() << "\");\n";
 
 		//make call
-		source << "\n\treturn restClass->call<" << it->returns << ", " << it->except << ">(\"" << it->verb << "\", ";
+		source << "\n\treturn _restClass->call<" << it->returns << ", " << it->except << ">(\"" << it->verb << "\", ";
 		if(hasPath) {
 			if(!it->url.isEmpty())
 				source << "QUrl(__path), ";
@@ -289,7 +299,7 @@ void ClassBuilder::writeMethodDefinitions()
 void ClassBuilder::writeMemberDefinitions()
 {
 	for(auto it = classes.constBegin(); it != classes.constEnd(); it++)
-		source << "\t,_" << it.key() << "(new " << it.value() << "(restClass->subClass(" << it.value() << "::Path), this))\n";
+		source << "\t,_" << it.key() << "(new " << it.value() << "(_restClass->subClass(" << it.value() << "::Path), this))\n";
 }
 
 void ClassBuilder::writeLocalApiGeneration()
@@ -319,7 +329,7 @@ void ClassBuilder::writeGlobalApiGeneration(const QString &globalName)
 	if(root["autoCreate"].toBool(true)) {
 		source << "\nstatic void __" << className << "_app_construct()\n"
 			   << "{\n"
-			   << "\t" << className << "::factory();\n"
+			   << "\tQTimer::singleShot(0, &" << className << "::factory);\n"
 			   << "}\n"
 			   << "Q_COREAPP_STARTUP_FUNCTION(__" << className << "_app_construct)\n";
 	}

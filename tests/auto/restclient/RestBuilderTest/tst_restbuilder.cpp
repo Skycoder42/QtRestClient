@@ -19,6 +19,7 @@ private Q_SLOTS:
 	void cleanupTestCase();
 	void testCustomCompiledObject();
 	void testCustomCompiledGadget();
+	void testCustomCompiledApi();
 };
 
 RestBuilderTest::RestBuilderTest()
@@ -27,6 +28,7 @@ RestBuilderTest::RestBuilderTest()
 
 void RestBuilderTest::initTestCase()
 {
+	Q_ASSERT(qgetenv("LD_PRELOAD").contains("Qt5RestClient"));
 }
 
 void RestBuilderTest::cleanupTestCase()
@@ -59,6 +61,13 @@ void RestBuilderTest::testCustomCompiledGadget()
 	post.setTitle("baum");
 	post.setBody("baum == 42");
 	QCOMPARE(post.user(), nullptr);
+}
+
+void RestBuilderTest::testCustomCompiledApi()
+{
+	auto api = new TestApi(this);
+	QVERIFY(api->restClient());
+	QVERIFY(api->restClass());
 }
 
 QTEST_MAIN(RestBuilderTest)
