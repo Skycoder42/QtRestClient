@@ -15,8 +15,8 @@ public:
 private Q_SLOTS:
 	void initTestCase();
 	void cleanupTestCase();
-	void testCustomCompiler_data();
-	void testCustomCompiler();
+	void testCustomCompiledObject();
+	void testCustomCompiledGadget();
 };
 
 RestBuilderTest::RestBuilderTest()
@@ -31,16 +31,26 @@ void RestBuilderTest::cleanupTestCase()
 {
 }
 
-void RestBuilderTest::testCustomCompiler_data()
+void RestBuilderTest::testCustomCompiledObject()
 {
-	QTest::addColumn<QString>("data");
-	QTest::newRow("0") << QString();
+	User user;
+
+	QSignalSpy idSpy(&user, &User::idChanged);
+	QSignalSpy nameSpy(&user, &User::nameChanged);
+
+	QCOMPARE(idSpy.count(), 0);
+	user.setId(42);
+	QCOMPARE(idSpy.count(), 1);
+	QCOMPARE(nameSpy.count(), 0);
+	user.setName("baum");
+	QCOMPARE(nameSpy.count(), 1);
+
+	QCOMPARE(user.property("id").toInt(), 42);
+	QCOMPARE(user.property("name").toString(), QStringLiteral("baum"));
 }
 
-void RestBuilderTest::testCustomCompiler()
+void RestBuilderTest::testCustomCompiledGadget()
 {
-	QFETCH(QString, data);
-	QVERIFY2(true, "Failure");
 }
 
 QTEST_MAIN(RestBuilderTest)
