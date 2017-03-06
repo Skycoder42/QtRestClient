@@ -1,6 +1,6 @@
 {
 	"$type": "object",
-	"$parent": "QObject",
+	"$parent": "QObject$",
 	"id": "int",
-	"name": "QString"
+	"name": "QString$"
 }

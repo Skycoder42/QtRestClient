@@ -18,12 +18,12 @@
 					"pathParams": {
 						"id": "int"
 					},
-					"returns": "$Post"
+					"returns": "Post$"
 				},
 				"addPost": {
 					"type": "method",
 					"verb": "POST",
-					"body": "$Post"
+					"body": "Post$"
 				}
 			}
 		},
@@ -38,8 +38,8 @@
 			"headers": {
 				"Request-Style": "babaric"
 			},
-			"returns": "$User",
-			"except": "QObject*"
+			"returns": "User*$",
+			"except": "QObject*$"
 		}
 	}
 }

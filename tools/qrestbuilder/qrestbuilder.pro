@@ -19,7 +19,9 @@ load(resources)
 
 SOURCES += \
 	main.cpp \
-    restbuilder.cpp
+    restbuilder.cpp \
+    objectbuilder.cpp \
+    classbuilder.cpp
 
 win32 {
 	QMAKE_TARGET_PRODUCT = "Qt Rest API Builder"
@@ -37,7 +39,9 @@ unix:!mac {
 }
 
 HEADERS += \
-    restbuilder.h
+    restbuilder.h \
+    objectbuilder.h \
+    classbuilder.h
 
 RESOURCES += \
     qrestbuilder.qrc

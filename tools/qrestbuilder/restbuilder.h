@@ -2,28 +2,27 @@
 #define RESTBUILDER_H
 
 #include <QFile>
+#include <QFileInfo>
 #include <QIODevice>
 #include <QJsonObject>
-#include <QObject>
 #include <QTextStream>
 
 class RestBuilder : public QObject
 {
-	Q_OBJECT
 public:
-	explicit RestBuilder(QObject *parent = nullptr);
+	explicit RestBuilder();
 
-	void buildClass(const QString &in, const QString &hOut, const QString &cppOut);
-	void buildObject(const QString &in, const QString &hOut, const QString &cppOut);
+	void build(const QString &in, const QString &hOut, const QString &cppOut);
 
-private:
+protected:
+	virtual void build(const QFileInfo &inFile) = 0;
+
 	QJsonObject readJson(const QString &fileName);
-
-	void generateApiObject(const QString &name, const QJsonObject &obj, QTextStream &header, QTextStream &source);
-	void generateApiGadget(const QString &name, const QJsonObject &obj, QTextStream &header, QTextStream &source);
-
 	void throwFile(const QFile &file);
 
+	QJsonObject root;
+	QTextStream header;
+	QTextStream source;
 };
 
 #endif // RESTBUILDER_H

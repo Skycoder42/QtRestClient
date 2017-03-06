@@ -1,4 +1,5 @@
-#include "restbuilder.h"
+#include "classbuilder.h"
+#include "objectbuilder.h"
 
 #include <QCoreApplication>
 #include <QDir>
@@ -45,17 +46,17 @@ int main(int argc, char *argv[])
 	parser.process(a);
 
 	try {
-		RestBuilder builder;
-		if(parser.isSet("class")) {
-			builder.buildClass(parser.value("in"),
-							   parser.value("header"),
-							   parser.value("impl"));
-		} else if(parser.isSet("object")) {
-			builder.buildObject(parser.value("in"),
-								parser.value("header"),
-								parser.value("impl"));
-		} else
+		QScopedPointer<RestBuilder> builder;
+		if(parser.isSet("class"))
+			builder.reset(new ClassBuilder());
+		else if(parser.isSet("object"))
+			builder.reset(new ObjectBuilder());
+		else
 			throw QStringLiteral("Invalid mode! You must specify either --class or --object");
+
+		builder->build(parser.value("in"),
+					   parser.value("header"),
+					   parser.value("impl"));
 		return EXIT_SUCCESS;
 	} catch (QString &str) {
 		std::cerr << str.toStdString() << std::endl;

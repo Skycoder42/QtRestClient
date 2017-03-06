@@ -6,39 +6,30 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 
-RestBuilder::RestBuilder(QObject *parent) :
-	QObject(parent)
+RestBuilder::RestBuilder() :
+	QObject()
 {}
 
-void RestBuilder::buildClass(const QString &in, const QString &hOut, const QString &cppOut)
+void RestBuilder::build(const QString &in, const QString &hOut, const QString &cppOut)
 {
-	auto root = readJson(in);
-}
+	root = readJson(in);
 
-void RestBuilder::buildObject(const QString &in, const QString &hOut, const QString &cppOut)
-{
-	QFileInfo inInfo(in);
-	auto root = readJson(in);
+	auto headerFile = new QFile(hOut, this);
+	if(!headerFile->open(QIODevice::WriteOnly | QIODevice::Text))
+		throwFile(*headerFile);
+	header.setDevice(headerFile);
 
-	QFile headerFile(hOut);
-	if(!headerFile.open(QIODevice::WriteOnly | QIODevice::Text))
-		throwFile(headerFile);
-	QTextStream headerStream(&headerFile);
+	auto sourceFile = new QFile(cppOut, this);
+	if(!sourceFile->open(QIODevice::WriteOnly | QIODevice::Text))
+		throwFile(*sourceFile);
+	source.setDevice(sourceFile);
 
-	QFile sourceFile(cppOut);
-	if(!sourceFile.open(QIODevice::WriteOnly | QIODevice::Text))
-		throwFile(sourceFile);
-	QTextStream sourceStream(&sourceFile);
+	build(in);
 
-	if(root["$type"].toString("object") == "object")
-		generateApiObject(inInfo.baseName(), root, headerStream, sourceStream);
-	else
-		generateApiGadget(inInfo.baseName(), root, headerStream, sourceStream);
-
-	headerStream.flush();
-	headerFile.close();
-	sourceStream.flush();
-	sourceFile.close();
+	header.flush();
+	header.device()->close();
+	source.flush();
+	source.device()->close();
 }
 
 QJsonObject RestBuilder::readJson(const QString &fileName)
@@ -54,20 +45,6 @@ QJsonObject RestBuilder::readJson(const QString &fileName)
 	file.close();
 
 	return doc.object();
-}
-
-void RestBuilder::generateApiObject(const QString &name, const QJsonObject &obj, QTextStream &header, QTextStream &source)
-{
-	header << "test3";
-	source << "test4";
-	qDebug() << "object:" << name;
-}
-
-void RestBuilder::generateApiGadget(const QString &name, const QJsonObject &obj, QTextStream &header, QTextStream &source)
-{
-	header << "test1";
-	source << "test2";
-	qDebug() << "gadget:" << name;
 }
 
 void RestBuilder::throwFile(const QFile &file)

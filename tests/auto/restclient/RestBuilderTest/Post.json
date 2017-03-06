@@ -1,7 +1,7 @@
 {
 	"$type": "gadget",
 	"id": "int",
-	"title": "QString",
-	"body": "QString",
-	"user": "$User"
+	"title": "QString$",
+	"body": "QString$",
+	"user": "User*$"
 }
