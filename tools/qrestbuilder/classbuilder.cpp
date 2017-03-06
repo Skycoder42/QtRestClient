@@ -23,50 +23,98 @@ void ClassBuilder::generateClass()
 {
 	qInfo() << "generating class:" << className;
 
-	auto includes = readIncludes();
-	includes.append("QtRestClient");
-	includes.append("QString");
-	includes.append("QStringList");
-	auto parent = root["parent"].toString("QObject");
-
 	readClasses();
 	readMethods();
+	auto parent = root["parent"].toString("QObject");
 
 	//write header
-	writeIncludes(header, includes);
-	header << "class " << className << " : public " << parent << "\n"
-		   << "{\n"
-		   << "public:\n";
-	generateFactoryDeclaration();
-	header << "\t" << className << "(QtRestClient::RestClass *restClass, QObject *parent);\n\n";
-	writeClassDeclarations();
-	writeMethodDeclarations();
-	header << "private:\n"
-		   << "\tQtRestClient::RestClass *restClass;\n";
-	writeMemberDeclarations();
+	writeClassBeginDeclaration(parent);
+	writeClassMainDeclaration();
 	header << "};\n\n";
 
 	//write source
-	source << "#include \"" << fileName << ".h\"\n"
-		   << "using namespace QtRestClient;\n\n"
-		   << "const QString " << className << "::Path(\"" << root["path"].toString() << "\");\n";
-	generateFactoryDefinition();
-	source << "\n" << className << "::" << className << "(RestClass *restClass, QObject *parent) :\n"
-		   << "\t" << parent << "(parent),\n"
-		   << "\trestClass(restClass)\n";
-	writeMemberDefinitions();
-	source << "{\n"
-		   << "\trestClass->setParent(this);\n"
-		   << "}\n";
-	writeClassDefinitions();
-	writeMethodDefinitions();
+	writeClassBeginDefinition();
+	writeClassMainDefinition(parent);
 }
 
 void ClassBuilder::generateApi()
 {
 	qInfo() << "generating api:" << className;
 
-	generateClass();
+	readClasses();
+	readMethods();
+	auto parent = root["parent"].toString("QObject");
+
+	//write header
+	writeClassBeginDeclaration(parent);
+	header << "\tstatic " << className << "::Factory factory();\n";
+	header << "\t" << className << "(QObject *parent = nullptr);\n";
+	writeClassMainDeclaration();
+	header << "\n\tstatic QtRestClient::RestClient *generateClient();\n"
+		   << "};\n\n";
+
+	//write source
+	writeClassBeginDefinition();
+	source << "\n" << className << "::Factory " << className << "::factory()\n"
+		   << "{\n"
+		   << "\treturn " << className << "::Factory(generateClient(), {});\n"
+		   << "}\n";
+	source << "\n" << className << "::" << className << "(QObject *parent) :\n"
+		   << "\t" << className << "(generateClient()->createClass(QString(), this), parent)\n"
+		   << "{}\n";
+	writeClassMainDefinition(parent);
+
+	//write API generation
+	auto globalName = root["globalName"].toString();
+	if(!globalName.isEmpty())
+		writeGlobalApiGeneration(globalName);
+	else
+		writeLocalApiGeneration();
+}
+
+void ClassBuilder::writeClassBeginDeclaration(const QString &parent)
+{
+	auto includes = readIncludes();
+	includes.append("QtRestClient");
+	includes.append("QString");
+	includes.append("QStringList");
+
+	writeIncludes(header, includes);
+	header << "class " << className << " : public " << parent << "\n"
+		   << "{\n"
+		   << "public:\n";
+	generateFactoryDeclaration();
+}
+
+void ClassBuilder::writeClassMainDeclaration()
+{
+	header << "\t" << className << "(QtRestClient::RestClass *restClass, QObject *parent);\n\n";
+	writeClassDeclarations();
+	writeMethodDeclarations();
+	header << "private:\n"
+		   << "\tQtRestClient::RestClass *restClass;\n";
+	writeMemberDeclarations();
+}
+
+void ClassBuilder::writeClassBeginDefinition()
+{
+	source << "#include \"" << fileName << ".h\"\n"
+		   << "using namespace QtRestClient;\n\n"
+		   << "const QString " << className << "::Path(\"" << root["path"].toString() << "\");\n";
+	generateFactoryDefinition();
+}
+
+void ClassBuilder::writeClassMainDefinition(const QString &parent)
+{
+	source << "\n" << className << "::" << className << "(RestClass *restClass, QObject *parent) :\n"
+		   << "\t" << parent << "(parent)\n"
+		   << "\t,restClass(restClass)\n";
+	writeMemberDefinitions();
+	source << "{\n"
+		   << "\trestClass->setParent(this);\n"
+		   << "}\n";
+	writeClassDefinitions();
+	writeMethodDefinitions();
 }
 
 void ClassBuilder::readClasses()
@@ -242,6 +290,54 @@ void ClassBuilder::writeMemberDefinitions()
 {
 	for(auto it = classes.constBegin(); it != classes.constEnd(); it++)
 		source << "\t,_" << it.key() << "(new " << it.value() << "(restClass->subClass(" << it.value() << "::Path), this))\n";
+}
+
+void ClassBuilder::writeLocalApiGeneration()
+{
+	source << "\nRestClient *" << className << "::generateClient()\n"
+		   << "{\n"
+		   << "\tstatic QPointer<RestClient> client = nullptr;\n"
+		   << "\tif(!client) {\n";
+	writeApiCreation();
+	source << "\t}\n"
+		   << "\treturn client;\n"
+		   << "}\n";
+}
+
+void ClassBuilder::writeGlobalApiGeneration(const QString &globalName)
+{
+	source << "\nRestClient *" << className << "::generateClient()\n"
+		   << "{\n"
+		   << "\tauto client = apiClient(\"" << globalName << "\");\n"
+		   << "\tif(!client) {\n";
+	writeApiCreation();
+	source << "\t\taddGlobalApi(\"" << globalName << "\", client);\n"
+		   << "\t}\n"
+		   << "\treturn client;\n"
+		   << "}\n";
+
+	if(root["autoCreate"].toBool(true)) {
+		source << "\nstatic void __" << className << "_app_construct()\n"
+			   << "{\n"
+			   << "\t" << className << "::factory();\n"
+			   << "}\n"
+			   << "Q_COREAPP_STARTUP_FUNCTION(__" << className << "_app_construct)\n";
+	}
+}
+
+void ClassBuilder::writeApiCreation()
+{
+	source << "\t\tclient = new RestClient(QCoreApplication::instance());\n"
+		   << "\t\tclient->setBaseUrl(QUrl(\"" << root["baseUrl"].toString() << "\"));\n";
+	auto version = root["apiVersion"].toString();
+	if(!version.isEmpty())
+		source << "\t\tclient->setApiVersion(QVersionNumber::fromString(\"" << version << "\"));\n";
+	auto headers = root["headers"].toObject();
+	for(auto it = headers.constBegin(); it != headers.constEnd(); it++)
+		source << "\t\tclient->addGlobalHeader(\"" << it.key() << "\", \"" << it.value().toString() << "\");\n";
+	auto parameters = root["parameters"].toObject();
+	for(auto it = parameters.constBegin(); it != parameters.constEnd(); it++)
+		source << "\t\tclient->addGlobalParameter(\"" << it.key() << "\", \"" << it.value().toString() << "\");\n";
 }
 
 bool ClassBuilder::writeMethodPath(const MethodInfo &info)

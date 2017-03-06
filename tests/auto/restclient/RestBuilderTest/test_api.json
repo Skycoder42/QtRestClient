@@ -7,10 +7,15 @@
 		"api_posts.h"
 	],
 	"globalName": "localhost",
+	"autoCreate": true,
 	"baseUrl": "http://localhost:3000",
-	"apiVersion": "",
-	"parameters": {},
-	"headers": {},
+	"apiVersion": "1.2.0",
+	"parameters": {
+		"limit": "100"
+	},
+	"headers": {
+		"Secret": "baum"
+	},
 
 	"classes": {
 		"posts": "PostClass"

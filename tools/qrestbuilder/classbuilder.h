@@ -32,6 +32,11 @@ private:
 	void generateClass();
 	void generateApi();
 
+	void writeClassBeginDeclaration(const QString &parent);
+	void writeClassMainDeclaration();
+	void writeClassBeginDefinition();
+	void writeClassMainDefinition(const QString &parent);
+
 	void readClasses();
 	void readMethods();
 
@@ -45,6 +50,10 @@ private:
 	void writeClassDefinitions();
 	void writeMethodDefinitions();
 	void writeMemberDefinitions();
+
+	void writeLocalApiGeneration();
+	void writeGlobalApiGeneration(const QString &globalName);
+	void writeApiCreation();
 
 	bool writeMethodPath(const MethodInfo &info);
 };
