@@ -25,11 +25,13 @@ private:
 	void writeWriteDeclarations();
 	void writeNotifyDeclarations();
 	void writeMemberDeclarations(QTextStream &stream);
+	void writeSourceIncludes();
 	void writeReadDefinitions(bool asGadget);
 	void writeWriteDefinitions(bool asGadget);
 	void writeDataClass();
 	void writeMemberDefinitions(QTextStream &stream);
 	void writeMemberCopyDefinitions(QTextStream &stream);
+	void writeListConverter(bool isObject);
 };
 
 #endif // OBJECTBUILDER_H

@@ -25,8 +25,8 @@ void ObjectBuilder::generateApiObject()
 	qInfo() << "generating object:" << className;
 
 	auto includes = readIncludes();
-	includes.append("QObject");
-	includes.append("QString");
+	includes.append("QtCore/qobject.h");
+	includes.append("QtCore/qstring.h");
 	readMembers();
 	auto parent = root["$parent"].toString("QObject");
 
@@ -48,13 +48,15 @@ void ObjectBuilder::generateApiObject()
 	header << "};\n\n";
 
 	//write source
-	source << "#include \"" << fileName << ".h\"\n\n"
-		   << className << "::" << className << "(QObject *parent) :\n"
+	writeSourceIncludes();
+	source << className << "::" << className << "(QObject *parent) :\n"
 		   << "\t" << parent << "(parent)\n";
 	writeMemberDefinitions(source);
 	source << "{}\n";
 	writeReadDefinitions(false);
 	writeWriteDefinitions(false);
+	if(root["$registerConverters"].toBool(true))
+		writeListConverter(true);
 }
 
 void ObjectBuilder::generateApiGadget()
@@ -62,8 +64,8 @@ void ObjectBuilder::generateApiGadget()
 	qInfo() << "generating gadget:" << className;
 
 	auto includes = readIncludes();
-	includes.append("QSharedDataPointer");
-	includes.append("QString");
+	includes.append("QtCore/qshareddata.h");
+	includes.append("QtCore/qstring.h");
 	readMembers();
 	auto parent = root["$parent"].toString();
 
@@ -90,7 +92,7 @@ void ObjectBuilder::generateApiGadget()
 		   << "};\n\n";
 
 	//write source
-	source << "#include \"" << fileName << ".h\"\n\n";
+	writeSourceIncludes();
 	writeDataClass();
 	source << className << "::" << className << "() :\n";
 	if(!parent.isEmpty())
@@ -110,6 +112,8 @@ void ObjectBuilder::generateApiGadget()
 		   << "}\n";
 	writeReadDefinitions(true);
 	writeWriteDefinitions(true);
+	if(root["$registerConverters"].toBool(true))
+		writeListConverter(false);
 }
 
 void ObjectBuilder::readMembers()
@@ -162,6 +166,13 @@ void ObjectBuilder::writeMemberDeclarations(QTextStream &stream)
 {
 	for(auto it = members.constBegin(); it != members.constEnd(); it++)
 		stream << "\t" << it.value() << " _" << it.key() << ";\n";
+}
+
+void ObjectBuilder::writeSourceIncludes()
+{
+	source << "#include \"" << fileName << ".h\"\n\n"
+		   << "#include <QtCore/qcoreapplication.h>\n"
+		   << "#include <QtJsonSerializer/qjsonserializer.h>\n\n";
 }
 
 void ObjectBuilder::writeReadDefinitions(bool asGadget)
@@ -220,4 +231,13 @@ void ObjectBuilder::writeMemberCopyDefinitions(QTextStream &stream)
 {
 	for(auto it = members.constBegin(); it != members.constEnd(); it++)
 		stream << "\t,_" << it.key() << "(other._" << it.key() << ")\n";
+}
+
+void ObjectBuilder::writeListConverter(bool isObject)
+{
+	source << "\nvoid __" << className << "_list_conv_registrator()\n"
+		   << "{\n"
+		   << "\tQJsonSerializer::registerListConverters<" << className << (isObject ? "*" : "") << ">();\n"
+		   << "}\n"
+		   << "Q_COREAPP_STARTUP_FUNCTION(__" << className << "_list_conv_registrator)\n";
 }

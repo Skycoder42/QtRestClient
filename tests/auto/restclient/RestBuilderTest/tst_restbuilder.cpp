@@ -28,8 +28,6 @@ void RestBuilderTest::initTestCase()
 {
 	Q_ASSERT(qgetenv("LD_PRELOAD").contains("Qt5RestClient"));
 	QCoreApplication::processEvents();
-	QJsonSerializer::registerListConverters<Post>();
-	QJsonSerializer::registerListConverters<User*>();
 	initTestJsonServer("./build-test-db.js");
 }
 

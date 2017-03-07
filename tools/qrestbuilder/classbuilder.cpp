@@ -75,9 +75,10 @@ void ClassBuilder::generateApi()
 void ClassBuilder::writeClassBeginDeclaration(const QString &parent)
 {
 	auto includes = readIncludes();
-	includes.append("QtRestClient");
-	includes.append("QString");
-	includes.append("QStringList");
+	includes.append("QtRestClient/restclient.h");
+	includes.append("QtRestClient/restclass.h");
+	includes.append("QtCore/qstring.h");
+	includes.append("QtCore/qstringlist.h");
 
 	writeIncludes(header, includes);
 	header << "class " << className << " : public " << parent << "\n"
@@ -101,7 +102,9 @@ void ClassBuilder::writeClassMainDeclaration()
 
 void ClassBuilder::writeClassBeginDefinition()
 {
-	source << "#include \"" << fileName << ".h\"\n"
+	source << "#include \"" << fileName << ".h\"\n\n"
+		   << "#include <QtCore/qcoreapplication.h>\n"
+		   << "#include <QtCore/qtimer.h>\n"
 		   << "using namespace QtRestClient;\n\n"
 		   << "const QString " << className << "::Path(\"" << root["path"].toString() << "\");\n";
 	generateFactoryDefinition();
