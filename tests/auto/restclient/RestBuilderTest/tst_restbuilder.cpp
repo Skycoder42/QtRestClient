@@ -1,7 +1,4 @@
-#include <QString>
-#include <QtTest>
-#include <QCoreApplication>
-
+#include "tst_global.h"
 #include <user.h>
 #include <post.h>
 #include <api_posts.h>
@@ -30,6 +27,9 @@ void RestBuilderTest::initTestCase()
 {
 	Q_ASSERT(qgetenv("LD_PRELOAD").contains("Qt5RestClient"));
 	QCoreApplication::processEvents();
+	QJsonSerializer::registerListConverters<Post>();
+	QJsonSerializer::registerListConverters<User*>();
+	initTestJsonServer("./advanced-test-db.js");
 }
 
 void RestBuilderTest::cleanupTestCase()
@@ -66,10 +66,19 @@ void RestBuilderTest::testCustomCompiledGadget()
 
 void RestBuilderTest::testCustomCompiledApi()
 {
+	// test eveything is there
 	auto api = new TestApi(this);
 	QVERIFY(api->restClient());
 	QVERIFY(api->restClass());
 	QVERIFY(api->posts());
+
+	//same for factory creation
+	auto t1 = TestApi::factory().instance(this);
+	QVERIFY(t1);
+	t1->deleteLater();
+	auto t2 = TestApi::factory().posts().instance(this);
+	QVERIFY(t2);
+	t2->deleteLater();
 }
 
 QTEST_MAIN(RestBuilderTest)

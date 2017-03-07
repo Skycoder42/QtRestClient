@@ -24,10 +24,11 @@ private:
 	void writeReadDeclarations();
 	void writeWriteDeclarations();
 	void writeNotifyDeclarations();
-	void writeMemberDefinitions(QTextStream &stream);
+	void writeMemberDeclarations(QTextStream &stream);
 	void writeReadDefinitions(bool asGadget);
 	void writeWriteDefinitions(bool asGadget);
 	void writeDataClass();
+	void writeMemberDefinitions(QTextStream &stream);
 	void writeMemberCopyDefinitions(QTextStream &stream);
 };
 
