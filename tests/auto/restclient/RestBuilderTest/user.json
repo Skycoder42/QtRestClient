@@ -2,6 +2,7 @@
 	"$type": "object",
 	"$parent": "QObject",
 	"$name": "User",
+	"$registerConverters": true,
 	"id": "int",
 	"name": "QString"
 }
