@@ -1,0 +1,9 @@
+{
+	"$type": "gadget",
+	"$name": "Post",
+
+	"id": "int",
+	"userId": "int",
+	"title": "QString",
+	"body": "QString"
+}

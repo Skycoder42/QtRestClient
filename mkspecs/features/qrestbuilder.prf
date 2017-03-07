@@ -30,13 +30,14 @@ qrestbuilder_o.depends += $$QMAKE_QRESTBUILDER_EXE
 
 QMAKE_EXTRA_COMPILERS += qrestbuilder_o
 
-qrestbuilder_m.name = QRESTBUILDER ${QMAKE_FILE_IN}.moc
+qrestbuilder_m.name = QRESTBUILDER_MOC ${QMAKE_FILE_IN}
 qrestbuilder_m.input = QRESTBUILDER_HEADERS
 qrestbuilder_m.variable_out = GENERATED_SOURCES
-qrestbuilder_m.commands = moc $(DEFINES) $(INCPATH) ${QMAKE_FILE_IN} -o $$QRESTBUILDER_DIR/.moc/moc_${QMAKE_FILE_BASE}$${first(QMAKE_EXT_CPP)}
-qrestbuilder_m.output = $$QRESTBUILDER_DIR/.moc/moc_${QMAKE_FILE_BASE}$${first(QMAKE_EXT_CPP)}
-qrestbuilder_m.CONFIG += target_predeps
-qrestbuilder_m.depends += $$QMAKE_QRESTBUILDER_EXE
+qrestbuilder_m.commands = ${QMAKE_FUNC_mocCmdBase} ${QMAKE_FILE_IN} -o ${QMAKE_FILE_OUT}
+qrestbuilder_m.output = $$MOC_DIR/$${QMAKE_H_MOD_MOC}${QMAKE_FILE_BASE}$${first(QMAKE_EXT_CPP)}
+qrestbuilder_m.CONFIG += target_predeps moc_verify
+qrestbuilder_m.depends += $$QMAKE_QRESTBUILDER_EXE $$WIN_INCLUDETEMP $$moc_predefs.output
+qrestbuilder_m.dependency_type = TYPE_C
 
 QMAKE_EXTRA_COMPILERS += qrestbuilder_m
 

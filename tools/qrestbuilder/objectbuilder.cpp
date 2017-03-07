@@ -64,6 +64,7 @@ void ObjectBuilder::generateApiGadget()
 	qInfo() << "generating gadget:" << className;
 
 	auto includes = readIncludes();
+	includes.append("QtCore/qobject.h");
 	includes.append("QtCore/qshareddata.h");
 	includes.append("QtCore/qstring.h");
 	readMembers();
