@@ -82,6 +82,7 @@ void ClassBuilder::writeClassBeginDeclaration(const QString &parent)
 	writeIncludes(header, includes);
 	header << "class " << className << " : public " << parent << "\n"
 		   << "{\n"
+		   << "\tQ_OBJECT\n\n"
 		   << "public:\n";
 	generateFactoryDeclaration();
 }

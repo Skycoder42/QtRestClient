@@ -17,6 +17,7 @@ private Q_SLOTS:
 	void testCustomCompiledObject();
 	void testCustomCompiledGadget();
 	void testCustomCompiledApi();
+	void testCustomCompiledApiPosts();
 };
 
 RestBuilderTest::RestBuilderTest()
@@ -29,7 +30,7 @@ void RestBuilderTest::initTestCase()
 	QCoreApplication::processEvents();
 	QJsonSerializer::registerListConverters<Post>();
 	QJsonSerializer::registerListConverters<User*>();
-	initTestJsonServer("./advanced-test-db.js");
+	initTestJsonServer("./build-test-db.js");
 }
 
 void RestBuilderTest::cleanupTestCase()
@@ -71,6 +72,7 @@ void RestBuilderTest::testCustomCompiledApi()
 	QVERIFY(api->restClient());
 	QVERIFY(api->restClass());
 	QVERIFY(api->posts());
+	api->deleteLater();
 
 	//same for factory creation
 	auto t1 = TestApi::factory().instance(this);
@@ -79,6 +81,45 @@ void RestBuilderTest::testCustomCompiledApi()
 	auto t2 = TestApi::factory().posts().instance(this);
 	QVERIFY(t2);
 	t2->deleteLater();
+}
+
+void RestBuilderTest::testCustomCompiledApiPosts()
+{
+	auto api = new TestApi(this);
+
+	bool called = false;
+	auto reply = api->posts()->listPosts();
+	reply->onSucceeded([&](int code, QList<Post> posts){
+		called = true;
+		QCOMPARE(code, 200);
+		QCOMPARE(posts.size(), 100);
+	});
+	reply->onAllErrors([&](QString error, int, QtRestClient::RestReply::ErrorType){
+		called = true;
+		QFAIL(qUtf8Printable(error));
+	});
+
+	QSignalSpy deleteSpy(reply, &QtRestClient::RestReply::destroyed);
+	QVERIFY(deleteSpy.wait());
+	QVERIFY(called);
+
+	auto reply2 = api->posts()->post(42);
+	reply2->onSucceeded([&](int code, Post post){
+		called = true;
+		QCOMPARE(code, 200);
+		QCOMPARE(post.id(), 42);
+		QVERIFY(post.user());
+		QCOMPARE(post.user()->id(), 42/2);
+		post.user()->deleteLater();
+	});
+	reply2->onAllErrors([&](QString error, int, QtRestClient::RestReply::ErrorType){
+		called = true;
+		QFAIL(qUtf8Printable(error));
+	});
+
+	QSignalSpy deleteSpy2(reply2, &QtRestClient::RestReply::destroyed);
+	QVERIFY(deleteSpy2.wait());
+	QVERIFY(called);
 }
 
 QTEST_MAIN(RestBuilderTest)
