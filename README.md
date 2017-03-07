@@ -72,10 +72,10 @@ restClass->get<Post>("42")->onSucceeded([](RestReply *reply, int statusCode, Pos
 And thats all you need for a basic API access. Check the documentation for more and *important* details about the client, the class and the replies!
 
 ### API-Generator
-The library comes with a tool to create API data classes and wrapper classes over the rest client. Those are generated from JSON files and allow an easy creation of APIs in your application. The tool is build as a custom compiler and added to qmake. To use the tool simply add the json files to you pro file, and the source will be automatically generated and compiled into your application!
+The library comes with a tool to create API data classes and wrapper classes over the rest client. Those are generated from JSON files and allow an easy creation of APIs in your application. The tool is build as a custom compiler and added to qmake. To use the tool simply add the json files to you pro file, and the sources will be automatically generated and compiled into your application!
 
 #### Example
-The following example shows a JSON file to generate the post form above (with shared data optimizations, automatic registration, etc.). It could be named `post.json`:
+The following example shows a JSON file to generate the post type from above (with shared data optimizations, automatic registration, etc.). It could be named `post.json`:
 ```json
 {
 	"$type": "gadget",
@@ -109,6 +109,7 @@ You can either directly add the methods to the API, or, like I did in this examp
 	"type": "class",
 	"name": "PostClass",
 	"includes": ["post.h"],
+	"path": "posts",
 	
 	"methods": {
 		"listPosts": {
