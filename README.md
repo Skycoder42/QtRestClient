@@ -71,6 +71,86 @@ restClass->get<Post>("42")->onSucceeded([](RestReply *reply, int statusCode, Pos
 
 And thats all you need for a basic API access. Check the documentation for more and *important* details about the client, the class and the replies!
 
+### API-Generator
+The library comes with a tool to create API data classes and wrapper classes over the rest client. Those are generated from JSON files and allow an easy creation of APIs in your application. The tool is build as a custom compiler and added to qmake. To use the tool simply add the json files to you pro file, and the source will be automatically generated and compiled into your application!
+
+#### Example
+The following example shows a JSON file to generate the post form above (with shared data optimizations, automatic registration, etc.). It could be named `post.json`:
+```json
+{
+	"$type": "gadget",
+	"$name": "Post",
+	
+	"id": "int",
+	"userId": "int",
+	"title": "QString",
+	"body": "QString"	
+}
+```
+
+A definition for a very simple API, that allows some simple operations for posts, could look like this. It could be named `api.json`:
+```json
+{
+	"type": "api",
+	"name": "ExampleApi",
+	"includes": ["api_posts.h"],
+	"globalName": "jsonplaceholder",	
+	"baseUrl": "https://jsonplaceholder.typicode.com",
+	
+	"classes": {
+		"posts": "PostClass"
+	}
+}
+```
+
+You can either directly add the methods to the API, or, like I did in this example, split the classes into different files. It could be named `api_posts.json`:
+```json
+{
+	"type": "class",
+	"name": "PostClass",
+	"includes": ["post.h"],
+	
+	"methods": {
+		"listPosts": {
+			"verb": "GET",
+			"returns": "QList<Post>"
+		},
+		"post": {
+			"verb": "GET",
+			"pathParams": ["id,int"],
+			"returns": "Post"
+		},
+		"savePost": {
+			"verb": "POST",
+			"body": "Post"
+		},
+		"deleteUserPosts": {
+			"verb": "DELETE",
+			"parameters": ["userId,int"]
+		}
+	}
+}
+```
+
+These files are added to the `.pro` file as follows:
+```pro
+REST_API_OBJECTS += post.json
+REST_API_CLASSES += api.json \
+	api_posts.json
+```
+
+And thats it! once you run qmake and compile your application, those APIs will be generated for you. The usage is fairly simple:
+```cpp
+//by using the API directly:
+auto api = new ExampleApi(this);
+auto reply = api->posts()->post(42);
+//continue as usual with any generic network reply
+
+//by using the factory to create the class only:
+auto posts = ExampleApi::factory().posts().instance(this);
+auto reply = posts->post(42);
+```
+
 ### Authentication
 When I was trying to implement authentication, I found that it can be quite heterogenous. Because of that, I did not implement a specific authentication mechanism. Instead, you can either use one supported by Qt or create your own auth flow. The easiest way to do so is to create a RestClient, and then perform whatever authentication you need with the clients internal QNetworkAccessManager, and set parameters, headers, cookies, etc accordingly, if neccessary.
 

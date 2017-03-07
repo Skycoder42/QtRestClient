@@ -9,12 +9,10 @@
 
 	"methods": {
 		"listPosts": {
-			"type": "method",
 			"verb": "GET",
 			"returns": "QList<Post>"
 		},
 		"post": {
-			"type": "method",
 			"verb": "GET",
 			"pathParams": [
 				"id,int"
@@ -22,7 +20,6 @@
 			"returns": "Post"
 		},
 		"addPost": {
-			"type": "method",
 			"verb": "POST",
 			"body": "Post"
 		}
