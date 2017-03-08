@@ -2,6 +2,7 @@
 
 #include <QDebug>
 #include <QFileInfo>
+#include <QJsonArray>
 
 ObjectBuilder::ObjectBuilder() {}
 
@@ -36,8 +37,10 @@ void ObjectBuilder::generateApiObject()
 		   << "{\n"
 		   << "\tQ_OBJECT\n\n";
 	writeProperties(true);
-	header << "\npublic:\n"
-		   << "\tQ_INVOKABLE " << className << "(QObject *parent = nullptr);\n\n";
+	header << "\npublic:\n";
+	if(root.contains("$enums"))
+		writeEnums();
+	header << "\tQ_INVOKABLE " << className << "(QObject *parent = nullptr);\n\n";
 	writeReadDeclarations();
 	header << "\npublic Q_SLOTS:\n";
 	writeWriteDeclarations();
@@ -80,8 +83,10 @@ void ObjectBuilder::generateApiGadget()
 	header << "{\n"
 		   << "\tQ_GADGET\n\n";
 	writeProperties(false);
-	header << "\npublic:\n"
-		   << "\t" << className << "();\n"
+	header << "\npublic:\n";
+	if(root.contains("$enums"))
+		writeEnums();
+	header << "\t" << className << "();\n"
 		   << "\t" << className << "(const " << className << " &other);\n"
 		   << "\t~" << className << "();\n\n"
 		   << "\t" << className << " &operator =(const " << className << " &other);\n\n";
@@ -131,6 +136,44 @@ QString ObjectBuilder::setter(const QString &name)
 	QString setterName = "set" + name;
 	setterName[3] = setterName[3].toUpper();
 	return setterName;
+}
+
+void ObjectBuilder::writeEnums()
+{
+	auto enums = root["$enums"].toObject();
+	for(auto it = enums.constBegin(); it != enums.constEnd(); it++) {
+		auto isFlags = false;
+		QString base;
+		QJsonArray values;
+		if(it.value().isObject()) {
+			auto obj = it->toObject();
+			isFlags = obj["isFlags"].toBool(false);
+			base = obj["base"].toString();
+			values = obj["values"].toArray();
+		} else
+			values = it->toArray();
+
+		if(!base.isEmpty())
+			header << "\tenum " << it.key() << " : " << base << " {\n";
+		else
+			header << "\tenum " << it.key() << " {\n";
+		foreach (auto value, values) {
+			auto data = value.toString().split(':');
+			if(data.size() == 1)
+				header << "\t\t" << data[0] << ",\n";
+			else if(data.size() == 2)
+				header << "\t\t" << data[0] << " = " << data[1] << ",\n";
+			else
+				throw QStringLiteral("Enum values can have at most 2 elments!");
+		}
+		header << "\t};\n";
+
+		if(isFlags) {
+			header << "\tQ_DECLARE_FLAGS(" << it.key() << "s, " << it.key() << ")\n"
+				   << "\tQ_FLAG(" << it.key() << "s)\n\n";
+		} else
+			header << "\tQ_ENUM(" << it.key() << ")\n\n";
+	}
 }
 
 void ObjectBuilder::writeProperties(bool withNotify)
