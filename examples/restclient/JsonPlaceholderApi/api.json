@@ -1,0 +1,11 @@
+{
+	"type": "api",
+	"name": "ExampleApi",
+	"includes": ["api_posts.h"],
+	"globalName": "jsonplaceholder",
+	"baseUrl": "https://jsonplaceholder.typicode.com",
+
+	"classes": {
+		"posts": "PostClass"
+	}
+}

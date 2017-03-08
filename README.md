@@ -80,11 +80,11 @@ The following example shows a JSON file to generate the post type from above (wi
 {
 	"$type": "gadget",
 	"$name": "Post",
-	
+
 	"id": "int",
 	"userId": "int",
 	"title": "QString",
-	"body": "QString"	
+	"body": "QString"
 }
 ```
 
@@ -94,9 +94,9 @@ A definition for a very simple API, that allows some simple operations for posts
 	"type": "api",
 	"name": "ExampleApi",
 	"includes": ["api_posts.h"],
-	"globalName": "jsonplaceholder",	
+	"globalName": "jsonplaceholder",
 	"baseUrl": "https://jsonplaceholder.typicode.com",
-	
+
 	"classes": {
 		"posts": "PostClass"
 	}
@@ -110,7 +110,7 @@ You can either directly add the methods to the API, or, like I did in this examp
 	"name": "PostClass",
 	"includes": ["post.h"],
 	"path": "posts",
-	
+
 	"methods": {
 		"listPosts": {
 			"verb": "GET",
@@ -135,6 +135,9 @@ You can either directly add the methods to the API, or, like I did in this examp
 
 These files are added to the `.pro` file as follows:
 ```pro
+# Load the feature
+load(qrestbuilder)
+
 REST_API_OBJECTS += post.json
 REST_API_CLASSES += api.json \
 	api_posts.json
@@ -151,6 +154,8 @@ auto reply = api->posts()->post(42);
 auto posts = ExampleApi::factory().posts().instance(this);
 auto reply = posts->post(42);
 ```
+
+Check the JsonPlaceholderApi example in `examples/restclient` for this example.
 
 ### Authentication
 When I was trying to implement authentication, I found that it can be quite heterogenous. Because of that, I did not implement a specific authentication mechanism. Instead, you can either use one supported by Qt or create your own auth flow. The easiest way to do so is to create a RestClient, and then perform whatever authentication you need with the clients internal QNetworkAccessManager, and set parameters, headers, cookies, etc accordingly, if neccessary.

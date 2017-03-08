@@ -22,6 +22,8 @@ HEADERS  += mainwindow.h
 FORMS    += mainwindow.ui
 
 REST_API_OBJECTS += post.json
+REST_API_CLASSES += api.json \
+	api_posts.json
 
 target.path = $$[QT_INSTALL_EXAMPLES]/restclient/JsonPlaceholderApi
 INSTALLS += target
@@ -32,5 +34,3 @@ unix:!mac {
 	LIBS += -L$$[QT_INSTALL_LIBS] -licui18n
 	LIBS += -L$$[QT_INSTALL_LIBS] -licuuc
 }
-
-
