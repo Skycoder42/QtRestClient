@@ -206,7 +206,7 @@ void ClassBuilder::writeClassDeclarations()
 void ClassBuilder::writeMethodDeclarations()
 {
 	for(auto it = methods.constBegin(); it != methods.constEnd(); it++) {
-		header << "\tQtRestClient::GenericRestReply<" << it->returns << "," << it->except << "> *" << it.key() << "(";
+		header << "\tQtRestClient::GenericRestReply<" << it->returns << ", " << it->except << "> *" << it.key() << "(";
 		QStringList parameters;
 		if(!it->body.isEmpty())
 			parameters.append(it->body + " __body");

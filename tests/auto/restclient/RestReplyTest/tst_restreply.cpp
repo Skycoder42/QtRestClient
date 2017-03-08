@@ -21,6 +21,9 @@ private Q_SLOTS:
 	void testGenericReplyWrapping_data();
 	void testGenericReplyWrapping();
 
+	void testGenericVoidReplyWrapping_data();
+	void testGenericVoidReplyWrapping();
+
 	void testGenericListReplyWrapping_data();
 	void testGenericListReplyWrapping();
 
@@ -218,6 +221,64 @@ void RestReplyTest::testGenericReplyWrapping()
 	QVERIFY(called);
 
 	result->deleteLater();
+}
+
+void RestReplyTest::testGenericVoidReplyWrapping_data()
+{
+	QTest::addColumn<QUrl>("url");
+	QTest::addColumn<bool>("succeed");
+	QTest::addColumn<int>("status");
+	QTest::addColumn<bool>("except");
+
+	QTest::newRow("get") << QUrl("http://localhost:3000/posts/1")
+						 << true
+						 << 200
+						 << false;
+
+	QTest::newRow("notFound") << QUrl("http://localhost:3000/posts/baum")
+							  << false
+							  << 404
+							  << false;
+
+	QTest::newRow("noSerExcept") << QUrl("http://localhost:3000/posts")
+							   << true
+							   << 200
+							   << false;
+}
+
+void RestReplyTest::testGenericVoidReplyWrapping()
+{
+	QFETCH(QUrl, url);
+	QFETCH(bool, succeed);
+	QFETCH(int, status);
+	QFETCH(bool, except);
+
+	QNetworkRequest request(url);
+	request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
+
+	bool called = false;
+
+	auto reply = new QtRestClient::GenericRestReply<void>(nam->get(request), client);
+	reply->onSucceeded([&](int code){
+		called = true;
+		QVERIFY(succeed);
+		QVERIFY(!except);
+		QCOMPARE(code, status);
+	});
+	reply->onAllErrors([&](QString error, int code, QtRestClient::RestReply::ErrorType type){
+		called = true;
+		QVERIFY2(!succeed, qUtf8Printable(error));
+		if(except)
+			QCOMPARE(type, QtRestClient::RestReply::DeserializationError);
+		else {
+			QCOMPARE(type, QtRestClient::RestReply::FailureError);
+			QCOMPARE(code, status);
+		}
+	});
+
+	QSignalSpy deleteSpy(reply, &QtRestClient::RestReply::destroyed);
+	QVERIFY(deleteSpy.wait());
+	QVERIFY(called);
 }
 
 void RestReplyTest::testGenericListReplyWrapping_data()
