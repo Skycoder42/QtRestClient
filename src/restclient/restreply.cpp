@@ -56,6 +56,16 @@ RestReply *RestReply::onFailed(std::function<void (int, QJsonArray)> handler)
 	return this;
 }
 
+RestReply *RestReply::onCompleted(std::function<void (int)> handler)
+{
+	if(!handler)
+		return this;
+	connect(this, &RestReply::completed, this, [=](int code, const QJsonValue &){
+		handler(code);
+	});
+	return this;
+}
+
 RestReply *RestReply::onError(std::function<void (QString, int, ErrorType)> handler)
 {
 	if(!handler)
@@ -194,6 +204,12 @@ void RestReplyPrivate::connectReply(QNetworkReply *reply)
 			q_ptr, &RestReply::downloadProgress);
 	connect(reply, &QNetworkReply::uploadProgress,
 			q_ptr, &RestReply::uploadProgress);
+
+	//completed signal
+	connect(q_ptr, &RestReply::succeeded,
+			q_ptr, &RestReply::completed);
+	connect(q_ptr, &RestReply::failed,
+			q_ptr, &RestReply::completed);
 }
 
 void RestReplyPrivate::replyFinished()
