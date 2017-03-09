@@ -17,11 +17,17 @@
 		"savePost": {
 			"verb": "POST",
 			"body": "Post",
-			"returns": "void"
+			"returns": "Post"
 		},
-		"deleteUserPosts": {
+		"updatePost": {
+			"verb": "PUT",
+			"pathParams": ["id,int"],
+			"body": "Post",
+			"returns": "Post"
+		},
+		"deletePost": {
 			"verb": "DELETE",
-			"parameters": ["userId,int"],
+			"pathParams": ["id,int"],
 			"returns": "void"
 		}
 	}

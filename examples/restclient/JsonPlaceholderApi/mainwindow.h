@@ -18,12 +18,18 @@ public:
 
 private slots:
 	void on_reloadButton_clicked();
+	void on_addButton_clicked();
+	void on_updateButton_clicked();
+	void on_deleteButton_clicked();
 
 private:
 	Ui::MainWindow *ui;
 	ExampleApi *api;
 
-	void onError(QString error, int code, QtRestClient::RestReply::ErrorType type);
+	Post getPost() const;
+	void setPost(const Post &post);
+	void clearPost();
+	void onError(bool isLoad, QString error, int code, QtRestClient::RestReply::ErrorType type);
 };
 
 #endif // MAINWINDOW_H

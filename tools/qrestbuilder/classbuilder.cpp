@@ -140,6 +140,7 @@ void ClassBuilder::readClasses()
 
 void ClassBuilder::readMethods()
 {
+	auto defExcept = root["except"].toString("QObject*");
 	auto member = root["methods"].toObject();
 	for(auto it = member.constBegin(); it != member.constEnd(); it++) {
 		auto obj = it.value().toObject();
@@ -166,7 +167,7 @@ void ClassBuilder::readMethods()
 			info.headers.insert(jt.key(), jt.value().toString());
 		info.body = obj["body"].toString(info.body);
 		info.returns = obj["returns"].toString(info.returns);
-		info.except = obj["except"].toString(info.except);
+		info.except = obj["except"].toString(defExcept);
 
 		methods.insert(it.key(), info);
 	}
