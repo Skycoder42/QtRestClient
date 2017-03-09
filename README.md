@@ -1,9 +1,7 @@
-[TOC]
-
-# QtRestClient {#readme}
+# QtRestClient
 A library for generic JSON-based REST-APIs, with a mechanism to map JSON to Qt objects.
 
-## Features {#features}
+## Features
 - Consume any JSON-REST-API
 - Map API objects to QObject/Q_GADGET classes. Supports:
   - basic objects
@@ -12,7 +10,7 @@ A library for generic JSON-based REST-APIs, with a mechanism to map JSON to Qt o
 - Allows to create API class representations to wrap specific parts of the api
 - Reply-based system - use either signal/slot or a more functional approach
 
-## Usage {#usage}
+## Usage
 The restclient is provided as a Qt module. Thus, all you have to do is add the module, and then, in your project, add `QT += restclient` to your `.pro` file!
 
 The API consists of 3 main classes:
@@ -20,10 +18,10 @@ The API consists of 3 main classes:
 - **RestClass:** A subset of the API, allows to make requests
 - **RestReply:** The reply control returned for every request, to obtain the result and react on errors
 
-### Example {#example}
+### Example
 The following example shows an example request made to [JSONPlaceholder](https://jsonplaceholder.typicode.com/).
 
-#### API-Definition {#apidefinition}
+#### API-Definition
 Before we can start using the API, we have to define c++ objects to map the JSON to. For this example, all we need is to represent a post. This example makes use of Q_GADGET, but it works the same for QObjets as well. MEMBER properties are used for simplicity, it works with any normal property. See [QtJsonSerializer](https://github.com/Skycoder42/QJsonSerializer) for more details about the serialization part. **Note:** This is optional. You can in fact use the API with JSON only.
 ```cpp
 struct Post
@@ -45,7 +43,7 @@ public:
 };
 ```
 
-#### API-Use {#apiuse}
+#### API-Use
 We will now query the data of the post with the id 42. The final URL is: https://jsonplaceholder.typicode.com/posts/42
 
 First, you set up the client, for example in your main:
@@ -73,10 +71,10 @@ restClass->get<Post>("42")->onSucceeded([](RestReply *reply, int statusCode, Pos
 
 And thats all you need for a basic API access. Check the documentation for more and *important* details about the client, the class and the replies!
 
-### API-Generator {#apigenerator}
+### API-Generator
 The library comes with a tool to create API data classes and wrapper classes over the rest client. Those are generated from JSON files and allow an easy creation of APIs in your application. The tool is build as a custom compiler and added to qmake. To use the tool simply add the json files to you pro file, and the sources will be automatically generated and compiled into your application!
 
-#### Example {#generatorexample}
+#### Example
 The following example shows a JSON file to generate the post type from above (with shared data optimizations, automatic registration, etc.). It could be named `post.json`:
 ```json
 {
@@ -168,7 +166,7 @@ auto reply = posts->post(42);
 
 Check the JsonPlaceholderApi example in `examples/restclient` for this example.
 
-### Authentication {#auth}
+### Authentication
 When I was trying to implement authentication, I found that it can be quite heterogenous. Because of that, I did not implement a specific authentication mechanism. Instead, you can either use one supported by Qt or create your own auth flow. The easiest way to do so is to create a RestClient, and then perform whatever authentication you need with the clients internal QNetworkAccessManager, and set parameters, headers, cookies, etc accordingly, if neccessary.
 
 Qt itself supports the following kinds of authentication:
@@ -177,10 +175,10 @@ Qt itself supports the following kinds of authentication:
 
 **Note:** For the latter, I may add support in a Future version. For the first one, simply connect to the managers signal.
 
-### QObject Ownership {#ownership}
+### QObject Ownership
 If you are using QtRestClient with QObjects, please be aware that none of the RestClients functions take ownership of the returend objects. This means **you** are responsible for deleting them, if not needed anymore. In short, you as caller own the objects returned to your handlers. If you are uncertain whether you need to handle an object or not, check the documentation of the specific function for details.
 
-## Download/Installation {#install}
+## Download/Installation
 There are multiple ways to install the Qt module, sorted by preference:
 
 1. **Arch-Linux only:** If you are building against your system Qt, you can use my AUR-Repository: [qt5-restclient](https://aur.archlinux.org/packages/qt5-restclient/)
@@ -203,6 +201,6 @@ There are multiple ways to install the Qt module, sorted by preference:
   - `make`
   - `make install`
 
-## Documentation {#doc}
+## Documentation
 The documentation is available on [github pages](https://skycoder42.github.io/QtRestClient/). It was created using [doxygen](http://www.doxygen.org/). The HTML-documentation and Qt-Help files are shipped
 together with the module for both the custom repository and the package on the release page. Please note that doxygen docs do not perfectly integrate with QtCreator/QtAssistant.
