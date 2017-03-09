@@ -79,6 +79,7 @@ public Q_SLOTS:
 	void setAutoDelete(bool autoDelete);
 
 Q_SIGNALS:
+	//! Is emitted when the request completed, i.e. succeeded or failed
 	void completed(int httpStatus, const QJsonValue &reply, QPrivateSignal);
 	//! Is emitted when the request succeeded
 	void succeeded(int httpStatus, const QJsonValue &reply, QPrivateSignal);
