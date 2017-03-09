@@ -1,5 +1,79 @@
 /*!
 @page generator The QRestBuilder Tool
 
+@brief The documentation for the qrestbuilder tool
+
 @tableofcontents
+
+# What it does {#generator_features}
+
+# Getting Started {#generator_start}
+The easiest way to get started is to check out the JsonPlaceholderApi example. It will teach you the general system behind the generator.
+You can then study this documentation to see, what you can do with it.
+
+# File Syntax documentation  {#generator_doc}
+The following sections show a detailed documentation of what you can do with the tool, and explain the syntax of the json files.
+
+## Project file setup {#generator_doc_pro}
+In order to use the tool as custom compiler, the features needs to be loaded. This is done by putting
+@code{.pro}
+load(qrestbuilder)
+@endcode
+
+Into your pro file.
+
+Once that is done, you can simply create the JSON files and add the to the pro file using
+@code{.pro}
+REST_API_OBJECTS += # for objects
+REST_API_CLASSES += # for classes
+@endcode
+
+## Generate objects {#generator_doc_object}
+Objects are added to the pro file by using the `REST_API_OBJECTS` variable. Your JSON files will need to have the following structure:
+
+### Type: object {#generator_doc_c_object}
+The root element of any object to be generated. It allows the following elements
+
+ Name					| Allowed values						| Default/Required						| Description
+------------------------|---------------------------------------|---------------------------------------|--------------------------------------------------------------------
+ $name					| any valid c++ class name				| file name								| The class name of the generated class
+ $type					| "gadget", "object"					| "gadget"								| Define the type of class to generate - Q_GADGET or QObject
+ $includes				| list of strings						| []									| specify a list of includes for the header file
+ $parent				| name of a valid parent class			| "Object" for objects, "" for gadgets	| If you need a custom parent, use this property
+ $registerConverters	| bool									| true									| If true, automatically registers the list converters for this type
+ $enums					| [enum-object](#generator_doc_c_enum)	| {}									| Allows you to add enums to the class. See [Type: enum-object](#generator_doc_c_enum)
+ &lt;properties&gt;		| [properties](#generator_doc_c_props)	| <i>none</i>							| See [Object Properties](#generator_doc_c_props)
+
+### Type: enum-object {#generator_doc_c_enum}
+If you want to use custom enum types in you class, use this object. It allows you to add key-value pairs of enums.
+The key is the name of the enum in the generated c++ class. The value can either be an [enum-value-list](#generator_doc_c_enum_value)
+or an [enum](#generator_doc_c_enum_obj).
+
+#### Type: enum-value-list {#generator_doc_c_enum_value}
+For simple enums, simply use the enums name as the key, and a list of strings as value. By default, the actual value of
+the enum keys, is determined by the compiler, but you can optionally specify the value by using `:` as seperator:
+- Normal Key: `"MyValue"`
+- Value Key: `"MyValue:42"`
+
+The following snippet shows how to use it:
+@code{.json}
+{
+	"MyEnum": ["Value1:1", "Value2", ...],
+	...
+}
+@endcode
+
+#### Type: enum {#generator_doc_c_enum_obj}
+If your enum needs more than just the keys, i.e. custom value, or you need flags, you can also use an enum object
+as value for you enum. They are defined as follows:
+
+Name		| Allowed values									| Default/Required			| Description
+------------|---------------------------------------------------|---------------------------|-------------------------------------------------------------------
+ isFlags	| bool												| false						| If set to true, a QFlags type will be generated
+ base		| name of a valid enum parent class					| none (compiler default)	| If you need a custom base, use this property
+ values		| [enum-value-list](#generator_doc_c_enum_value)	| <i>required</i>			| The actual enum values. See [Type: enum-value-list](#generator_doc_c_enum_value)
+
+### Object Properties {#generator_doc_c_props}
+
+## Generate classes {#generator_doc_class}
 */
