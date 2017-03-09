@@ -49,6 +49,7 @@ void ObjectBuilder::generateApiObject()
 	header << "\nprivate:\n";
 	writeMemberDeclarations(header);
 	header << "};\n\n";
+	writeFlagOperators();
 
 	//write source
 	writeSourceIncludes();
@@ -96,6 +97,7 @@ void ObjectBuilder::generateApiGadget()
 	header << "\nprivate:\n"
 		   << "\t QSharedDataPointer<" << className << "Data> d;\n"
 		   << "};\n\n";
+	writeFlagOperators();
 
 	//write source
 	writeSourceIncludes();
@@ -174,6 +176,32 @@ void ObjectBuilder::writeEnums()
 		} else
 			header << "\tQ_ENUM(" << it.key() << ")\n\n";
 	}
+}
+
+void ObjectBuilder::writeFlagOperators()
+{
+	auto hasFlags = false;
+	auto enums = root["$enums"].toObject();
+	for(auto it = enums.constBegin(); it != enums.constEnd(); it++) {
+		auto isFlags = false;
+		QString base;
+		QJsonArray values;
+		if(it.value().isObject()) {
+			auto obj = it->toObject();
+			isFlags = obj["isFlags"].toBool(false);
+			base = obj["base"].toString();
+			values = obj["values"].toArray();
+		} else
+			values = it->toArray();
+
+		if(isFlags){
+			hasFlags = true;
+			header << "Q_DECLARE_OPERATORS_FOR_FLAGS(" << className << "::" << it.key() << "s)\n";
+		}
+	}
+
+	if(hasFlags)
+		header << "\n";
 }
 
 void ObjectBuilder::writeProperties(bool withNotify)

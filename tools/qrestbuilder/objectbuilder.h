@@ -21,6 +21,7 @@ private:
 	QString setter(const QString &name);
 
 	void writeEnums();
+	void writeFlagOperators();
 	void writeProperties(bool withNotify);
 	void writeReadDeclarations();
 	void writeWriteDeclarations();

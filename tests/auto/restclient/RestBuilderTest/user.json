@@ -20,5 +20,5 @@
 	"id": "int",
 	"name": "QString",
 	"gender": "User::GenderType",
-	"title": "User::UserType"
+	"title": "User::UserTypes"
 }

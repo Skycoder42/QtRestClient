@@ -48,9 +48,16 @@ void RestBuilderTest::testCustomCompiledObject()
 	QCOMPARE(nameSpy.count(), 0);
 	user.setName("baum");
 	QCOMPARE(nameSpy.count(), 1);
+	user.setGender(User::Male);
+	user.setTitle(User::Doctor | User::Professor);
+
+	qDebug() << user.gender() << user.title();
+	qDebug() << user.property("gender") << user.property("title");
 
 	QCOMPARE(user.property("id").toInt(), 42);
 	QCOMPARE(user.property("name").toString(), QStringLiteral("baum"));
+	QCOMPARE(user.property("gender").value<User::GenderType>(), User::Male);
+	QCOMPARE(user.property("title").toInt(), (int)User::Doctor | User::Professor);
 }
 
 void RestBuilderTest::testCustomCompiledGadget()
