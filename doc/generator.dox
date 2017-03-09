@@ -13,6 +13,10 @@ You can then study this documentation to see, what you can do with it.
 
 # File Syntax documentation  {#generator_doc}
 The following sections show a detailed documentation of what you can do with the tool, and explain the syntax of the json files.
+You can check the following locations for some sample files:
+- [README.md](@ref index)
+- `example/JsonPlaceholderApi`
+- `tests/auto/restclient/RestBuilderTest`
 
 ## Project file setup {#generator_doc_pro}
 In order to use the tool as custom compiler, the features needs to be loaded. This is done by putting
@@ -44,6 +48,21 @@ The root element of any object to be generated. It allows the following elements
  $enums					| [enum-object](#generator_doc_c_enum)	| {}									| Allows you to add enums to the class. See [Type: enum-object](#generator_doc_c_enum)
  &lt;properties&gt;		| [properties](#generator_doc_c_props)	| <i>none</i>							| See [Object Properties](#generator_doc_c_props)
 
+#### Object Properties {#generator_doc_c_props}
+You can basically specify **any** property in the object. Anything that does not start with a `$` is interpret as a property for the generated object.
+For each such property, the key will be the name of the property in the object, and the value is a string containing the properties type. All default
+types and QString are available by default, for other types, you will have to add includes.
+
+Here is an example of a few properties:
+@code{.json}
+{
+	"$includes": ["QDateTime"],
+	"id": "int",
+	"name": "QString",
+	"date": "QDateTime"
+}
+@endcode
+
 ### Type: enum-object {#generator_doc_c_enum}
 If you want to use custom enum types in you class, use this object. It allows you to add key-value pairs of enums.
 The key is the name of the enum in the generated c++ class. The value can either be an [enum-value-list](#generator_doc_c_enum_value)
@@ -72,8 +91,6 @@ Name		| Allowed values									| Default/Required			| Description
  isFlags	| bool												| false						| If set to true, a QFlags type will be generated
  base		| name of a valid enum parent class					| none (compiler default)	| If you need a custom base, use this property
  values		| [enum-value-list](#generator_doc_c_enum_value)	| <i>required</i>			| The actual enum values. See [Type: enum-value-list](#generator_doc_c_enum_value)
-
-### Object Properties {#generator_doc_c_props}
 
 ## Generate classes {#generator_doc_class}
 */
