@@ -5,7 +5,9 @@
 # $4: $$[QT_INSTALL_HEADERS]
 # $5: $$[QT_INSTALL_DOCS]
 # $pwd: dest dir
+set -e
 
+scriptDir=$(dirname "$0")
 destDir="$(pwd)"
 srcDir=$1
 version=$2
@@ -14,9 +16,15 @@ qtBins=$3
 qtHeaders=$4
 qtDocs=$5
 doxyTemplate="$srcDir/Doxyfile"
+readme="$destDir/README.md"
+doxme="$scriptDir/doxme.py"
+
+python "$doxme" "$srcDir/../README.md"
 
 cat "$doxyTemplate" > Doxyfile
 echo "PROJECT_NUMBER = \"$version\"" >> Doxyfile
+echo "INPUT += \"$readme\"" >> Doxyfile
+echo "USE_MDFILE_AS_MAINPAGE = \"$readme\"" >> Doxyfile
 echo "OUTPUT_DIRECTORY = \"$destDir\"" >> Doxyfile
 echo "QHP_NAMESPACE = \"de.skycoder42.qtrestclient.$verTag\"" >> Doxyfile
 echo "QHP_CUST_FILTER_NAME = \"RestClient $version\"" >> Doxyfile

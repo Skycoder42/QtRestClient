@@ -151,13 +151,13 @@ void ClassBuilder::readMethods()
 			throw QStringLiteral("You can only use either path or url, not both!");
 		info.verb = obj["verb"].toString(info.verb);
 		foreach(auto value, obj["pathParams"].toArray()) {
-			auto param = value.toString().split(",");
+			auto param = value.toString().split(';');
 			if(param.size() != 2)
 				throw QStringLiteral("Element in pathParams must be ,-seperated!");
 			info.pathParams.append({param[0], param[1]});
 		}
 		foreach(auto value, obj["parameters"].toArray()) {
-			auto param = value.toString().split(",");
+			auto param = value.toString().split(';');
 			if(param.size() != 2)
 				throw QStringLiteral("Element in parameters must be ,-seperated!");
 			info.parameters.append({param[0], param[1]});

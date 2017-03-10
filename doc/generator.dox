@@ -179,17 +179,17 @@ If neither `path` nor `url` are specified, the request will use the classes path
 
 ### Type: param-list {#generator_doc_param}
 In order to specify parameters, that are added to the method in the same order they have been specified, a param-list is used.
-It's a list of strings, were each string has the format `<name>,<type>`. The name will be the name of the parameter, and type
-it's type. Please note that the type must be convertible to string vai QVariant.
+It's a list of strings, were each string has the format `<name>;<type>`. The name will be the name of the parameter, and type
+it's type. Please note that the type must be convertible to string via QVariant.
 
 The following snippet shows an example of such parameters:
 @code{.json}
 {
 	"include": ["QDateTime", ...]
 	"parameters": [
-		"id,int",
-		"name,QString",
-		"date,QDateTime"
+		"id;int",
+		"name;QString",
+		"date;QDateTime"
 	]
 }
 @endcode

@@ -16,7 +16,7 @@
 		"post": {
 			"verb": "GET",
 			"pathParams": [
-				"id,int"
+				"id;int"
 			],
 			"returns": "Post"
 		},
