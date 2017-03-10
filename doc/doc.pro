@@ -2,6 +2,7 @@ TEMPLATE = aux
 
 OTHER_FILES += Doxyfile \
 	makedoc.sh \
+	doxme.py \
 	../README.md \
 	*.dox \
 	snippets/*.cpp \

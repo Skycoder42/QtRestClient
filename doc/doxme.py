@@ -28,12 +28,11 @@ outFile = open(doxme, "w")
 
 isFirst = True
 for line in inFile:
-	print(line.strip())
 	if isFirst:
-		readFirst(line.strip(), outFile)
+		readFirst(line[:-1], outFile)
 		isFirst = False
 	else:
-		readMore(line.strip(), outFile)
-		
+		readMore(line[:-1], outFile)
+
 inFile.close();
 outFile.close();
