@@ -46,6 +46,6 @@ unix:!mac {
 	LIBS += -L$$[QT_INSTALL_LIBS] -licuuc
 }
 
-feature.path = $$[QT_INSTALL_DATA]/mkspecs/features
+feature.path = $$[QT_INSTALL_ARCHDATA]/mkspecs/features
 feature.files = $$PWD/../../mkspecs/features/qrestbuilder.prf
 INSTALLS += feature
