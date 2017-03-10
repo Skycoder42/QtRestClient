@@ -51,9 +51,6 @@ qrestbuilder_s.CONFIG += target_predeps
 QMAKE_EXTRA_COMPILERS += qrestbuilder_s
 }
 
-!isEmpty(REST_API_DEFINITONS) {
-    INCLUDEPATH += $$absolute_path($$QRESTBUILDER_DIR, $$OUT_PWD)
-}
-
+INCLUDEPATH += $$absolute_path($$QRESTBUILDER_DIR, $$OUT_PWD)
 QMAKE_DIR_REPLACE += QRESTBUILDER_DIR
 QMAKE_DIR_REPLACE_SANE += QRESTBUILDER_DIR
