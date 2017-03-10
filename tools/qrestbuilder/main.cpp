@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
 	QCoreApplication::setApplicationName(TARGET);
 	QCoreApplication::setApplicationVersion(VERSION);
 	QCoreApplication::setOrganizationName(COMPANY);
-	QCoreApplication::setOrganizationDomain(DOMAIN);
+	QCoreApplication::setOrganizationDomain(BUNDLE_PREFIX);
 
 	QCommandLineParser parser;
 	parser.setApplicationDescription("A tool to create code for a rest API based on an API description");

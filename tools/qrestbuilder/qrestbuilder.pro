@@ -12,7 +12,7 @@ DEFINES += BUILD_QSCXMLC
 DEFINES += "TARGET=\\\"$$TARGET\\\""
 DEFINES += "VERSION=\\\"$$VERSION\\\""
 DEFINES += "COMPANY=\\\"$$COMPANY\\\""
-DEFINES += "DOMAIN=\\\"$$BUNDLE_PREFIX\\\""
+DEFINES += "BUNDLE_PREFIX=\\\"$$BUNDLE_PREFIX\\\""
 
 load(qt_tool)
 load(resources)
