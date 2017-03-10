@@ -23,7 +23,9 @@ private:
 
 void RequestBuilderTest::initTestCase()
 {
+#ifdef Q_OS_UNIX
 	Q_ASSERT(qgetenv("LD_PRELOAD").contains("Qt5RestClient"));
+#endif
 	initTestJsonServer();
 	nam = new QNetworkAccessManager(this);
 }

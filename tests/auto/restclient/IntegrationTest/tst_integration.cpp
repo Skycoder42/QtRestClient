@@ -22,7 +22,9 @@ private:
 
 void IntegrationTest::initTestCase()
 {
+#ifdef Q_OS_UNIX
 	Q_ASSERT(qgetenv("LD_PRELOAD").contains("Qt5RestClient"));
+#endif
 	QJsonSerializer::registerListConverters<JphPost*>();
 	initTestJsonServer("./advanced-test-db.js");
 	client = createClient(this);

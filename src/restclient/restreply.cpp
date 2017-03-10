@@ -206,10 +206,10 @@ void RestReplyPrivate::connectReply(QNetworkReply *reply)
 			q_ptr, &RestReply::uploadProgress);
 
 	//completed signal
-	connect(q_ptr, &RestReply::succeeded,
-			q_ptr, &RestReply::completed);
-	connect(q_ptr, &RestReply::failed,
-			q_ptr, &RestReply::completed);
+	connect(q_ptr, SIGNAL(succeeded(int,QJsonValue)),
+			q_ptr, SIGNAL(completed(int,QJsonValue)));
+	connect(q_ptr, SIGNAL(failed(int,QJsonValue)),
+			q_ptr, SIGNAL(completed(int,QJsonValue)));
 }
 
 void RestReplyPrivate::replyFinished()

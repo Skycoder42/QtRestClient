@@ -26,7 +26,9 @@ RestBuilderTest::RestBuilderTest()
 
 void RestBuilderTest::initTestCase()
 {
+#ifdef Q_OS_UNIX
 	Q_ASSERT(qgetenv("LD_PRELOAD").contains("Qt5RestClient"));
+#endif
 	QCoreApplication::processEvents();
 	initTestJsonServer("./build-test-db.js");
 }

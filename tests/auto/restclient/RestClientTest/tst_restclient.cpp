@@ -13,7 +13,9 @@ private Q_SLOTS:
 
 void RestClientTest::initTestCase()
 {
+#ifdef Q_OS_UNIX
 	Q_ASSERT(qgetenv("LD_PRELOAD").contains("Qt5RestClient"));
+#endif
 }
 
 void RestClientTest::testBaseUrl_data()
