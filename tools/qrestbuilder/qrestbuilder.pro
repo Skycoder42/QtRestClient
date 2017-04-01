@@ -15,7 +15,6 @@ DEFINES += "COMPANY=\\\"$$COMPANY\\\""
 DEFINES += "BUNDLE_PREFIX=\\\"$$BUNDLE_PREFIX\\\""
 
 load(qt_tool)
-load(resources)
 
 SOURCES += \
 	main.cpp \
@@ -27,9 +26,6 @@ HEADERS += \
 	restbuilder.h \
 	objectbuilder.h \
 	classbuilder.h
-
-RESOURCES += \
-	qrestbuilder.qrc
 
 win32 {
 	QMAKE_TARGET_PRODUCT = "Qt Rest API Builder"

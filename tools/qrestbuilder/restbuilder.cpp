@@ -18,6 +18,11 @@ void RestBuilder::build(const QString &in, const QString &hOut, const QString &c
 	QFileInfo inInfo(in);
 	fileName = inInfo.baseName();
 	className = root[specialPrefix() + "name"].toString(fileName);
+	exportedClassName = root[specialPrefix() + "export"].toString();
+	if(exportedClassName.isEmpty())
+		exportedClassName = className;
+	else
+		exportedClassName += QLatin1Char(' ') + className;
 
 	auto headerFile = new QFile(hOut, this);
 	if(!headerFile->open(QIODevice::WriteOnly | QIODevice::Text))

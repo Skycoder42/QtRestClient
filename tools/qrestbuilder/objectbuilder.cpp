@@ -33,7 +33,7 @@ void ObjectBuilder::generateApiObject()
 
 	//write header
 	writeIncludes(header, includes);
-	header << "class " << className << " : public " << parent << "\n"
+	header << "class " << exportedClassName << " : public " << parent << "\n"
 		   << "{\n"
 		   << "\tQ_OBJECT\n\n";
 	writeProperties(true);
@@ -78,9 +78,9 @@ void ObjectBuilder::generateApiGadget()
 	writeIncludes(header, includes);
 	header << "class " << className << "Data;\n";
 	if(parent.isEmpty())
-		header << "class " << className << "\n";
+		header << "class " << exportedClassName << "\n";
 	else
-		header << "class " << className << " : public " << parent << "\n";
+		header << "class " << exportedClassName << " : public " << parent << "\n";
 	header << "{\n"
 		   << "\tQ_GADGET\n\n";
 	writeProperties(false);

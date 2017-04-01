@@ -26,6 +26,7 @@ protected:
 
 	QString fileName;
 	QString className;
+	QString exportedClassName;
 	QJsonObject root;
 	QTextStream header;
 	QTextStream source;

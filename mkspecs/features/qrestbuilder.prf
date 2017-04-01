@@ -1,10 +1,11 @@
 qtPrepareTool(QMAKE_QRESTBUILDER, qrestbuilder)
 
 isEmpty(QRESTBUILDER_DIR):QRESTBUILDER_DIR = .
+isEmpty(MOC_DIR):MOC_DIR = .
 
 debug_and_release {
-    CONFIG(debug, debug|release):SUFFIX = /debug
-    CONFIG(release, debug|release):SUFFIX = /release
+	CONFIG(debug, debug|release):SUFFIX = /debug
+	CONFIG(release, debug|release):SUFFIX = /release
 }
 
 QRESTBUILDER_DIR = $$QRESTBUILDER_DIR$$SUFFIX

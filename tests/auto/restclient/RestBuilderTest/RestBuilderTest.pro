@@ -27,3 +27,6 @@ REST_API_OBJECTS += post.json \
 	user.json
 REST_API_CLASSES += test_api.json \
 	api_posts.json
+
+HEADERS += \
+    testmacro.h

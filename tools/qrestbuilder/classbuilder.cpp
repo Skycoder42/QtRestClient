@@ -81,7 +81,7 @@ void ClassBuilder::writeClassBeginDeclaration(const QString &parent)
 	includes.append("QtCore/qstringlist.h");
 
 	writeIncludes(header, includes);
-	header << "class " << className << " : public " << parent << "\n"
+	header << "class " << exportedClassName << " : public " << parent << "\n"
 		   << "{\n"
 		   << "\tQ_OBJECT\n\n"
 		   << "public:\n";

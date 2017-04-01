@@ -4,8 +4,10 @@
 	"includes": [
 		"post.h",
 		"user.h",
-		"api_posts.h"
+		"api_posts.h",
+		"testmacro.h"
 	],
+	"export": "TEST_EXPORT",
 	"globalName": "localhost",
 	"autoCreate": true,
 	"baseUrl": "http://localhost:3000",
