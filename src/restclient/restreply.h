@@ -101,6 +101,9 @@ Q_SIGNALS:
 	//! @notifyAcFn{RestReply::autoDelete}
 	void autoDeleteChanged(bool autoDelete, QPrivateSignal);
 
+protected:
+	static QByteArray jsonTypeName(QJsonValue::Type type);
+
 private:
 	RestReplyPrivate *d_ptr;
 };

@@ -189,7 +189,7 @@ GenericRestReply<DataClassType, ErrorClassType> *GenericRestReply<DataClassType,
 	connect(this, &RestReply::succeeded, this, [=](int code, const QJsonValue &value){
 		try {
 			if(!value.isObject())
-				throw QJsonDeserializationException("Expected JSON object but got " + QByteArray::number(value.type()));
+				throw QJsonDeserializationException("Expected JSON object but got " + jsonTypeName(value.type()));
 			handler(code, client->serializer()->deserialize<DataClassType>(value.toObject()));
 		} catch(QJsonSerializerException &e) {
 			if(exceptionHandler)
@@ -207,7 +207,7 @@ GenericRestReply<DataClassType, ErrorClassType> *GenericRestReply<DataClassType,
 	connect(this, &RestReply::failed, this, [=](int code, const QJsonValue &value){
 		try {
 			if(!value.isObject())
-				throw QJsonDeserializationException("Expected JSON object but got " + QByteArray::number(value.type()));
+				throw QJsonDeserializationException("Expected JSON object but got " + jsonTypeName(value.type()));
 			handler(code, client->serializer()->deserialize<ErrorClassType>(value.toObject()));
 		} catch(QJsonSerializerException &e) {
 			if(exceptionHandler)
@@ -290,7 +290,7 @@ GenericRestReply<void, ErrorClassType> *GenericRestReply<void, ErrorClassType>::
 	connect(this, &RestReply::failed, this, [=](int code, const QJsonValue &value){
 		try {
 			if(!value.isObject())
-				throw QJsonDeserializationException("Expected JSON object but got " + QByteArray::number(value.type()));
+				throw QJsonDeserializationException("Expected JSON object but got " + jsonTypeName(value.type()));
 			handler(code, client->serializer()->deserialize<ErrorClassType>(value.toObject()));
 		} catch(QJsonSerializerException &e) {
 			if(exceptionHandler)
@@ -362,7 +362,7 @@ GenericRestReply<QList<DataClassType>, ErrorClassType> *GenericRestReply<QList<D
 	connect(this, &RestReply::succeeded, this, [=](int code, const QJsonValue &value){
 		try {
 			if(!value.isArray())
-				throw QJsonDeserializationException("Expected JSON array but got " + QByteArray::number(value.type()));
+				throw QJsonDeserializationException("Expected JSON array but got " + jsonTypeName(value.type()));
 			handler(code, client->serializer()->deserialize<DataClassType>(value.toArray()));
 		} catch(QJsonSerializerException &e) {
 			if(exceptionHandler)
@@ -380,7 +380,7 @@ GenericRestReply<QList<DataClassType>, ErrorClassType> *GenericRestReply<QList<D
 	connect(this, &RestReply::failed, this, [=](int code, const QJsonValue &value){
 		try {
 			if(!value.isObject())
-				throw QJsonDeserializationException("Expected JSON object but got " + QByteArray::number(value.type()));
+				throw QJsonDeserializationException("Expected JSON object but got " + jsonTypeName(value.type()));
 			handler(code, client->serializer()->deserialize<ErrorClassType>(value.toObject()));
 		} catch(QJsonSerializerException &e) {
 			if(exceptionHandler)
@@ -452,7 +452,7 @@ GenericRestReply<Paging<DataClassType>, ErrorClassType> *GenericRestReply<Paging
 	connect(this, &RestReply::succeeded, this, [=](int code, const QJsonValue &value){
 		try {
 			if(!value.isObject())
-				throw QJsonDeserializationException("Expected JSON object but got " + QByteArray::number(value.type()));
+				throw QJsonDeserializationException("Expected JSON object but got " + jsonTypeName(value.type()));
 			auto iPaging = client->pagingFactory()->createPaging(client->serializer(), value.toObject());
 			auto data = client->serializer()->deserialize<DataClassType>(iPaging->items());
 			handler(code, Paging<DataClassType>(iPaging, data, client));
@@ -473,7 +473,7 @@ GenericRestReply<Paging<DataClassType>, ErrorClassType> *GenericRestReply<Paging
 	connect(this, &RestReply::failed, this, [=](int code, const QJsonValue &value){
 		try {
 			if(!value.isObject())
-				throw QJsonDeserializationException("Expected JSON object but got " + QByteArray::number(value.type()));
+				throw QJsonDeserializationException("Expected JSON object but got " + jsonTypeName(value.type()));
 			handler(code, client->serializer()->deserialize<ErrorClassType>(value.toObject()));
 		} catch(QJsonSerializerException &e) {
 			if(exceptionHandler)

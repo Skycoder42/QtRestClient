@@ -72,8 +72,8 @@ QVariantMap StandardPaging::properties() const
 IPaging *StandardPagingFactory::createPaging(QJsonSerializer *, const QJsonObject &data) const
 {
 	//validate data and next only -> only ones required
-	if(!validateUrl(data[QLatin1String("next")]) ||
-	   !data[QLatin1String("items")].isArray())
+	if(!validateUrl(data[QStringLiteral("next")]) ||
+	   !data[QStringLiteral("items")].isArray())
 		throw QJsonDeserializationException("Given JSON is not a default paging object!");
 	return new StandardPaging(data);
 }
@@ -91,10 +91,10 @@ bool StandardPagingFactory::validateUrl(const QJsonValue &value)
 // ------------- Private Implementation -------------
 
 StandardPagingPrivate::StandardPagingPrivate(const QJsonObject &object) :
-	total(object[QLatin1String("total")].toInt(INT_MAX)),
-	offset(object[QLatin1String("offset")].toInt(-1)),
-	prev(object[QLatin1String("previous")].isNull() ? QUrl() : object[QLatin1String("previous")].toString()),
-	next(object[QLatin1String("next")].isNull() ? QUrl() : object[QLatin1String("next")].toString()),
-	items(object[QLatin1String("items")].toArray()),
+	total(object[QStringLiteral("total")].toInt(INT_MAX)),
+	offset(object[QStringLiteral("offset")].toInt(-1)),
+	prev(object[QStringLiteral("previous")].isNull() ? QUrl() : object[QStringLiteral("previous")].toString()),
+	next(object[QStringLiteral("next")].isNull() ? QUrl() : object[QStringLiteral("next")].toString()),
+	items(object[QStringLiteral("items")].toArray()),
 	properties(QJsonValue(object).toVariant().toMap())
 {}

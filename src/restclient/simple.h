@@ -69,6 +69,8 @@ class Simple<T, typename std::enable_if<std::is_void<typename T::QtGadgetHelper>
 public:
 	//! Constructor
 	Simple();
+	//! Virtual destructor
+	inline virtual ~Simple() {}
 
 	//! Returns the link to the extended version of this object. @sa #QTRESTCLIENT_EXT_HREF_PROP
 	virtual QUrl extensionHref() const = 0;

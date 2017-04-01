@@ -134,6 +134,29 @@ void RestReply::setAutoDelete(bool autoDelete)
 	emit autoDeleteChanged(autoDelete, {});
 }
 
+QByteArray RestReply::jsonTypeName(QJsonValue::Type type)
+{
+	switch (type) {
+	case QJsonValue::Null:
+		return "null";
+	case QJsonValue::Bool:
+		return "bool";
+	case QJsonValue::Double:
+		return "double";
+	case QJsonValue::String:
+		return "string";
+	case QJsonValue::Array:
+		return "array";
+	case QJsonValue::Object:
+		return "object";
+	case QJsonValue::Undefined:
+		return "undefined";
+	default:
+		Q_UNREACHABLE();
+		return {};
+	}
+}
+
 // ------------- Private Implementation -------------
 
 const QByteArray RestReplyPrivate::PropertyVerb("__QtRestClient_RestReplyPrivate_PropertyVerb");

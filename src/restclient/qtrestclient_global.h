@@ -1,5 +1,5 @@
-#ifndef QRESTCLIENT_H
-#define QRESTCLIENT_H
+#ifndef QTRESTCLIENT_GLOBAL_H
+#define QTRESTCLIENT_GLOBAL_H
 
 #include <QtCore/qglobal.h>
 #include <QtCore/qhash.h>
@@ -34,4 +34,4 @@ Q_RESTCLIENT_EXPORT RestClass *apiRootClass(const QString &name);
 Q_RESTCLIENT_EXPORT RestClass *createApiClass(const QString &name, const QString &path, QObject *parent = nullptr);
 }
 
-#endif // QRESTCLIENT_H
+#endif // QTRESTCLIENT_GLOBAL_H

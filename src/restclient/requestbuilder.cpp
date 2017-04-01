@@ -223,7 +223,7 @@ QUrl RequestBuilder::buildUrl() const
 	if(!d->version.isNull())
 		pathList.append(QLatin1Char('v') + d->version.normalized().toString());
 	pathList.append(d->path);
-	url.setPath(QLatin1Char('/') + pathList.join(QLatin1Char('/')) + (d->trailingSlash ? QLatin1String("/") : QString()));
+	url.setPath(QLatin1Char('/') + pathList.join(QLatin1Char('/')) + (d->trailingSlash ? QStringLiteral("/") : QString()));
 
 	if(!d->user.isNull())
 		url.setUserName(d->user);
