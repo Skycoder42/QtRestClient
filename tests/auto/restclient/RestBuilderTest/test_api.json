@@ -5,7 +5,7 @@
 		"post.h",
 		"user.h",
 		"api_posts.h",
-		"testmacro.h"
+		">testmacro.h"
 	],
 	"export": "TEST_EXPORT",
 	"globalName": "localhost",

@@ -95,9 +95,15 @@ void RestBuilder::writeIncGuardEnd()
 void RestBuilder::writeIncludes(QTextStream &stream, const QStringList &includes)
 {
 	foreach (auto inc, QSet<QString>::fromList(includes)) {
-		stream << "#include <"
-			   << inc
-			   << ">\n";
+		if(inc.startsWith(">")) {
+			stream << "#include \""
+				   << inc.mid(1)
+				   << "\"\n";
+		} else {
+			stream << "#include <"
+				   << inc
+				   << ">\n";
+		}
 	}
 	stream << '\n';
 }

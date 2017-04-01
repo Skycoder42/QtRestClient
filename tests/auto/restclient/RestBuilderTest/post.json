@@ -3,7 +3,7 @@
 	"$name": "Post",
 	"$includes": [
 		"user.h",
-		"testmacro.h"
+		">testmacro.h"
 	],
 	"$export": "TEST_EXPORT",
 	"id": "int",
