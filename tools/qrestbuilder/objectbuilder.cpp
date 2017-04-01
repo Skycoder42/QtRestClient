@@ -4,10 +4,14 @@
 #include <QFileInfo>
 #include <QJsonArray>
 
-ObjectBuilder::ObjectBuilder() {}
+ObjectBuilder::ObjectBuilder() :
+	members(),
+	testEquality(true)
+{}
 
 void ObjectBuilder::build()
 {
+	testEquality = root["$testEquality"].toBool(true);
 	if(root["$type"].toString() == "object")
 		generateApiObject();
 	else if(root["$type"].toString() == "gadget")
@@ -263,10 +267,12 @@ void ObjectBuilder::writeWriteDefinitions(bool asGadget)
 	auto prefix = asGadget ? QStringLiteral("d->_") : QStringLiteral("_");
 	for(auto it = members.constBegin(); it != members.constEnd(); it++) {
 		source << "\nvoid " << className << "::" << setter(it.key()) << "(" << it.value() << " " << it.key() << ")\n"
-			   << "{\n"
-			   << "\tif(" << prefix << it.key() << " == " << it.key() << ")\n"
-			   << "\t\treturn;\n\n"
-			   << "\t" << prefix << it.key() << " = " << it.key() <<";\n";
+			   << "{\n";
+		if(testEquality) {
+			source << "\tif(" << prefix << it.key() << " == " << it.key() << ")\n"
+				   << "\t\treturn;\n\n";
+		}
+		source << "\t" << prefix << it.key() << " = " << it.key() <<";\n";
 		if(!asGadget)
 			source << "\temit " << it.key() << "Changed(" << it.key() << ");\n";
 		source << "}\n";

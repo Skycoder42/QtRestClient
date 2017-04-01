@@ -3,6 +3,7 @@
 	"$parent": "QObject",
 	"$name": "User",
 	"$registerConverters": true,
+	"$testEquality": false,
 	"$enums": {
 		"GenderType": ["Male", "Female"],
 		"UserType": {

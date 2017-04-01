@@ -10,6 +10,7 @@ public:
 
 private:
 	QHash<QString, QString> members;
+	bool testEquality;
 
 	void build() override;
 	QString specialPrefix() override;
