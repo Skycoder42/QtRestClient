@@ -6,6 +6,7 @@
 		">testmacro.h"
 	],
 	"$export": "TEST_EXPORT",
+
 	"id": "int",
 	"title": "QString",
 	"body": "QString",

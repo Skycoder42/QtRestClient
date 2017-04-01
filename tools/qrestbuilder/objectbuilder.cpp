@@ -46,6 +46,8 @@ void ObjectBuilder::generateApiObject()
 		writeEnums();
 	header << "\tQ_INVOKABLE " << className << "(QObject *parent = nullptr);\n\n";
 	writeReadDeclarations();
+	if(root["$generateEquals"].toBool(false))
+		writeEqualsDeclaration(false);
 	header << "\npublic Q_SLOTS:\n";
 	writeWriteDeclarations();
 	header << "\nQ_SIGNALS:\n";
@@ -63,8 +65,10 @@ void ObjectBuilder::generateApiObject()
 	source << "{}\n";
 	writeReadDefinitions(false);
 	writeWriteDefinitions(false);
+	if(root["$generateEquals"].toBool(false))
+		writeEqualsDefinition(false);
 	if(root["$registerConverters"].toBool(true))
-		writeListConverter(true);
+		writeListConverter(false);
 }
 
 void ObjectBuilder::generateApiGadget()
@@ -98,6 +102,8 @@ void ObjectBuilder::generateApiGadget()
 	writeReadDeclarations();
 	header << "\n";
 	writeWriteDeclarations();
+	if(root["$generateEquals"].toBool(true))
+		writeEqualsDeclaration(true);
 	header << "\nprivate:\n"
 		   << "\t QSharedDataPointer<" << className << "Data> d;\n"
 		   << "};\n\n";
@@ -124,8 +130,10 @@ void ObjectBuilder::generateApiGadget()
 		   << "}\n";
 	writeReadDefinitions(true);
 	writeWriteDefinitions(true);
+	if(root["$generateEquals"].toBool(true))
+		writeEqualsDefinition(true);
 	if(root["$registerConverters"].toBool(true))
-		writeListConverter(false);
+		writeListConverter(true);
 }
 
 void ObjectBuilder::readMembers()
@@ -232,6 +240,12 @@ void ObjectBuilder::writeWriteDeclarations()
 		header << "\tvoid " << setter(it.key()) << "(" << it.value() << " " << it.key() << ");\n";
 }
 
+void ObjectBuilder::writeEqualsDeclaration(bool asGadget)
+{
+	header << "\n\tbool operator ==(const " << className << " " << (asGadget ? "&" : "*") << "other) const;\n";
+	header << "\tbool operator !=(const " << className << " " << (asGadget ? "&" : "*") << "other) const;\n";
+}
+
 void ObjectBuilder::writeNotifyDeclarations()
 {
 	for(auto it = members.constBegin(); it != members.constEnd(); it++)
@@ -279,6 +293,29 @@ void ObjectBuilder::writeWriteDefinitions(bool asGadget)
 	}
 }
 
+void ObjectBuilder::writeEqualsDefinition(bool asGadget)
+{
+	auto prefix = asGadget ? QStringLiteral("d->_") : QStringLiteral("_");
+	auto otherPrefix = (asGadget ? "." : "->") + prefix;
+	//equals
+	source << "\nbool " << className << "::" << "operator ==(const " << className << " " << (asGadget ? "&" : "*") << "other) const\n"
+		   << "{\n"
+		   << "\treturn true";
+	for(auto it = members.constBegin(); it != members.constEnd(); it++)
+		source << "\n\t\t&& " << prefix << it.key() << " == other" << otherPrefix << it.key();
+	source << ";\n"
+		   << "}\n";
+
+	//unequals
+	source << "\nbool " << className << "::" << "operator !=(const " << className << " " << (asGadget ? "&" : "*") << "other) const\n"
+		   << "{\n"
+		   << "\treturn false";
+	for(auto it = members.constBegin(); it != members.constEnd(); it++)
+		source << "\n\t\t|| " << prefix << it.key() << " != other" << otherPrefix << it.key();
+	source << ";\n"
+		   << "}\n";
+}
+
 void ObjectBuilder::writeDataClass()
 {
 	auto name = className + "Data";
@@ -311,11 +348,11 @@ void ObjectBuilder::writeMemberCopyDefinitions(QTextStream &stream)
 		stream << "\t,_" << it.key() << "(other._" << it.key() << ")\n";
 }
 
-void ObjectBuilder::writeListConverter(bool isObject)
+void ObjectBuilder::writeListConverter(bool asGadget)
 {
 	source << "\nvoid __" << className << "_list_conv_registrator()\n"
 		   << "{\n"
-		   << "\tQJsonSerializer::registerListConverters<" << className << (isObject ? "*" : "") << ">();\n"
+		   << "\tQJsonSerializer::registerListConverters<" << className << (asGadget ? "" : "*") << ">();\n"
 		   << "}\n"
 		   << "Q_COREAPP_STARTUP_FUNCTION(__" << className << "_list_conv_registrator)\n";
 }

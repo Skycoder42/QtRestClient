@@ -4,6 +4,7 @@
 	"$name": "User",
 	"$registerConverters": true,
 	"$testEquality": false,
+	"$generateEquals": true,
 	"$enums": {
 		"GenderType": ["Male", "Female"],
 		"UserType": {
