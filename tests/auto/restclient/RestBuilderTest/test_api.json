@@ -13,10 +13,10 @@
 	"baseUrl": "http://localhost:3000",
 	"apiVersion": "",
 	"parameters": {
-		"limit": "100"
+		"limit": "$QByteArray::number(LIMIT)"
 	},
 	"headers": {
-		"Secret": "baum"
+		"Secret": "$APP_SECRET"
 	},
 
 	"classes": {
@@ -28,10 +28,10 @@
 			"url": "http://localhost:3000/user",
 			"verb": "GET",
 			"parameters": [
-				"id;int"
+				"id;int;0"
 			],
 			"headers": {
-				"Request-Style": "barbaric"
+				"Request-Style": "$QByteArray(\"babaric\").constData()"
 			},
 			"returns": "User*",
 			"except": "QObject*"

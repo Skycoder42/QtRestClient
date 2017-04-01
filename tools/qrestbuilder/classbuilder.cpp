@@ -2,7 +2,10 @@
 #include <QJsonArray>
 #include <QDebug>
 
-ClassBuilder::ClassBuilder() {}
+ClassBuilder::ClassBuilder() :
+	classes(),
+	methods()
+{}
 
 void ClassBuilder::build()
 {
@@ -17,6 +20,14 @@ void ClassBuilder::build()
 QString ClassBuilder::specialPrefix()
 {
 	return QString();
+}
+
+QString ClassBuilder::expr(const QString &expression)
+{
+	if(expression.startsWith('$'))
+		return expression.mid(1);
+	else
+		return '"' + expression + '"';
 }
 
 void ClassBuilder::generateClass()
@@ -106,7 +117,7 @@ void ClassBuilder::writeClassBeginDefinition()
 		   << "#include <QtCore/qcoreapplication.h>\n"
 		   << "#include <QtCore/qtimer.h>\n"
 		   << "using namespace QtRestClient;\n\n"
-		   << "const QString " << className << "::Path(\"" << root["path"].toString() << "\");\n";
+		   << "const QString " << className << "::Path(" << expr(root["path"].toString()) << ");\n";
 	generateFactoryDefinition();
 }
 
@@ -150,18 +161,10 @@ void ClassBuilder::readMethods()
 		if(!info.path.isEmpty() && !info.url.isEmpty())
 			throw QStringLiteral("You can only use either path or url, not both!");
 		info.verb = obj["verb"].toString(info.verb);
-		foreach(auto value, obj["pathParams"].toArray()) {
-			auto param = value.toString().split(';');
-			if(param.size() != 2)
-				throw QStringLiteral("Element in pathParams must be ,-seperated!");
-			info.pathParams.append({param[0], param[1]});
-		}
-		foreach(auto value, obj["parameters"].toArray()) {
-			auto param = value.toString().split(';');
-			if(param.size() != 2)
-				throw QStringLiteral("Element in parameters must be ,-seperated!");
-			info.parameters.append({param[0], param[1]});
-		}
+		foreach(auto value, obj["pathParams"].toArray())
+			info.pathParams.append(value.toString());
+		foreach(auto value, obj["parameters"].toArray())
+			info.parameters.append(value.toString());
 		auto headers = obj["headers"].toObject();
 		for(auto jt = headers.constBegin(); jt != headers.constEnd(); jt++)
 			info.headers.insert(jt.key(), jt.value().toString());
@@ -212,9 +215,9 @@ void ClassBuilder::writeMethodDeclarations()
 		if(!it->body.isEmpty())
 			parameters.append(it->body + " __body");
 		foreach(auto path, it->pathParams)
-			parameters.append(path.second + " " + path.first);
+			parameters.append(path.write(true));
 		foreach(auto param, it->parameters)
-			parameters.append(param.second + " " + param.first);
+			parameters.append(param.write(true));
 		header << parameters.join(", ") << ") const;\n";
 	}
 	if(!methods.isEmpty())
@@ -271,9 +274,9 @@ void ClassBuilder::writeMethodDefinitions()
 		if(!it->body.isEmpty())
 			parameters.append(it->body + " __body");
 		foreach(auto path, it->pathParams)
-			parameters.append(path.second + " " + path.first);
+			parameters.append(path.write(false));
 		foreach(auto param, it->parameters)
-			parameters.append(param.second + " " + param.first);
+			parameters.append(param.write(false));
 		source << parameters.join(", ") << ") const\n"
 			   << "{\n";
 
@@ -281,13 +284,13 @@ void ClassBuilder::writeMethodDefinitions()
 		auto hasPath = writeMethodPath(it.value());
 		source << "\tQVariantHash __params;\n";
 		foreach(auto param, it->parameters)
-			source << "\t__params.insert(\"" << param.first << "\", " << param.first << ");\n";
+			source << "\t__params.insert(\"" << param.name << "\", " << param.name << ");\n";
 		source << "\tHeaderHash __headers;\n";
 		for(auto jt = it->headers.constBegin(); jt != it->headers.constEnd(); jt++)
-			source << "\t__headers.insert(\"" << jt.key() << "\", \"" << jt.value() << "\");\n";
+			source << "\t__headers.insert(\"" << jt.key() << "\", " << expr(jt.value()) << ");\n";
 
 		//make call
-		source << "\n\treturn _restClass->call<" << it->returns << ", " << it->except << ">(\"" << it->verb << "\", ";
+		source << "\n\treturn _restClass->call<" << it->returns << ", " << it->except << ">(" << expr(it->verb) << ", ";
 		if(hasPath) {
 			if(!it->url.isEmpty())
 				source << "QUrl(__path), ";
@@ -321,12 +324,13 @@ void ClassBuilder::writeLocalApiGeneration()
 
 void ClassBuilder::writeGlobalApiGeneration(const QString &globalName)
 {
+	auto golbalExpr = expr(globalName);
 	source << "\nRestClient *" << className << "::generateClient()\n"
 		   << "{\n"
-		   << "\tauto client = apiClient(\"" << globalName << "\");\n"
+		   << "\tauto client = apiClient(" << golbalExpr << ");\n"
 		   << "\tif(!client) {\n";
 	writeApiCreation();
-	source << "\t\taddGlobalApi(\"" << globalName << "\", client);\n"
+	source << "\t\taddGlobalApi(" << golbalExpr << ", client);\n"
 		   << "\t}\n"
 		   << "\treturn client;\n"
 		   << "}\n";
@@ -343,31 +347,31 @@ void ClassBuilder::writeGlobalApiGeneration(const QString &globalName)
 void ClassBuilder::writeApiCreation()
 {
 	source << "\t\tclient = new RestClient(QCoreApplication::instance());\n"
-		   << "\t\tclient->setBaseUrl(QUrl(\"" << root["baseUrl"].toString() << "\"));\n";
+		   << "\t\tclient->setBaseUrl(QUrl(" << expr(root["baseUrl"].toString()) << "));\n";
 	auto version = root["apiVersion"].toString();
 	if(!version.isEmpty())
-		source << "\t\tclient->setApiVersion(QVersionNumber::fromString(\"" << version << "\"));\n";
+		source << "\t\tclient->setApiVersion(QVersionNumber::fromString(" << expr(version) << "));\n";
 	auto headers = root["headers"].toObject();
 	for(auto it = headers.constBegin(); it != headers.constEnd(); it++)
-		source << "\t\tclient->addGlobalHeader(\"" << it.key() << "\", \"" << it.value().toString() << "\");\n";
+		source << "\t\tclient->addGlobalHeader(\"" << it.key() << "\", " << expr(it.value().toString()) << ");\n";
 	auto parameters = root["parameters"].toObject();
 	for(auto it = parameters.constBegin(); it != parameters.constEnd(); it++)
-		source << "\t\tclient->addGlobalParameter(\"" << it.key() << "\", \"" << it.value().toString() << "\");\n";
+		source << "\t\tclient->addGlobalParameter(\"" << it.key() << "\", " << expr(it.value().toString()) << ");\n";
 }
 
 bool ClassBuilder::writeMethodPath(const MethodInfo &info)
 {
 	if(!info.path.isEmpty())
-		source << "\tQString __path = \"" << info.path << "\";\n";
+		source << "\tQString __path = " << expr(info.path) << ";\n";
 	else if(!info.url.isEmpty())
-		source << "\tQString __path = \"" << info.url << "\";\n";
+		source << "\tQString __path = " << expr(info.url) << ";\n";
 	else if(!info.pathParams.isEmpty())
 		source << "\tQString __path;\n";
 	else
 		return false;
 
 	foreach(auto param, info.pathParams)
-		source << "\t__path.append(QVariant::fromValue(" << param.first << ").toString());\n";
+		source << "\t__path.append(QVariant::fromValue(" << param.name << ").toString());\n";
 	source << "\n";
 	return true;
 }
@@ -384,3 +388,22 @@ ClassBuilder::MethodInfo::MethodInfo() :
 	returns("QObject*"),
 	except("QObject*")
 {}
+
+ClassBuilder::MethodInfo::Parameter::Parameter(const QString &data)
+{
+	auto param = data.split(';');
+	if(param.size() < 2 || param.size() > 3)
+		throw QStringLiteral("Element in pathParams must be of format \"name;type[;default]>\"");
+	type = param[1];
+	name = param[0];
+	if(param.size() == 3)
+		defaultValue = param[2];
+}
+
+QString ClassBuilder::MethodInfo::Parameter::write(bool withDefault) const
+{
+	QString res = type + ' ' + name;
+	if(withDefault && !defaultValue.isEmpty())
+		res += " = " + defaultValue;
+	return res;
+}

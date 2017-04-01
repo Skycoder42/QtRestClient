@@ -10,11 +10,20 @@ public:
 
 private:
 	struct MethodInfo {
+		struct Parameter {
+			QString type;
+			QString name;
+			QString defaultValue;
+
+			Parameter(const QString &data);
+			QString write(bool withDefault) const;
+		};
+
 		QString path;
 		QString url;
 		QString verb;
-		QList<QPair<QString, QString>> pathParams;
-		QList<QPair<QString, QString>> parameters;
+		QList<Parameter> pathParams;
+		QList<Parameter> parameters;
 		QHash<QString, QString> headers;
 		QString body;
 		QString returns;
@@ -28,6 +37,8 @@ private:
 
 	void build() override;
 	QString specialPrefix() override;
+
+	static QString expr(const QString &expression);
 
 	void generateClass();
 	void generateApi();
