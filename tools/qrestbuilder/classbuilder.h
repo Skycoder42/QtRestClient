@@ -34,6 +34,7 @@ private:
 
 	QHash<QString, QString> classes;
 	QHash<QString, MethodInfo> methods;
+	QString defaultExcept;
 
 	void build() override;
 	QString specialPrefix() override;

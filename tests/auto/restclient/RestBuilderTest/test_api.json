@@ -18,6 +18,7 @@
 	"headers": {
 		"Secret": "$APP_SECRET"
 	},
+	"except": "User*",
 
 	"classes": {
 		"posts": "PostClass"

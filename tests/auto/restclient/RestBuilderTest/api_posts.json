@@ -6,7 +6,6 @@
 	],
 	"parent": "QObject",
 	"path": "posts",
-	"except": "QObject*",
 
 	"methods": {
 		"listPosts": {

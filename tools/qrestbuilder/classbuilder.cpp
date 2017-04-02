@@ -4,7 +4,8 @@
 
 ClassBuilder::ClassBuilder() :
 	classes(),
-	methods()
+	methods(),
+	defaultExcept("QObject*")
 {}
 
 void ClassBuilder::build()
@@ -106,8 +107,12 @@ void ClassBuilder::writeClassMainDeclaration()
 		   << "\tQtRestClient::RestClass *restClass() const;\n\n";
 	writeClassDeclarations();
 	writeMethodDeclarations();
-	header << "private:\n"
-		   << "\tQtRestClient::RestClass *_restClass;\n";
+	header << "\tvoid setErrorTranslator(const std::function<QString(" << defaultExcept << ", int)> &fn);\n\n"
+		   << "Q_SIGNALS:\n"
+		   << "\tvoid apiError(const QString &errorString, int errorCode, QtRestClient::RestReply::ErrorType errorType);\n\n"
+		   << "private:\n"
+		   << "\tQtRestClient::RestClass *_restClass;\n"
+		   << "\tstd::function<QString(" << defaultExcept << ", int)> _errorTranslator;\n";
 	writeMemberDeclarations();
 }
 
@@ -116,6 +121,7 @@ void ClassBuilder::writeClassBeginDefinition()
 	source << "#include \"" << fileName << ".h\"\n\n"
 		   << "#include <QtCore/qcoreapplication.h>\n"
 		   << "#include <QtCore/qtimer.h>\n"
+		   << "#include <QtCore/qpointer.h>\n"
 		   << "using namespace QtRestClient;\n\n"
 		   << "const QString " << className << "::Path(" << expr(root["path"].toString()) << ");\n";
 	generateFactoryDefinition();
@@ -125,7 +131,8 @@ void ClassBuilder::writeClassMainDefinition(const QString &parent)
 {
 	source << "\n" << className << "::" << className << "(RestClass *restClass, QObject *parent) :\n"
 		   << "\t" << parent << "(parent)\n"
-		   << "\t,_restClass(restClass)\n";
+		   << "\t,_restClass(restClass)\n"
+		   << "\t,_errorTranslator()\n";
 	writeMemberDefinitions();
 	source << "{\n"
 		   << "\t_restClass->setParent(this);\n"
@@ -140,6 +147,10 @@ void ClassBuilder::writeClassMainDefinition(const QString &parent)
 		   << "}\n";
 	writeClassDefinitions();
 	writeMethodDefinitions();
+	source << "\nvoid " << className << "::setErrorTranslator(const std::function<QString(" << defaultExcept << ", int)> &fn)\n"
+		   << "{\n"
+		   << "\t_errorTranslator = fn;\n"
+		   << "}\n";
 }
 
 void ClassBuilder::readClasses()
@@ -151,7 +162,7 @@ void ClassBuilder::readClasses()
 
 void ClassBuilder::readMethods()
 {
-	auto defExcept = root["except"].toString("QObject*");
+	defaultExcept = root["except"].toString(defaultExcept);
 	auto member = root["methods"].toObject();
 	for(auto it = member.constBegin(); it != member.constEnd(); it++) {
 		auto obj = it.value().toObject();
@@ -170,7 +181,7 @@ void ClassBuilder::readMethods()
 			info.headers.insert(jt.key(), jt.value().toString());
 		info.body = obj["body"].toString(info.body);
 		info.returns = obj["returns"].toString(info.returns);
-		info.except = obj["except"].toString(defExcept);
+		info.except = obj["except"].toString(defaultExcept);
 
 		methods.insert(it.key(), info);
 	}
@@ -218,7 +229,7 @@ void ClassBuilder::writeMethodDeclarations()
 			parameters.append(path.write(true));
 		foreach(auto param, it->parameters)
 			parameters.append(param.write(true));
-		header << parameters.join(", ") << ") const;\n";
+		header << parameters.join(", ") << ");\n";
 	}
 	if(!methods.isEmpty())
 		header << '\n';
@@ -277,7 +288,7 @@ void ClassBuilder::writeMethodDefinitions()
 			parameters.append(path.write(false));
 		foreach(auto param, it->parameters)
 			parameters.append(param.write(false));
-		source << parameters.join(", ") << ") const\n"
+		source << parameters.join(", ") << ")\n"
 			   << "{\n";
 
 		//create parameters
@@ -290,7 +301,7 @@ void ClassBuilder::writeMethodDefinitions()
 			source << "\t__headers.insert(\"" << jt.key() << "\", " << expr(jt.value()) << ");\n";
 
 		//make call
-		source << "\n\treturn _restClass->call<" << it->returns << ", " << it->except << ">(" << expr(it->verb) << ", ";
+		source << "\n\tauto __reply = _restClass->call<" << it->returns << ", " << it->except << ">(" << expr(it->verb) << ", ";
 		if(hasPath) {
 			if(!it->url.isEmpty())
 				source << "QUrl(__path), ";
@@ -300,7 +311,22 @@ void ClassBuilder::writeMethodDefinitions()
 		if(!it->body.isEmpty())
 			source << "__body, ";
 		source << "__params, __headers);\n";
-		source << "}\n";
+
+		if(it->except == defaultExcept) {
+			source << "\tQPointer<" << className << "> __this(this);\n"
+				   << "\t__reply->onAllErrors([__this](QString __e, int __c, RestReply::ErrorType __t){\n"
+				   << "\t\tif(__this)\n"
+				   << "\t\t\temit __this->apiError(__e, __c, __t);\n"
+				   << "\t}, [__this](" << it->except << " __o, int __c){\n"
+				   << "\t\tif(__this && __this->_errorTranslator)\n"
+				   << "\t\t\treturn __this->_errorTranslator(__o, __c);\n"
+				   << "\t\telse\n"
+				   << "\t\t\treturn QString();\n"
+				   << "\t});\n";
+		}
+
+		source << "\treturn __reply;\n"
+			   << "}\n";
 	}
 }
 
