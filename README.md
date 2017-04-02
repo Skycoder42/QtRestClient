@@ -4,11 +4,35 @@ A library for generic JSON-based REST-APIs, with a mechanism to map JSON to Qt o
 ## Features
 - Consume any JSON-REST-API
 - Map API objects to QObject/Q_GADGET classes. Supports:
-  - basic objects
-  - lists
-  - paging objects
+	- basic objects
+	- lists
+	- paging objects
 - Allows to create API class representations to wrap specific parts of the api
 - Reply-based system - use either signal/slot or a more functional approach
+- Custom compiler to generate API objects, classes and methods from simple JSON files
+
+## Download/Installation
+There are multiple ways to install the Qt module, sorted by preference:
+
+1. **Arch-Linux only:** If you are building against your system Qt, you can use my AUR-Repository: [qt5-restclient](https://aur.archlinux.org/packages/qt5-restclient/)
+2. Simply add my repository to your Qt MaintenanceTool (Image-based How-To here: [Add custom repository](https://github.com/Skycoder42/QtModules/blob/master/README.md#add-my-repositories-to-qt-maintenancetool)):
+	1. Open the MaintenanceTool, located in your Qt install directory (e.g. `~/Qt/MaintenanceTool`)
+	2. Select `Add or remove components` and click on the `Settings` button
+	3. Go to `Repositories`, scroll to the bottom, select `User defined repositories` and press `Add`
+	4. In the right column (selected by default), type:
+		- On Linux: https://install.skycoder42.de/qtmodules/linux_x64
+		- On Windows: https://install.skycoder42.de/qtmodules/windows_x86
+		- On Mac: https://install.skycoder42.de/qtmodules/mac_x64
+	5. Press `Ok`, make shure `Add or remove components` is still selected, and continue the install (`Next >`)
+	6. A new entry appears under all supported Qt Versions (e.g. `Qt > Qt 5.8 > Skycoder42 Qt modules`)
+	7. You can install either all of my modules, or select the one you need: `Qt Rest Client`
+	8. Continue the setup and thats it! you can now use the module for all of your installed Kits for that Qt Version
+3. Download the compiled modules from the release page. **Note:** You will have to add the correct ones yourself and may need to adjust some paths to fit your installation!
+4. Build it yourself! **Note:** This requires perl to be installed. If you don't have/need cmake, you can ignore the related warnings. To automatically build and install to your Qt installation, run:
+	- `qmake`
+	- `make qmake_all`
+	- `make`
+	- `make install`
 
 ## Usage
 The restclient is provided as a Qt module. Thus, all you have to do is add the module, and then, in your project, add `QT += restclient` to your `.pro` file!
@@ -177,29 +201,6 @@ Qt itself supports the following kinds of authentication:
 
 ### QObject Ownership
 If you are using QtRestClient with QObjects, please be aware that none of the RestClients functions take ownership of the returend objects. This means **you** are responsible for deleting them, if not needed anymore. In short, you as caller own the objects returned to your handlers. If you are uncertain whether you need to handle an object or not, check the documentation of the specific function for details.
-
-## Download/Installation
-There are multiple ways to install the Qt module, sorted by preference:
-
-1. **Arch-Linux only:** If you are building against your system Qt, you can use my AUR-Repository: [qt5-restclient](https://aur.archlinux.org/packages/qt5-restclient/)
-2. Simply add my repository to your Qt MaintenanceTool (Image-based How-To here: [Add custom repository](https://github.com/Skycoder42/QtModules/blob/master/README.md#add-my-repositories-to-qt-maintenancetool)):
-  1. Open the MaintenanceTool, located in your Qt install directory (e.g. `~/Qt/MaintenanceTool`)
-  2. Select `Add or remove components` and click on the `Settings` button
-  3. Go to `Repositories`, scroll to the bottom, select `User defined repositories` and press `Add`
-  4. In the right column (selected by default), type:
-	- On Linux: https://install.skycoder42.de/qtmodules/linux_x64
-	- On Windows: https://install.skycoder42.de/qtmodules/windows_x86
-	- On Mac: https://install.skycoder42.de/qtmodules/mac_x64
-  5. Press `Ok`, make shure `Add or remove components` is still selected, and continue the install (`Next >`)
-  6. A new entry appears under all supported Qt Versions (e.g. `Qt > Qt 5.8 > Skycoder42 Qt modules`)
-  7. You can install either all of my modules, or select the one you need: `Qt Rest Client`
-  8. Continue the setup and thats it! you can now use the module for all of your installed Kits for that Qt Version
-3. Download the compiled modules from the release page. **Note:** You will have to add the correct ones yourself and may need to adjust some paths to fit your installation!
-4. Build it yourself! **Note:** This requires perl to be installed. If you don't have/need cmake, you can ignore the related warnings. To automatically build and install to your Qt installation, run:
-  - `qmake`
-  - `make qmake_all`
-  - `make`
-  - `make install`
 
 ## Documentation
 The documentation is available on [github pages](https://skycoder42.github.io/QtRestClient/). It was created using [doxygen](http://www.doxygen.org/). The HTML-documentation and Qt-Help files are shipped

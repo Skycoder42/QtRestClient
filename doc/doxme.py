@@ -14,7 +14,7 @@ readCounter = 0
 def readMore(line, out):
 	global readCounter
 	if line[0:2] == "##":
-		out.write(line[1:] + " {{#readme_label_{}}}\n".format(readCounter))
+		out.write(line[1:] + " {{#qtrestclient_readme_label_{}}}\n".format(readCounter))
 		readCounter += 1
 	else:
 		out.write(line + "\n")

@@ -256,7 +256,8 @@ ALIASES                = "accessors{1}=<table><tr><th colspan= 2>Accessors</th><
                          "writeAcFn{1}=WRITE accessor for \1" \
                          "notifyAcFn{1}=NOTIFY accessor for \1" \
                          "memberAcFn{1}=MEMBER accessor for \1" \
-                         "inherit{1}=Inherits 1"
+                         "inherit{1}=Inherits 1" \
+                         "resetAcFn{1}=RESET accessor for \1"
 
 # This tag can be used to specify a number of word-keyword mappings (TCL only).
 # A mapping has the form "name=value". For example adding "class=itcl::class"
@@ -1348,7 +1349,7 @@ GENERATE_HTMLHELP      = NO
 # written to the html output directory.
 # This tag requires that the tag GENERATE_HTMLHELP is set to YES.
 
-CHM_FILE               = ./HSCompanionAdminToolHelp.chm
+CHM_FILE               = 
 
 # The HHC_LOCATION tag can be used to specify the location (absolute path
 # including file name) of the HTML help compiler (hhc.exe). If non-empty,
