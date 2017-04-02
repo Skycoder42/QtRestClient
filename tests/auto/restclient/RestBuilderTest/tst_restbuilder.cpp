@@ -31,6 +31,8 @@ void RestBuilderTest::initTestCase()
 #endif
 	QCoreApplication::processEvents();
 	initTestJsonServer("./build-test-db.js");
+
+	qRegisterMetaType<QtRestClient::RestReply::ErrorType>();
 }
 
 void RestBuilderTest::cleanupTestCase()
@@ -107,6 +109,7 @@ void RestBuilderTest::testCustomCompiledApiPosts()
 	QVERIFY(deleteSpy.wait());
 	QVERIFY(called);
 
+	called = false;
 	auto reply2 = api->posts()->post(42);
 	reply2->onSucceeded([&](int code, Post post){
 		called = true;
@@ -123,6 +126,26 @@ void RestBuilderTest::testCustomCompiledApiPosts()
 
 	QSignalSpy deleteSpy2(reply2, &QtRestClient::RestReply::destroyed);
 	QVERIFY(deleteSpy2.wait());
+	QVERIFY(called);
+
+	called = false;
+	QSignalSpy errorSpy(api->posts(), &PostClass::apiError);
+	api->posts()->setErrorTranslator([&](QObject*,int){
+		called = true;
+		return QString();
+	});
+	auto reply3 = api->posts()->post(4242);
+	reply3->onSucceeded([&](int, Post){
+		called = true;
+		QFAIL("Expected to fail!");
+	});
+	QSignalSpy deleteSpy3(reply3, &QtRestClient::RestReply::destroyed);
+
+	QVERIFY(errorSpy.wait());
+	QCOMPARE(errorSpy[0][1].toInt(), 404);
+	QCOMPARE(errorSpy[0][2].toInt(), (int)QtRestClient::RestReply::FailureError);
+
+	QVERIFY(deleteSpy3.wait());
 	QVERIFY(called);
 }
 
