@@ -51,9 +51,12 @@ The root element of any object to be generated. It allows the following elements
 ------------------------|---------------------------------------|---------------------------------------|--------------------------------------------------------------------
  $name					| any valid c++ class name				| file name								| The class name of the generated class
  $type					| "gadget", "object"					| "gadget"								| Define the type of class to generate - Q_GADGET or QObject
- $includes				| list of strings						| []									| specify a list of includes for the header file
+ $includes				| list of strings						| []									| Specify a list of includes for the header file.<br>By default, the are included with `<...>`. To include as `"..."`, prepend "&gt;" to the include.<br>(Example: `>myClass.h` to get `#include "myClass.h"` instead of `#include <myClass.h>`)
+ $export				| string								| <i>none</i>							| Sepcify an export macro. The value is put before the class definition, if you want to export the generated classes
  $parent				| name of a valid parent class			| "QObject" for objects, "" for gadgets	| If you need a custom parent, use this property
  $registerConverters	| bool									| true									| If true, automatically registers the list converters for this type
+ $testEquality			| bool									| true									| Setter methods check if the value did actually change before assigning it.<br>This can fail if a used type does not have equality operators.
+ $generateEquals		| bool									| $type == "gadget"						| If enabled, default-generated equality operators are added
  $enums					| [enum-object](#generator_doc_o_enum)	| {}									| Allows you to add enums to the class. See [Type: enum-object](#generator_doc_o_enum)
  &lt;properties&gt;		| [properties](#generator_doc_o_props)	| <i>none</i>							| See [Object Properties](#generator_doc_o_props)
 
@@ -118,7 +121,8 @@ All types allow the following elements:
 ------------|-------------------------------------------|-------------------|--------------------------------------------------------------------
  type		| "api" or "class"							| "class"			| Define the type to generate - a class or an api
  name		| any valid c++ class name					| file name			| The class name of the generated class
- includes	| list of strings							| []				| specify a list of includes for the header file
+ includes	| list of strings							| []				| specify a list of includes for the header file.<br>By default, the are included with `<...>`. To include as `"..."`, prepend "&gt;" to the include.<br>(Example: `>myClass.h` to get `#include "myClass.h"` instead of `#include <myClass.h>`)
+ export		| string									| <i>none</i>		| Sepcify an export macro. The value is put before the class definition, if you want to export the generated classes
  parent		| name of a valid parent class				| "QObject"			| If you need a custom parent, use this property
  except		| The default execpt value					| "QObject*"		| The default value for "except" of all [method](#generator_doc_c_method) elements
  classes	| [classes-object](#generator_doc_c_cobj)	| {}				| The child-classes. See [Type: classes-object](#generator_doc_c_cobj)
@@ -126,20 +130,20 @@ All types allow the following elements:
 
 If the type is `class` the following properties are available as well:
 
- Name		| Allowed values	| Default/Required	| Description
-------------|-------------------|-------------------|--------------------------------------------------------------------
- path		| string			| ""				| Set the path of this class, relative to **it's parent**. Empty means same as parent
+ Name		| Allowed values					| Default/Required	| Description
+------------|-----------------------------------|-------------------|--------------------------------------------------------------------
+ path		| [expression](#generator_doc_expr)	| ""				| Set the path of this class, relative to **it's parent**. Empty means same as parent
 
 If the type is `api` the following properties are available as well:
 
- Name		| Allowed values	| Default/Required	| Description
-------------|-------------------|-------------------|--------------------------------------------------------------------
- baseUrl	| URL (string)		| <i>required</i>	| The base URL of the API. Will be set as QtRestClient::RestClient::baseUrl
- apiVersion	| a version string	| no version		| The version of the API. Will be set as QtRestClient::RestClient::apiVersion
- parameters	| object			| {}				| Parameters in key-value format. Will be set as QtRestClient::RestClient::globalParameters
- headers	| object			| {}				| Headers in key-value format. Will be set as QtRestClient::RestClient::globalHeaders, UTF-8 encoded
- globalName	| string			| none				| If specified, the API will be registered by that name using QtRestClient::addGlobalApi
- autoCreate	| bool				| true				| <i>Requires `globalName` to be set.</i> If set to true, the API will be automatically registered on application start. If not, it happens on first use
+ Name		| Allowed values							| Default/Required	| Description
+------------|-------------------------------------------|-------------------|--------------------------------------------------------------------
+ baseUrl	| URL ([expression](#generator_doc_expr))	| <i>required</i>	| The base URL of the API. Will be set as QtRestClient::RestClient::baseUrl
+ apiVersion	| version [expression](#generator_doc_expr)	| no version		| The version of the API. Will be set as QtRestClient::RestClient::apiVersion
+ parameters	| object									| {}				| Parameters in key-value format. Will be set as QtRestClient::RestClient::globalParameters. Values are of type [expression](#generator_doc_expr)
+ headers	| object									| {}				| Headers in key-value format. Will be set as QtRestClient::RestClient::globalHeaders, UTF-8 encoded. Values are of type [expression](#generator_doc_expr)
+ globalName	| [expression](#generator_doc_expr)			| none				| If specified, the API will be registered by that name using QtRestClient::addGlobalApi
+ autoCreate	| bool										| true				| <i>Requires `globalName` to be set.</i> If set to true, the API will be automatically registered on application start. If not, it happens on first use
 
 ### Type: classes-object {#generator_doc_c_cobj}
 This type allows you to add "child-classes" to your class/api in form of key-value pairs. The key is the name of the
@@ -158,29 +162,40 @@ The following snippet shows an example. It assumes an `myclass.json`, holding a 
 }
 @endcode
 
+### Type: Expressions {#generator_doc_expr}
+In the following sections, you will often find `expression` as a type. This allows you to enter c++ expressions where strings are expected. An expression can
+either be interpret as a string or as an expression.
+
+If you pass a normal string, i.e. `"myString"`, it is interpreted as a string. In the generated code, the json string will be put as is.
+
+If you however prepend the `$`-sign, it becomes an expression. As an expression, whatever comes after the $, will be used as C++ code, and not as a string.
+For Example, `"$MyClass::myFunction()"` will insert the function call `MyClass::myFunction()`, instead of a string. You can escape strings in this synax using
+`$myFunc(\"string\")`. An expression can contain anything, as long as the result is compilable. You may need to add additional includes for your expressions.
+
 ### Type: methods-object {#generator_doc_c_mobj}
 The main aspect of your class are the methods. They define what can be done by your class. The define a HTTP-request, that will
 be wrapped into a c++ method by the builder. Like most other elements, the methods are key-value pairs as well, with the key
 beeing the methods name, and the value a `method-object`, that can contain the following elements:
 
- Name		| Allowed values						| Default/Required							| Description
-------------|---------------------------------------|-------------------------------------------|--------------------------------------------------------------------
- path		| string								| none										| A subpath, append to the classes path. **must not be combined with `url`**
- url		| URL (string)							| none										| A (relative) url, resolved to the classes path. **must not be combined with `path`**
- verb		| HTTP-Verb (string)					| "GET"										| The HTTP-Verb to be used for the request
- body		| name of a c++ object					| none										| An optional body, to be sent with the request. Must be serializable and included
- pathParams	| [param-list](#generator_doc_param)	| []										| A list of parameters, where each parameter becomes a segment, appended to the requests path. See [Type: param-list](#generator_doc_param)
- parameters	| [param-list](#generator_doc_param)	| []										| A list of parameters, added as QUrlQuery parameters. See [Type: param-list](#generator_doc_param)
- headers	| object								| {}										| Headers in key-value format. Will be added as additional HTTP-Headers, UTF-8 encoded
- returns	| name of a c++ object					| "QObject*"								| The type of the reply entity. Must be serializable and included, or void
- except		| name of a c++ object					| [class](#generator_doc_c_class).except	| The type of a reply with an error. Must be serializable and included. Defaults to the classes except property
+ Name		| Allowed values								| Default/Required							| Description
+------------|-----------------------------------------------|-------------------------------------------|--------------------------------------------------------------------
+ path		| [expression](#generator_doc_expr)				| none										| A subpath, append to the classes path. **must not be combined with `url`**
+ url		| URL ([expression](#generator_doc_expr))		| none										| A (relative) url, resolved to the classes path. **must not be combined with `path`**
+ verb		| HTTP-Verb ([expression](#generator_doc_expr))	| "GET"										| The HTTP-Verb to be used for the request
+ body		| name of a c++ object							| none										| An optional body, to be sent with the request. Must be serializable and included
+ pathParams	| [param-list](#generator_doc_param)			| []										| A list of parameters, where each parameter becomes a segment, appended to the requests path. See [Type: param-list](#generator_doc_param)
+ parameters	| [param-list](#generator_doc_param)			| []										| A list of parameters, added as QUrlQuery parameters. See [Type: param-list](#generator_doc_param)
+ headers	| object										| {}										| Headers in key-value format. Will be added as additional HTTP-Headers, UTF-8 encoded. Values are of type [expression](#generator_doc_expr)
+ returns	| name of a c++ object							| "QObject*"								| The type of the reply entity. Must be serializable and included, or void
+ except		| name of a c++ object							| [class](#generator_doc_c_class).except	| The type of a reply with an error. Must be serializable and included. Defaults to the classes except property
 
 If neither `path` nor `url` are specified, the request will use the classes path without modifications
 
 ### Type: param-list {#generator_doc_param}
 In order to specify parameters, that are added to the method in the same order they have been specified, a param-list is used.
-It's a list of strings, were each string has the format `<name>;<type>`. The name will be the name of the parameter, and type
-it's type. Please note that the type must be convertible to string via QVariant.
+It's a list of strings, were each string has the format `<name>;<type>[;<default>]`. The name will be the name of the parameter, and type
+it's type. Please note that the type must be convertible to string via QVariant. The default part is optional, and ca be used to provide a default
+argument for the parameter. Please note that the rules of default arguments of C++ apply here. See http://en.cppreference.com/w/cpp/language/default_arguments
 
 The following snippet shows an example of such parameters:
 @code{.json}

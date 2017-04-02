@@ -102,6 +102,7 @@ Q_SIGNALS:
 	void autoDeleteChanged(bool autoDelete, QPrivateSignal);
 
 protected:
+	//! Converts a json type id into a string
 	static QByteArray jsonTypeName(QJsonValue::Type type);
 
 private:
