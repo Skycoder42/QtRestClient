@@ -17,3 +17,5 @@ DISTFILES += \
     $$PWD/build-test-db.js
 
 DEFINES += "TEST_SRC_DIR=\\\"$$PWD\\\""
+
+mac: QMAKE_LFLAGS += '-Wl,-rpath,\'$$OUT_PWD/../../../../lib\''
