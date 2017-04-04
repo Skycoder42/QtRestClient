@@ -2,7 +2,10 @@ TARGET = QtRestClient
 
 QT = core network jsonserializer
 
-PUBLIC_HEADERS += \
+HEADERS +=  \
+	restclass_p.h \
+	restclient_p.h \
+	restreply_p.h \
 	qtrestclient_global.h \
 	genericrestreply.h \
 	ipaging.h \
@@ -16,20 +19,13 @@ PUBLIC_HEADERS += \
 	standardpaging.h \
 	metacomponent.h
 
-PRIVATE_HEADERS += \
-	restclass_p.h \
-	restclient_p.h \
-	restreply_p.h
-
-HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
-
 SOURCES += \
 	requestbuilder.cpp \
 	restclass.cpp \
 	restclient.cpp \
 	restreply.cpp \
 	standardpaging.cpp \
-    ipaging.cpp
+	ipaging.cpp
 
 load(qt_module)
 
