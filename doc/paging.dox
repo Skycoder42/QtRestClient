@@ -16,10 +16,10 @@ mechanism in an easy manner.
 
 @note All links in paging objects will be resolved relative to the clients URL. For absolute
 URLs, this means only stuff like headers or additional query parameters are added. Relative
-URLs however must be relative to the clients URL. If thats not the case, you can extend
-StandardPaging to adjust the URLs.
+URLs however must be relative to the clients URL. If thats not the case, you can extend the
+private class StandardPaging to adjust the URLs, or implement your own IPaging.
 
-@sa Paging::iterate, IPaging, StandardPaging, PagingFactory
+@sa Paging::iterate, IPaging, PagingFactory
 */
 
 /*!

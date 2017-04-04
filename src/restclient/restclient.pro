@@ -16,8 +16,8 @@ HEADERS +=  \
 	restclient.h \
 	restreply.h \
 	simple.h \
-	standardpaging.h \
-	metacomponent.h
+	metacomponent.h \
+    standardpaging_p.h
 
 SOURCES += \
 	requestbuilder.cpp \

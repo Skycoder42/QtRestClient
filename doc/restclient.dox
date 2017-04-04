@@ -246,7 +246,7 @@ RestClass instances, requests, replies and more will use this new serializer.
 The client will take ownership of the factory. You must not delete it after setting it. All
 RestClass instances, requests, replies and more will use this new factory.
 
-@sa RestClient::pagingFactory, IPaging, Paging, StandardPagingFactory
+@sa RestClient::pagingFactory, IPaging, Paging, PagingFactory
 */
 
 /*!

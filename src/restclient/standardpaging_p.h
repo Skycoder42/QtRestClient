@@ -1,5 +1,5 @@
-#ifndef STANDARDPAGING_H
-#define STANDARDPAGING_H
+#ifndef STANDARDPAGING_P_H
+#define STANDARDPAGING_P_H
 
 #include "QtRestClient/qtrestclient_global.h"
 #include "QtRestClient/ipaging.h"
@@ -9,7 +9,6 @@
 namespace QtRestClient {
 
 class StandardPagingPrivate;
-//! The standard implementation of IPaging
 class Q_RESTCLIENT_EXPORT StandardPaging : public IPaging
 {
 	Q_GADGET
@@ -48,7 +47,6 @@ private:
 	void setJson(const QJsonObject &object);
 };
 
-//! The factory that creates StandardPaging pagings
 class Q_RESTCLIENT_EXPORT StandardPagingFactory : public PagingFactory
 {
 public:
@@ -60,4 +58,4 @@ private:
 
 }
 
-#endif // STANDARDPAGING_H
+#endif // STANDARDPAGING_P_H
