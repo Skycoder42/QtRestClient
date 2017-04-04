@@ -23,7 +23,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">QtRestClient
-   &#160;<span id="projectnumber">1.1.0</span>
+   &#160;<span id="projectnumber">1.2.0</span>
    </div>
    <div id="projectbrief">A library for generic JSON-based REST-APIs, with a mechanism to map JSON to Qt objects</div>
   </td>
@@ -172,8 +172,8 @@ class QtRestClient::Paging&lt; T &gt;</h3>
 <p>The paging class is a container class that allows you to access generic paging mechanisms.</p>
 <p>Typically, APIs use paging as a method to reduce the size of replies. Instead of returning a complete list of elements, only a small chunck (i.e. 10 Elements) is returned, wrapped into a paging object. The object itself containes links, indexes and more to make it possible to iterate over them, by sending multiple consecutive requests.</p>
 <p>While most of these paging objects are very similar, they can have different structures. The <a class="el" href="class_qt_rest_client_1_1_paging.html" title="A class to access generic paging objects. ">Paging</a> class, in combination with the <a class="el" href="class_qt_rest_client_1_1_i_paging.html" title="Interface to parse generic paging objects and operate on them. ">IPaging</a> interface, allows you to access any paging mechanism in an easy manner.</p>
-<dl class="section note"><dt>Note</dt><dd>All links in paging objects will be resolved relative to the clients URL. For absolute URLs, this means only stuff like headers or additional query parameters are added. Relative URLs however must be relative to the clients URL. If thats not the case, you can extend <a class="el" href="class_qt_rest_client_1_1_standard_paging.html" title="The standard implementation of IPaging. ">StandardPaging</a> to adjust the URLs.</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_qt_rest_client_1_1_paging.html#a1df3459a84a093b138775c378d754628" title="Iterates over all paging objects. ">Paging::iterate</a>, <a class="el" href="class_qt_rest_client_1_1_i_paging.html" title="Interface to parse generic paging objects and operate on them. ">IPaging</a>, <a class="el" href="class_qt_rest_client_1_1_standard_paging.html" title="The standard implementation of IPaging. ">StandardPaging</a>, <a class="el" href="class_qt_rest_client_1_1_paging_factory.html" title="An interface for a factory to create paging objects. ">PagingFactory</a> </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>All links in paging objects will be resolved relative to the clients URL. For absolute URLs, this means only stuff like headers or additional query parameters are added. Relative URLs however must be relative to the clients URL. If thats not the case, you can extend the private class StandardPaging to adjust the URLs, or implement your own <a class="el" href="class_qt_rest_client_1_1_i_paging.html" title="Interface to parse generic paging objects and operate on them. ">IPaging</a>.</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_qt_rest_client_1_1_paging.html#a1df3459a84a093b138775c378d754628" title="Iterates over all paging objects. ">Paging::iterate</a>, <a class="el" href="class_qt_rest_client_1_1_i_paging.html" title="Interface to parse generic paging objects and operate on them. ">IPaging</a>, <a class="el" href="class_qt_rest_client_1_1_paging_factory.html" title="An interface for a factory to create paging objects. ">PagingFactory</a> </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="paging__fwd_8h_source.html#l00025">25</a> of file <a class="el" href="paging__fwd_8h_source.html">paging_fwd.h</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
@@ -239,7 +239,7 @@ template&lt;typename EO &gt; </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Mar 10 2017 14:40:29 for QtRestClient by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Apr 4 2017 14:27:36 for QtRestClient by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.13
 </small></address>

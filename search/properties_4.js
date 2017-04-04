@@ -11,6 +11,7 @@ var searchData=
   ['emptylabel',['emptyLabel',['https://doc.qt.io/qt-5/qundoview.html#emptyLabel-prop',0,'QUndoView']]],
   ['enabled',['enabled',['https://doc.qt.io/qt-5/qgraphicseffect.html#enabled-prop',0,'QGraphicsEffect::enabled()'],['https://doc.qt.io/qt-5/qgraphicsobject.html#enabled-prop',0,'QGraphicsObject::enabled()'],['https://doc.qt.io/qt-5/qaction.html#enabled-prop',0,'QAction::enabled()'],['https://doc.qt.io/qt-5/qactiongroup.html#enabled-prop',0,'QActionGroup::enabled()'],['https://doc.qt.io/qt-5/qshortcut.html#enabled-prop',0,'QShortcut::enabled()'],['https://doc.qt.io/qt-5/qwidget.html#enabled-prop',0,'QWidget::enabled()'],['https://doc.qt.io/qt-5/qquickitem.html#enabled-prop',0,'QQuickItem::enabled()'],['https://doc.qt.io/qt-5/qt3dcore-qnode.html#enabled-prop',0,'Qt3DCore::QNode::enabled()']]],
   ['endvalue',['endValue',['https://doc.qt.io/qt-5/qvariantanimation.html#endValue-prop',0,'QVariantAnimation']]],
+  ['enumasstring',['enumAsString',['https://skycoder42.github.io/QJsonSerializer/class_q_json_serializer.html#ac430c1962106cc1d0efcbef4a11b03f3',0,'QJsonSerializer']]],
   ['error',['error',['https://doc.qt.io/qt-5/qdnslookup.html#error-prop',0,'QDnsLookup::error()'],['https://doc.qt.io/qt-5/qsensor.html#error-prop',0,'QSensor::error()']]],
   ['errorevent',['errorEvent',['https://doc.qt.io/qt-5/qscxmlevent.html#errorEvent-prop',0,'QScxmlEvent']]],
   ['errormessage',['errorMessage',['https://doc.qt.io/qt-5/qscxmlevent.html#errorMessage-prop',0,'QScxmlEvent']]],

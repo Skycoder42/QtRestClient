@@ -23,7 +23,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">QtRestClient
-   &#160;<span id="projectnumber">1.1.0</span>
+   &#160;<span id="projectnumber">1.2.0</span>
    </div>
    <div id="projectbrief">A library for generic JSON-based REST-APIs, with a mechanism to map JSON to Qt objects</div>
   </td>
@@ -470,7 +470,7 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="elRef"
 <p>If you need to set additional properties on the builder, that are not provided by the rest client itself, you can override this function. To preserve all the properties override as follows:</p>
 <div class="fragment"><div class="line">RequestBuilder MyClient::builder()<span class="keyword"> const override </span>{</div><div class="line">    <span class="keywordflow">return</span> <a class="code" href="class_qt_rest_client_1_1_rest_client.html#ab5bf445cec914a93e71f864957d528be">RestClient::builder</a>()</div><div class="line">        .set...</div><div class="line">}</div></div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><a class="el" href="class_qt_rest_client_1_1_rest_class.html#afa0b24df3e788eefa415a4e8dd8e43c0" title="Creates a request builder for this class. ">RestClass::builder</a> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="restclient_8cpp_source.html#l00075">75</a> of file <a class="el" href="restclient_8cpp_source.html">restclient.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="restclient_8cpp_source.html#l00077">77</a> of file <a class="el" href="restclient_8cpp_source.html">restclient.cpp</a>.</p>
 
 </div>
 </div>
@@ -512,7 +512,7 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="elRef"
 <p>The path will be appended to one created by the client. Please not that for all requests the request will be recreated. If you change any property of the <a class="el" href="class_qt_rest_client_1_1_rest_client.html" title="A class to define access to an API, with general settings. ">RestClient</a>, this will affect all <a class="el" href="class_qt_rest_client_1_1_rest_class.html" title="A class to perform requests to an API. ">RestClass</a> instances that have been created by this client.</p>
 <p>The following example shows how this affects the <a class="el" href="class_qt_rest_client_1_1_rest_class.html" title="A class to perform requests to an API. ">RestClass</a>: </p><div class="fragment"><div class="line"><span class="comment">//client is configured as</span></div><div class="line">client-&gt;setBaseUrl(<span class="stringliteral">&quot;https://api.example.com/default/&quot;</span>);</div><div class="line">client-&gt;addGlobalParameter(<span class="stringliteral">&quot;id&quot;</span>, <span class="stringliteral">&quot;42&quot;</span>);</div><div class="line"></div><div class="line"><span class="comment">//class was created using</span></div><div class="line"><span class="keyword">auto</span> rClass = client-&gt;createClass(<span class="stringliteral">&quot;stuff/important&quot;</span>, <span class="keyword">this</span>);</div><div class="line"></div><div class="line"><span class="comment">//doing the following request</span></div><div class="line">rClass-&gt;get&lt;MyType&gt;(<span class="stringliteral">&quot;test&quot;</span>);</div><div class="line"><span class="comment">//will make a request to the URL: https://api.example.com/default/stuff/important/test?id=42</span></div><div class="line"></div><div class="line"><span class="comment">//after modifying the client and doing it again</span></div><div class="line">client-&gt;setApiVersion(<a class="codeRef" target="_blank" doxygen="/home/sky/Qt/Docs/Qt-5.8/qtcore/qtcore.tags:https://doc.qt.io/qt-5/" href="https://doc.qt.io/qt-5/qversionnumber.html">QVersionNumber</a>(1));</div><div class="line">rClass-&gt;get&lt;MyType&gt;(<span class="stringliteral">&quot;test&quot;</span>);</div><div class="line"><span class="comment">//the URL becomes: https://api.example.com/default/v1/stuff/important/test?id=42</span></div></div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><a class="el" href="class_qt_rest_client_1_1_rest_client.html#a6477b2d6df004f1c9c0cf572b2e9aa07" title="Returns the rest class with the root path. ">RestClient::rootClass</a>, <a class="el" href="namespace_qt_rest_client.html#a4945a084dd4f6353820ceb5485ddf035" title="Creates a new API class based on the client for the given API name. ">QtRestClient::createApiClass</a> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="restclient_8cpp_source.html#l00020">20</a> of file <a class="el" href="restclient_8cpp_source.html">restclient.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="restclient_8cpp_source.html#l00022">22</a> of file <a class="el" href="restclient_8cpp_source.html">restclient.cpp</a>.</p>
 
 </div>
 </div>
@@ -535,7 +535,7 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="elRef"
 <dl class="section return"><dt>Returns</dt><dd>The network access manager used by the client</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="class_qt_rest_client_1_1_rest_client.html#a17ee12ebd4c664b290e83c26c5c6e1a6" title="Sets the network access manager to be used by all requests for this client. ">RestClient::setManager</a> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="restclient_8cpp_source.html#l00030">30</a> of file <a class="el" href="restclient_8cpp_source.html">restclient.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="restclient_8cpp_source.html#l00032">32</a> of file <a class="el" href="restclient_8cpp_source.html">restclient.cpp</a>.</p>
 
 </div>
 </div>
@@ -558,7 +558,7 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="elRef"
 <dl class="section return"><dt>Returns</dt><dd>The paging factory used by the client</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="class_qt_rest_client_1_1_rest_client.html#a3f10628c5e6bf2f2845882b6bf5a7d58" title="Sets the paging factory to be used by all paging requests for this client. ">RestClient::setPagingFactory</a>, <a class="el" href="class_qt_rest_client_1_1_i_paging.html" title="Interface to parse generic paging objects and operate on them. ">IPaging</a>, <a class="el" href="class_qt_rest_client_1_1_paging.html" title="A class to access generic paging objects. ">Paging</a> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="restclient_8cpp_source.html#l00040">40</a> of file <a class="el" href="restclient_8cpp_source.html">restclient.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="restclient_8cpp_source.html#l00042">42</a> of file <a class="el" href="restclient_8cpp_source.html">restclient.cpp</a>.</p>
 
 </div>
 </div>
@@ -582,7 +582,7 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="elRef"
 <p>The root class is an instance of a <a class="el" href="class_qt_rest_client_1_1_rest_class.html" title="A class to perform requests to an API. ">RestClass</a>, created with no extra path, parented to the client. You can use it to make requests, but you do not own it. You can create an equivalent copy of this instance, owned by you, by calling:</p>
 <div class="fragment"><div class="line"><span class="keyword">auto</span> myRootClass = client-&gt;createClass(<a class="codeRef" target="_blank" doxygen="/home/sky/Qt/Docs/Qt-5.8/qtcore/qtcore.tags:https://doc.qt.io/qt-5/" href="https://doc.qt.io/qt-5/qstring.html">QString</a>(), <span class="keyword">this</span>);</div></div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><a class="el" href="class_qt_rest_client_1_1_rest_client.html#ae457d392d7c8d25f8e76ade95cc80973" title="Creates a new rest class for the given path and parent. ">RestClient::createClass</a>, <a class="el" href="namespace_qt_rest_client.html#a681be0d82f7bfa8bb977371af0187a91" title="Returns the clients root class for the given API name. ">QtRestClient::apiRootClass</a> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="restclient_8cpp_source.html#l00025">25</a> of file <a class="el" href="restclient_8cpp_source.html">restclient.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="restclient_8cpp_source.html#l00027">27</a> of file <a class="el" href="restclient_8cpp_source.html">restclient.cpp</a>.</p>
 
 </div>
 </div>
@@ -605,7 +605,7 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="elRef"
 <dl class="section return"><dt>Returns</dt><dd>The json serializer used by the client</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="class_qt_rest_client_1_1_rest_client.html#ab52e327f77ef87cbe3fc556ac6d337d7" title="Sets the json serializer to be used by all requests for this client. ">RestClient::setSerializer</a>, <a href="https://skycoder42.github.io/QJsonSerializer">https://skycoder42.github.io/QJsonSerializer</a> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="restclient_8cpp_source.html#l00035">35</a> of file <a class="el" href="restclient_8cpp_source.html">restclient.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="restclient_8cpp_source.html#l00037">37</a> of file <a class="el" href="restclient_8cpp_source.html">restclient.cpp</a>.</p>
 
 </div>
 </div>
@@ -643,7 +643,7 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="elRef"
 <p>The client will take ownership of the manager. You must not delete it after setting it. All <a class="el" href="class_qt_rest_client_1_1_rest_class.html" title="A class to perform requests to an API. ">RestClass</a> instances, requests, replies and more will use this new manager.</p>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="class_qt_rest_client_1_1_rest_client.html#a4517e032b051849aa0d6fbeb62d2e5a8" title="Returns the network access manager used by the restclient. ">RestClient::manager</a> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="restclient_8cpp_source.html#l00085">85</a> of file <a class="el" href="restclient_8cpp_source.html">restclient.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="restclient_8cpp_source.html#l00087">87</a> of file <a class="el" href="restclient_8cpp_source.html">restclient.cpp</a>.</p>
 
 </div>
 </div>
@@ -687,7 +687,7 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="elRef"
 <dl class="section note"><dt>Note</dt><dd>While it is recommended to use these attributes, they may not all work for every backend. Older servers, for example, may have problems with HTTP2 requests, and will fail to even reply. In such cases, you can still use these attributes, and simply overwrite the problematic one again:</dd></dl>
 <div class="fragment"><div class="line">client-&gt;setModernAttributes()</div><div class="line">client-&gt;addRequestAttribute(QNetworkRequest::HTTP2AllowedAttribute, <span class="keyword">false</span>);</div></div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><a class="el" href="class_qt_rest_client_1_1_rest_client.html#a702de0d9054f8869b8473b85ec2a06c1" title="A collection of attributes to be set on every request. ">RestClient::requestAttributes</a>, QNetworkRequest::Attribute </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="restclient_8cpp_source.html#l00149">149</a> of file <a class="el" href="restclient_8cpp_source.html">restclient.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="restclient_8cpp_source.html#l00151">151</a> of file <a class="el" href="restclient_8cpp_source.html">restclient.cpp</a>.</p>
 
 </div>
 </div>
@@ -723,9 +723,9 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="elRef"
   </dd>
 </dl>
 <p>The client will take ownership of the factory. You must not delete it after setting it. All <a class="el" href="class_qt_rest_client_1_1_rest_class.html" title="A class to perform requests to an API. ">RestClass</a> instances, requests, replies and more will use this new factory.</p>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_qt_rest_client_1_1_rest_client.html#a0bdf814e9173285962800cfc10c746e2" title="Returns the paging factory used by the restclient. ">RestClient::pagingFactory</a>, <a class="el" href="class_qt_rest_client_1_1_i_paging.html" title="Interface to parse generic paging objects and operate on them. ">IPaging</a>, <a class="el" href="class_qt_rest_client_1_1_paging.html" title="A class to access generic paging objects. ">Paging</a>, <a class="el" href="class_qt_rest_client_1_1_standard_paging_factory.html" title="The factory that creates StandardPaging pagings. ">StandardPagingFactory</a> </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_qt_rest_client_1_1_rest_client.html#a0bdf814e9173285962800cfc10c746e2" title="Returns the paging factory used by the restclient. ">RestClient::pagingFactory</a>, <a class="el" href="class_qt_rest_client_1_1_i_paging.html" title="Interface to parse generic paging objects and operate on them. ">IPaging</a>, <a class="el" href="class_qt_rest_client_1_1_paging.html" title="A class to access generic paging objects. ">Paging</a>, <a class="el" href="class_qt_rest_client_1_1_paging_factory.html" title="An interface for a factory to create paging objects. ">PagingFactory</a> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="restclient_8cpp_source.html#l00099">99</a> of file <a class="el" href="restclient_8cpp_source.html">restclient.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="restclient_8cpp_source.html#l00101">101</a> of file <a class="el" href="restclient_8cpp_source.html">restclient.cpp</a>.</p>
 
 </div>
 </div>
@@ -763,7 +763,7 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="elRef"
 <p>The client will take ownership of the serializer. You must not delete it after setting it. All <a class="el" href="class_qt_rest_client_1_1_rest_class.html" title="A class to perform requests to an API. ">RestClass</a> instances, requests, replies and more will use this new serializer.</p>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="class_qt_rest_client_1_1_rest_client.html#a56a0c36f7a5580de2db935de70b112be" title="Returns the json serializer used by the restclient. ">RestClient::serializer</a>, <a href="https://skycoder42.github.io/QJsonSerializer">https://skycoder42.github.io/QJsonSerializer</a> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="restclient_8cpp_source.html#l00092">92</a> of file <a class="el" href="restclient_8cpp_source.html">restclient.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="restclient_8cpp_source.html#l00094">94</a> of file <a class="el" href="restclient_8cpp_source.html">restclient.cpp</a>.</p>
 
 </div>
 </div>
@@ -1034,7 +1034,7 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="elRef"
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Mar 10 2017 14:40:29 for QtRestClient by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Apr 4 2017 14:27:36 for QtRestClient by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.13
 </small></address>

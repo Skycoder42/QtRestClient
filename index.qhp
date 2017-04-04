@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <QtHelpProject version="1.0">
-  <namespace>de.skycoder42.qtrestclient.110</namespace>
+  <namespace>de.skycoder42.qtrestclient.120</namespace>
   <virtualFolder>doc_qtrestclient</virtualFolder>
-  <customFilter name="RestClient 1.1.0">
+  <customFilter name="RestClient 1.2.0">
     <filterAttribute>qtrestclient</filterAttribute>
-    <filterAttribute>1.1.0</filterAttribute>
+    <filterAttribute>1.2.0</filterAttribute>
   </customFilter>
   <filterSection>
     <filterAttribute>doxygen</filterAttribute>
     <toc>
-      <section title="QtRestClient 1.1.0" ref="index.html">
-        <section title="Features" ref="index.html#readme_label_0" />
-        <section title="Usage" ref="index.html#readme_label_1">
-          <section title="Example" ref="index.html#readme_label_2">
-            <section title="API-Definition" ref="index.html#readme_label_3" />
-            <section title="API-Use" ref="index.html#readme_label_4" />
+      <section title="QtRestClient 1.2.0" ref="index.html">
+        <section title="Features" ref="index.html#qtrestclient_readme_label_0" />
+        <section title="Download/Installation" ref="index.html#qtrestclient_readme_label_1" />
+        <section title="Usage" ref="index.html#qtrestclient_readme_label_2">
+          <section title="Example" ref="index.html#qtrestclient_readme_label_3">
+            <section title="API-Definition" ref="index.html#qtrestclient_readme_label_4" />
+            <section title="API-Use" ref="index.html#qtrestclient_readme_label_5" />
           </section>
-          <section title="API-Generator" ref="index.html#readme_label_5">
-            <section title="Example" ref="index.html#readme_label_6" />
+          <section title="API-Generator" ref="index.html#qtrestclient_readme_label_6">
+            <section title="Example" ref="index.html#qtrestclient_readme_label_7" />
           </section>
-          <section title="Authentication" ref="index.html#readme_label_7" />
-          <section title="QObject Ownership" ref="index.html#readme_label_8" />
+          <section title="Authentication" ref="index.html#qtrestclient_readme_label_8" />
+          <section title="QObject Ownership" ref="index.html#qtrestclient_readme_label_9" />
         </section>
-        <section title="Download/Installation" ref="index.html#readme_label_9" />
-        <section title="Documentation" ref="index.html#readme_label_10" />
+        <section title="Documentation" ref="index.html#qtrestclient_readme_label_10" />
         <section title="The QRestBuilder Tool" ref="generator.html">
           <section title="What it does" ref="generator.html#generator_features" />
           <section title="Getting Started" ref="generator.html#generator_start" />
@@ -41,6 +41,7 @@
             <section title="Generate classes" ref="generator.html#generator_doc_class">
               <section title="Type: class" ref="generator.html#generator_doc_c_class" />
               <section title="Type: classes-object" ref="generator.html#generator_doc_c_cobj" />
+              <section title="Type: Expressions" ref="generator.html#generator_doc_expr" />
               <section title="Type: methods-object" ref="generator.html#generator_doc_c_mobj" />
               <section title="Type: param-list" ref="generator.html#generator_doc_param" />
             </section>
@@ -107,6 +108,7 @@
                 <section title="items" ref="class_qt_rest_client_1_1_i_paging.html#a5493368be64c3fb8597b3359e5857551" />
                 <section title="next" ref="class_qt_rest_client_1_1_i_paging.html#ace2bb072d674b4f69736ee1784952b58" />
                 <section title="offset" ref="class_qt_rest_client_1_1_i_paging.html#abe237b5d1ff6649e6f2b91cfed6581ac" />
+                <section title="originalJson" ref="class_qt_rest_client_1_1_i_paging.html#af176f3b22041b25b0e045933848df047" />
                 <section title="previous" ref="class_qt_rest_client_1_1_i_paging.html#a778b02f2b9eb1075f8fe4542b2b17c0f" />
                 <section title="properties" ref="class_qt_rest_client_1_1_i_paging.html#acf050073ce9d50d8f7d4aeb82cb0ad45" />
                 <section title="total" ref="class_qt_rest_client_1_1_i_paging.html#ad843d960951aa92a29e6f492ce5ed5de" />
@@ -329,6 +331,7 @@
               </section>
               <section title="Simple&lt; T, typename std::enable_if&lt; std::is_void&lt; typename T::QtGadgetHelper &gt;::value &gt;::type &gt;" ref="class_qt_rest_client_1_1_simple_3_01_t_00_01typename_01std_1_1enable__if_3_01std_1_1is__void_3_0e3917a0d7780becccdeb92e5e53ff1ab.html">
                 <section title="Simple" ref="class_qt_rest_client_1_1_simple_3_01_t_00_01typename_01std_1_1enable__if_3_01std_1_1is__void_3_0e3917a0d7780becccdeb92e5e53ff1ab.html#a4b3d03dee796d59d6e0fa8ced34f5af5" />
+                <section title="~Simple" ref="class_qt_rest_client_1_1_simple_3_01_t_00_01typename_01std_1_1enable__if_3_01std_1_1is__void_3_0e3917a0d7780becccdeb92e5e53ff1ab.html#a7d365d02989e98e81a389ac0d3423bb2" />
                 <section title="currentExtended" ref="class_qt_rest_client_1_1_simple_3_01_t_00_01typename_01std_1_1enable__if_3_01std_1_1is__void_3_0e3917a0d7780becccdeb92e5e53ff1ab.html#ad083ee68c43763afbe2aa5ce39bb4a70" />
                 <section title="extend" ref="class_qt_rest_client_1_1_simple_3_01_t_00_01typename_01std_1_1enable__if_3_01std_1_1is__void_3_0e3917a0d7780becccdeb92e5e53ff1ab.html#a4375b05cbd25bca1f38d6a46bcdcbee7" />
                 <section title="extend" ref="class_qt_rest_client_1_1_simple_3_01_t_00_01typename_01std_1_1enable__if_3_01std_1_1is__void_3_0e3917a0d7780becccdeb92e5e53ff1ab.html#ad41842d9b26f7aa6bb65691ff6841268" />
@@ -336,35 +339,16 @@
                 <section title="hasExtension" ref="class_qt_rest_client_1_1_simple_3_01_t_00_01typename_01std_1_1enable__if_3_01std_1_1is__void_3_0e3917a0d7780becccdeb92e5e53ff1ab.html#af5855fdd1f3ec9fc0bc0934a7c4fe214" />
                 <section title="isExtended" ref="class_qt_rest_client_1_1_simple_3_01_t_00_01typename_01std_1_1enable__if_3_01std_1_1is__void_3_0e3917a0d7780becccdeb92e5e53ff1ab.html#a6dfc124da89faa1eb79c43cf70bc5ff0" />
               </section>
-              <section title="StandardPaging" ref="class_qt_rest_client_1_1_standard_paging.html">
-                <section title="StandardPaging" ref="class_qt_rest_client_1_1_standard_paging.html#a6d616d6755768863eaf8c0a7b0e0f2b4" />
-                <section title="~StandardPaging" ref="class_qt_rest_client_1_1_standard_paging.html#a38b1a50270ae898fe20cba0e658bb8ee" />
-                <section title="hasNext" ref="class_qt_rest_client_1_1_standard_paging.html#a7fb30d1a5dfeb1a423749be517fbbe39" />
-                <section title="hasPrevious" ref="class_qt_rest_client_1_1_standard_paging.html#a2e939b74d531c77f368d31b27efa58af" />
-                <section title="items" ref="class_qt_rest_client_1_1_standard_paging.html#a5e9f3c74e6dcaca5379236def709de2e" />
-                <section title="next" ref="class_qt_rest_client_1_1_standard_paging.html#aebbb9f7a42bf8783f7efa33591d17ed1" />
-                <section title="offset" ref="class_qt_rest_client_1_1_standard_paging.html#ac41b90bf9ef7dc7aa8d129723715ddf4" />
-                <section title="previous" ref="class_qt_rest_client_1_1_standard_paging.html#af8245759ffdf0db70b0b4f6269fdc7d3" />
-                <section title="properties" ref="class_qt_rest_client_1_1_standard_paging.html#a96b0f1ab6f0a512e83c6bfe21c1db7eb" />
-                <section title="total" ref="class_qt_rest_client_1_1_standard_paging.html#a4814ef980cb95af752bb53ba7b537b12" />
-              </section>
-              <section title="StandardPagingFactory" ref="class_qt_rest_client_1_1_standard_paging_factory.html">
-                <section title="createPaging" ref="class_qt_rest_client_1_1_standard_paging_factory.html#adfea829d44742cd51d679d86e47ff5ff" />
-              </section>
             </section>
           </section>
           <section title="Class Index" ref="classes.html" />
           <section title="Class Hierarchy" ref="hierarchy.html">
-            <section title="QtRestClient::IPaging" ref="class_qt_rest_client_1_1_i_paging.html">
-              <section title="QtRestClient::StandardPaging" ref="class_qt_rest_client_1_1_standard_paging.html" />
-            </section>
+            <section title="QtRestClient::IPaging" ref="class_qt_rest_client_1_1_i_paging.html" />
             <section title="QtRestClient::MetaComponent&lt; T, typename &gt;" ref="namespace_qt_rest_client.html#class_qt_rest_client_1_1_meta_component" />
             <section title="QtRestClient::MetaComponent&lt; T *, typename std::enable_if&lt; std::is_base_of&lt; QObject, T &gt;::value &gt;::type &gt;" ref="class_qt_rest_client_1_1_meta_component_3_01_t_01_5_00_01typename_01std_1_1enable__if_3_01std_1_91f896eeadb81066402044b2ec8fef4f.html" />
             <section title="QtRestClient::MetaComponent&lt; T, typename std::enable_if&lt; std::is_void&lt; typename T::QtGadgetHelper &gt;::value &gt;::type &gt;" ref="class_qt_rest_client_1_1_meta_component_3_01_t_00_01typename_01std_1_1enable__if_3_01std_1_1is__b8f82327343312e32aa8aa1f04dce084.html" />
             <section title="QtRestClient::Paging&lt; T &gt;" ref="class_qt_rest_client_1_1_paging.html" />
-            <section title="QtRestClient::PagingFactory" ref="class_qt_rest_client_1_1_paging_factory.html">
-              <section title="QtRestClient::StandardPagingFactory" ref="class_qt_rest_client_1_1_standard_paging_factory.html" />
-            </section>
+            <section title="QtRestClient::PagingFactory" ref="class_qt_rest_client_1_1_paging_factory.html" />
             <section title="QObject" ref="qobject.html">
               <section title="QtRestClient::RestClass" ref="class_qt_rest_client_1_1_rest_class.html" />
               <section title="QtRestClient::RestClient" ref="class_qt_rest_client_1_1_rest_client.html" />
@@ -382,6 +366,7 @@
             <section title="QtRestClient::RequestBuilder" ref="class_qt_rest_client_1_1_request_builder.html" />
             <section title="QtRestClient::Simple&lt; T, typename &gt;" ref="namespace_qt_rest_client.html#class_qt_rest_client_1_1_simple" />
             <section title="QtRestClient::Simple&lt; T, typename std::enable_if&lt; std::is_void&lt; typename T::QtGadgetHelper &gt;::value &gt;::type &gt;" ref="class_qt_rest_client_1_1_simple_3_01_t_00_01typename_01std_1_1enable__if_3_01std_1_1is__void_3_0e3917a0d7780becccdeb92e5e53ff1ab.html" />
+            <section title="typedef" ref="classtypedef.html" />
           </section>
           <section title="Class Members" ref="functions.html">
             <section title="All" ref="functions.html">
@@ -415,6 +400,7 @@
               <section title="g" ref="functions_func_g.html" />
               <section title="h" ref="functions_func_h.html" />
               <section title="i" ref="functions_func_i.html" />
+              <section title="j" ref="functions_func_j.html" />
               <section title="m" ref="functions_func_m.html" />
               <section title="n" ref="functions_func_n.html" />
               <section title="o" ref="functions_func_o.html" />
@@ -524,6 +510,7 @@
               </section>
               <section title="Simple&lt; T, typename std::enable_if&lt; std::is_void&lt; typename T::QtGadgetHelper &gt;::value &gt;::type &gt;" ref="class_qt_rest_client_1_1_simple_3_01_t_00_01typename_01std_1_1enable__if_3_01std_1_1is__void_3_0e3917a0d7780becccdeb92e5e53ff1ab.html">
                 <section title="Simple" ref="class_qt_rest_client_1_1_simple_3_01_t_00_01typename_01std_1_1enable__if_3_01std_1_1is__void_3_0e3917a0d7780becccdeb92e5e53ff1ab.html#a4b3d03dee796d59d6e0fa8ced34f5af5" />
+                <section title="~Simple" ref="class_qt_rest_client_1_1_simple_3_01_t_00_01typename_01std_1_1enable__if_3_01std_1_1is__void_3_0e3917a0d7780becccdeb92e5e53ff1ab.html#a7d365d02989e98e81a389ac0d3423bb2" />
                 <section title="currentExtended" ref="class_qt_rest_client_1_1_simple_3_01_t_00_01typename_01std_1_1enable__if_3_01std_1_1is__void_3_0e3917a0d7780becccdeb92e5e53ff1ab.html#ad083ee68c43763afbe2aa5ce39bb4a70" />
                 <section title="extend" ref="class_qt_rest_client_1_1_simple_3_01_t_00_01typename_01std_1_1enable__if_3_01std_1_1is__void_3_0e3917a0d7780becccdeb92e5e53ff1ab.html#a4375b05cbd25bca1f38d6a46bcdcbee7" />
                 <section title="extend" ref="class_qt_rest_client_1_1_simple_3_01_t_00_01typename_01std_1_1enable__if_3_01std_1_1is__void_3_0e3917a0d7780becccdeb92e5e53ff1ab.html#ad41842d9b26f7aa6bb65691ff6841268" />
@@ -534,7 +521,6 @@
               <section title="QTRESTCLIENT_EXT_HREF_PROP" ref="simple_8h.html#adb736142c1bb37be294e576049790ef9" />
             </section>
             <section title="standardpaging.cpp" ref="standardpaging_8cpp_source.html" />
-            <section title="standardpaging.h" ref="standardpaging_8h_source.html" />
           </section>
           <section title="File Members" ref="globals.html">
             <section title="All" ref="globals.html" />
@@ -547,6 +533,7 @@
       <keyword name="CONCAT_PARAMS" id="restclass.h::CONCAT_PARAMS" ref="restclass_8h.html#af3007e82857672b1442c342ccd846035" />
       <keyword name="QTRESTCLIENT_EXT_HREF_PROP" id="simple.h::QTRESTCLIENT_EXT_HREF_PROP" ref="simple_8h.html#adb736142c1bb37be294e576049790ef9" />
       <keyword name="The QRestBuilder Tool" id="The QRestBuilder Tool" ref="generator.html" />
+      <keyword name="typedef" id="typedef" ref="classtypedef.html" />
       <keyword name="QtRestClient" id="QtRestClient" ref="namespace_qt_rest_client.html" />
       <keyword name="HeaderHash" id="QtRestClient::HeaderHash" ref="namespace_qt_rest_client.html#a7740c5315769e26058b0ddd005885bdd" />
       <keyword name="addGlobalApi" id="QtRestClient::addGlobalApi" ref="namespace_qt_rest_client.html#a78075e9bed69e0224778b083e74dd902" />
@@ -643,6 +630,7 @@
       <keyword name="customEvent" id="QObject::customEvent" ref="qobject.html#customEvent" />
       <keyword name="connectNotify" id="QObject::connectNotify" ref="qobject.html#connectNotify" />
       <keyword name="disconnectNotify" id="QObject::disconnectNotify" ref="qobject.html#disconnectNotify" />
+      <keyword name="jsonTypeName" id="QtRestClient::RestReply::jsonTypeName" ref="class_qt_rest_client_1_1_rest_reply.html#a3a7c173594d798d607faeb7657d4bda7" />
       <keyword name="autoDelete" id="QtRestClient::RestReply::autoDelete" ref="class_qt_rest_client_1_1_rest_reply.html#ae22e4e64eeefdec18bbd42f2174a750c" />
       <keyword name="objectName" id="QObject::objectName" ref="qobject.html#objectName-prop" />
       <keyword name="QtRestClient::GenericRestReply&lt; Paging&lt; DataClassType &gt;, ErrorClassType &gt;" id="QtRestClient::GenericRestReply&lt; Paging&lt; DataClassType &gt;, ErrorClassType &gt;" ref="class_qt_rest_client_1_1_generic_rest_reply_3_01_paging_3_01_data_class_type_01_4_00_01_error_class_type_01_4.html" />
@@ -735,6 +723,7 @@
       <keyword name="customEvent" id="QObject::customEvent" ref="qobject.html#customEvent" />
       <keyword name="connectNotify" id="QObject::connectNotify" ref="qobject.html#connectNotify" />
       <keyword name="disconnectNotify" id="QObject::disconnectNotify" ref="qobject.html#disconnectNotify" />
+      <keyword name="jsonTypeName" id="QtRestClient::RestReply::jsonTypeName" ref="class_qt_rest_client_1_1_rest_reply.html#a3a7c173594d798d607faeb7657d4bda7" />
       <keyword name="autoDelete" id="QtRestClient::RestReply::autoDelete" ref="class_qt_rest_client_1_1_rest_reply.html#ae22e4e64eeefdec18bbd42f2174a750c" />
       <keyword name="objectName" id="QObject::objectName" ref="qobject.html#objectName-prop" />
       <keyword name="QtRestClient::GenericRestReply&lt; QList&lt; DataClassType &gt;, ErrorClassType &gt;" id="QtRestClient::GenericRestReply&lt; QList&lt; DataClassType &gt;, ErrorClassType &gt;" ref="class_qt_rest_client_1_1_generic_rest_reply_3_01_q_list_3_01_data_class_type_01_4_00_01_error_class_type_01_4.html" />
@@ -826,6 +815,7 @@
       <keyword name="customEvent" id="QObject::customEvent" ref="qobject.html#customEvent" />
       <keyword name="connectNotify" id="QObject::connectNotify" ref="qobject.html#connectNotify" />
       <keyword name="disconnectNotify" id="QObject::disconnectNotify" ref="qobject.html#disconnectNotify" />
+      <keyword name="jsonTypeName" id="QtRestClient::RestReply::jsonTypeName" ref="class_qt_rest_client_1_1_rest_reply.html#a3a7c173594d798d607faeb7657d4bda7" />
       <keyword name="autoDelete" id="QtRestClient::RestReply::autoDelete" ref="class_qt_rest_client_1_1_rest_reply.html#ae22e4e64eeefdec18bbd42f2174a750c" />
       <keyword name="objectName" id="QObject::objectName" ref="qobject.html#objectName-prop" />
       <keyword name="QtRestClient::GenericRestReply&lt; void, ErrorClassType &gt;" id="QtRestClient::GenericRestReply&lt; void, ErrorClassType &gt;" ref="class_qt_rest_client_1_1_generic_rest_reply_3_01void_00_01_error_class_type_01_4.html" />
@@ -917,6 +907,7 @@
       <keyword name="customEvent" id="QObject::customEvent" ref="qobject.html#customEvent" />
       <keyword name="connectNotify" id="QObject::connectNotify" ref="qobject.html#connectNotify" />
       <keyword name="disconnectNotify" id="QObject::disconnectNotify" ref="qobject.html#disconnectNotify" />
+      <keyword name="jsonTypeName" id="QtRestClient::RestReply::jsonTypeName" ref="class_qt_rest_client_1_1_rest_reply.html#a3a7c173594d798d607faeb7657d4bda7" />
       <keyword name="autoDelete" id="QtRestClient::RestReply::autoDelete" ref="class_qt_rest_client_1_1_rest_reply.html#ae22e4e64eeefdec18bbd42f2174a750c" />
       <keyword name="objectName" id="QObject::objectName" ref="qobject.html#objectName-prop" />
       <keyword name="QtRestClient::IPaging" id="QtRestClient::IPaging" ref="class_qt_rest_client_1_1_i_paging.html" />
@@ -929,6 +920,7 @@
       <keyword name="hasPrevious" id="QtRestClient::IPaging::hasPrevious" ref="class_qt_rest_client_1_1_i_paging.html#a1c272c07deaac5872f5328829e169e41" />
       <keyword name="previous" id="QtRestClient::IPaging::previous" ref="class_qt_rest_client_1_1_i_paging.html#a778b02f2b9eb1075f8fe4542b2b17c0f" />
       <keyword name="properties" id="QtRestClient::IPaging::properties" ref="class_qt_rest_client_1_1_i_paging.html#acf050073ce9d50d8f7d4aeb82cb0ad45" />
+      <keyword name="originalJson" id="QtRestClient::IPaging::originalJson" ref="class_qt_rest_client_1_1_i_paging.html#af176f3b22041b25b0e045933848df047" />
       <keyword name="QtRestClient::MetaComponent&lt; T *, typename std::enable_if&lt; std::is_base_of&lt; QObject, T &gt;::value &gt;::type &gt;" id="QtRestClient::MetaComponent&lt; T *, typename std::enable_if&lt; std::is_base_of&lt; QObject, T &gt;::value &gt;::type &gt;" ref="class_qt_rest_client_1_1_meta_component_3_01_t_01_5_00_01typename_01std_1_1enable__if_3_01std_1_91f896eeadb81066402044b2ec8fef4f.html" />
       <keyword name="is_meta" id="QtRestClient::MetaComponent&lt; T *, typename std::enable_if&lt; std::is_base_of&lt; QObject, T &gt;::value &gt;::type &gt;::is_meta" ref="class_qt_rest_client_1_1_meta_component_3_01_t_01_5_00_01typename_01std_1_1enable__if_3_01std_1_91f896eeadb81066402044b2ec8fef4f.html#a790711cd005c21659fdbd1e8dd975376" />
       <keyword name="deleteLater" id="QtRestClient::MetaComponent&lt; T *, typename std::enable_if&lt; std::is_base_of&lt; QObject, T &gt;::value &gt;::type &gt;::deleteLater" ref="class_qt_rest_client_1_1_meta_component_3_01_t_01_5_00_01typename_01std_1_1enable__if_3_01std_1_91f896eeadb81066402044b2ec8fef4f.html#a7a6a0e792211a87d969c7b07d68bb97f" />
@@ -1271,6 +1263,7 @@
       <keyword name="parent" id="QObject::parent" ref="qobject.html#parent" />
       <keyword name="inherits" id="QObject::inherits" ref="qobject.html#inherits" />
       <keyword name="deleteLater" id="QObject::deleteLater" ref="qobject.html#deleteLater" />
+      <keyword name="jsonTypeName" id="QtRestClient::RestReply::jsonTypeName" ref="class_qt_rest_client_1_1_rest_reply.html#a3a7c173594d798d607faeb7657d4bda7" />
       <keyword name="autoDelete" id="QtRestClient::RestReply::autoDelete" ref="class_qt_rest_client_1_1_rest_reply.html#ae22e4e64eeefdec18bbd42f2174a750c" />
       <keyword name="objectName" id="QObject::objectName" ref="qobject.html#objectName-prop" />
       <keyword name="tr" id="QObject::tr" ref="qobject.html#tr" />
@@ -1363,26 +1356,13 @@
       <keyword name="objectName" id="QObject::objectName" ref="qobject.html#objectName-prop" />
       <keyword name="QtRestClient::Simple&lt; T, typename std::enable_if&lt; std::is_void&lt; typename T::QtGadgetHelper &gt;::value &gt;::type &gt;" id="QtRestClient::Simple&lt; T, typename std::enable_if&lt; std::is_void&lt; typename T::QtGadgetHelper &gt;::value &gt;::type &gt;" ref="class_qt_rest_client_1_1_simple_3_01_t_00_01typename_01std_1_1enable__if_3_01std_1_1is__void_3_0e3917a0d7780becccdeb92e5e53ff1ab.html" />
       <keyword name="Simple" id="QtRestClient::Simple&lt; T, typename std::enable_if&lt; std::is_void&lt; typename T::QtGadgetHelper &gt;::value &gt;::type &gt;::Simple" ref="class_qt_rest_client_1_1_simple_3_01_t_00_01typename_01std_1_1enable__if_3_01std_1_1is__void_3_0e3917a0d7780becccdeb92e5e53ff1ab.html#a4b3d03dee796d59d6e0fa8ced34f5af5" />
+      <keyword name="~Simple" id="QtRestClient::Simple&lt; T, typename std::enable_if&lt; std::is_void&lt; typename T::QtGadgetHelper &gt;::value &gt;::type &gt;::~Simple" ref="class_qt_rest_client_1_1_simple_3_01_t_00_01typename_01std_1_1enable__if_3_01std_1_1is__void_3_0e3917a0d7780becccdeb92e5e53ff1ab.html#a7d365d02989e98e81a389ac0d3423bb2" />
       <keyword name="extensionHref" id="QtRestClient::Simple&lt; T, typename std::enable_if&lt; std::is_void&lt; typename T::QtGadgetHelper &gt;::value &gt;::type &gt;::extensionHref" ref="class_qt_rest_client_1_1_simple_3_01_t_00_01typename_01std_1_1enable__if_3_01std_1_1is__void_3_0e3917a0d7780becccdeb92e5e53ff1ab.html#a4f5bea5c41f235db9adbe69f54048d69" />
       <keyword name="hasExtension" id="QtRestClient::Simple&lt; T, typename std::enable_if&lt; std::is_void&lt; typename T::QtGadgetHelper &gt;::value &gt;::type &gt;::hasExtension" ref="class_qt_rest_client_1_1_simple_3_01_t_00_01typename_01std_1_1enable__if_3_01std_1_1is__void_3_0e3917a0d7780becccdeb92e5e53ff1ab.html#af5855fdd1f3ec9fc0bc0934a7c4fe214" />
       <keyword name="isExtended" id="QtRestClient::Simple&lt; T, typename std::enable_if&lt; std::is_void&lt; typename T::QtGadgetHelper &gt;::value &gt;::type &gt;::isExtended" ref="class_qt_rest_client_1_1_simple_3_01_t_00_01typename_01std_1_1enable__if_3_01std_1_1is__void_3_0e3917a0d7780becccdeb92e5e53ff1ab.html#a6dfc124da89faa1eb79c43cf70bc5ff0" />
       <keyword name="currentExtended" id="QtRestClient::Simple&lt; T, typename std::enable_if&lt; std::is_void&lt; typename T::QtGadgetHelper &gt;::value &gt;::type &gt;::currentExtended" ref="class_qt_rest_client_1_1_simple_3_01_t_00_01typename_01std_1_1enable__if_3_01std_1_1is__void_3_0e3917a0d7780becccdeb92e5e53ff1ab.html#ad083ee68c43763afbe2aa5ce39bb4a70" />
       <keyword name="extend" id="QtRestClient::Simple&lt; T, typename std::enable_if&lt; std::is_void&lt; typename T::QtGadgetHelper &gt;::value &gt;::type &gt;::extend" ref="class_qt_rest_client_1_1_simple_3_01_t_00_01typename_01std_1_1enable__if_3_01std_1_1is__void_3_0e3917a0d7780becccdeb92e5e53ff1ab.html#a4375b05cbd25bca1f38d6a46bcdcbee7" />
       <keyword name="extend" id="QtRestClient::Simple&lt; T, typename std::enable_if&lt; std::is_void&lt; typename T::QtGadgetHelper &gt;::value &gt;::type &gt;::extend" ref="class_qt_rest_client_1_1_simple_3_01_t_00_01typename_01std_1_1enable__if_3_01std_1_1is__void_3_0e3917a0d7780becccdeb92e5e53ff1ab.html#ad41842d9b26f7aa6bb65691ff6841268" />
-      <keyword name="QtRestClient::StandardPaging" id="QtRestClient::StandardPaging" ref="class_qt_rest_client_1_1_standard_paging.html" />
-      <keyword name="StandardPaging" id="QtRestClient::StandardPaging::StandardPaging" ref="class_qt_rest_client_1_1_standard_paging.html#a6d616d6755768863eaf8c0a7b0e0f2b4" />
-      <keyword name="items" id="QtRestClient::StandardPaging::items" ref="class_qt_rest_client_1_1_standard_paging.html#a5e9f3c74e6dcaca5379236def709de2e" />
-      <keyword name="total" id="QtRestClient::StandardPaging::total" ref="class_qt_rest_client_1_1_standard_paging.html#a4814ef980cb95af752bb53ba7b537b12" />
-      <keyword name="offset" id="QtRestClient::StandardPaging::offset" ref="class_qt_rest_client_1_1_standard_paging.html#ac41b90bf9ef7dc7aa8d129723715ddf4" />
-      <keyword name="hasNext" id="QtRestClient::StandardPaging::hasNext" ref="class_qt_rest_client_1_1_standard_paging.html#a7fb30d1a5dfeb1a423749be517fbbe39" />
-      <keyword name="next" id="QtRestClient::StandardPaging::next" ref="class_qt_rest_client_1_1_standard_paging.html#aebbb9f7a42bf8783f7efa33591d17ed1" />
-      <keyword name="hasPrevious" id="QtRestClient::StandardPaging::hasPrevious" ref="class_qt_rest_client_1_1_standard_paging.html#a2e939b74d531c77f368d31b27efa58af" />
-      <keyword name="previous" id="QtRestClient::StandardPaging::previous" ref="class_qt_rest_client_1_1_standard_paging.html#af8245759ffdf0db70b0b4f6269fdc7d3" />
-      <keyword name="properties" id="QtRestClient::StandardPaging::properties" ref="class_qt_rest_client_1_1_standard_paging.html#a96b0f1ab6f0a512e83c6bfe21c1db7eb" />
-      <keyword name="~IPaging" id="QtRestClient::IPaging::~IPaging" ref="class_qt_rest_client_1_1_i_paging.html#a987ec4d85ef79dd5d97c4b52b6ac6536" />
-      <keyword name="QtRestClient::StandardPagingFactory" id="QtRestClient::StandardPagingFactory" ref="class_qt_rest_client_1_1_standard_paging_factory.html" />
-      <keyword name="createPaging" id="QtRestClient::StandardPagingFactory::createPaging" ref="class_qt_rest_client_1_1_standard_paging_factory.html#adfea829d44742cd51d679d86e47ff5ff" />
-      <keyword name="~PagingFactory" id="QtRestClient::PagingFactory::~PagingFactory" ref="class_qt_rest_client_1_1_paging_factory.html#a98d3c968fb90edad25fda606e75f919b" />
     </keywords>
     <files>
       <file>tabs.css</file>
@@ -1428,10 +1408,10 @@
       <file>restreply_8h_source.html</file>
       <file>simple_8h_source.html</file>
       <file>standardpaging_8cpp_source.html</file>
-      <file>standardpaging_8h_source.html</file>
       <file>restclass_8h.html</file>
       <file>simple_8h.html</file>
       <file>generator.html</file>
+      <file>classtypedef.html</file>
       <file>namespace_qt_rest_client.html</file>
       <file>class_qt_rest_client_1_1_generic_rest_reply.html</file>
       <file>class_qt_rest_client_1_1_generic_rest_reply.png</file>
@@ -1446,7 +1426,6 @@
       <file>class_qt_rest_client_1_1_generic_rest_reply_3_01void_00_01_error_class_type_01_4.png</file>
       <file>class_qt_rest_client_1_1_generic_rest_reply_3_01void_00_01_error_class_type_01_4-members.html</file>
       <file>class_qt_rest_client_1_1_i_paging.html</file>
-      <file>class_qt_rest_client_1_1_i_paging.png</file>
       <file>class_qt_rest_client_1_1_i_paging-members.html</file>
       <file>class_qt_rest_client_1_1_meta_component_3_01_t_01_5_00_01typename_01std_1_1enable__if_3_01std_1_91f896eeadb81066402044b2ec8fef4f.html</file>
       <file>class_qt_rest_client_1_1_meta_component_3_01_t_01_5_00_01typename_01std_1_1enable__if_3_01std_1_2f11906ae81c8440e7c6613ff3c96cfc.html</file>
@@ -1458,7 +1437,6 @@
       <file>class_qt_rest_client_1_1_paging_data.png</file>
       <file>class_qt_rest_client_1_1_paging_data-members.html</file>
       <file>class_qt_rest_client_1_1_paging_factory.html</file>
-      <file>class_qt_rest_client_1_1_paging_factory.png</file>
       <file>class_qt_rest_client_1_1_paging_factory-members.html</file>
       <file>class_qt_rest_client_1_1_request_builder.html</file>
       <file>class_qt_rest_client_1_1_request_builder-members.html</file>
@@ -1476,12 +1454,6 @@
       <file>class_qt_rest_client_1_1_simple_3_01_t_01_5_00_01typename_01std_1_1enable__if_3_01std_1_1is__bas8f9e064325d4950e1a3f6d7862103db7.html</file>
       <file>class_qt_rest_client_1_1_simple_3_01_t_00_01typename_01std_1_1enable__if_3_01std_1_1is__void_3_0e3917a0d7780becccdeb92e5e53ff1ab.html</file>
       <file>class_qt_rest_client_1_1_simple_3_01_t_00_01typename_01std_1_1enable__if_3_01std_1_1is__void_3_0434d2cbf1cd0e234e3682c76c90d7c02.html</file>
-      <file>class_qt_rest_client_1_1_standard_paging.html</file>
-      <file>class_qt_rest_client_1_1_standard_paging.png</file>
-      <file>class_qt_rest_client_1_1_standard_paging-members.html</file>
-      <file>class_qt_rest_client_1_1_standard_paging_factory.html</file>
-      <file>class_qt_rest_client_1_1_standard_paging_factory.png</file>
-      <file>class_qt_rest_client_1_1_standard_paging_factory-members.html</file>
       <file>dir_224488320b21830798b17b8a1433f8b6.html</file>
       <file>dir_68267d1309a1af8e8297ef4c3efbcdba.html</file>
       <file>index.html</file>
@@ -1526,6 +1498,7 @@
       <file>functions_func_g.html</file>
       <file>functions_func_h.html</file>
       <file>functions_func_i.html</file>
+      <file>functions_func_j.html</file>
       <file>functions_func_m.html</file>
       <file>functions_func_n.html</file>
       <file>functions_func_o.html</file>

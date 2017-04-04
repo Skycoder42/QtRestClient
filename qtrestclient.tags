@@ -354,6 +354,13 @@
       <anchor>acf050073ce9d50d8f7d4aeb82cb0ad45</anchor>
       <arglist>() const =0</arglist>
     </member>
+    <member kind="function" virtualness="pure">
+      <type>virtual QJsonObject</type>
+      <name>originalJson</name>
+      <anchorfile>class_qt_rest_client_1_1_i_paging.html</anchorfile>
+      <anchor>af176f3b22041b25b0e045933848df047</anchor>
+      <arglist>() const =0</arglist>
+    </member>
   </compound>
   <compound kind="class">
     <name>QtRestClient::MetaComponent</name>
@@ -2133,6 +2140,13 @@
       <anchor>ab972af1e6b2bf3a7c3f5f6cc6dadc2f1</anchor>
       <arglist>() const</arglist>
     </member>
+    <member kind="function" protection="protected" static="yes">
+      <type>static QByteArray</type>
+      <name>jsonTypeName</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_reply.html</anchorfile>
+      <anchor>a3a7c173594d798d607faeb7657d4bda7</anchor>
+      <arglist>(QJsonValue::Type type)</arglist>
+    </member>
     <member kind="property">
       <type>bool</type>
       <name>autoDelete</name>
@@ -2214,6 +2228,13 @@
       <anchor>a4b3d03dee796d59d6e0fa8ced34f5af5</anchor>
       <arglist>()</arglist>
     </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual</type>
+      <name>~Simple</name>
+      <anchorfile>class_qt_rest_client_1_1_simple_3_01_t_00_01typename_01std_1_1enable__if_3_01std_1_1is__void_3_0e3917a0d7780becccdeb92e5e53ff1ab.html</anchorfile>
+      <anchor>a7d365d02989e98e81a389ac0d3423bb2</anchor>
+      <arglist>()</arglist>
+    </member>
     <member kind="function" virtualness="pure">
       <type>virtual QUrl</type>
       <name>extensionHref</name>
@@ -2257,86 +2278,6 @@
       <arglist>(RestClient *client, std::function&lt; void(T, bool)&gt; extensionHandler, std::function&lt; void(RestReply *, QString, int, RestReply::ErrorType)&gt; errorHandler={}, std::function&lt; QString(ET, int)&gt; failureTransformer={})</arglist>
     </member>
   </compound>
-  <compound kind="class">
-    <name>QtRestClient::StandardPaging</name>
-    <filename>class_qt_rest_client_1_1_standard_paging.html</filename>
-    <base>QtRestClient::IPaging</base>
-    <member kind="function">
-      <type></type>
-      <name>StandardPaging</name>
-      <anchorfile>class_qt_rest_client_1_1_standard_paging.html</anchorfile>
-      <anchor>a6d616d6755768863eaf8c0a7b0e0f2b4</anchor>
-      <arglist>(const QJsonObject &amp;object)</arglist>
-    </member>
-    <member kind="function">
-      <type>QJsonArray</type>
-      <name>items</name>
-      <anchorfile>class_qt_rest_client_1_1_standard_paging.html</anchorfile>
-      <anchor>a5e9f3c74e6dcaca5379236def709de2e</anchor>
-      <arglist>() const override</arglist>
-    </member>
-    <member kind="function">
-      <type>int</type>
-      <name>total</name>
-      <anchorfile>class_qt_rest_client_1_1_standard_paging.html</anchorfile>
-      <anchor>a4814ef980cb95af752bb53ba7b537b12</anchor>
-      <arglist>() const override</arglist>
-    </member>
-    <member kind="function">
-      <type>int</type>
-      <name>offset</name>
-      <anchorfile>class_qt_rest_client_1_1_standard_paging.html</anchorfile>
-      <anchor>ac41b90bf9ef7dc7aa8d129723715ddf4</anchor>
-      <arglist>() const override</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>hasNext</name>
-      <anchorfile>class_qt_rest_client_1_1_standard_paging.html</anchorfile>
-      <anchor>a7fb30d1a5dfeb1a423749be517fbbe39</anchor>
-      <arglist>() const override</arglist>
-    </member>
-    <member kind="function">
-      <type>QUrl</type>
-      <name>next</name>
-      <anchorfile>class_qt_rest_client_1_1_standard_paging.html</anchorfile>
-      <anchor>aebbb9f7a42bf8783f7efa33591d17ed1</anchor>
-      <arglist>() const override</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>hasPrevious</name>
-      <anchorfile>class_qt_rest_client_1_1_standard_paging.html</anchorfile>
-      <anchor>a2e939b74d531c77f368d31b27efa58af</anchor>
-      <arglist>() const override</arglist>
-    </member>
-    <member kind="function">
-      <type>QUrl</type>
-      <name>previous</name>
-      <anchorfile>class_qt_rest_client_1_1_standard_paging.html</anchorfile>
-      <anchor>af8245759ffdf0db70b0b4f6269fdc7d3</anchor>
-      <arglist>() const override</arglist>
-    </member>
-    <member kind="function">
-      <type>QVariantMap</type>
-      <name>properties</name>
-      <anchorfile>class_qt_rest_client_1_1_standard_paging.html</anchorfile>
-      <anchor>a96b0f1ab6f0a512e83c6bfe21c1db7eb</anchor>
-      <arglist>() const override</arglist>
-    </member>
-  </compound>
-  <compound kind="class">
-    <name>QtRestClient::StandardPagingFactory</name>
-    <filename>class_qt_rest_client_1_1_standard_paging_factory.html</filename>
-    <base>QtRestClient::PagingFactory</base>
-    <member kind="function">
-      <type>IPaging *</type>
-      <name>createPaging</name>
-      <anchorfile>class_qt_rest_client_1_1_standard_paging_factory.html</anchorfile>
-      <anchor>adfea829d44742cd51d679d86e47ff5ff</anchor>
-      <arglist>(QJsonSerializer *serializer, const QJsonObject &amp;data) const override</arglist>
-    </member>
-  </compound>
   <compound kind="namespace">
     <name>QtRestClient</name>
     <filename>namespace_qt_rest_client.html</filename>
@@ -2358,8 +2299,6 @@
     <class kind="class">QtRestClient::Simple</class>
     <class kind="class">QtRestClient::Simple&lt; T *, typename std::enable_if&lt; std::is_base_of&lt; QObject, T &gt;::value &gt;::type &gt;</class>
     <class kind="class">QtRestClient::Simple&lt; T, typename std::enable_if&lt; std::is_void&lt; typename T::QtGadgetHelper &gt;::value &gt;::type &gt;</class>
-    <class kind="class">QtRestClient::StandardPaging</class>
-    <class kind="class">QtRestClient::StandardPagingFactory</class>
     <member kind="typedef">
       <type>QHash&lt; QByteArray, QByteArray &gt;</type>
       <name>HeaderHash</name>
@@ -2420,6 +2359,7 @@
     <docanchor file="generator" title="Generate classes">generator_doc_class</docanchor>
     <docanchor file="generator" title="Type: class">generator_doc_c_class</docanchor>
     <docanchor file="generator" title="Type: classes-object">generator_doc_c_cobj</docanchor>
+    <docanchor file="generator" title="Type: Expressions">generator_doc_expr</docanchor>
     <docanchor file="generator" title="Type: methods-object">generator_doc_c_mobj</docanchor>
     <docanchor file="generator" title="Type: param-list">generator_doc_param</docanchor>
   </compound>
@@ -2427,16 +2367,16 @@
     <name>index</name>
     <title></title>
     <filename>index</filename>
-    <docanchor file="index" title="Features">readme_label_0</docanchor>
-    <docanchor file="index" title="Usage">readme_label_1</docanchor>
-    <docanchor file="index" title="Example">readme_label_2</docanchor>
-    <docanchor file="index" title="API-Definition">readme_label_3</docanchor>
-    <docanchor file="index" title="API-Use">readme_label_4</docanchor>
-    <docanchor file="index" title="API-Generator">readme_label_5</docanchor>
-    <docanchor file="index" title="Example">readme_label_6</docanchor>
-    <docanchor file="index" title="Authentication">readme_label_7</docanchor>
-    <docanchor file="index" title="QObject Ownership">readme_label_8</docanchor>
-    <docanchor file="index" title="Download/Installation">readme_label_9</docanchor>
-    <docanchor file="index" title="Documentation">readme_label_10</docanchor>
+    <docanchor file="index" title="Features">qtrestclient_readme_label_0</docanchor>
+    <docanchor file="index" title="Download/Installation">qtrestclient_readme_label_1</docanchor>
+    <docanchor file="index" title="Usage">qtrestclient_readme_label_2</docanchor>
+    <docanchor file="index" title="Example">qtrestclient_readme_label_3</docanchor>
+    <docanchor file="index" title="API-Definition">qtrestclient_readme_label_4</docanchor>
+    <docanchor file="index" title="API-Use">qtrestclient_readme_label_5</docanchor>
+    <docanchor file="index" title="API-Generator">qtrestclient_readme_label_6</docanchor>
+    <docanchor file="index" title="Example">qtrestclient_readme_label_7</docanchor>
+    <docanchor file="index" title="Authentication">qtrestclient_readme_label_8</docanchor>
+    <docanchor file="index" title="QObject Ownership">qtrestclient_readme_label_9</docanchor>
+    <docanchor file="index" title="Documentation">qtrestclient_readme_label_10</docanchor>
   </compound>
 </tagfile>

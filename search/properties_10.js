@@ -14,6 +14,7 @@ var searchData=
   ['regexp',['regExp',['https://doc.qt.io/qt-5/qregexpvalidator.html#regExp-prop',0,'QRegExpValidator']]],
   ['regularexpression',['regularExpression',['https://doc.qt.io/qt-5/qregularexpressionvalidator.html#regularExpression-prop',0,'QRegularExpressionValidator']]],
   ['remainingtime',['remainingTime',['https://doc.qt.io/qt-5/qtimer.html#remainingTime-prop',0,'QTimer']]],
+  ['remoteurl',['remoteUrl',['https://doc.qt.io/qt-5/class_qt_data_sync_1_1_ws_authenticator.html#af042685cc0e56efcb7514ad9f5bf1578',0,'QtDataSync::WsAuthenticator']]],
   ['renderhints',['renderHints',['https://doc.qt.io/qt-5/qgraphicsview.html#renderHints-prop',0,'QGraphicsView']]],
   ['renderpolicy',['renderPolicy',['https://doc.qt.io/qt-5/qt3drender-qrendersettings.html#renderPolicy-prop',0,'Qt3DRender::QRenderSettings']]],
   ['rendertarget',['renderTarget',['https://doc.qt.io/qt-5/qquickpainteditem.html#renderTarget-prop',0,'QQuickPaintedItem']]],
@@ -38,5 +39,6 @@ var searchData=
   ['rowcount',['rowCount',['https://doc.qt.io/qt-5/qtablewidget.html#rowCount-prop',0,'QTableWidget']]],
   ['rowwrappolicy',['rowWrapPolicy',['https://doc.qt.io/qt-5/qformlayout.html#rowWrapPolicy-prop',0,'QFormLayout']]],
   ['rubberbandselectionmode',['rubberBandSelectionMode',['https://doc.qt.io/qt-5/qgraphicsview.html#rubberBandSelectionMode-prop',0,'QGraphicsView']]],
-  ['running',['running',['https://doc.qt.io/qt-5/qstatemachine.html#running-prop',0,'QStateMachine::running()'],['https://doc.qt.io/qt-5/qscxmlstatemachine.html#running-prop',0,'QScxmlStateMachine::running()']]]
+  ['runasadmin',['runAsAdmin',['https://doc.qt.io/qt-5/class_qt_auto_updater_1_1_update_controller.html#a1c5a18c8728e9803a1e3ed927f038a53',0,'QtAutoUpdater::UpdateController']]],
+  ['running',['running',['https://doc.qt.io/qt-5/class_qt_auto_updater_1_1_update_controller.html#a7fa2f115bc28f412003822cc0dfdb3d0',0,'QtAutoUpdater::UpdateController::running()'],['https://doc.qt.io/qt-5/class_qt_auto_updater_1_1_updater.html#aef607db5109f57300e47b8e35615c7fa',0,'QtAutoUpdater::Updater::running()'],['https://doc.qt.io/qt-5/qstatemachine.html#running-prop',0,'QStateMachine::running()'],['https://doc.qt.io/qt-5/qscxmlstatemachine.html#running-prop',0,'QScxmlStateMachine::running()']]]
 ];

@@ -16,6 +16,7 @@ var searchData=
   ['shadersourcetypes',['ShaderSourceTypes',['https://doc.qt.io/qt-5/qsgrendererinterface.html#ShaderSourceType-enum',0,'QSGRendererInterface']]],
   ['shadertype',['ShaderType',['https://doc.qt.io/qt-5/qopenglshader.html#ShaderTypeBit-enum',0,'QOpenGLShader']]],
   ['sharemodes',['ShareModes',['https://doc.qt.io/qt-5/qnearfieldsharemanager.html#ShareMode-enum',0,'QNearFieldShareManager']]],
+  ['size',['size',['https://doc.qt.io/qt-5/struct_qt_auto_updater_1_1_updater_1_1_update_info.html#a526ebb1045a57eefb2287906a3b82c8c',0,'QtAutoUpdater::Updater::UpdateInfo']]],
   ['size_5ftype',['size_type',['https://doc.qt.io/qt-5/qjsonarray.html#size_type-typedef',0,'QJsonArray::size_type()'],['https://doc.qt.io/qt-5/qjsonobject.html#size_type-typedef',0,'QJsonObject::size_type()'],['https://doc.qt.io/qt-5/qhash.html#size_type-typedef',0,'QHash::size_type()'],['https://doc.qt.io/qt-5/qlinkedlist.html#size_type-typedef',0,'QLinkedList::size_type()'],['https://doc.qt.io/qt-5/qlist.html#size_type-typedef',0,'QList::size_type()'],['https://doc.qt.io/qt-5/qmap.html#size_type-typedef',0,'QMap::size_type()'],['https://doc.qt.io/qt-5/qset.html#size_type-typedef',0,'QSet::size_type()'],['https://doc.qt.io/qt-5/qstring.html#size_type-typedef',0,'QString::size_type()'],['https://doc.qt.io/qt-5/qvarlengtharray.html#size_type-typedef',0,'QVarLengthArray::size_type()'],['https://doc.qt.io/qt-5/qvector.html#size_type-typedef',0,'QVector::size_type()']]],
   ['socketoptions',['SocketOptions',['https://doc.qt.io/qt-5/qlocalserver.html#SocketOption-enum',0,'QLocalServer']]],
   ['sortflags',['SortFlags',['https://doc.qt.io/qt-5/qdir.html#SortFlag-enum',0,'QDir']]],
@@ -27,5 +28,8 @@ var searchData=
   ['stepenabled',['StepEnabled',['https://doc.qt.io/qt-5/qabstractspinbox.html#StepEnabledFlag-enum',0,'QAbstractSpinBox']]],
   ['stringid',['StringId',['https://doc.qt.io/qt-5/qscxmlexecutablecontent.html#StringId-typedef',0,'QScxmlExecutableContent']]],
   ['subcontrols',['SubControls',['https://doc.qt.io/qt-5/qstyle.html#SubControl-enum',0,'QStyle']]],
-  ['subwindowoptions',['SubWindowOptions',['https://doc.qt.io/qt-5/qmdisubwindow.html#SubWindowOption-enum',0,'QMdiSubWindow']]]
+  ['subwindowoptions',['SubWindowOptions',['https://doc.qt.io/qt-5/qmdisubwindow.html#SubWindowOption-enum',0,'QMdiSubWindow']]],
+  ['synced',['Synced',['https://doc.qt.io/qt-5/class_qt_data_sync_1_1_sync_controller.html#af5fc5102475cdfa66405035c4ce6cfd3ac48c9a1220214cd3bfa2344a97693bcb',0,'QtDataSync::SyncController']]],
+  ['syncedwitherrors',['SyncedWithErrors',['https://doc.qt.io/qt-5/class_qt_data_sync_1_1_sync_controller.html#af5fc5102475cdfa66405035c4ce6cfd3ab7c1205994c9ecea584f060e23c2dfbc',0,'QtDataSync::SyncController']]],
+  ['syncing',['Syncing',['https://doc.qt.io/qt-5/class_qt_data_sync_1_1_sync_controller.html#af5fc5102475cdfa66405035c4ce6cfd3a310578a2db004c56fbd2e0cb11777b00',0,'QtDataSync::SyncController']]]
 ];

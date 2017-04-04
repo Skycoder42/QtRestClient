@@ -4,6 +4,7 @@ var searchData=
   ['capabilities',['Capabilities',['https://doc.qt.io/qt-5/qimageioplugin.html#Capability-enum',0,'QImageIOPlugin::Capabilities()'],['https://doc.qt.io/qt-5/qtouchdevice.html#CapabilityFlag-enum',0,'QTouchDevice::Capabilities()'],['https://doc.qt.io/qt-5/qnetworkconfigurationmanager.html#Capability-enum',0,'QNetworkConfigurationManager::Capabilities()'],['https://doc.qt.io/qt-5/qnetworkproxy.html#Capability-enum',0,'QNetworkProxy::Capabilities()']]],
   ['categoryfilter',['CategoryFilter',['https://doc.qt.io/qt-5/qloggingcategory.html#CategoryFilter-typedef',0,'QLoggingCategory']]],
   ['categoryfunction',['CategoryFunction',['https://doc.qt.io/qt-5/qmessagelogger.html#CategoryFunction-typedef',0,'QMessageLogger']]],
+  ['changed',['Changed',['https://doc.qt.io/qt-5/class_qt_data_sync_1_1_state_holder.html#a3ac1a05a93bb0c3b88bb3f2e04df4b11abca3cf573c55666e9c9491ea38097ae5',0,'QtDataSync::StateHolder']]],
   ['changeflags',['ChangeFlags',['https://doc.qt.io/qt-5/qgraphicseffect.html#ChangeFlag-enum',0,'QGraphicsEffect::ChangeFlags()'],['https://doc.qt.io/qt-5/qpinchgesture.html#ChangeFlag-enum',0,'QPinchGesture::ChangeFlags()'],['https://doc.qt.io/qt-5/qt3dcore-qscenechange.html#ChangeFlag-enum',0,'Qt3DCore::ChangeFlags()']]],
   ['clearfunction',['ClearFunction',['https://doc.qt.io/qt-5/qqmllistproperty.html#ClearFunction-typedef',0,'QQmlListProperty']]],
   ['clearmode',['ClearMode',['https://doc.qt.io/qt-5/qsgabstractrenderer.html#ClearModeBit-enum',0,'QSGAbstractRenderer']]],
