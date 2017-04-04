@@ -13,7 +13,9 @@ using namespace QtRestClient;
 RestClient::RestClient(QObject *parent) :
 	QObject(parent),
 	d_ptr(new RestClientPrivate(this))
-{}
+{
+	d->serializer->setAllowDefaultNull(true);
+}
 
 RestClient::~RestClient() {}
 

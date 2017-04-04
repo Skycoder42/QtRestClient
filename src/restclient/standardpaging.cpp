@@ -6,23 +6,23 @@ namespace QtRestClient {
 class StandardPagingPrivate
 {
 public:
-	StandardPagingPrivate(const QJsonObject &object);
+	StandardPagingPrivate();
 
 	int total;
 	int offset;
 	QUrl prev;
 	QUrl next;
 	QJsonArray items;
-	QVariantMap properties;
+	QJsonObject json;
 };
 
 }
 
 #define d d_ptr
 
-StandardPaging::StandardPaging(const QJsonObject &object) :
+StandardPaging::StandardPaging() :
 	IPaging(),
-	d_ptr(new StandardPagingPrivate(object))
+	d_ptr(new StandardPagingPrivate())
 {}
 
 StandardPaging::~StandardPaging() {}
@@ -64,18 +64,55 @@ QUrl StandardPaging::previous() const
 
 QVariantMap StandardPaging::properties() const
 {
-	return d->properties;
+	return QJsonValue(d->json).toVariant().toMap();
+}
+
+QJsonObject StandardPaging::originalJson() const
+{
+	return d->json;
+}
+
+void StandardPaging::setItems(const QJsonArray &items)
+{
+	d->items = items;
+}
+
+void StandardPaging::setTotal(int total)
+{
+	d->total = total;
+}
+
+void StandardPaging::setOffset(int offset)
+{
+	d->offset = offset;
+}
+
+void StandardPaging::setNext(const QUrl &next)
+{
+	d->next = next;
+}
+
+void StandardPaging::setPrevious(const QUrl &previous)
+{
+	d->prev = previous;
+}
+
+void StandardPaging::setJson(const QJsonObject &object)
+{
+	d->json = object;
 }
 
 // ------------- Factory Implementation -------------
 
-IPaging *StandardPagingFactory::createPaging(QJsonSerializer *, const QJsonObject &data) const
+IPaging *StandardPagingFactory::createPaging(QJsonSerializer *serializer, const QJsonObject &data) const
 {
 	//validate data and next only -> only ones required
 	if(!validateUrl(data[QStringLiteral("next")]) ||
 	   !data[QStringLiteral("items")].isArray())
 		throw QJsonDeserializationException("Given JSON is not a default paging object!");
-	return new StandardPaging(data);
+	auto paging = new StandardPaging(serializer->deserialize<StandardPaging>(data));
+	paging->setJson(data);
+	return paging;
 }
 
 bool StandardPagingFactory::validateUrl(const QJsonValue &value)
@@ -90,11 +127,11 @@ bool StandardPagingFactory::validateUrl(const QJsonValue &value)
 
 // ------------- Private Implementation -------------
 
-StandardPagingPrivate::StandardPagingPrivate(const QJsonObject &object) :
-	total(object[QStringLiteral("total")].toInt(INT_MAX)),
-	offset(object[QStringLiteral("offset")].toInt(-1)),
-	prev(object[QStringLiteral("previous")].isNull() ? QUrl() : object[QStringLiteral("previous")].toString()),
-	next(object[QStringLiteral("next")].isNull() ? QUrl() : object[QStringLiteral("next")].toString()),
-	items(object[QStringLiteral("items")].toArray()),
-	properties(QJsonValue(object).toVariant().toMap())
+StandardPagingPrivate::StandardPagingPrivate() :
+	total(INT_MAX),
+	offset(-1),
+	prev(),
+	next(),
+	items(),
+	json()
 {}

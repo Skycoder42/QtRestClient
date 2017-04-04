@@ -4,7 +4,7 @@
 #include "QtRestClient/qtrestclient_global.h"
 #include "QtRestClient/ipaging.h"
 
-#include <QtCore/qscopedpointer.h>
+#include <QtCore/qsharedpointer.h>
 
 namespace QtRestClient {
 
@@ -12,9 +12,19 @@ class StandardPagingPrivate;
 //! The standard implementation of IPaging
 class Q_RESTCLIENT_EXPORT StandardPaging : public IPaging
 {
+	Q_GADGET
+
+	Q_PROPERTY(QJsonArray items READ items WRITE setItems)
+	Q_PROPERTY(int total READ total WRITE setTotal)
+	Q_PROPERTY(int offset READ offset WRITE setOffset)
+	Q_PROPERTY(QUrl next READ next WRITE setNext)
+	Q_PROPERTY(QUrl previous READ previous WRITE setPrevious)
+
+	friend class StandardPagingFactory;
+
 public:
 	//! Creates a standard paging from a valid json object
-	StandardPaging(const QJsonObject &object);
+	StandardPaging();
 	~StandardPaging();
 
 	QJsonArray items() const override;
@@ -25,9 +35,17 @@ public:
 	bool hasPrevious() const override;
 	QUrl previous() const override;
 	QVariantMap properties() const override;
+	QJsonObject originalJson() const override;
 
 private:
-	QScopedPointer<StandardPagingPrivate> d_ptr;
+	QSharedPointer<StandardPagingPrivate> d_ptr;
+
+	void setItems(const QJsonArray &items);
+	void setTotal(int total);
+	void setOffset(int offset);
+	void setNext(const QUrl &next);
+	void setPrevious(const QUrl &previous);
+	void setJson(const QJsonObject &object);
 };
 
 //! The factory that creates StandardPaging pagings

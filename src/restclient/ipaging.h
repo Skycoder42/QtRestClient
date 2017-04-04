@@ -34,6 +34,8 @@ public:
 	virtual QUrl previous() const;
 	//! Returns a hash containing all properties of the original JSON
 	virtual QVariantMap properties() const = 0;
+	//! Returns the original JSON element parsed
+	virtual QJsonObject originalJson() const = 0;
 };
 
 //! An interface for a factory to create paging objects
