@@ -295,8 +295,8 @@ void ObjectBuilder::writeWriteDefinitions(bool asGadget)
 
 void ObjectBuilder::writeEqualsDefinition(bool asGadget)
 {
-	auto prefix = asGadget ? QStringLiteral("d->_") : QStringLiteral("_");
-	auto otherPrefix = (asGadget ? QStringLiteral(".") : QStringLiteral("->")) + prefix;
+    QString prefix = asGadget ? QStringLiteral("d->_") : QStringLiteral("_");
+    QString otherPrefix = (asGadget ? QStringLiteral(".") : QStringLiteral("->")) + prefix;
 	//equals
 	source << "\nbool " << className << "::" << "operator ==(const " << className << " " << (asGadget ? "&" : "*") << "other) const\n"
 		   << "{\n"
