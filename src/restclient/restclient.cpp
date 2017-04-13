@@ -152,7 +152,9 @@ void RestClient::setRequestAttributes(QHash<QNetworkRequest::Attribute, QVariant
 
 void RestClient::setModernAttributes()
 {
+#if QT_VERSION < QT_VERSION_CHECK(5, 9, 0)
 	d->attribs.insert(QNetworkRequest::FollowRedirectsAttribute, true);
+#endif
 	d->attribs.insert(QNetworkRequest::HttpPipeliningAllowedAttribute, true);
 	d->attribs.insert(QNetworkRequest::SpdyAllowedAttribute, true);
 	d->attribs.insert(QNetworkRequest::HTTP2AllowedAttribute, true);
