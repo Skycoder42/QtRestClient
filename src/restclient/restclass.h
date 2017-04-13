@@ -236,7 +236,7 @@ public:
 	//! @}
 
 private:
-	QScopedPointer<RestClassPrivate> d_ptr;
+	QScopedPointer<RestClassPrivate> d;
 
 	explicit RestClass(RestClient *client, QStringList subPath, QObject *parent);
 

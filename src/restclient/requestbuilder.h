@@ -77,7 +77,7 @@ public:
 	RequestBuilder &operator =(const RequestBuilder &other);
 
 private:
-	QSharedDataPointer<RequestBuilderPrivate> d_ptr;
+	QSharedDataPointer<RequestBuilderPrivate> d;
 };
 
 }

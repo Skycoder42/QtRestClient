@@ -18,11 +18,9 @@ public:
 
 }
 
-#define d d_ptr
-
 StandardPaging::StandardPaging() :
 	IPaging(),
-	d_ptr(new StandardPagingPrivate())
+	d(new StandardPagingPrivate())
 {}
 
 StandardPaging::~StandardPaging() {}

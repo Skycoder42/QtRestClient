@@ -123,7 +123,7 @@ Q_SIGNALS:
 	void sslConfigurationChanged(QSslConfiguration sslConfiguration, QPrivateSignal);
 
 private:
-	QScopedPointer<RestClientPrivate> d_ptr;
+	QScopedPointer<RestClientPrivate> d;
 };
 
 }

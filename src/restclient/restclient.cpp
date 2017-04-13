@@ -8,13 +8,15 @@
 #include <QtCore/QUuid>
 using namespace QtRestClient;
 
-#define d d_ptr
 
 RestClient::RestClient(QObject *parent) :
 	QObject(parent),
-	d_ptr(new RestClientPrivate(this))
+	d(new RestClientPrivate(this))
 {
 	d->serializer->setAllowDefaultNull(true);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 9, 0)
+	d->nam->setRedirectPolicy(QNetworkAccessManager::NoLessSafeRedirectPolicy);
+#endif
 }
 
 RestClient::~RestClient() {}

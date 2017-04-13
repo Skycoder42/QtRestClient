@@ -37,7 +37,7 @@ public:
 	QJsonObject originalJson() const override;
 
 private:
-	QSharedPointer<StandardPagingPrivate> d_ptr;
+	QSharedPointer<StandardPagingPrivate> d;
 
 	void setItems(const QJsonArray &items);
 	void setTotal(int total);

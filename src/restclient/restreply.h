@@ -106,7 +106,7 @@ protected:
 	static QByteArray jsonTypeName(QJsonValue::Type type);
 
 private:
-	RestReplyPrivate *d_ptr;
+	RestReplyPrivate *d;
 };
 
 }

@@ -7,11 +7,10 @@
 
 using namespace QtRestClient;
 
-#define d d_ptr
 
 RestReply::RestReply(QNetworkReply *networkReply, QObject *parent) :
 	QObject(parent),
-	d_ptr(new RestReplyPrivate(networkReply, this))
+	d(new RestReplyPrivate(networkReply, this))
 {
 	d->connectReply(networkReply);
 }
@@ -204,7 +203,7 @@ RestReplyPrivate::RestReplyPrivate(QNetworkReply *networkReply, RestReply *q_ptr
 	networkReply(networkReply),
 	autoDelete(true),
 	retryDelay(-1),
-	q_ptr(q_ptr)
+	q(q_ptr)
 {}
 
 RestReplyPrivate::~RestReplyPrivate()
@@ -220,19 +219,19 @@ void RestReplyPrivate::connectReply(QNetworkReply *reply)
 
 	//forward some signals
 	connect(reply, QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::error),
-			q_ptr, &RestReply::networkError);
+			q, &RestReply::networkError);
 	connect(reply, &QNetworkReply::sslErrors,
 			this, &RestReplyPrivate::handleSslErrors);
 	connect(reply, &QNetworkReply::downloadProgress,
-			q_ptr, &RestReply::downloadProgress);
+			q, &RestReply::downloadProgress);
 	connect(reply, &QNetworkReply::uploadProgress,
-			q_ptr, &RestReply::uploadProgress);
+			q, &RestReply::uploadProgress);
 
 	//completed signal
-	connect(q_ptr, SIGNAL(succeeded(int,QJsonValue)),
-			q_ptr, SIGNAL(completed(int,QJsonValue)));
-	connect(q_ptr, SIGNAL(failed(int,QJsonValue)),
-			q_ptr, SIGNAL(completed(int,QJsonValue)));
+	connect(q, SIGNAL(succeeded(int,QJsonValue)),
+			q, SIGNAL(completed(int,QJsonValue)));
+	connect(q, SIGNAL(failed(int,QJsonValue)),
+			q, SIGNAL(completed(int,QJsonValue)));
 }
 
 void RestReplyPrivate::replyFinished()
@@ -243,7 +242,7 @@ void RestReplyPrivate::replyFinished()
 	QJsonParseError jError;
 	auto jDoc = QJsonDocument::fromJson(readData, &jError);
 	if(jError.error != QJsonParseError::NoError && !readData.isEmpty())
-		emit q_ptr->error(jError.errorString(), jError.error, RestReply::JsonParseError, {});
+		emit q->error(jError.errorString(), jError.error, RestReply::JsonParseError, {});
 	else {
 		QJsonValue jValue;
 		if(jDoc.isObject())
@@ -254,12 +253,12 @@ void RestReplyPrivate::replyFinished()
 		//check "http errors", becaus they can have data
 		auto status = networkReply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
 		if(status >= 300)//errors begin at 300
-			emit q_ptr->failed(status, jValue, {});
+			emit q->failed(status, jValue, {});
 		else {//now network errors
 			if(networkReply->error() != QNetworkReply::NoError)
-				emit q_ptr->error(networkReply->errorString(), networkReply->error(), RestReply::NetworkError, {});
+				emit q->error(networkReply->errorString(), networkReply->error(), RestReply::NetworkError, {});
 			else {//no errors, completed!
-				emit q_ptr->succeeded(status, jValue, {});
+				emit q->succeeded(status, jValue, {});
 				retryDelay = -1;
 			}
 		}
@@ -272,13 +271,13 @@ void RestReplyPrivate::replyFinished()
 		QTimer::singleShot(retryDelay, Qt::PreciseTimer, this, &RestReplyPrivate::retryReply);
 		retryDelay = -1;
 	} else if(autoDelete)
-		q_ptr->deleteLater();
+		q->deleteLater();
 }
 
 void RestReplyPrivate::handleSslErrors(const QList<QSslError> &errors)
 {
 	bool ignore = false;
-	emit q_ptr->sslErrors(errors, ignore);
+	emit q->sslErrors(errors, ignore);
 	if(ignore)
 		networkReply->ignoreSslErrors(errors);
 }

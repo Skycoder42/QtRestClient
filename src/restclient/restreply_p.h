@@ -35,7 +35,7 @@ private Q_SLOTS:
 	void retryReply();
 
 private:
-	RestReply *q_ptr;
+	RestReply *q;
 };
 
 }

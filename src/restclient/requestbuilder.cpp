@@ -68,14 +68,12 @@ QByteArray RequestBuilderPrivate::ContentType = "Content-Type";
 QByteArray RequestBuilderPrivate::ContentTypeJson = "application/json";
 }
 
-#define d d_ptr
-
 RequestBuilder::RequestBuilder(const QUrl &baseUrl, QNetworkAccessManager *nam) :
-	d_ptr(new RequestBuilderPrivate(baseUrl, nam))
+	d(new RequestBuilderPrivate(baseUrl, nam))
 {}
 
 RequestBuilder::RequestBuilder(const RequestBuilder &other) :
-	d_ptr(other.d_ptr)
+	d(other.d)
 {}
 
 RequestBuilder::~RequestBuilder() {}
@@ -264,6 +262,6 @@ QNetworkReply *RequestBuilder::send() const
 
 RequestBuilder &RequestBuilder::operator =(const RequestBuilder &other)
 {
-	d_ptr = other.d_ptr;
+	d = other.d;
 	return *this;
 }
