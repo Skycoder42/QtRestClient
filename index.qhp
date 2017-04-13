@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <QtHelpProject version="1.0">
-  <namespace>de.skycoder42.qtrestclient.120</namespace>
+  <namespace>de.skycoder42.qtrestclient.121</namespace>
   <virtualFolder>doc_qtrestclient</virtualFolder>
-  <customFilter name="RestClient 1.2.0">
+  <customFilter name="RestClient 1.2.1">
     <filterAttribute>qtrestclient</filterAttribute>
-    <filterAttribute>1.2.0</filterAttribute>
+    <filterAttribute>1.2.1</filterAttribute>
   </customFilter>
   <filterSection>
     <filterAttribute>doxygen</filterAttribute>
     <toc>
-      <section title="QtRestClient 1.2.0" ref="index.html">
+      <section title="QtRestClient 1.2.1" ref="index.html">
         <section title="Features" ref="index.html#qtrestclient_readme_label_0" />
         <section title="Download/Installation" ref="index.html#qtrestclient_readme_label_1" />
         <section title="Usage" ref="index.html#qtrestclient_readme_label_2">

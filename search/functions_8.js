@@ -548,6 +548,7 @@ var searchData=
   ['isrelative',['isRelative',['https://doc.qt.io/qt-5/qdir.html#isRelative',0,'QDir::isRelative()'],['https://doc.qt.io/qt-5/qfileinfo.html#isRelative',0,'QFileInfo::isRelative()'],['https://doc.qt.io/qt-5/qurl.html#isRelative',0,'QUrl::isRelative()']]],
   ['isrelativepath',['isRelativePath',['https://doc.qt.io/qt-5/qdir.html#isRelativePath',0,'QDir']]],
   ['isremote',['isRemote',['https://doc.qt.io/qt-5/qprinterinfo.html#isRemote',0,'QPrinterInfo']]],
+  ['isremoteenabled',['isRemoteEnabled',['https://doc.qt.io/qt-5/class_qt_data_sync_1_1_ws_authenticator.html#a9b53b7d7a035ae5cc999732ed3f9196e',0,'QtDataSync::WsAuthenticator']]],
   ['isresettable',['isResettable',['https://doc.qt.io/qt-5/qqmlproperty.html#isResettable',0,'QQmlProperty::isResettable()'],['https://doc.qt.io/qt-5/qmetaproperty.html#isResettable',0,'QMetaProperty::isResettable()']]],
   ['isresultavailable',['isResultAvailable',['https://doc.qt.io/qt-5/qopengltimerquery.html#isResultAvailable',0,'QOpenGLTimerQuery::isResultAvailable()'],['https://doc.qt.io/qt-5/qopengltimemonitor.html#isResultAvailable',0,'QOpenGLTimeMonitor::isResultAvailable()']]],
   ['isresultreadyat',['isResultReadyAt',['https://doc.qt.io/qt-5/qfuture.html#isResultReadyAt',0,'QFuture']]],

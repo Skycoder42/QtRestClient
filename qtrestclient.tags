@@ -2,7 +2,7 @@
 <tagfile>
   <compound kind="file">
     <name>restclass.h</name>
-    <path>/home/sky/Programming/QtProjects/QtRestClient/src/restclient/</path>
+    <path>/home/sky/Programming/QtLibraries/QtRestClient/src/restclient/</path>
     <filename>restclass_8h</filename>
     <class kind="class">QtRestClient::RestClass</class>
     <namespace>QtRestClient</namespace>
@@ -16,7 +16,7 @@
   </compound>
   <compound kind="file">
     <name>simple.h</name>
-    <path>/home/sky/Programming/QtProjects/QtRestClient/src/restclient/</path>
+    <path>/home/sky/Programming/QtLibraries/QtRestClient/src/restclient/</path>
     <filename>simple_8h</filename>
     <class kind="class">QtRestClient::Simple</class>
     <class kind="class">QtRestClient::Simple&lt; T *, typename std::enable_if&lt; std::is_base_of&lt; QObject, T &gt;::value &gt;::type &gt;</class>

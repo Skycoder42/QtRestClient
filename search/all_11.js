@@ -1234,7 +1234,7 @@ var searchData=
   ['qtapreading',['QTapReading',['https://doc.qt.io/qt-5/qtapreading.html',0,'']]],
   ['qtapsensor',['QTapSensor',['https://doc.qt.io/qt-5/qtapsensor.html',0,'QTapSensor'],['https://doc.qt.io/qt-5/qtapsensor.html#QTapSensor',0,'QTapSensor::QTapSensor()']]],
   ['qtautoupdater',['QtAutoUpdater',['https://doc.qt.io/qt-5/namespace_qt_auto_updater.html',0,'']]],
-  ['qtbackgroundprocess',['QtBackgroundProcess',['https://doc.qt.io/qt-5/class_qt_background_process_1_1_app.html',0,'']]],
+  ['qtbackgroundprocess',['QtBackgroundProcess',['https://doc.qt.io/qt-5/namespace_qt_background_process.html',0,'']]],
   ['qtbluetooth_2ebluetoothdiscoverymodel',['QtBluetooth.BluetoothDiscoveryModel',['https://doc.qt.io/qt-5/qml-qtbluetooth-bluetoothdiscoverymodel.html',0,'']]],
   ['qtbluetooth_2ebluetoothservice',['QtBluetooth.BluetoothService',['https://doc.qt.io/qt-5/qml-qtbluetooth-bluetoothservice.html',0,'']]],
   ['qtbluetooth_2ebluetoothsocket',['QtBluetooth.BluetoothSocket',['https://doc.qt.io/qt-5/qml-qtbluetooth-bluetoothsocket.html',0,'']]],
