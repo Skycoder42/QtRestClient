@@ -1,5 +1,5 @@
-#ifndef SIMPLEBASE_H
-#define SIMPLEBASE_H
+#ifndef QTRESTCLIENT_SIMPLEBASE_H
+#define QTRESTCLIENT_SIMPLEBASE_H
 
 #include "QtRestClient/qtrestclient_global.h"
 #include "QtRestClient/genericrestreply.h"
@@ -234,5 +234,5 @@ void Simple<T, typename std::enable_if<std::is_void<typename T::QtGadgetHelper>:
 
 }
 
-#endif // SIMPLEBASE_H
+#endif // QTRESTCLIENT_SIMPLEBASE_H
 //! @file

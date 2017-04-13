@@ -1,5 +1,5 @@
-#ifndef QRESTCLIENT_P_H
-#define QRESTCLIENT_P_H
+#ifndef QTRESTCLIENT_QRESTCLIENT_P_H
+#define QTRESTCLIENT_QRESTCLIENT_P_H
 
 #include <QtJsonSerializer/QJsonSerializer>
 #include "restclient.h"
@@ -31,4 +31,4 @@ public:
 
 }
 
-#endif // QRESTCLIENT_P_H
+#endif // QTRESTCLIENT_QRESTCLIENT_P_H

@@ -1,5 +1,5 @@
-#ifndef GENERICRESTREPLY_H
-#define GENERICRESTREPLY_H
+#ifndef QTRESTCLIENT_GENERICRESTREPLY_H
+#define QTRESTCLIENT_GENERICRESTREPLY_H
 
 #include "QtRestClient/qtrestclient_global.h"
 #include "QtRestClient/restclient.h"
@@ -555,4 +555,4 @@ GenericRestReply<Paging<DataClassType>, ErrorClassType> *GenericRestReply<Paging
 
 }
 
-#endif // GENERICRESTREPLY_H
+#endif // QTRESTCLIENT_GENERICRESTREPLY_H

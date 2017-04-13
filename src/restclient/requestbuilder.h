@@ -1,5 +1,5 @@
-#ifndef REQUESTBUILDER_H
-#define REQUESTBUILDER_H
+#ifndef QTRESTCLIENT_REQUESTBUILDER_H
+#define QTRESTCLIENT_REQUESTBUILDER_H
 
 #include "QtRestClient/qtrestclient_global.h"
 
@@ -82,4 +82,4 @@ private:
 
 }
 
-#endif // REQUESTBUILDER_H
+#endif // QTRESTCLIENT_REQUESTBUILDER_H

@@ -1,5 +1,5 @@
-#ifndef IPAGING_H
-#define IPAGING_H
+#ifndef QTRESTCLIENT_IPAGING_H
+#define QTRESTCLIENT_IPAGING_H
 
 #include "QtRestClient/qtrestclient_global.h"
 
@@ -51,4 +51,4 @@ public:
 
 }
 
-#endif // IPAGING_H
+#endif // QTRESTCLIENT_IPAGING_H

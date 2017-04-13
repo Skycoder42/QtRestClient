@@ -1,5 +1,5 @@
-#ifndef RESTCLASS_P_H
-#define RESTCLASS_P_H
+#ifndef QTRESTCLIENT_RESTCLASS_P_H
+#define QTRESTCLIENT_RESTCLASS_P_H
 
 #include "restclass.h"
 
@@ -18,4 +18,4 @@ public:
 
 }
 
-#endif // RESTCLASS_P_H
+#endif // QTRESTCLIENT_RESTCLASS_P_H

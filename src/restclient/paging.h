@@ -1,5 +1,5 @@
-#ifndef PAGING_H
-#define PAGING_H
+#ifndef QTRESTCLIENT_PAGING_H
+#define QTRESTCLIENT_PAGING_H
 
 #include "QtRestClient/paging_fwd.h"
 #include "QtRestClient/genericrestreply.h"
@@ -259,4 +259,4 @@ PagingData<T>::PagingData(const PagingData &other) :
 
 }
 
-#endif // PAGING_H
+#endif // QTRESTCLIENT_PAGING_H

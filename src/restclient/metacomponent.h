@@ -1,5 +1,5 @@
-#ifndef METACOMPONENT_H
-#define METACOMPONENT_H
+#ifndef QTRESTCLIENT_METACOMPONENT_H
+#define QTRESTCLIENT_METACOMPONENT_H
 
 #include "QtRestClient/qtrestclient_global.h"
 
@@ -53,4 +53,4 @@ public:
 
 }
 
-#endif // METACOMPONENT_H
+#endif // QTRESTCLIENT_METACOMPONENT_H

@@ -1,5 +1,5 @@
-#ifndef RESTREPLY_P_H
-#define RESTREPLY_P_H
+#ifndef QTRESTCLIENT_RESTREPLY_P_H
+#define QTRESTCLIENT_RESTREPLY_P_H
 
 #include "restreply.h"
 
@@ -40,4 +40,4 @@ private:
 
 }
 
-#endif // RESTREPLY_P_H
+#endif // QTRESTCLIENT_RESTREPLY_P_H

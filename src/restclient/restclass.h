@@ -1,5 +1,5 @@
-#ifndef RESTCLASS_H
-#define RESTCLASS_H
+#ifndef QTRESTCLIENT_RESTCLASS_H
+#define QTRESTCLIENT_RESTCLASS_H
 
 #include "QtRestClient/qtrestclient_global.h"
 #include "QtRestClient/requestbuilder.h"
@@ -374,5 +374,5 @@ QVariantHash RestClass::concatParams(QString key, QVariant value, Args... parame
 
 }
 
-#endif // RESTCLASS_H
+#endif // QTRESTCLIENT_RESTCLASS_H
 //! @file

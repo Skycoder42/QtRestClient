@@ -1,5 +1,5 @@
-#ifndef RESTCLIENT_H
-#define RESTCLIENT_H
+#ifndef QTRESTCLIENT_RESTCLIENT_H
+#define QTRESTCLIENT_RESTCLIENT_H
 
 #include "QtRestClient/qtrestclient_global.h"
 #include "QtRestClient/requestbuilder.h"
@@ -128,4 +128,4 @@ private:
 
 }
 
-#endif // RESTCLIENT_H
+#endif // QTRESTCLIENT_RESTCLIENT_H

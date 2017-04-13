@@ -1,5 +1,5 @@
-#ifndef STANDARDPAGING_P_H
-#define STANDARDPAGING_P_H
+#ifndef QTRESTCLIENT_STANDARDPAGING_P_H
+#define QTRESTCLIENT_STANDARDPAGING_P_H
 
 #include "QtRestClient/qtrestclient_global.h"
 #include "QtRestClient/ipaging.h"
@@ -58,4 +58,4 @@ private:
 
 }
 
-#endif // STANDARDPAGING_P_H
+#endif // QTRESTCLIENT_STANDARDPAGING_P_H

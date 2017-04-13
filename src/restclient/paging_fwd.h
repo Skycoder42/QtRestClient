@@ -1,5 +1,5 @@
-#ifndef PAGING_FWD_H
-#define PAGING_FWD_H
+#ifndef QTRESTCLIENT_PAGING_FWD_H
+#define QTRESTCLIENT_PAGING_FWD_H
 
 #include "QtRestClient/qtrestclient_global.h"
 
@@ -92,4 +92,4 @@ private:
 
 }
 
-#endif // PAGING_FWD_H
+#endif // QTRESTCLIENT_PAGING_FWD_H

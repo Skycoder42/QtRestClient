@@ -1,5 +1,5 @@
-#ifndef RESTREPLY_H
-#define RESTREPLY_H
+#ifndef QTRESTCLIENT_RESTREPLY_H
+#define QTRESTCLIENT_RESTREPLY_H
 
 #include "QtRestClient/qtrestclient_global.h"
 
@@ -111,4 +111,4 @@ private:
 
 }
 
-#endif // RESTREPLY_H
+#endif // QTRESTCLIENT_RESTREPLY_H
