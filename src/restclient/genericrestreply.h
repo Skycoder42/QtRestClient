@@ -363,7 +363,7 @@ GenericRestReply<QList<DataClassType>, ErrorClassType> *GenericRestReply<QList<D
 		try {
 			if(!value.isArray())
 				throw QJsonDeserializationException("Expected JSON array but got " + jsonTypeName(value.type()));
-			handler(code, client->serializer()->deserialize<DataClassType>(value.toArray()));
+			handler(code, client->serializer()->deserialize<QList<DataClassType>>(value.toArray()));
 		} catch(QJsonSerializerException &e) {
 			if(exceptionHandler)
 				exceptionHandler(e);
@@ -454,7 +454,7 @@ GenericRestReply<Paging<DataClassType>, ErrorClassType> *GenericRestReply<Paging
 			if(!value.isObject())
 				throw QJsonDeserializationException("Expected JSON object but got " + jsonTypeName(value.type()));
 			auto iPaging = client->pagingFactory()->createPaging(client->serializer(), value.toObject());
-			auto data = client->serializer()->deserialize<DataClassType>(iPaging->items());
+			auto data = client->serializer()->deserialize<QList<DataClassType>>(iPaging->items());
 			handler(code, Paging<DataClassType>(iPaging, data, client));
 		} catch(QJsonSerializerException &e) {
 			if(exceptionHandler)
