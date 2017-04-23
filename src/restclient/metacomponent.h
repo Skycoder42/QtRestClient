@@ -13,10 +13,8 @@ class MetaComponent
 {
 public:
 #if !defined(Q_OS_WIN) || defined(__MINGW32__)
-	//! Member to test if the meto component has a metaobject
+	//! Member to test if the component has a metaobject
 	typedef std::false_type is_meta;
-#else //Static assert does not seem to work for windows -> disable it -_-
-	typedef std::true_type is_meta;
 #endif
 };
 
