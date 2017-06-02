@@ -3,7 +3,6 @@ var searchData=
   ['id',['Id',['https://doc.qt.io/qt-5/qaccessible.html#Id-typedef',0,'QAccessible']]],
   ['imageconversionflags',['ImageConversionFlags',['https://doc.qt.io/qt-5/qt.html#ImageConversionFlag-enum',0,'Qt']]],
   ['infoflags',['InfoFlags',['https://doc.qt.io/qt-5/qtouchevent-touchpoint.html#InfoFlag-enum',0,'QTouchEvent::TouchPoint']]],
-  ['infolevel',['InfoLevel',['https://doc.qt.io/qt-5/class_qt_auto_updater_1_1_update_controller.html#a3c3df76116942329e05f639e60bbf5a2a43b3e1289758645dc665b719f0742227',0,'QtAutoUpdater::UpdateController']]],
   ['inputdialogoptions',['InputDialogOptions',['https://doc.qt.io/qt-5/qinputdialog.html#InputDialogOption-enum',0,'QInputDialog']]],
   ['inputmethodhints',['InputMethodHints',['https://doc.qt.io/qt-5/qt.html#InputMethodHint-enum',0,'Qt']]],
   ['inputmethodqueries',['InputMethodQueries',['https://doc.qt.io/qt-5/qt.html#InputMethodQuery-enum',0,'Qt']]],

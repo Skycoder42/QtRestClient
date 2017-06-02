@@ -23,7 +23,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">QtRestClient
-   &#160;<span id="projectnumber">1.2.2</span>
+   &#160;<span id="projectnumber">1.2.3</span>
    </div>
    <div id="projectbrief">A library for generic JSON-based REST-APIs, with a mechanism to map JSON to Qt objects</div>
   </td>
@@ -111,7 +111,7 @@ Project file setup</h2>
 <p>In order to use the tool as custom compiler, the features needs to be loaded. This is done by putting </p><div class="fragment"><div class="line">load(qrestbuilder)</div></div><!-- fragment --><p>Into your pro file.</p>
 <p>Once that is done, you can simply create the JSON files and add the to the pro file using </p><div class="fragment"><div class="line">REST_API_OBJECTS += # for objects</div><div class="line">REST_API_CLASSES += # for classes</div></div><!-- fragment --><h2><a class="anchor" id="generator_doc_object"></a>
 Generate objects</h2>
-<p>Objects are added to the pro file by using the <code>REST_API_OBJECTS</code> variable. An object is simply a "data type" class. It will be generated with a bunch of properties (Q_PROPERTY), and methods to access them. They are generated in an optimized way, an can be used by the rest client as data classes. It allows a simple, fast and easy creation of those objects. You can generate them in two ways: As a Q_GADGET or a <a class="elRef" target="_blank" doxygen="/home/sky/Qt/Docs/Qt-5.8/qtcore/qtcore.tags:https://doc.qt.io/qt-5/" href="https://doc.qt.io/qt-5/qobject.html">QObject</a>. The gadget has the advantage of beeing a value type and using shared data, but on the other side does not really allow inheritance and does not support change signals or dynamic properties, which the <a class="elRef" target="_blank" doxygen="/home/sky/Qt/Docs/Qt-5.8/qtcore/qtcore.tags:https://doc.qt.io/qt-5/" href="https://doc.qt.io/qt-5/qobject.html">QObject</a> classes do.</p>
+<p>Objects are added to the pro file by using the <code>REST_API_OBJECTS</code> variable. An object is simply a "data type" class. It will be generated with a bunch of properties (Q_PROPERTY), and methods to access them. They are generated in an optimized way, an can be used by the rest client as data classes. It allows a simple, fast and easy creation of those objects. You can generate them in two ways: As a Q_GADGET or a <a class="elRef" target="_blank" doxygen="/home/sky/Qt/Docs/Qt-5.9/qtcore/qtcore.tags:https://doc.qt.io/qt-5/" href="https://doc.qt.io/qt-5/qobject.html">QObject</a>. The gadget has the advantage of beeing a value type and using shared data, but on the other side does not really allow inheritance and does not support change signals or dynamic properties, which the <a class="elRef" target="_blank" doxygen="/home/sky/Qt/Docs/Qt-5.9/qtcore/qtcore.tags:https://doc.qt.io/qt-5/" href="https://doc.qt.io/qt-5/qobject.html">QObject</a> classes do.</p>
 <p>Your JSON files will need to have the following structure:</p>
 <h3><a class="anchor" id="generator_doc_o_object"></a>
 Type: object</h3>
@@ -122,7 +122,7 @@ Type: object</h3>
 <tr>
 <td>$name </td><td>any valid c++ class name </td><td>file name </td><td>The class name of the generated class </td></tr>
 <tr>
-<td>$type </td><td>"gadget", "object" </td><td>"gadget" </td><td>Define the type of class to generate - Q_GADGET or <a class="elRef" target="_blank" doxygen="/home/sky/Qt/Docs/Qt-5.8/qtcore/qtcore.tags:https://doc.qt.io/qt-5/" href="https://doc.qt.io/qt-5/qobject.html">QObject</a> </td></tr>
+<td>$type </td><td>"gadget", "object" </td><td>"gadget" </td><td>Define the type of class to generate - Q_GADGET or <a class="elRef" target="_blank" doxygen="/home/sky/Qt/Docs/Qt-5.9/qtcore/qtcore.tags:https://doc.qt.io/qt-5/" href="https://doc.qt.io/qt-5/qobject.html">QObject</a> </td></tr>
 <tr>
 <td>$includes </td><td>list of strings </td><td>[] </td><td>Specify a list of includes for the header file.<br />
 By default, the are included with <code>&lt;...&gt;</code>. To include as <code>"..."</code>, prepend "&amp;gt;" to the include.<br />
@@ -145,7 +145,7 @@ This can fail if a used type does not have equality operators. </td></tr>
 </table>
 <h4><a class="anchor" id="generator_doc_o_props"></a>
 Object Properties</h4>
-<p>You can basically specify <b>any</b> property in the object. Anything that does not start with a <code>$</code> is interpret as a property for the generated object. For each such property, the key will be the name of the property in the object, and the value is a string containing the properties type. All default types and <a class="elRef" target="_blank" doxygen="/home/sky/Qt/Docs/Qt-5.8/qtcore/qtcore.tags:https://doc.qt.io/qt-5/" href="https://doc.qt.io/qt-5/qstring.html">QString</a> are available by default, for other types, you will have to add includes.</p>
+<p>You can basically specify <b>any</b> property in the object. Anything that does not start with a <code>$</code> is interpret as a property for the generated object. For each such property, the key will be the name of the property in the object, and the value is a string containing the properties type. All default types and <a class="elRef" target="_blank" doxygen="/home/sky/Qt/Docs/Qt-5.9/qtcore/qtcore.tags:https://doc.qt.io/qt-5/" href="https://doc.qt.io/qt-5/qstring.html">QString</a> are available by default, for other types, you will have to add includes.</p>
 <p>Here is an example of a few properties: </p><div class="fragment"><div class="line">{</div><div class="line">    &quot;$includes&quot;: [&quot;QDateTime&quot;],</div><div class="line">    &quot;id&quot;: &quot;int&quot;,</div><div class="line">    &quot;name&quot;: &quot;QString&quot;,</div><div class="line">    &quot;date&quot;: &quot;QDateTime&quot;</div><div class="line">}</div></div><!-- fragment --><h3><a class="anchor" id="generator_doc_o_enum"></a>
 Type: enum-object</h3>
 <p>If you want to use custom enum types in you class, use this object. It allows you to add key-value pairs of enums. The key is the name of the enum in the generated c++ class. The value can either be an <a href="#generator_doc_o_enum_value">enum-value-list</a> or an <a href="#generator_doc_o_enum_obj">enum</a>.</p>
@@ -162,7 +162,7 @@ Type: enum</h4>
 <tr>
 <th>Name </th><th>Allowed values </th><th>Default/Required </th><th>Description  </th></tr>
 <tr>
-<td>isFlags </td><td>bool </td><td>false </td><td>If set to true, a <a class="elRef" target="_blank" doxygen="/home/sky/Qt/Docs/Qt-5.8/qtcore/qtcore.tags:https://doc.qt.io/qt-5/" href="https://doc.qt.io/qt-5/qflags.html">QFlags</a> type will be generated </td></tr>
+<td>isFlags </td><td>bool </td><td>false </td><td>If set to true, a <a class="elRef" target="_blank" doxygen="/home/sky/Qt/Docs/Qt-5.9/qtcore/qtcore.tags:https://doc.qt.io/qt-5/" href="https://doc.qt.io/qt-5/qflags.html">QFlags</a> type will be generated </td></tr>
 <tr>
 <td>base </td><td>name of a valid enum parent class </td><td>none (compiler default) </td><td>If you need a custom base, use this property </td></tr>
 <tr>
@@ -247,7 +247,7 @@ Type: methods-object</h3>
 <tr>
 <td>pathParams </td><td><a href="#generator_doc_param">param-list</a> </td><td>[] </td><td>A list of parameters, where each parameter becomes a segment, appended to the requests path. See <a href="#generator_doc_param">Type: param-list</a> </td></tr>
 <tr>
-<td>parameters </td><td><a href="#generator_doc_param">param-list</a> </td><td>[] </td><td>A list of parameters, added as <a class="elRef" target="_blank" doxygen="/home/sky/Qt/Docs/Qt-5.8/qtcore/qtcore.tags:https://doc.qt.io/qt-5/" href="https://doc.qt.io/qt-5/qurlquery.html">QUrlQuery</a> parameters. See <a href="#generator_doc_param">Type: param-list</a> </td></tr>
+<td>parameters </td><td><a href="#generator_doc_param">param-list</a> </td><td>[] </td><td>A list of parameters, added as <a class="elRef" target="_blank" doxygen="/home/sky/Qt/Docs/Qt-5.9/qtcore/qtcore.tags:https://doc.qt.io/qt-5/" href="https://doc.qt.io/qt-5/qurlquery.html">QUrlQuery</a> parameters. See <a href="#generator_doc_param">Type: param-list</a> </td></tr>
 <tr>
 <td>headers </td><td>object </td><td>{} </td><td>Headers in key-value format. Will be added as additional HTTP-Headers, UTF-8 encoded. Values are of type <a href="#generator_doc_expr">expression</a> </td></tr>
 <tr>
@@ -258,11 +258,11 @@ Type: methods-object</h3>
 <p>If neither <code>path</code> nor <code>url</code> are specified, the request will use the classes path without modifications</p>
 <h3><a class="anchor" id="generator_doc_param"></a>
 Type: param-list</h3>
-<p>In order to specify parameters, that are added to the method in the same order they have been specified, a param-list is used. It's a list of strings, were each string has the format <code>&lt;name&gt;;&lt;type&gt;[;&lt;default&gt;]</code>. The name will be the name of the parameter, and type it's type. Please note that the type must be convertible to string via <a class="elRef" target="_blank" doxygen="/home/sky/Qt/Docs/Qt-5.8/qtcore/qtcore.tags:https://doc.qt.io/qt-5/" href="https://doc.qt.io/qt-5/qvariant.html">QVariant</a>. The default part is optional, and ca be used to provide a default argument for the parameter. Please note that the rules of default arguments of C++ apply here. See <a href="http://en.cppreference.com/w/cpp/language/default_arguments">http://en.cppreference.com/w/cpp/language/default_arguments</a></p>
+<p>In order to specify parameters, that are added to the method in the same order they have been specified, a param-list is used. It's a list of strings, were each string has the format <code>&lt;name&gt;;&lt;type&gt;[;&lt;default&gt;]</code>. The name will be the name of the parameter, and type it's type. Please note that the type must be convertible to string via <a class="elRef" target="_blank" doxygen="/home/sky/Qt/Docs/Qt-5.9/qtcore/qtcore.tags:https://doc.qt.io/qt-5/" href="https://doc.qt.io/qt-5/qvariant.html">QVariant</a>. The default part is optional, and ca be used to provide a default argument for the parameter. Please note that the rules of default arguments of C++ apply here. See <a href="http://en.cppreference.com/w/cpp/language/default_arguments">http://en.cppreference.com/w/cpp/language/default_arguments</a></p>
 <p>The following snippet shows an example of such parameters: </p><div class="fragment"><div class="line">{</div><div class="line">    &quot;include&quot;: [&quot;QDateTime&quot;, ...]</div><div class="line">    &quot;parameters&quot;: [</div><div class="line">        &quot;id;int&quot;,</div><div class="line">        &quot;name;QString&quot;,</div><div class="line">        &quot;date;QDateTime&quot;</div><div class="line">    ]</div><div class="line">}</div></div><!-- fragment --> </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sun Apr 23 2017 18:23:19 for QtRestClient by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Jun 2 2017 22:26:01 for QtRestClient by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.13
 </small></address>

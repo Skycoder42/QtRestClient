@@ -1,15 +1,12 @@
 var searchData=
 [
-  ['record',['Record',['https://doc.qt.io/qt-5/qndeffilter-record.html',0,'QNdefFilter']]],
-  ['remoteconnector',['RemoteConnector',['https://doc.qt.io/qt-5/class_qt_data_sync_1_1_remote_connector.html',0,'QtDataSync']]],
-  ['renderer',['Renderer',['https://doc.qt.io/qt-5/qquickframebufferobject-renderer.html',0,'QQuickFramebufferObject']]],
-  ['renderstate',['RenderState',['https://doc.qt.io/qt-5/qsgmaterialshader-renderstate.html',0,'QSGMaterialShader::RenderState'],['https://doc.qt.io/qt-5/qsgrendernode-renderstate.html',0,'QSGRenderNode::RenderState'],['https://doc.qt.io/qt-5/qml-renderstate.html',0,'RenderState']]],
-  ['rendertarget',['RenderTarget',['https://doc.qt.io/qt-5/qml-rendertarget.html',0,'']]],
-  ['rendertargetoutput',['RenderTargetOutput',['https://doc.qt.io/qt-5/qml-rendertargetoutput.html',0,'']]],
-  ['requestbuilder',['RequestBuilder',['../class_qt_rest_client_1_1_request_builder.html',1,'QtRestClient']]],
-  ['requestid',['RequestId',['https://doc.qt.io/qt-5/qnearfieldtarget-requestid.html',0,'QNearFieldTarget']]],
-  ['requestidprivate',['RequestIdPrivate',['https://doc.qt.io/qt-5/qnearfieldtarget-requestidprivate.html',0,'QNearFieldTarget']]],
-  ['restclass',['RestClass',['../class_qt_rest_client_1_1_rest_class.html',1,'QtRestClient']]],
-  ['restclient',['RestClient',['../class_qt_rest_client_1_1_rest_client.html',1,'QtRestClient']]],
-  ['restreply',['RestReply',['../class_qt_rest_client_1_1_rest_reply.html',1,'QtRestClient']]]
+  ['scaledpixmapargument',['ScaledPixmapArgument',['https://doc.qt.io/qt-5/qiconengine-scaledpixmapargument.html',0,'QIconEngine']]],
+  ['selection',['Selection',['https://doc.qt.io/qt-5/qabstracttextdocumentlayout-selection.html',0,'QAbstractTextDocumentLayout']]],
+  ['sequence',['Sequence',['https://doc.qt.io/qt-5/qbluetoothserviceinfo-sequence.html',0,'QBluetoothServiceInfo']]],
+  ['signalevent',['SignalEvent',['https://doc.qt.io/qt-5/qstatemachine-signalevent.html',0,'QStateMachine']]],
+  ['simple',['Simple',['../namespace_qt_rest_client.html#class_qt_rest_client_1_1_simple',1,'QtRestClient']]],
+  ['simple_3c_20t_20_2a_2c_20typename_20std_3a_3aenable_5fif_3c_20std_3a_3ais_5fbase_5fof_3c_20qobject_2c_20t_20_3e_3a_3avalue_20_3e_3a_3atype_20_3e',['Simple&lt; T *, typename std::enable_if&lt; std::is_base_of&lt; QObject, T &gt;::value &gt;::type &gt;',['../class_qt_rest_client_1_1_simple_3_01_t_01_5_00_01typename_01std_1_1enable__if_3_01std_1_1is__basd53df30d33fde91b51f378efb6baeecc.html',1,'QtRestClient']]],
+  ['simple_3c_20t_2c_20typename_20std_3a_3aenable_5fif_3c_20std_3a_3ais_5fvoid_3c_20typename_20t_3a_3aqtgadgethelper_20_3e_3a_3avalue_20_3e_3a_3atype_20_3e',['Simple&lt; T, typename std::enable_if&lt; std::is_void&lt; typename T::QtGadgetHelper &gt;::value &gt;::type &gt;',['../class_qt_rest_client_1_1_simple_3_01_t_00_01typename_01std_1_1enable__if_3_01std_1_1is__void_3_0e3917a0d7780becccdeb92e5e53ff1ab.html',1,'QtRestClient']]],
+  ['state',['State',['https://doc.qt.io/qt-5/qaccessible-state.html',0,'QAccessible']]],
+  ['stlgeometryloader',['StlGeometryLoader',['https://doc.qt.io/qt-5/qt3drender-stlgeometryloader.html',0,'Qt3DRender']]]
 ];
