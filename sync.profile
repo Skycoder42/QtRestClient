@@ -5,8 +5,7 @@
 %classnames = (
 	"genericrestreply.h" => "GenericRestReply",
 	"metacomponent.h" => "MetaComponent",
-	"ipaging.h" => "IPaging",
-	"ipaging.h" => "PagingFactory",
+	"ipaging.h" => "IPaging,PagingFactory",
 	"paging.h" => "Paging",
 	"requestbuilder.h" => "RequestBuilder",
 	"restclass.h" => "RestClass",
