@@ -1,7 +1,7 @@
 @echo on
 
 echo %CD%
-.\tests\auto\restclient\rest-db-setup.bat
-.\qtmodules-travis\ci\win\build.bat
+call .\tests\auto\restclient\rest-db-setup.bat
+call .\qtmodules-travis\ci\win\build.bat
 
 taskkill /F /IM nodejs.exe
