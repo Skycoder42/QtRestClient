@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 if [[ $PLATFORM == "gcc_64" ]]; then
 	mv ./qtmodules-travis/ci/linux/setup-docker.sh ./qtmodules-travis/ci/linux/setup-docker.sh.tmp
