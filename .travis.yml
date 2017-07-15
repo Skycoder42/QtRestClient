@@ -34,10 +34,11 @@ matrix:
 
 before_install:
   - git clone https://github.com/Skycoder42/QtModules.git ./qtmodules-travis
-  - sudo npm install -g json-server
+  - ./tests/ci/setup.sh
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then travis_wait 40 ./qtmodules-travis/ci/$TRAVIS_OS_NAME/setup.sh; else ./qtmodules-travis/ci/$TRAVIS_OS_NAME/setup.sh; fi
 
 script:
+  - ./tests/auto/restclient/rest-db-setup.sh &
   - ./qtmodules-travis/ci/$TRAVIS_OS_NAME/build.sh
 
 before_deploy:
