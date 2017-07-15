@@ -2,7 +2,7 @@
 set -ex
 
 apt-get -qq update
-apt-get -qq install --no-install-recommends curl
+apt-get -qq install --no-install-recommends curl ca-certificates
 curl -Lo /tmp/instnode.sh https://deb.nodesource.com/setup_6.x
 chmod a+x /tmp/instnode.sh
 /tmp/instnode.sh
