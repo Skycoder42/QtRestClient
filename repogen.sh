@@ -4,4 +4,8 @@
 # $2 Version
 
 myDir=$(dirname "$0")
-"$myDir/../QtModules/repogen.py" "$1" RestClient "qt.59.skycoder42.jsonserializer" "qrestbuilder" "A library for generic JSON-based REST-APIs, with a mechanism to map JSON to Qt objects." "$2" "$myDir/LICENSE" BSD-3-Clause
+qtDir=${1?First parameter must be set to the dir to install}
+version=${2?Set the version as second parameter}
+qtvid=$(echo $qtDir | sed -e "s/\\.//g")
+
+"$myDir/../QtModules/deploy/repogen.py"  "$qtDir" RestClient "qt.$qtvid.skycoder42.jsonserializer" "qrestbuilder" "A library for generic JSON-based REST-APIs, with a mechanism to map JSON to Qt objects." "$version" "$myDir/LICENSE" BSD-3-Clause
