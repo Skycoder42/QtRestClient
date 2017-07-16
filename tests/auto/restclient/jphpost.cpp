@@ -28,7 +28,6 @@ bool JphPost::equals(const JphPost *left, const QObject *right)
 
 bool JphPost::equals(const QObject *other) const
 {
-
 	if(this == other)
 		return true;
 	else if(!other)

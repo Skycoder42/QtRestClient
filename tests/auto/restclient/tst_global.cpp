@@ -4,6 +4,7 @@
 
 void initTestJsonServer(QString relativeDbPath)
 {
+	qDebug() << Q_FUNC_INFO;
 	QDir targetDir(TEST_SRC_DIR);
 
 	QFile inFile(targetDir.absoluteFilePath(relativeDbPath));
