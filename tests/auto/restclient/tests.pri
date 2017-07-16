@@ -14,7 +14,8 @@ DISTFILES += \
 	$$PWD/rest-db-setup.bat \
 	$$PWD/default-test-db.js \
 	$$PWD/advanced-test-db.js \
-    $$PWD/build-test-db.js
+    $$PWD/build-test-db.js \
+    $$PWD/rest-db-setup.sh
 
 DEFINES += "TEST_SRC_DIR=\\\"$$PWD\\\""
 
