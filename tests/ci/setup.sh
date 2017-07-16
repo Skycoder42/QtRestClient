@@ -24,3 +24,4 @@ mv ./qtmodules-travis/ci/$TRAVIS_OS_NAME/$buildFileName ./qtmodules-travis/ci/$T
 echo "#!/bin/bash" > ./qtmodules-travis/ci/$TRAVIS_OS_NAME/$buildFileName
 echo ./tests/auto/restclient/rest-db-setup.sh >> ./qtmodules-travis/ci/$TRAVIS_OS_NAME/$buildFileName
 cat ./qtmodules-travis/ci/$TRAVIS_OS_NAME/$buildFileName.tmp >> ./qtmodules-travis/ci/$TRAVIS_OS_NAME/$buildFileName
+chmod a+x ./qtmodules-travis/ci/$TRAVIS_OS_NAME/$buildFileName
