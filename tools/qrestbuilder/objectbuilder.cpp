@@ -1,6 +1,5 @@
 #include "objectbuilder.h"
 
-#include <QDebug>
 #include <QFileInfo>
 #include <QJsonArray>
 
@@ -11,29 +10,27 @@ ObjectBuilder::ObjectBuilder() :
 
 void ObjectBuilder::build()
 {
-	testEquality = root["$testEquality"].toBool(true);
-	if(root["$type"].toString() == "object")
+	testEquality = root[QStringLiteral("$testEquality")].toBool(true);
+	if(root[QStringLiteral("$type")].toString() == QStringLiteral("object"))
 		generateApiObject();
-	else if(root["$type"].toString() == "gadget")
+	else if(root[QStringLiteral("$type")].toString() == QStringLiteral("gadget"))
 		generateApiGadget();
 	else
-		throw QStringLiteral("REST_API_OBJECTS must be either of type object or gadget");
+		throw tr("REST_API_OBJECTS must be either of type object or gadget");
 }
 
 QString ObjectBuilder::specialPrefix()
 {
-	return "$";
+	return QStringLiteral("$");
 }
 
 void ObjectBuilder::generateApiObject()
 {
-	qInfo() << "generating object:" << className;
-
 	auto includes = readIncludes();
-	includes.append("QtCore/qobject.h");
-	includes.append("QtCore/qstring.h");
+	includes.append(QStringLiteral("QtCore/qobject.h"));
+	includes.append(QStringLiteral("QtCore/qstring.h"));
 	readMembers();
-	auto parent = root["$parent"].toString("QObject");
+	auto parent = root[QStringLiteral("$parent")].toString(QStringLiteral("QObject"));
 
 	//write header
 	writeIncludes(header, includes);
@@ -42,11 +39,11 @@ void ObjectBuilder::generateApiObject()
 		   << "\tQ_OBJECT\n\n";
 	writeProperties(true);
 	header << "\npublic:\n";
-	if(root.contains("$enums"))
+	if(root.contains(QStringLiteral("$enums")))
 		writeEnums();
 	header << "\tQ_INVOKABLE " << className << "(QObject *parent = nullptr);\n\n";
 	writeReadDeclarations();
-	if(root["$generateEquals"].toBool(false))
+	if(root[QStringLiteral("$generateEquals")].toBool(false))
 		writeEqualsDeclaration(false);
 	header << "\npublic Q_SLOTS:\n";
 	writeWriteDeclarations();
@@ -65,22 +62,20 @@ void ObjectBuilder::generateApiObject()
 	source << "{}\n";
 	writeReadDefinitions(false);
 	writeWriteDefinitions(false);
-	if(root["$generateEquals"].toBool(false))
+	if(root[QStringLiteral("$generateEquals")].toBool(false))
 		writeEqualsDefinition(false);
-	if(root["$registerConverters"].toBool(true))
+	if(root[QStringLiteral("$registerConverters")].toBool(true))
 		writeListConverter(false);
 }
 
 void ObjectBuilder::generateApiGadget()
 {
-	qInfo() << "generating gadget:" << className;
-
 	auto includes = readIncludes();
-	includes.append("QtCore/qobject.h");
-	includes.append("QtCore/qshareddata.h");
-	includes.append("QtCore/qstring.h");
+	includes.append(QStringLiteral("QtCore/qobject.h"));
+	includes.append(QStringLiteral("QtCore/qshareddata.h"));
+	includes.append(QStringLiteral("QtCore/qstring.h"));
 	readMembers();
-	auto parent = root["$parent"].toString();
+	auto parent = root[QStringLiteral("$parent")].toString();
 
 	//write header
 	writeIncludes(header, includes);
@@ -93,7 +88,7 @@ void ObjectBuilder::generateApiGadget()
 		   << "\tQ_GADGET\n\n";
 	writeProperties(false);
 	header << "\npublic:\n";
-	if(root.contains("$enums"))
+	if(root.contains(QStringLiteral("$enums")))
 		writeEnums();
 	header << "\t" << className << "();\n"
 		   << "\t" << className << "(const " << className << " &other);\n"
@@ -102,7 +97,7 @@ void ObjectBuilder::generateApiGadget()
 	writeReadDeclarations();
 	header << "\n";
 	writeWriteDeclarations();
-	if(root["$generateEquals"].toBool(true))
+	if(root[QStringLiteral("$generateEquals")].toBool(true))
 		writeEqualsDeclaration(true);
 	header << "\nprivate:\n"
 		   << "\t QSharedDataPointer<" << className << "Data> d;\n"
@@ -130,16 +125,16 @@ void ObjectBuilder::generateApiGadget()
 		   << "}\n";
 	writeReadDefinitions(true);
 	writeWriteDefinitions(true);
-	if(root["$generateEquals"].toBool(true))
+	if(root[QStringLiteral("$generateEquals")].toBool(true))
 		writeEqualsDefinition(true);
-	if(root["$registerConverters"].toBool(true))
+	if(root[QStringLiteral("$registerConverters")].toBool(true))
 		writeListConverter(true);
 }
 
 void ObjectBuilder::readMembers()
 {
 	for(auto it = root.constBegin(); it != root.constEnd(); it++) {
-		if(it.key().startsWith("$"))
+		if(it.key().startsWith(QLatin1Char('$')))
 			continue;
 		members.insert(it.key(), it.value().toString());
 	}
@@ -147,23 +142,23 @@ void ObjectBuilder::readMembers()
 
 QString ObjectBuilder::setter(const QString &name)
 {
-	QString setterName = "set" + name;
+	QString setterName = QStringLiteral("set") + name;
 	setterName[3] = setterName[3].toUpper();
 	return setterName;
 }
 
 void ObjectBuilder::writeEnums()
 {
-	auto enums = root["$enums"].toObject();
+	auto enums = root[QStringLiteral("$enums")].toObject();
 	for(auto it = enums.constBegin(); it != enums.constEnd(); it++) {
 		auto isFlags = false;
 		QString base;
 		QJsonArray values;
 		if(it.value().isObject()) {
 			auto obj = it->toObject();
-			isFlags = obj["isFlags"].toBool(false);
-			base = obj["base"].toString();
-			values = obj["values"].toArray();
+			isFlags = obj[QStringLiteral("isFlags")].toBool(false);
+			base = obj[QStringLiteral("base")].toString();
+			values = obj[QStringLiteral("values")].toArray();
 		} else
 			values = it->toArray();
 
@@ -172,13 +167,13 @@ void ObjectBuilder::writeEnums()
 		else
 			header << "\tenum " << it.key() << " {\n";
 		foreach (auto value, values) {
-			auto data = value.toString().split(':');
+			auto data = value.toString().split(QLatin1Char(':'));
 			if(data.size() == 1)
 				header << "\t\t" << data[0] << ",\n";
 			else if(data.size() == 2)
 				header << "\t\t" << data[0] << " = " << data[1] << ",\n";
 			else
-				throw QStringLiteral("Enum values can have at most 2 elments!");
+				throw tr("Enum values can have at most 2 elments!");
 		}
 		header << "\t};\n";
 
@@ -193,16 +188,16 @@ void ObjectBuilder::writeEnums()
 void ObjectBuilder::writeFlagOperators()
 {
 	auto hasFlags = false;
-	auto enums = root["$enums"].toObject();
+	auto enums = root[QStringLiteral("$enums")].toObject();
 	for(auto it = enums.constBegin(); it != enums.constEnd(); it++) {
 		auto isFlags = false;
 		QString base;
 		QJsonArray values;
 		if(it.value().isObject()) {
 			auto obj = it->toObject();
-			isFlags = obj["isFlags"].toBool(false);
-			base = obj["base"].toString();
-			values = obj["values"].toArray();
+			isFlags = obj[QStringLiteral("isFlags")].toBool(false);
+			base = obj[QStringLiteral("base")].toString();
+			values = obj[QStringLiteral("values")].toArray();
 		} else
 			values = it->toArray();
 
@@ -295,8 +290,8 @@ void ObjectBuilder::writeWriteDefinitions(bool asGadget)
 
 void ObjectBuilder::writeEqualsDefinition(bool asGadget)
 {
-    QString prefix = asGadget ? QStringLiteral("d->_") : QStringLiteral("_");
-    QString otherPrefix = (asGadget ? QStringLiteral(".") : QStringLiteral("->")) + prefix;
+	QString prefix = asGadget ? QStringLiteral("d->_") : QStringLiteral("_");
+	QString otherPrefix = (asGadget ? QStringLiteral(".") : QStringLiteral("->")) + prefix;
 	//equals
 	source << "\nbool " << className << "::" << "operator ==(const " << className << " " << (asGadget ? "&" : "*") << "other) const\n"
 		   << "{\n"
@@ -318,7 +313,7 @@ void ObjectBuilder::writeEqualsDefinition(bool asGadget)
 
 void ObjectBuilder::writeDataClass()
 {
-	auto name = className + "Data";
+	QString name = className + QStringLiteral("Data");
 	source << "class " << name << " : public QSharedData\n"
 		   << "{\n"
 		   << "public:\n"

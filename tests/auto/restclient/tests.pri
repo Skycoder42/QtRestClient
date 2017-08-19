@@ -14,9 +14,11 @@ DISTFILES += \
 	$$PWD/rest-db-setup.bat \
 	$$PWD/default-test-db.js \
 	$$PWD/advanced-test-db.js \
-    $$PWD/build-test-db.js \
-    $$PWD/rest-db-setup.sh
+	$$PWD/build-test-db.js \
+	$$PWD/rest-db-setup.sh
 
 DEFINES += "TEST_SRC_DIR=\\\"$$PWD\\\""
 
 mac: QMAKE_LFLAGS += '-Wl,-rpath,\'$$OUT_PWD/../../../../lib\''
+
+DEFINES -= QT_ASCII_CAST_WARNINGS

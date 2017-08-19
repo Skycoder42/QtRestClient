@@ -17,8 +17,8 @@ void RestBuilder::build(const QString &in, const QString &hOut, const QString &c
 
 	QFileInfo inInfo(in);
 	fileName = inInfo.baseName();
-	className = root[specialPrefix() + "name"].toString(fileName);
-	exportedClassName = root[specialPrefix() + "export"].toString();
+	className = root[specialPrefix() + QStringLiteral("name")].toString(fileName);
+	exportedClassName = root[specialPrefix() + QStringLiteral("export")].toString();
 	if(exportedClassName.isEmpty())
 		exportedClassName = className;
 	else
@@ -53,7 +53,7 @@ QJsonObject RestBuilder::readJson(const QString &fileName)
 	QJsonParseError error;
 	auto doc = QJsonDocument::fromJson(file.readAll(), &error);
 	if(error.error != QJsonParseError::NoError)
-		throw QString(fileName + ": " + error.errorString());
+		throw tr("%1: %2").arg(fileName).arg(error.errorString());
 	file.close();
 
 	return doc.object();
@@ -61,13 +61,13 @@ QJsonObject RestBuilder::readJson(const QString &fileName)
 
 void RestBuilder::throwFile(const QFile &file)
 {
-	throw QString(file.fileName() + ": " + file.errorString());
+	throw tr("%1: %2").arg(file.fileName()).arg(file.errorString());
 }
 
 QStringList RestBuilder::readIncludes()
 {
 	QStringList res;
-	auto includes = root[specialPrefix() + "includes"].toArray();
+	auto includes = root[specialPrefix() + QStringLiteral("includes")].toArray();
 	foreach(auto include, includes)
 		res.append(include.toString());
 	return res;
@@ -75,7 +75,7 @@ QStringList RestBuilder::readIncludes()
 
 void RestBuilder::writeIncGuardBegin()
 {
-	QString guard = fileName.toUpper() + "_H";
+	QString guard = fileName.toUpper() + QStringLiteral("_H");
 	header << "#ifndef "
 		   << guard
 		   << '\n'
@@ -86,7 +86,7 @@ void RestBuilder::writeIncGuardBegin()
 
 void RestBuilder::writeIncGuardEnd()
 {
-	QString guard = fileName.toUpper() + "_H";
+	QString guard = fileName.toUpper() + QStringLiteral("_H");
 	header << "#endif //"
 		   << guard
 		   << '\n';
@@ -95,7 +95,7 @@ void RestBuilder::writeIncGuardEnd()
 void RestBuilder::writeIncludes(QTextStream &stream, const QStringList &includes)
 {
 	foreach (auto inc, QSet<QString>::fromList(includes)) {
-		if(inc.startsWith(">")) {
+		if(inc.startsWith(QLatin1Char('>'))) {
 			stream << "#include \""
 				   << inc.mid(1)
 				   << "\"\n";
