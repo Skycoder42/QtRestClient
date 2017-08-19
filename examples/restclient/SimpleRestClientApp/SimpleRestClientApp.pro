@@ -3,8 +3,6 @@ QT += core gui widgets restclient network
 TARGET = SimpleRestClientApp
 TEMPLATE = app
 
-DEFINES += QT_DEPRECATED_WARNINGS
-
 SOURCES += main.cpp\
 		mainwindow.cpp
 

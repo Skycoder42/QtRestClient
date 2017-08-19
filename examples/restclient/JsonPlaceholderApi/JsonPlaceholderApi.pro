@@ -11,9 +11,6 @@ QT       += core gui widgets restclient
 TARGET = JsonPlaceholderApi
 TEMPLATE = app
 
-DEFINES += QT_DEPRECATED_WARNINGS
-
-
 SOURCES += main.cpp\
 		mainwindow.cpp
 
