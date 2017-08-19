@@ -2,7 +2,7 @@
 A library for generic JSON-based REST-APIs, with a mechanism to map JSON to Qt objects.
 
 [![Travis Build Status](https://travis-ci.org/Skycoder42/QtRestClient.svg?branch=master)](https://travis-ci.org/Skycoder42/QtRestClient)
-[![Appveyor Build status](https://ci.appveyor.com/api/projects/status/66vntcoho3t4x1jw?svg=true)](https://ci.appveyor.com/project/Skycoder42/qtrestclient)
+[![Appveyor Build status](https://ci.appveyor.com/api/projects/status/66vntcoho3t4x1jw/branch/master?svg=true)](https://ci.appveyor.com/project/Skycoder42/qtrestclient/branch/master)
 
 ## Features
 - Consume any JSON-REST-API
