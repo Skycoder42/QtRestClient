@@ -39,7 +39,7 @@ private:
 	void build() override;
 	QString specialPrefix() override;
 
-	static QString expr(const QString &expression);
+	static QString expr(const QString &expression, bool stringLiteral);
 
 	void generateClass();
 	void generateApi();

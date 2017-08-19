@@ -22,10 +22,12 @@ QString ClassBuilder::specialPrefix()
 	return QString();
 }
 
-QString ClassBuilder::expr(const QString &expression)
+QString ClassBuilder::expr(const QString &expression, bool stringLiteral)
 {
 	if(expression.startsWith(QLatin1Char('$')))
 		return expression.mid(1);
+	else if(stringLiteral)
+		return QStringLiteral("QStringLiteral(\"") + expression + QStringLiteral("\")");
 	else
 		return QLatin1Char('"') + expression + QLatin1Char('"');
 }
@@ -118,7 +120,7 @@ void ClassBuilder::writeClassBeginDefinition()
 		   << "#include <QtCore/qtimer.h>\n"
 		   << "#include <QtCore/qpointer.h>\n"
 		   << "using namespace QtRestClient;\n\n"
-		   << "const QString " << className << "::Path(" << expr(root[QStringLiteral("path")].toString()) << ");\n";
+		   << "const QString " << className << "::Path(" << expr(root[QStringLiteral("path")].toString(), true) << ");\n";
 	generateFactoryDefinition();
 }
 
@@ -290,13 +292,13 @@ void ClassBuilder::writeMethodDefinitions()
 		auto hasPath = writeMethodPath(it.value());
 		source << "\tQVariantHash __params;\n";
 		foreach(auto param, it->parameters)
-			source << "\t__params.insert(\"" << param.name << "\", " << param.name << ");\n";
+			source << "\t__params.insert(QStringLiteral(\"" << param.name << "\"), " << param.name << ");\n";
 		source << "\tHeaderHash __headers;\n";
 		for(auto jt = it->headers.constBegin(); jt != it->headers.constEnd(); jt++)
-			source << "\t__headers.insert(\"" << jt.key() << "\", " << expr(jt.value()) << ");\n";
+			source << "\t__headers.insert(\"" << jt.key() << "\", " << expr(jt.value(), false) << ");\n";
 
 		//make call
-		source << "\n\tauto __reply = _restClass->call<" << it->returns << ", " << it->except << ">(" << expr(it->verb) << ", ";
+		source << "\n\tauto __reply = _restClass->call<" << it->returns << ", " << it->except << ">(" << expr(it->verb, false) << ", ";
 		if(hasPath) {
 			if(!it->url.isEmpty())
 				source << "QUrl(__path), ";
@@ -345,7 +347,7 @@ void ClassBuilder::writeLocalApiGeneration()
 
 void ClassBuilder::writeGlobalApiGeneration(const QString &globalName)
 {
-	auto golbalExpr = expr(globalName);
+	auto golbalExpr = expr(globalName, true);
 	source << "\nRestClient *" << className << "::generateClient()\n"
 		   << "{\n"
 		   << "\tauto client = apiClient(" << golbalExpr << ");\n"
@@ -368,24 +370,24 @@ void ClassBuilder::writeGlobalApiGeneration(const QString &globalName)
 void ClassBuilder::writeApiCreation()
 {
 	source << "\t\tclient = new RestClient(QCoreApplication::instance());\n"
-		   << "\t\tclient->setBaseUrl(QUrl(" << expr(root[QStringLiteral("baseUrl")].toString()) << "));\n";
+		   << "\t\tclient->setBaseUrl(QUrl(" << expr(root[QStringLiteral("baseUrl")].toString(), true) << "));\n";
 	auto version = root[QStringLiteral("apiVersion")].toString();
 	if(!version.isEmpty())
-		source << "\t\tclient->setApiVersion(QVersionNumber::fromString(" << expr(version) << "));\n";
+		source << "\t\tclient->setApiVersion(QVersionNumber::fromString(" << expr(version, true) << "));\n";
 	auto headers = root[QStringLiteral("headers")].toObject();
 	for(auto it = headers.constBegin(); it != headers.constEnd(); it++)
-		source << "\t\tclient->addGlobalHeader(\"" << it.key() << "\", " << expr(it.value().toString()) << ");\n";
+		source << "\t\tclient->addGlobalHeader(\"" << it.key() << "\", " << expr(it.value().toString(), false) << ");\n";
 	auto parameters = root[QStringLiteral("parameters")].toObject();
 	for(auto it = parameters.constBegin(); it != parameters.constEnd(); it++)
-		source << "\t\tclient->addGlobalParameter(\"" << it.key() << "\", " << expr(it.value().toString()) << ");\n";
+		source << "\t\tclient->addGlobalParameter(QStringLiteral(\"" << it.key() << "\"), " << expr(it.value().toString(), true) << ");\n";
 }
 
 bool ClassBuilder::writeMethodPath(const MethodInfo &info)
 {
 	if(!info.path.isEmpty())
-		source << "\tQString __path = " << expr(info.path) << ";\n";
+		source << "\tQString __path = " << expr(info.path, true) << ";\n";
 	else if(!info.url.isEmpty())
-		source << "\tQString __path = " << expr(info.url) << ";\n";
+		source << "\tQString __path = " << expr(info.url, true) << ";\n";
 	else if(!info.pathParams.isEmpty())
 		source << "\tQString __path;\n";
 	else

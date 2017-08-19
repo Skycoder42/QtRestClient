@@ -113,8 +113,8 @@ void MainWindow::on_pushButton_clicked()
 	});
 	connect(reply, &RestReply::failed, this, [=](int status, QJsonValue value){
 		ui->codeLineEdit->setText(QString::number(status));
-		ui->networkErrorLabel->setText("Request failure:");
-		ui->networkErrorLineEdit->setText("Request Failed! See JSON for more details!");
+		ui->networkErrorLabel->setText(tr("Request failure:"));
+		ui->networkErrorLineEdit->setText(tr("Request Failed! See JSON for more details!"));
 		QJsonDocument doc;
 		if(value.isObject())
 			doc = QJsonDocument(value.toObject());
@@ -125,7 +125,7 @@ void MainWindow::on_pushButton_clicked()
 	});
 	connect(reply, &RestReply::error, this, [=](QString errorString, int code, RestReply::ErrorType type){
 		ui->codeLineEdit->setText(QString::number(code));
-		ui->networkErrorLabel->setText(type == RestReply::NetworkError ? "Network error:" : "JSON parse error:");
+		ui->networkErrorLabel->setText(type == RestReply::NetworkError ? tr("Network error:") : tr("JSON parse error:"));
 		ui->networkErrorLineEdit->setText(errorString);
 		ui->replyJsonEdit->clear();
 		QTimer::singleShot(2000, this, &MainWindow::zeroBars);
