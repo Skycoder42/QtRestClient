@@ -15,32 +15,32 @@ int main(int argc, char *argv[])
 	QCoreApplication::setOrganizationDomain(QStringLiteral(BUNDLE_PREFIX));
 
 	QCommandLineParser parser;
-	parser.setApplicationDescription(QCoreApplication::translate("GLOBAL", "A tool to create code for a rest API based on an API description"));
+	parser.setApplicationDescription(QCoreApplication::translate("PARSER", "A tool to create code for a rest API based on an API description"));
 	parser.addVersionOption();
 	parser.addHelpOption();
 
 	parser.addOption({
 						 QStringLiteral("class"),
-						 QCoreApplication::translate("GLOBAL", "Set the builders mode to build an api class")
+						 QCoreApplication::translate("PARSER", "Set the builders mode to build an api class")
 					 });
 	parser.addOption({
 						 QStringLiteral("object"),
-						 QCoreApplication::translate("GLOBAL", "Set the builders mode to build an api object")
+						 QCoreApplication::translate("PARSER", "Set the builders mode to build an api object")
 					 });
 	parser.addOption({
 						 QStringLiteral("in"),
-						 QCoreApplication::translate("GLOBAL", "The input JSON <file> containing the API definition"),
-						 QCoreApplication::translate("GLOBAL", "file")
+						 QCoreApplication::translate("PARSER", "The input JSON <file> containing the API definition"),
+						 QCoreApplication::translate("PARSER", "file")
 					 });
 	parser.addOption({
 						 QStringLiteral("header"),
-						 QCoreApplication::translate("GLOBAL", "The <name> of the header file to generate"),
-						 QCoreApplication::translate("GLOBAL", "name")
+						 QCoreApplication::translate("PARSER", "The <name> of the header file to generate"),
+						 QCoreApplication::translate("PARSER", "name")
 					 });
 	parser.addOption({
 						 QStringLiteral("impl"),
-						 QCoreApplication::translate("GLOBAL", "The <name> of the implementation file to generate"),
-						 QCoreApplication::translate("GLOBAL", "name")
+						 QCoreApplication::translate("PARSER", "The <name> of the implementation file to generate"),
+						 QCoreApplication::translate("PARSER", "name")
 					 });
 
 	parser.process(a);
@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
 		else if(parser.isSet(QStringLiteral("object")))
 			builder.reset(new ObjectBuilder());
 		else
-			throw QCoreApplication::translate("GLOBAL", "Invalid mode! You must specify either --class or --object");
+			throw QCoreApplication::translate("PARSER", "Invalid mode! You must specify either --class or --object");
 
 		builder->build(parser.value(QStringLiteral("in")),
 					   parser.value(QStringLiteral("header")),

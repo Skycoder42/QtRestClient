@@ -9,6 +9,8 @@
 
 class RestBuilder : public QObject
 {
+	Q_OBJECT
+
 public:
 	explicit RestBuilder();
 

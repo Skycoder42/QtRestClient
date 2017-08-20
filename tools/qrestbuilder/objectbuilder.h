@@ -5,6 +5,8 @@
 
 class ObjectBuilder : public RestBuilder
 {
+	Q_OBJECT
+
 public:
 	explicit ObjectBuilder();
 

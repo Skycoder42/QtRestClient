@@ -27,6 +27,8 @@ HEADERS += \
 	objectbuilder.h \
 	classbuilder.h
 
+include(translations/translations.pri)
+
 win32 {
 	QMAKE_TARGET_PRODUCT = "Qt Rest API Builder"
 	QMAKE_TARGET_COMPANY = $$COMPANY
