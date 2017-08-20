@@ -1,10 +1,12 @@
 #include "classbuilder.h"
 #include "objectbuilder.h"
 
-#include <QCoreApplication>
-#include <QDir>
 #include <QCommandLineParser>
-#include <iostream>
+#include <QCoreApplication>
+#include <QDebug>
+#include <QDir>
+#include <QLibraryInfo>
+#include <QTranslator>
 
 int main(int argc, char *argv[])
 {
@@ -13,6 +15,20 @@ int main(int argc, char *argv[])
 	QCoreApplication::setApplicationVersion(QStringLiteral(VERSION));
 	QCoreApplication::setOrganizationName(QStringLiteral(COMPANY));
 	QCoreApplication::setOrganizationDomain(QStringLiteral(BUNDLE_PREFIX));
+
+	QStringList trList = {QStringLiteral("qtbase"), QStringLiteral("qrestbuilder")};
+	foreach(auto trFile, trList) {
+		auto translator = new QTranslator(&a);
+		if(translator->load(QLocale(),
+							trFile,
+							QStringLiteral("_"),
+							QLibraryInfo::location(QLibraryInfo::TranslationsPath)))
+			a.installTranslator(translator);
+		else {
+			qWarning() << "Failed to load translations file" << trFile;
+			delete translator;
+		}
+	}
 
 	QCommandLineParser parser;
 	parser.setApplicationDescription(QCoreApplication::translate("PARSER", "A tool to create code for a rest API based on an API description"));
@@ -59,7 +75,7 @@ int main(int argc, char *argv[])
 					   parser.value(QStringLiteral("impl")));
 		return EXIT_SUCCESS;
 	} catch (const QString &str) {
-		std::cerr << str.toStdString() << std::endl;
+		qCritical() << qUtf8Printable(str);
 		return EXIT_FAILURE;
 	}
 }
