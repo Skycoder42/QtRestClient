@@ -14,25 +14,31 @@ env:
 
 matrix:
   include:
+    #- os: linux
+      #env:
+        #- PLATFORM=gcc_64
+        #- BUILD_DOC=true
+    #- os: linux
+      #env:
+        #- PLATFORM=android_armv7
+    #- os: linux
+      #env:
+        #- PLATFORM=android_x86
+    #- os: osx
+      #env:
+        #- PLATFORM=clang_64
+    #- os: osx
+      #env:
+        #- PLATFORM=ios
     - os: linux
       env:
-        - PLATFORM=gcc_64
-        - BUILD_DOC=true
-    - os: linux
-      env:
-        - PLATFORM=android_armv7
-    - os: linux
-      env:
-        - PLATFORM=android_x86
+        - PLATFORM=static
     - os: osx
       env:
-        - PLATFORM=clang_64
-    - os: osx
-      env:
-        - PLATFORM=ios
+        - PLATFORM=static
 
 before_install:
-  - git clone https://github.com/Skycoder42/QtModules.git ./qtmodules-travis
+  - git clone https://github.com/Skycoder42/QtModules.git --branch static-tools ./qtmodules-travis
   - ./tests/ci/setup.sh
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then travis_wait 40 ./qtmodules-travis/ci/$TRAVIS_OS_NAME/setup.sh; else ./qtmodules-travis/ci/$TRAVIS_OS_NAME/setup.sh; fi
 
