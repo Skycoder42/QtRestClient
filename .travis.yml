@@ -11,7 +11,8 @@ env:
   global:
     - QT_VER=5.9.2
     - EXTRA_MODULES=.skycoder42.jsonserializer
-    - STATIC_QT_MODS=qttools qtjsonserializer
+    - STATIC_QT_MODS=qttools
+    - STATIC_EXTRA_MODS=qtjsonserializer
 
 matrix:
   include:
