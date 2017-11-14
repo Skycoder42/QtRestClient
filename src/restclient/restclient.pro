@@ -1,6 +1,7 @@
 TARGET = QtRestClient
 
 QT = core network jsonserializer
+MODULE_CONFIG += c++11 qrestbuilder
 
 HEADERS +=  \
 	restclass_p.h \
@@ -17,7 +18,7 @@ HEADERS +=  \
 	restreply.h \
 	simple.h \
 	metacomponent.h \
-    standardpaging_p.h
+	standardpaging_p.h
 
 SOURCES += \
 	requestbuilder.cpp \
@@ -28,6 +29,11 @@ SOURCES += \
 	ipaging.cpp
 
 load(qt_module)
+
+FEATURES += ../../mkspecs/features/qrestbuilder.prf
+features.files = $$FEATURES
+features.path = $$[QT_HOST_DATA]/mkspecs/features/
+INSTALLS += features
 
 win32 {
 	QMAKE_TARGET_PRODUCT = "QtRestClient"
