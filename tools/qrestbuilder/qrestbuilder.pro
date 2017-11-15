@@ -1,6 +1,6 @@
 option(host_build)
 
-QT = core jsonserializer
+QT = core
 CONFIG += console c++11
 
 TARGET = qrestbuilder

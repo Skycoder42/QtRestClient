@@ -12,7 +12,6 @@ env:
     - QT_VER=5.9.2
     - EXTRA_MODULES=.skycoder42.jsonserializer
     - STATIC_QT_MODS=qttools
-    - STATIC_EXTRA_MODS=qtjsonserializer
 
 matrix:
   include:
@@ -40,7 +39,7 @@ matrix:
         - PLATFORM=static
 
 before_install:
-  - git clone https://github.com/Skycoder42/QtModules.git --branch static-tools ./qtmodules-travis
+  - git clone https://github.com/Skycoder42/QtModules.git ./qtmodules-travis
   - ./tests/ci/setup.sh
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then travis_wait 40 ./qtmodules-travis/ci/$TRAVIS_OS_NAME/setup.sh; else ./qtmodules-travis/ci/$TRAVIS_OS_NAME/setup.sh; fi
 
