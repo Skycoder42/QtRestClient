@@ -8,3 +8,5 @@ docTarget.recurse_target = doxygen
 QMAKE_EXTRA_TARGETS += docTarget
 
 DISTFILES += .qmake.conf
+
+static_host_build: SUBDIRS = tools

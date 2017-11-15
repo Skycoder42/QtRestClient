@@ -25,7 +25,10 @@ void initTestJsonServer(QString relativeDbPath)
 
 	inFile.close();
 	outFile.close();
-	QThread::sleep(5);//Time for the server to reload the database
+	for(auto i = 0; i < 7; i++) {
+		QCoreApplication::processEvents();
+		QThread::sleep(1);//Time for the server to reload the database
+	}
 }
 
 QtRestClient::RestClient *createClient(QObject *parent)

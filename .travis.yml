@@ -11,6 +11,7 @@ env:
   global:
     - QT_VER=5.9.2
     - EXTRA_MODULES=.skycoder42.jsonserializer
+    - STATIC_QT_MODS=qttools
 
 matrix:
   include:
@@ -30,6 +31,12 @@ matrix:
     - os: osx
       env:
         - PLATFORM=ios
+    - os: linux
+      env:
+        - PLATFORM=static
+    - os: osx
+      env:
+        - PLATFORM=static
 
 before_install:
   - git clone https://github.com/Skycoder42/QtModules.git ./qtmodules-travis
