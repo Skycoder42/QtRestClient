@@ -19,8 +19,13 @@ private slots:
 private:
 	HttpServer *_server;
 	QTcpSocket *_socket;
-	QByteArray verb;
-	QByteArray path;
+
+	QByteArray _verb;
+	QByteArray _path;
+
+	bool _hdrDone;
+	qint64 _len;
+	QByteArray _content;
 };
 
 class HttpServer : public QTcpServer
@@ -35,6 +40,9 @@ public:
 	void verifyRunning();
 	QJsonObject data() const;
 
+	QJsonValue obtainData(QByteArrayList path) const;
+	void applyData(const QByteArray &verb, QByteArrayList path, const QJsonObject &data = {});
+
 public slots:
 	void setData(QJsonObject data);
 
@@ -46,6 +54,8 @@ private slots:
 
 private:
 	QJsonObject _data;
+
+	QJsonValue applyDataImpl(bool isPut, QByteArrayList path, QJsonValue cData, const QJsonObject &data);
 };
 
 #endif // HTTPSERVER_H

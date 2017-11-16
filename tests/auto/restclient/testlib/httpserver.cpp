@@ -24,6 +24,45 @@ QJsonObject HttpServer::data() const
 	return _data;
 }
 
+QJsonValue HttpServer::obtainData(QByteArrayList path) const
+{
+	QJsonValue subValue = _data;
+
+	foreach (auto segment, path) {
+		if(segment.isEmpty())
+			continue;
+
+		if(subValue.isObject()) {
+			auto subObj = subValue.toObject();
+			if(!subObj.contains(QString::fromUtf8(segment)))
+				throw QStringLiteral("path not found");
+			else
+				subValue = subObj.value(QString::fromUtf8(segment));
+		} else if(subValue.isArray()) {
+			auto subArray = subValue.toArray();
+			auto ok = false;
+			auto index = segment.toInt(&ok) - 1;//start counting at 1
+			if(ok && index >= 0 && index < subArray.size())
+				subValue = subArray.at(index);
+			else
+				throw QStringLiteral("path not found");
+		} else
+			throw QStringLiteral("path not found");
+	}
+
+	return subValue;
+}
+
+void HttpServer::applyData(const QByteArray &verb, QByteArrayList path, const QJsonObject &data)
+{
+	if(verb == "PUT")
+		_data = applyDataImpl(true, path, _data, data).toObject();
+	else if(verb == "POST")
+		_data = applyDataImpl(false, path, _data, data).toObject();
+	else if(verb == "DELETE")
+		_data = applyDataImpl(true, path, _data, {}).toObject();
+}
+
 void HttpServer::setData(QJsonObject data)
 {
 	if (_data == data)
@@ -39,12 +78,53 @@ void HttpServer::connected()
 		new HttpConnection(nextPendingConnection(), this);
 }
 
+QJsonValue HttpServer::applyDataImpl(bool isPut, QByteArrayList path, QJsonValue cData, const QJsonObject &data)
+{
+	while(!path.isEmpty() && path.first().isEmpty())
+		path.removeFirst();
+	if(path.isEmpty())
+		return data.isEmpty() ? QJsonValue(QJsonValue::Undefined) : data;
+
+	auto segment = QString::fromUtf8(path.takeFirst());
+	if(cData.isObject()) {
+		auto obj = cData.toObject();
+		auto newData = applyDataImpl(isPut, path, obj[segment], data);
+		if(newData.isUndefined())
+			obj.remove(segment);
+		else
+			obj[segment] = newData;
+		return obj;
+	} else if(cData.isArray()) {
+		auto array = cData.toArray();
+
+		auto ok = false;
+		auto index = segment.toInt(&ok) - 1;//start counting at 1
+		if(index < 0)
+			throw QStringLiteral("invalid path index");
+		while(array.size() <= index)
+			array.append(QJsonValue::Null);
+
+		auto newData = applyDataImpl(isPut, path, array[index], data);
+		if(newData.isUndefined())
+			array.removeAt(index);
+		else
+			array[index] = newData;
+		return array;
+	} else
+		throw QStringLiteral("path not found");
+}
+
 
 
 HttpConnection::HttpConnection(QTcpSocket *socket, HttpServer *parent) :
 	QObject(parent),
 	_server(parent),
-	_socket(socket)
+	_socket(socket),
+	_verb(),
+	_path(),
+	_hdrDone(false),
+	_len(0),
+	_content()
 {
 	_socket->setParent(this);
 
@@ -58,57 +138,47 @@ void HttpConnection::readyRead()
 {
 	qint64 bytes = 0;
 	while((bytes = _socket->bytesAvailable()) >= 2) {
-		auto nextLine = _socket->readLine(bytes).simplified();
-		if(nextLine.isEmpty())
+		if(_hdrDone)
 			reply();
-		else if(verb.isEmpty()) {
-			auto line = nextLine.split(' ');
-			if(line.size() < 2)
-				_socket->disconnectFromHost();
-			else {
-				verb = line[0];
-				path = line[1];
-			}
+		else {
+			auto nextLine = _socket->readLine(bytes).simplified();
+			if(nextLine.isEmpty()) {
+				_hdrDone = true;
+				reply();
+			} else if(_verb.isEmpty()) {
+				auto line = nextLine.split(' ');
+				if(line.size() < 2)
+					_socket->disconnectFromHost();
+				else {
+					_verb = line[0];
+					_path = line[1];
+				}
+			} else if(nextLine.startsWith("Content-Length: "))
+				_len = nextLine.mid(16).toInt();
 		}
 	}
 }
 
 void HttpConnection::reply()
 {
-	auto segments = path.split('/');
+	auto segments = _path.split('/');
 
-	QJsonValue subValue = _server->data();
-	auto error = false;
-	foreach (auto segment, segments) {
-		if(segment.isEmpty())
-			continue;
+	try {
+		//read content if required
+		if(_content.size() < _len) {
+			_content += _socket->readAll();
+			if(_len - _content.trimmed().size() > 0)
+				return;
+			_content = _content.trimmed();
 
-		if(subValue.isObject()) {
-			auto subObj = subValue.toObject();
-			if(!subObj.contains(QString::fromUtf8(segment))) {
-				error = true;
-				break;
-			} else
-				subValue = subObj.value(QString::fromUtf8(segment));
-		} else if(subValue.isArray()) {
-			auto subArray = subValue.toArray();
-			auto ok = false;
-			auto index = segment.toInt(&ok) - 1;//start counting at 1
-			if(ok && index >= 0 && index < subArray.size())
-				subValue = subArray.at(index);
-			else
-				error = true;
-		} else
-			error = true;
-	}
+			QJsonParseError e;
+			auto obj = QJsonDocument::fromJson(_content, &e).object();
+			if(e.error != QJsonParseError::NoError)
+				throw QString(QStringLiteral("Parser-Error: ") + e.errorString());
+			_server->applyData(_verb, segments, obj);
+		}
 
-	if(error) {
-		_socket->write("HTTP/1.1 404 NOT FOUND\r\n");
-		_socket->write("Content-Length:0\r\n");
-		_socket->write("Content-Type: application/json\r\n");
-		_socket->write("Connection: Closed\r\n");
-		_socket->write("\r\n");
-	} else {
+		QJsonValue subValue = _server->obtainData(segments);
 		QByteArray doc;
 		if(subValue.isObject())
 			doc = QJsonDocument(subValue.toObject()).toJson(QJsonDocument::Compact);
@@ -121,6 +191,14 @@ void HttpConnection::reply()
 		_socket->write("Connection: Closed\r\n");
 		_socket->write("\r\n");
 		_socket->write(doc + "\r\n");
+	} catch(QString &e) {
+		qWarning().noquote() << "SERVER-Error[" << _verb <<  _path << "]:" << e;
+		_socket->write("HTTP/1.1 404 NOT FOUND\r\n");
+		_socket->write("Content-Length:0\r\n");
+		_socket->write("Content-Type: application/json\r\n");
+		_socket->write("Connection: Closed\r\n");
+		_socket->write("\r\n");
 	}
+
 	_socket->flush();
 }
