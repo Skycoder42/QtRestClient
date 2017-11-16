@@ -1,4 +1,4 @@
-#include "tst_global.h"
+#include "testlib.h"
 
 class RequestBuilderTest : public QObject
 {
@@ -18,6 +18,7 @@ private Q_SLOTS:
 	void testSending();
 
 private:
+	HttpServer *server;
 	QNetworkAccessManager *nam;
 };
 
@@ -26,12 +27,16 @@ void RequestBuilderTest::initTestCase()
 #ifdef Q_OS_UNIX
 	Q_ASSERT(qgetenv("LD_PRELOAD").contains("Qt5RestClient"));
 #endif
-	initTestJsonServer();
+	server = new HttpServer(this);
+	server->verifyRunning();
+	Testlib::initTestJsonServer(server);
 	nam = new QNetworkAccessManager(this);
 }
 
 void RequestBuilderTest::cleanupTestCase()
 {
+	server->deleteLater();
+	server = nullptr;
 	nam->deleteLater();
 	nam = nullptr;
 }
@@ -342,7 +347,7 @@ void RequestBuilderTest::testSending_data()
 	object["id"] = 1;
 	object["title"] = "Title1";
 	object["body"] = "Body1";
-	QTest::newRow("testDefaultGet") << QUrl("http://localhost:3000/posts/1")
+	QTest::newRow("testDefaultGet") << QUrl(QStringLiteral("http://localhost:%1/posts/1").arg(server->serverPort()))
 									<< QJsonObject()
 									<< QByteArray()
 									<< 200
@@ -351,14 +356,14 @@ void RequestBuilderTest::testSending_data()
 
 	object["title"] = "baum";
 	object["body"] = 42;
-	QTest::newRow("testPut") << QUrl("http://localhost:3000/posts/1")
+	QTest::newRow("testPut") << QUrl(QStringLiteral("http://localhost:%1/posts/1").arg(server->serverPort()))
 							 << object
 							 << QByteArray("PUT")
 							 << 200
 							 << QNetworkReply::NoError
 							 << object;
 
-	QTest::newRow("testError") << QUrl("http://localhost:3000/posts/baum")
+	QTest::newRow("testError") << QUrl(QStringLiteral("http://localhost:%1/posts/baum").arg(server->serverPort()))
 									<< QJsonObject()
 									<< QByteArray("GET")
 									<< 404
@@ -389,10 +394,12 @@ void RequestBuilderTest::testSending()
 	QCOMPARE(reply->error(), error);
 	QCOMPARE(reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt(), status);
 
-	QJsonParseError e;
-	auto repData = QJsonDocument::fromJson(reply->readAll(), &e).object();
-	QCOMPARE(e.error, QJsonParseError::NoError);
-	QCOMPARE(repData, object);
+	if(error == QNetworkReply::NoError) {
+		QJsonParseError e;
+		auto repData = QJsonDocument::fromJson(reply->readAll(), &e).object();
+		QCOMPARE(e.error, QJsonParseError::NoError);
+		QCOMPARE(repData, object);
+	}
 
 	reply->deleteLater();
 }
