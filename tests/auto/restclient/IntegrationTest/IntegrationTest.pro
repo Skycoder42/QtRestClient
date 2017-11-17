@@ -14,7 +14,7 @@ CONFIG   -= app_bundle
 
 TEMPLATE = app
 
-include(../tests2.pri)
+include(../tests.pri)
 
 SOURCES += tst_integration.cpp \
 	jphuser.cpp

@@ -41,11 +41,10 @@ matrix:
 
 install:
   - git clone https://github.com/Skycoder42/QtModules.git .\qtmodules-travis
-  - npm install -g json-server
   - .\qtmodules-travis\ci\win\setup.bat
 
 build_script:
-  - .\tests\ci\build.bat
+  - .\qtmodules-travis\ci\win\build.bat
 
 after_build:
   - .\qtmodules-travis\ci\win\upload-prepare.bat
