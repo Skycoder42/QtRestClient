@@ -36,6 +36,7 @@ class HttpServer : public QTcpServer
 
 public:
 	explicit HttpServer(QObject *parent = nullptr);
+	explicit HttpServer(quint16 port, QObject *parent = nullptr);
 
 	void verifyRunning();
 	QJsonObject data() const;

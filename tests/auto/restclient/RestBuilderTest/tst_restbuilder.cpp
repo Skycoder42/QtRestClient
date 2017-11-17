@@ -1,4 +1,4 @@
-#include "tst_global.h"
+#include "testlib.h"
 #include <user.h>
 #include <post.h>
 #include <api_posts.h>
@@ -8,9 +8,6 @@ class RestBuilderTest : public QObject
 {
 	Q_OBJECT
 
-public:
-	RestBuilderTest();
-
 private Q_SLOTS:
 	void initTestCase();
 	void cleanupTestCase();
@@ -18,25 +15,42 @@ private Q_SLOTS:
 	void testCustomCompiledGadget();
 	void testCustomCompiledApi();
 	void testCustomCompiledApiPosts();
-};
 
-RestBuilderTest::RestBuilderTest()
-{
-}
+private:
+	HttpServer *server;
+};
 
 void RestBuilderTest::initTestCase()
 {
 #ifdef Q_OS_UNIX
 	Q_ASSERT(qgetenv("LD_PRELOAD").contains("Qt5RestClient"));
 #endif
-	QCoreApplication::processEvents();
-	initTestJsonServer("./build-test-db.js");
+	server = new HttpServer(45715, this);
+	server->verifyRunning();
+
+	QJsonObject root;
+	QJsonArray posts;
+	for(auto i = 1; i <= 100; i++) {
+		posts.append(QJsonObject {
+						 {QStringLiteral("id"), i},
+						 {QStringLiteral("user"), QJsonObject {
+							  {QStringLiteral("id"), qCeil(i/2.0)},
+							  {QStringLiteral("name"), QStringLiteral("user%1").arg(qCeil(i/2.0))},
+						  }},
+						 {QStringLiteral("title"), QStringLiteral("Title%1").arg(i)},
+						 {QStringLiteral("body"), QStringLiteral("Body%1").arg(i)}
+					 });
+	}
+	root[QStringLiteral("posts")] = posts;
+	server->setData(root);
 
 	qRegisterMetaType<QtRestClient::RestReply::ErrorType>();
 }
 
 void RestBuilderTest::cleanupTestCase()
 {
+	server->deleteLater();
+	server = nullptr;
 }
 
 void RestBuilderTest::testCustomCompiledObject()
@@ -129,6 +143,7 @@ void RestBuilderTest::testCustomCompiledApiPosts()
 	QVERIFY(called);
 
 	called = false;
+	QCoreApplication::processEvents();
 	QSignalSpy errorSpy(api->posts(), &PostClass::apiError);
 	api->posts()->setErrorTranslator([&](QObject*,int){
 		called = true;
@@ -142,8 +157,8 @@ void RestBuilderTest::testCustomCompiledApiPosts()
 	QSignalSpy deleteSpy3(reply3, &QtRestClient::RestReply::destroyed);
 
 	QVERIFY(errorSpy.wait());
-	QCOMPARE(errorSpy[0][1].toInt(), 404);
 	QCOMPARE(errorSpy[0][2].toInt(), (int)QtRestClient::RestReply::FailureError);
+	QCOMPARE(errorSpy[0][1].toInt(), 404);
 
 	QVERIFY(deleteSpy3.wait());
 	QVERIFY(called);

@@ -237,31 +237,28 @@ void RestReplyPrivate::connectReply(QNetworkReply *reply)
 void RestReplyPrivate::replyFinished()
 {
 	retryDelay = -1;
-	//check json first to allow data for certain network fails
+
+	//read json first to allow data for certain network fails
 	auto readData = networkReply->readAll();
 	QJsonParseError jError;
 	auto jDoc = QJsonDocument::fromJson(readData, &jError);
-	if(jError.error != QJsonParseError::NoError && !readData.isEmpty())
-		emit q->error(jError.errorString(), jError.error, RestReply::JsonParseError, {});
-	else {
-		QJsonValue jValue;
-		if(jDoc.isObject())
-			jValue = jDoc.object();
-		else if(jDoc.isArray())
-			jValue = jDoc.array();
+	QJsonValue jValue;
+	if(jDoc.isObject())
+		jValue = jDoc.object();
+	else if(jDoc.isArray())
+		jValue = jDoc.array();
 
-		//check "http errors", becaus they can have data
-		auto status = networkReply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-		if(status >= 300)//errors begin at 300
-			emit q->failed(status, jValue, {});
-		else {//now network errors
-			if(networkReply->error() != QNetworkReply::NoError)
-				emit q->error(networkReply->errorString(), networkReply->error(), RestReply::NetworkError, {});
-			else {//no errors, completed!
-				emit q->succeeded(status, jValue, {});
-				retryDelay = -1;
-			}
-		}
+	//check "http errors", because they can have data, but only if json is valid
+	auto status = networkReply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+	if(jError.error == QJsonParseError::NoError && status >= 300)//first: status code error + valid json
+		emit q->failed(status, jValue, {});
+	else if(networkReply->error() != QNetworkReply::NoError)//next: check normal network errors
+		emit q->error(networkReply->errorString(), networkReply->error(), RestReply::NetworkError, {});
+	else if(jError.error != QJsonParseError::NoError) //next: json errors
+		emit q->error(jError.errorString(), jError.error, RestReply::JsonParseError, {});
+	else {//no errors, completed!
+		emit q->succeeded(status, jValue, {});
+		retryDelay = -1;
 	}
 
 	if(retryDelay == 0) {

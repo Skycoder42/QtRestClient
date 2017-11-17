@@ -5,12 +5,16 @@
 #include <QtTest>
 
 HttpServer::HttpServer(QObject *parent) :
+	HttpServer(0, parent)
+{}
+
+HttpServer::HttpServer(quint16 port, QObject *parent) :
 	QTcpServer(parent)
 {
 	connect(this, &HttpServer::newConnection,
 			this, &HttpServer::connected);
 
-	listen(QHostAddress::LocalHost);
+	listen(QHostAddress::LocalHost, port);
 }
 
 void HttpServer::verifyRunning()
@@ -179,8 +183,11 @@ void HttpConnection::readyRead()
 
 void HttpConnection::reply()
 {
-	auto segments = _path.split('/');
+	qDebug() << _verb << _path;
+	auto superPath = _path.split('?');
+	auto segments = superPath.first().split('/');
 
+	QByteArray doc;
 	try {
 		//read content if required
 		if(_content.size() < _len) {
@@ -197,26 +204,26 @@ void HttpConnection::reply()
 		}
 
 		QJsonValue subValue = _server->obtainData(segments);
-		QByteArray doc;
 		if(subValue.isObject())
 			doc = QJsonDocument(subValue.toObject()).toJson(QJsonDocument::Compact);
 		else
 			doc = QJsonDocument(subValue.toArray()).toJson(QJsonDocument::Compact);
 
 		_socket->write("HTTP/1.1 200 OK\r\n");
-		_socket->write("Content-Length: " + QByteArray::number(doc.size()) + "\r\n");
-		_socket->write("Content-Type: application/json\r\n");
-		_socket->write("Connection: Closed\r\n");
-		_socket->write("\r\n");
-		_socket->write(doc + "\r\n");
 	} catch(QString &e) {
 		qWarning().noquote() << "SERVER-Error[" << _verb <<  _path << "]:" << e;
-		_socket->write("HTTP/1.1 404 NOT FOUND\r\n");
-		_socket->write("Content-Length:0\r\n");
-		_socket->write("Content-Type: application/json\r\n");
-		_socket->write("Connection: Closed\r\n");
-		_socket->write("\r\n");
+
+		QJsonObject error;
+		error[QStringLiteral("message")] = e;
+		doc = QJsonDocument(error).toJson(QJsonDocument::Compact);
+
+		_socket->write("HTTP/1.1 404 Not Found\r\n");
 	}
 
+	_socket->write("Content-Length: " + QByteArray::number(doc.size()) + "\r\n");
+	_socket->write("Content-Type: application/json\r\n");
+	_socket->write("Connection: Closed\r\n");
+	_socket->write("\r\n");
+	_socket->write(doc + "\r\n");
 	_socket->flush();
 }
