@@ -29,7 +29,7 @@ void RequestBuilderTest::initTestCase()
 #endif
 	server = new HttpServer(this);
 	server->verifyRunning();
-	Testlib::initTestJsonServer(server);
+	server->setDefaultData();
 	nam = new QNetworkAccessManager(this);
 }
 

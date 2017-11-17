@@ -43,8 +43,8 @@ public:
 	QJsonValue obtainData(QByteArrayList path) const;
 	void applyData(const QByteArray &verb, QByteArrayList path, const QJsonObject &data = {});
 
-public slots:
 	void setData(QJsonObject data);
+	void setDefaultData();
 
 signals:
 	void dataChanged(QJsonObject data);

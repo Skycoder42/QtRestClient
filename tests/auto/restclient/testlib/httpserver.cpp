@@ -10,7 +10,7 @@ HttpServer::HttpServer(QObject *parent) :
 	connect(this, &HttpServer::newConnection,
 			this, &HttpServer::connected);
 
-	listen(QHostAddress::LocalHost, 43653);//DEBUG switch port
+	listen(QHostAddress::LocalHost);
 }
 
 void HttpServer::verifyRunning()
@@ -70,6 +70,24 @@ void HttpServer::setData(QJsonObject data)
 
 	_data = data;
 	emit dataChanged(_data);
+}
+
+void HttpServer::setDefaultData()
+{
+	QJsonObject root;
+
+	QJsonArray posts;
+	for(auto i = 1; i <= 100; i++) {
+		posts.append(QJsonObject {
+						 {QStringLiteral("id"), i},
+						 {QStringLiteral("userId"), qCeil(i/2.0)},
+						 {QStringLiteral("title"), QStringLiteral("Title%1").arg(i)},
+						 {QStringLiteral("body"), QStringLiteral("Body%1").arg(i)}
+					 });
+	}
+	root[QStringLiteral("posts")] = posts;
+
+	setData(root);
 }
 
 void HttpServer::connected()

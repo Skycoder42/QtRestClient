@@ -9,7 +9,6 @@
 class Testlib
 {
 public:
-	static void initTestJsonServer(HttpServer *server, QString relativeDbPath = QStringLiteral("default-test-db.js"));
 	static QtRestClient::RestClient *createClient(QObject *parent = nullptr);
 };
 
