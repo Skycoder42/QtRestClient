@@ -14,7 +14,7 @@ CONFIG   -= app_bundle
 
 TEMPLATE = app
 
-include(../tests.pri)
+include(../tests2.pri)
 
 SOURCES += tst_restclient.cpp
 DEFINES += SRCDIR=\\\"$$PWD/\\\"

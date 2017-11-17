@@ -1,4 +1,4 @@
-#include "tst_global.h"
+#include "testlib.h"
 
 class RestClientTest : public QObject
 {
