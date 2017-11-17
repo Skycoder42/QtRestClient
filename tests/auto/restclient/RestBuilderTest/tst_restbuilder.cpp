@@ -30,7 +30,7 @@ void RestBuilderTest::initTestCase()
 
 	QJsonObject root;
 	QJsonArray posts;
-	for(auto i = 1; i <= 100; i++) {
+	for(auto i = 0; i < 100; i++) {
 		posts.append(QJsonObject {
 						 {QStringLiteral("id"), i},
 						 {QStringLiteral("user"), QJsonObject {

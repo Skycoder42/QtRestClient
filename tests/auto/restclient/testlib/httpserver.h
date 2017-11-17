@@ -38,6 +38,8 @@ public:
 	explicit HttpServer(QObject *parent = nullptr);
 	explicit HttpServer(quint16 port, QObject *parent = nullptr);
 
+	QUrl url(const QString &subPath) const;
+
 	void verifyRunning();
 	QJsonObject data() const;
 
@@ -46,6 +48,7 @@ public:
 
 	void setData(QJsonObject data);
 	void setDefaultData();
+	void setAdvancedData();
 
 signals:
 	void dataChanged(QJsonObject data);

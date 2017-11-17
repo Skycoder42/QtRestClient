@@ -347,7 +347,7 @@ void RequestBuilderTest::testSending_data()
 	object["id"] = 1;
 	object["title"] = "Title1";
 	object["body"] = "Body1";
-	QTest::newRow("testDefaultGet") << QUrl(QStringLiteral("http://localhost:%1/posts/1").arg(server->serverPort()))
+	QTest::newRow("testDefaultGet") << server->url("posts/1")
 									<< QJsonObject()
 									<< QByteArray()
 									<< 200
@@ -356,19 +356,19 @@ void RequestBuilderTest::testSending_data()
 
 	object["title"] = "baum";
 	object["body"] = 42;
-	QTest::newRow("testPut") << QUrl(QStringLiteral("http://localhost:%1/posts/1").arg(server->serverPort()))
+	QTest::newRow("testPut") << server->url("posts/1")
 							 << object
 							 << QByteArray("PUT")
 							 << 200
 							 << QNetworkReply::NoError
 							 << object;
 
-	QTest::newRow("testError") << QUrl(QStringLiteral("http://localhost:%1/posts/baum").arg(server->serverPort()))
-									<< QJsonObject()
-									<< QByteArray("GET")
-									<< 404
-									<< QNetworkReply::ContentNotFoundError
-									<< QJsonObject();
+	QTest::newRow("testError") << server->url("posts/baum")
+							   << QJsonObject()
+							   << QByteArray("GET")
+							   << 404
+							   << QNetworkReply::ContentNotFoundError
+							   << QJsonObject();
 }
 
 void RequestBuilderTest::testSending()

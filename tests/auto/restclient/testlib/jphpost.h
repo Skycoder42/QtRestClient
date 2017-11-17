@@ -23,6 +23,7 @@ public:
 	static bool listEquals(const QList<T*> &left, const QList<T*> &right);
 
 	static JphPost *createDefault(QObject *parent);
+	static JphPost *createFirst(QObject *parent);
 
 	int id;
 	int userId;

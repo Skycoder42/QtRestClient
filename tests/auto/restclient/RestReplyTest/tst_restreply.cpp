@@ -1,5 +1,5 @@
 #include "simplejphpost.h"
-#include "tst_global.h"
+#include "testlib.h"
 
 #include <jphpost.h>
 
@@ -37,6 +37,7 @@ private Q_SLOTS:
 	void testSimplePagingIterate();
 
 private:
+	HttpServer *server;
 	QtRestClient::RestClient *client;
 	QNetworkAccessManager *nam;
 };
@@ -48,14 +49,18 @@ void RestReplyTest::initTestCase()
 #endif
 	QJsonSerializer::registerListConverters<JphPost*>();
 	QJsonSerializer::registerListConverters<SimpleJphPost*>();
-	initTestJsonServer("./advanced-test-db.js");
-	client = createClient(this);
-	client->setBaseUrl(QStringLiteral("http://localhost:3000"));
+	server = new HttpServer(this);
+	server->verifyRunning();
+	server->setAdvancedData();
+	client = Testlib::createClient(this);
+	client->setBaseUrl(QStringLiteral("http://localhost:%1").arg(server->serverPort()));
 	nam = client->manager();
 }
 
 void RestReplyTest::cleanupTestCase()
 {
+	server->deleteLater();
+	server = nullptr;
 	client->deleteLater();
 	client = nullptr;
 	nam = nullptr;
@@ -74,12 +79,12 @@ void RestReplyTest::testReplyWrapping_data()
 	object["title"] = "Title1";
 	object["body"] = "Body1";
 
-	QTest::newRow("get") << QUrl("http://localhost:3000/posts/1")
+	QTest::newRow("get") << server->url("posts/1")
 						 << true
 						 << 200
 						 << object;
 
-	QTest::newRow("notFound") << QUrl("http://localhost:3000/posts/baum")
+	QTest::newRow("notFound") << server->url("posts/baum")
 							  << false
 							  << 404
 							  << QJsonObject();
@@ -166,19 +171,19 @@ void RestReplyTest::testGenericReplyWrapping_data()
 	QTest::addColumn<QObject*>("result");
 	QTest::addColumn<bool>("except");
 
-	QTest::newRow("get") << QUrl("http://localhost:3000/posts/1")
+	QTest::newRow("get") << server->url("posts/1")
 						 << true
 						 << 200
 						 << (QObject*)JphPost::createDefault(this)
 						 << false;
 
-	QTest::newRow("notFound") << QUrl("http://localhost:3000/posts/baum")
+	QTest::newRow("notFound") << server->url("posts/baum")
 							  << false
 							  << 404
 							  << new QObject(this)
 							  << false;
 
-	QTest::newRow("serExcept") << QUrl("http://localhost:3000/posts")
+	QTest::newRow("serExcept") << server->url("posts")
 							   << false
 							   << 0
 							   << new QObject(this)
@@ -232,17 +237,17 @@ void RestReplyTest::testGenericVoidReplyWrapping_data()
 	QTest::addColumn<int>("status");
 	QTest::addColumn<bool>("except");
 
-	QTest::newRow("get") << QUrl("http://localhost:3000/posts/1")
+	QTest::newRow("get") << server->url("posts/1")
 						 << true
 						 << 200
 						 << false;
 
-	QTest::newRow("notFound") << QUrl("http://localhost:3000/posts/baum")
+	QTest::newRow("notFound") << server->url("posts/baum")
 							  << false
 							  << 404
 							  << false;
 
-	QTest::newRow("noSerExcept") << QUrl("http://localhost:3000/posts")
+	QTest::newRow("noSerExcept") << server->url("posts")
 							   << true
 							   << 200
 							   << false;
@@ -292,21 +297,21 @@ void RestReplyTest::testGenericListReplyWrapping_data()
 	QTest::addColumn<QObject*>("firstResult");
 	QTest::addColumn<bool>("except");
 
-	QTest::newRow("get") << QUrl("http://localhost:3000/posts")
+	QTest::newRow("get") << server->url("posts")
 						 << true
 						 << 200
 						 << 100
-						 << (QObject*)JphPost::createDefault(this)
+						 << (QObject*)JphPost::createFirst(this)
 						 << false;
 
-	QTest::newRow("notFound") << QUrl("http://localhost:3000/postses")
+	QTest::newRow("notFound") << server->url("postses")
 							  << false
 							  << 404
 							  << 0
 							  << new QObject(this)
 							  << false;
 
-	QTest::newRow("serExcept") << QUrl("http://localhost:3000/posts/1")
+	QTest::newRow("serExcept") << server->url("posts/1")
 							   << false
 							   << 0
 							   << 0
@@ -366,15 +371,15 @@ void RestReplyTest::testGenericPagingReplyWrapping_data()
 	QTest::addColumn<QObject*>("firstResult");
 	QTest::addColumn<bool>("except");
 
-	QTest::newRow("get") << QUrl("http://localhost:3000/pages/0")
+	QTest::newRow("get") << server->url("pages/0")
 						 << true
 						 << 200
 						 << 0
 						 << 100
-						 << (QObject*)JphPost::createDefault(this)
+						 << (QObject*)JphPost::createFirst(this)
 						 << false;
 
-	QTest::newRow("notFound") << QUrl("http://localhost:3000/pageses")
+	QTest::newRow("notFound") << server->url("pageses")
 							  << false
 							  << 404
 							  << 0
@@ -382,7 +387,7 @@ void RestReplyTest::testGenericPagingReplyWrapping_data()
 							  << new QObject(this)
 							  << false;
 
-	QTest::newRow("serExcept") << QUrl("http://localhost:3000/posts/1")
+	QTest::newRow("serExcept") << server->url("posts/1")
 							   << false
 							   << 0
 							   << 0
@@ -438,7 +443,7 @@ void RestReplyTest::testGenericPagingReplyWrapping()
 
 void RestReplyTest::testPagingNext()
 {
-	QNetworkRequest request(QStringLiteral("http://localhost:3000/pages/0"));
+	QNetworkRequest request(server->url("pages/0"));
 	request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
 
 	bool called = false;
@@ -492,7 +497,7 @@ void RestReplyTest::testPagingNext()
 
 void RestReplyTest::testPagingPrevious()
 {
-	QNetworkRequest request(QStringLiteral("http://localhost:3000/pages/9"));
+	QNetworkRequest request(server->url("pages/9"));
 	request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
 
 	bool called = false;
@@ -546,7 +551,7 @@ void RestReplyTest::testPagingPrevious()
 
 void RestReplyTest::testPagingIterate()
 {
-	QNetworkRequest request(QStringLiteral("http://localhost:3000/pages/0"));
+	QNetworkRequest request(server->url("pages/0"));
 	request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
 
 	auto count = 0;
@@ -554,11 +559,11 @@ void RestReplyTest::testPagingIterate()
 	reply->iterate([&](JphPost *data, int index){
 		auto ok = false;
 		[&](){
-			QCOMPARE(index, count++);
+			QCOMPARE(index, count);
 			QCOMPARE(data->id, count);//validating the id is enough
 			ok = true;
 		}();
-		if(!ok || count == 100)
+		if(!ok || ++count == 100)
 			emit test_unlock();
 		data->deleteLater();
 		return ok;
@@ -643,7 +648,7 @@ void RestReplyTest::testSimpleExtension()
 
 void RestReplyTest::testSimplePagingIterate()
 {
-	QNetworkRequest request(QStringLiteral("http://localhost:3000/pagelets/0"));
+	QNetworkRequest request(server->url("pagelets/0"));
 	request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
 
 	auto count = 0;
@@ -652,10 +657,10 @@ void RestReplyTest::testSimplePagingIterate()
 		auto ok = false;
 		[&](){
 			QCOMPARE(index, -1);
-			QCOMPARE(data->id, ++count);//validating the id is enough
+			QCOMPARE(data->id, count);//validating the id is enough
 			ok = true;
 		}();
-		if(!ok || count == 100)
+		if(!ok || ++count == 100)
 			emit test_unlock();
 		data->deleteLater();
 		return ok;

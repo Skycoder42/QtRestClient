@@ -17,6 +17,13 @@ HttpServer::HttpServer(quint16 port, QObject *parent) :
 	listen(QHostAddress::LocalHost, port);
 }
 
+QUrl HttpServer::url(const QString &subPath) const
+{
+	return QUrl(QStringLiteral("http://localhost:%1/%2")
+				.arg(serverPort())
+				.arg(subPath));
+}
+
 void HttpServer::verifyRunning()
 {
 	QVERIFY(isListening());
@@ -45,7 +52,7 @@ QJsonValue HttpServer::obtainData(QByteArrayList path) const
 		} else if(subValue.isArray()) {
 			auto subArray = subValue.toArray();
 			auto ok = false;
-			auto index = segment.toInt(&ok) - 1;//start counting at 1
+			auto index = segment.toInt(&ok);
 			if(ok && index >= 0 && index < subArray.size())
 				subValue = subArray.at(index);
 			else
@@ -81,7 +88,7 @@ void HttpServer::setDefaultData()
 	QJsonObject root;
 
 	QJsonArray posts;
-	for(auto i = 1; i <= 100; i++) {
+	for(auto i = 0; i < 100; i++) {
 		posts.append(QJsonObject {
 						 {QStringLiteral("id"), i},
 						 {QStringLiteral("userId"), qCeil(i/2.0)},
@@ -90,6 +97,73 @@ void HttpServer::setDefaultData()
 					 });
 	}
 	root[QStringLiteral("posts")] = posts;
+
+	setData(root);
+}
+
+void HttpServer::setAdvancedData()
+{
+	QJsonObject root;
+
+	QJsonArray posts;
+	QJsonArray pages;
+	QJsonArray postlets;
+	QJsonArray pagelets;
+
+	for(auto i = 0; i < 100; i++) {
+		//posts
+		posts.append(QJsonObject {
+						 {QStringLiteral("id"), i},
+						 {QStringLiteral("userId"), qCeil(i/2.0)},
+						 {QStringLiteral("title"), QStringLiteral("Title%1").arg(i)},
+						 {QStringLiteral("body"), QStringLiteral("Body%1").arg(i)}
+					 });
+		//postlets
+		postlets.append(QJsonObject {
+						 {QStringLiteral("id"), i},
+						 {QStringLiteral("title"), QStringLiteral("Title%1").arg(i)},
+						 {QStringLiteral("href"), QStringLiteral("/posts/%1").arg(i)}
+					 });
+	}
+	root[QStringLiteral("posts")] = posts;
+	root[QStringLiteral("postlets")] = postlets;
+
+	for(auto i = 0; i < 10; i++) {
+		//pages
+		QJsonObject page {
+			{QStringLiteral("id"), i},
+			{QStringLiteral("total"), 100},
+			{QStringLiteral("offset"), i*10},
+			{QStringLiteral("next"), i < 9 ?
+								QStringLiteral("/pages/%1").arg(i + 1) :
+								QJsonValue(QJsonValue::Null)},
+			{QStringLiteral("previous"), i > 0 ?
+								QStringLiteral("/pages/%1").arg(i - 1) :
+								QJsonValue(QJsonValue::Null)},
+		};
+
+		QJsonArray pageItems;
+		for(auto j = 0; j < 10; j++)
+			pageItems.append(posts[(i*10) + j]);
+		page[QStringLiteral("items")] = pageItems;
+		pages.append(page);
+
+		//pagelets
+		QJsonObject pagelet {
+			{QStringLiteral("id"), i},
+			{QStringLiteral("next"), i < 9 ?
+								QStringLiteral("/pagelets/%1").arg(i + 1) :
+								QJsonValue(QJsonValue::Null)},
+		};
+
+		QJsonArray pageletItems;
+		for(auto j = 0; j < 10; j++)
+			pageletItems.append(postlets[(i*10) + j]);
+		pagelet[QStringLiteral("items")] = pageletItems;
+		pagelets.append(pagelet);
+	}
+	root[QStringLiteral("pages")] = pages;
+	root[QStringLiteral("pagelets")] = pagelets;
 
 	setData(root);
 }
@@ -120,7 +194,7 @@ QJsonValue HttpServer::applyDataImpl(bool isPut, QByteArrayList path, QJsonValue
 		auto array = cData.toArray();
 
 		auto ok = false;
-		auto index = segment.toInt(&ok) - 1;//start counting at 1
+		auto index = segment.toInt(&ok);
 		if(index < 0)
 			throw QStringLiteral("invalid path index");
 		while(array.size() <= index)
