@@ -1,5 +1,5 @@
 #include "jphuser.h"
-#include "tst_global.h"
+#include "testlib.h"
 
 using namespace QtRestClient;
 
@@ -17,6 +17,7 @@ private Q_SLOTS:
 	void testQObjectPagingChain();
 
 private:
+	HttpServer *server;
 	RestClient *client;
 };
 
@@ -26,9 +27,11 @@ void IntegrationTest::initTestCase()
 	Q_ASSERT(qgetenv("LD_PRELOAD").contains("Qt5RestClient"));
 #endif
 	QJsonSerializer::registerListConverters<JphPost*>();
-	initTestJsonServer("./advanced-test-db.js");
-	client = createClient(this);
-	client->setBaseUrl(QStringLiteral("http://localhost:3000"));
+	server = new HttpServer(this);
+	server->verifyRunning();
+	server->setAdvancedData();
+	client = Testlib::createClient(this);
+	client->setBaseUrl(QStringLiteral("http://localhost:%1").arg(server->serverPort()));
 }
 
 void IntegrationTest::cleanupTestCase()
@@ -42,6 +45,7 @@ void IntegrationTest::cleanupTestCase()
 void IntegrationTest::testJsonChain()
 {
 	QJsonObject object;
+	object["id"] = 1;
 	object["userId"] = 42;
 	object["title"] = "baum";
 	object["body"] = "baum";
@@ -132,8 +136,8 @@ void IntegrationTest::testQObjectPagingChain()
 	reply->iterate([&](JphPost* data, int index){
 		auto ok = false;
 		[&](){
-			QCOMPARE(index, count++);
-			QCOMPARE(data->id, count);
+			QCOMPARE(index, count);
+			QCOMPARE(data->id, count++);
 			ok = true;
 		}();
 		data->deleteLater();

@@ -257,7 +257,6 @@ void HttpConnection::readyRead()
 
 void HttpConnection::reply()
 {
-	qDebug() << _verb << _path;
 	auto superPath = _path.split('?');
 	auto segments = superPath.first().split('/');
 
