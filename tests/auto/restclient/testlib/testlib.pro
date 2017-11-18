@@ -1,6 +1,6 @@
 TEMPLATE = lib
 
-QT += testlib restclient qml
+QT += testlib restclient
 QT -= gui
 
 CONFIG += static

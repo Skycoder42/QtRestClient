@@ -3,6 +3,7 @@ A library for generic JSON-based REST-APIs, with a mechanism to map JSON to Qt o
 
 [![Travis Build Status](https://travis-ci.org/Skycoder42/QtRestClient.svg?branch=master)](https://travis-ci.org/Skycoder42/QtRestClient)
 [![Appveyor Build status](https://ci.appveyor.com/api/projects/status/66vntcoho3t4x1jw/branch/master?svg=true)](https://ci.appveyor.com/project/Skycoder42/qtrestclient/branch/master)
+[![AUR](https://img.shields.io/aur/version/qt5-restclient.svg)](https://aur.archlinux.org/packages/qt5-restclient/)
 
 ## Features
 - Consume any JSON-REST-API
@@ -17,7 +18,15 @@ A library for generic JSON-based REST-APIs, with a mechanism to map JSON to Qt o
 ## Download/Installation
 There are multiple ways to install the Qt module, sorted by preference:
 
-1. **Arch-Linux only:** If you are building against your system Qt, you can use my AUR-Repository: [qt5-restclient](https://aur.archlinux.org/packages/qt5-restclient/)
+1. Package Managers: The library is available via:
+	- **Arch-Linux:** AUR-Repository: [`qt5-restclient`](https://aur.archlinux.org/packages/qt5-restclient/)
+	- **Ubuntu:** Launchpad-PPA:
+		- Artful: [ppa:skycoder42/qt-modules](https://launchpad.net/~skycoder42/+archive/ubuntu/qt-modules), package `libqt5restclient[1/-dev]`
+		- Xenial: [ppa:skycoder42/qt-modules-opt](https://launchpad.net/~skycoder42/+archive/ubuntu/qt-modules-opt), package `qtrestclient`
+	- **MacOs:**
+		- Tap: [`brew tap Skycoder42/qt-modules`](https://github.com/Skycoder42/homebrew-qt-modules)
+		- Package: `qtrestclient`
+		- **IMPORTANT:** Due to limitations of homebrew, you must run `source /usr/local/opt/qtrestclient/bashrc.sh` before you can use the module. Some goes for the `qtjsonserializer` dependency
 2. Simply add my repository to your Qt MaintenanceTool (Image-based How-To here: [Add custom repository](https://github.com/Skycoder42/QtModules/blob/master/README.md#add-my-repositories-to-qt-maintenancetool)):
 	1. Open the MaintenanceTool, located in your Qt install directory (e.g. `~/Qt/MaintenanceTool`)
 	2. Select `Add or remove components` and click on the `Settings` button
