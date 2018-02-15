@@ -1,0 +1,13 @@
+{
+	"title": "QtRestClient",
+	"description": "A library for generic JSON-based REST-APIs, with a mechanism to map JSON to Qt objects.",
+	"modules": [ "QtRestClient" ],
+	"dependencies": [
+		".skycoder42.jsonserializer"
+	],
+	"excludes": [],
+	"license": {
+		"name": "BSD-3-Clause",
+		"path": "LICENSE"
+	}
+}

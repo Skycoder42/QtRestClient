@@ -24,7 +24,7 @@ void MainWindow::on_reloadButton_clicked()
 	api->posts()->listPosts()->onSucceeded([this](int code, QList<Post> posts){
 		ui->loadStatusLabel->setText(QStringLiteral("Status: %1").arg(code));
 		ui->reloadButton->setEnabled(true);
-		foreach(auto post, posts) {
+		for(auto post : qAsConst(posts)) {
 			new QTreeWidgetItem(ui->postsTreeWidget, {
 									QString::number(post.id()),
 									QString::number(post.userId()),

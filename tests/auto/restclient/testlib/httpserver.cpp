@@ -35,11 +35,11 @@ QJsonObject HttpServer::data() const
 	return _data;
 }
 
-QJsonValue HttpServer::obtainData(QByteArrayList path) const
+QJsonValue HttpServer::obtainData(const QByteArrayList &path) const
 {
 	QJsonValue subValue = _data;
 
-	foreach (auto segment, path) {
+	for (auto segment : path) {
 		if(segment.isEmpty())
 			continue;
 

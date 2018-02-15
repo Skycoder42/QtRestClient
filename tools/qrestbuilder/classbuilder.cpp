@@ -169,9 +169,9 @@ void ClassBuilder::readMethods()
 		if(!info.path.isEmpty() && !info.url.isEmpty())
 			throw tr("You can only use either path or url, not both!");
 		info.verb = obj[QStringLiteral("verb")].toString(info.verb);
-		foreach(auto value, obj[QStringLiteral("pathParams")].toArray())
+		for(auto value : obj[QStringLiteral("pathParams")].toArray())
 			info.pathParams.append(value.toString());
-		foreach(auto value, obj[QStringLiteral("parameters")].toArray())
+		for(auto value : obj[QStringLiteral("parameters")].toArray())
 			info.parameters.append(value.toString());
 		auto headers = obj[QStringLiteral("headers")].toObject();
 		for(auto jt = headers.constBegin(); jt != headers.constEnd(); jt++)
@@ -222,9 +222,9 @@ void ClassBuilder::writeMethodDeclarations()
 		QStringList parameters;
 		if(!it->body.isEmpty())
 			parameters.append(it->body + QStringLiteral(" __body"));
-		foreach(auto path, it->pathParams)
+		for(auto path : it->pathParams)
 			parameters.append(path.write(true));
-		foreach(auto param, it->parameters)
+		for(auto param : it->parameters)
 			parameters.append(param.write(true));
 		header << parameters.join(QStringLiteral(", ")) << ");\n";
 	}
@@ -281,9 +281,9 @@ void ClassBuilder::writeMethodDefinitions()
 		QStringList parameters;
 		if(!it->body.isEmpty())
 			parameters.append(it->body + QStringLiteral(" __body"));
-		foreach(auto path, it->pathParams)
+		for(auto path : it->pathParams)
 			parameters.append(path.write(false));
-		foreach(auto param, it->parameters)
+		for(auto param : it->parameters)
 			parameters.append(param.write(false));
 		source << parameters.join(QStringLiteral(", ")) << ")\n"
 			   << "{\n";
@@ -291,7 +291,7 @@ void ClassBuilder::writeMethodDefinitions()
 		//create parameters
 		auto hasPath = writeMethodPath(it.value());
 		source << "\tQVariantHash __params;\n";
-		foreach(auto param, it->parameters)
+		for(auto param : it->parameters)
 			source << "\t__params.insert(QStringLiteral(\"" << param.name << "\"), " << param.name << ");\n";
 		source << "\tHeaderHash __headers;\n";
 		for(auto jt = it->headers.constBegin(); jt != it->headers.constEnd(); jt++)
@@ -393,7 +393,7 @@ bool ClassBuilder::writeMethodPath(const MethodInfo &info)
 	else
 		return false;
 
-	foreach(auto param, info.pathParams)
+	for(auto param : info.pathParams)
 		source << "\t__path.append(QVariant::fromValue(" << param.name << ").toString());\n";
 	source << "\n";
 	return true;

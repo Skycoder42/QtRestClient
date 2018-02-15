@@ -68,7 +68,7 @@ QStringList RestBuilder::readIncludes()
 {
 	QStringList res;
 	auto includes = root[specialPrefix() + QStringLiteral("includes")].toArray();
-	foreach(auto include, includes)
+	for(auto include : includes)
 		res.append(include.toString());
 	return res;
 }
@@ -94,7 +94,7 @@ void RestBuilder::writeIncGuardEnd()
 
 void RestBuilder::writeIncludes(QTextStream &stream, const QStringList &includes)
 {
-	foreach (auto inc, QSet<QString>::fromList(includes)) {
+	for(auto inc : QSet<QString>::fromList(includes)) {
 		if(inc.startsWith(QLatin1Char('>'))) {
 			stream << "#include \""
 				   << inc.mid(1)

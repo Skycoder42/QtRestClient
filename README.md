@@ -3,6 +3,7 @@ A library for generic JSON-based REST-APIs, with a mechanism to map JSON to Qt o
 
 [![Travis Build Status](https://travis-ci.org/Skycoder42/QtRestClient.svg?branch=master)](https://travis-ci.org/Skycoder42/QtRestClient)
 [![Appveyor Build status](https://ci.appveyor.com/api/projects/status/66vntcoho3t4x1jw/branch/master?svg=true)](https://ci.appveyor.com/project/Skycoder42/qtrestclient/branch/master)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/5a75806bda324b14bf493c1d94ad7041)](https://www.codacy.com/app/Skycoder42/QtRestClient)
 [![AUR](https://img.shields.io/aur/version/qt5-restclient.svg)](https://aur.archlinux.org/packages/qt5-restclient/)
 
 ## Features
@@ -20,9 +21,7 @@ There are multiple ways to install the Qt module, sorted by preference:
 
 1. Package Managers: The library is available via:
 	- **Arch-Linux:** AUR-Repository: [`qt5-restclient`](https://aur.archlinux.org/packages/qt5-restclient/)
-	- **Ubuntu:** Launchpad-PPA:
-		- Artful: [ppa:skycoder42/qt-modules](https://launchpad.net/~skycoder42/+archive/ubuntu/qt-modules), package `libqt5restclient[1/-dev]`
-		- Xenial: [ppa:skycoder42/qt-modules-opt](https://launchpad.net/~skycoder42/+archive/ubuntu/qt-modules-opt), package `qtrestclient`
+	- **Ubuntu:** Launchpad-PPA: [ppa:skycoder42/qt-modules](https://launchpad.net/~skycoder42/+archive/ubuntu/qt-modules), package `libqt5restclient[1/-dev]`
 	- **MacOs:**
 		- Tap: [`brew tap Skycoder42/qt-modules`](https://github.com/Skycoder42/homebrew-qt-modules)
 		- Package: `qtrestclient`

@@ -3,5 +3,7 @@ CONFIG += ordered
 
 SUBDIRS += restclient
 
-docTarget.target = doxygen
-QMAKE_EXTRA_TARGETS += docTarget
+restclient.CONFIG += no_lrelease_target
+
+prepareRecursiveTarget(lrelease)
+QMAKE_EXTRA_TARGETS += lrelease

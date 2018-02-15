@@ -121,7 +121,7 @@ RequestBuilder &RequestBuilder::updateFromRelativeUrl(const QUrl &url, bool merg
 	d->path.clear();
 	if(mergeQuery) {
 		QUrlQuery query(url.query());
-		foreach(auto item, query.queryItems())
+		for(auto item : query.queryItems())
 			d->query.addQueryItem(item.first, item.second);
 	} else
 		d->query = QUrlQuery(url.query());
@@ -138,7 +138,7 @@ RequestBuilder &RequestBuilder::addParameter(const QString &name, const QString 
 
 RequestBuilder &RequestBuilder::addParameters(const QUrlQuery &parameters)
 {
-	foreach(auto param, parameters.queryItems())
+	for(auto param : parameters.queryItems())
 		d->query.addQueryItem(param.first, param.second);
 	return *this;
 }

@@ -39,7 +39,6 @@ class Q_RESTCLIENT_EXPORT RestClient : public QObject
 public:
 	//! Constructor
 	explicit RestClient(QObject *parent = nullptr);
-	//! Destructor
 	~RestClient();
 
 	//! Creates a new rest class for the given path and parent

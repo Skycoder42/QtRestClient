@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
 	QCoreApplication::setOrganizationDomain(QStringLiteral(BUNDLE_PREFIX));
 
 	QStringList trList = {QStringLiteral("qtbase"), QStringLiteral("qrestbuilder")};
-	foreach(auto trFile, trList) {
+	for(auto trFile : trList) {
 		auto translator = new QTranslator(&a);
 		if(translator->load(QLocale(),
 							trFile,

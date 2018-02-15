@@ -23,7 +23,6 @@ public:
 	RequestBuilder(const QUrl &baseUrl, QNetworkAccessManager *nam = nullptr);
 	//! Copy Constructor
 	RequestBuilder(const RequestBuilder &other);
-	//! Destructor
 	~RequestBuilder();
 
 	//! Sets the credentails of the URL

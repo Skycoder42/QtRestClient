@@ -43,7 +43,7 @@ public:
 	void verifyRunning();
 	QJsonObject data() const;
 
-	QJsonValue obtainData(QByteArrayList path) const;
+	QJsonValue obtainData(const QByteArrayList &path) const;
 	void applyData(const QByteArray &verb, QByteArrayList path, const QJsonObject &data = {});
 
 	void setData(QJsonObject data);

@@ -14,7 +14,6 @@ namespace QtRestClient {
 class Q_RESTCLIENT_EXPORT IPaging
 {
 public:
-	//! Virtual destructor
 	virtual ~IPaging();
 
 	//! Returns the items of this paging object, i.e. it's data
@@ -42,7 +41,6 @@ public:
 class Q_RESTCLIENT_EXPORT PagingFactory
 {
 public:
-	//! Virtual destructor
 	virtual ~PagingFactory();
 
 	//! Creates a new paging object of the given data

@@ -166,7 +166,7 @@ void ObjectBuilder::writeEnums()
 			header << "\tenum " << it.key() << " : " << base << " {\n";
 		else
 			header << "\tenum " << it.key() << " {\n";
-		foreach (auto value, values) {
+		for (auto value : values) {
 			auto data = value.toString().split(QLatin1Char(':'));
 			if(data.size() == 1)
 				header << "\t\t" << data[0] << ",\n";

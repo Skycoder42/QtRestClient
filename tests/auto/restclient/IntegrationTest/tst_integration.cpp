@@ -23,8 +23,9 @@ private:
 
 void IntegrationTest::initTestCase()
 {
-#ifdef Q_OS_UNIX
-	Q_ASSERT(qgetenv("LD_PRELOAD").contains("Qt5RestClient"));
+#ifdef Q_OS_LINUX
+	if(!qgetenv("LD_PRELOAD").contains("Qt5RestClient"))
+		qWarning() << "No LD_PRELOAD set - this may fail on systems with multiple version of the modules";
 #endif
 	QJsonSerializer::registerListConverters<JphPost*>();
 	server = new HttpServer(this);

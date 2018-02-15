@@ -2,11 +2,19 @@ load(qt_parts)
 
 SUBDIRS += doc
 
-docTarget.target = doxygen
-docTarget.CONFIG += recursive
-docTarget.recurse_target = doxygen
-QMAKE_EXTRA_TARGETS += docTarget
+doxygen.target = doxygen
+doxygen.CONFIG = recursive
+doxygen.recurse_target = doxygen
+doxygen.recurse += doc
+QMAKE_EXTRA_TARGETS += doxygen
 
-DISTFILES += .qmake.conf
+lrelease.target = lrelease
+lrelease.CONFIG = recursive
+lrelease.recurse_target = lrelease
+lrelease.recurse = sub_src sub_tools
+QMAKE_EXTRA_TARGETS += lrelease
+
+DISTFILES += .qmake.conf \
+	sync.profile
 
 static_host_build: SUBDIRS = tools

@@ -4,7 +4,6 @@ TRANSLATIONS += $$PWD/qrestbuilder_de.ts \
 OTHER_FILES += $$TRANSLATIONS
 
 qtPrepareTool(LRELEASE, lrelease)
-LRELEASE += -nounfinished
 
 releaseTarget.target = lrelease
 releaseTarget.commands = $$LRELEASE "$$_PRO_FILE_"
