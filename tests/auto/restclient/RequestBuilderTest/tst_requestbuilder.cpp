@@ -16,6 +16,7 @@ private Q_SLOTS:
 
 	void testSending_data();
 	void testSending();
+	void setPostParamsSending();
 
 private:
 	HttpServer *server;
@@ -401,6 +402,34 @@ void RequestBuilderTest::testSending()
 		QCOMPARE(e.error, QJsonParseError::NoError);
 		QCOMPARE(repData, object);
 	}
+
+	reply->deleteLater();
+}
+
+void RequestBuilderTest::setPostParamsSending()
+{
+	QJsonObject repJson {
+		{QStringLiteral("username"), QStringLiteral("user")},
+		{QStringLiteral("password"), QStringLiteral("super secret")}
+	};
+
+	auto builder = QtRestClient::RequestBuilder(server->url("posts/baum"), nam);
+	builder.setAttribute(QNetworkRequest::HTTP2AllowedAttribute, false);
+
+	builder.addPostParameter(QStringLiteral("username"), QStringLiteral("user"));
+	builder.addPostParameter(QStringLiteral("password"), QStringLiteral("super secret"));
+
+	auto reply = builder.send();
+	QSignalSpy replySpy(reply, &QNetworkReply::finished);
+
+	QVERIFY(replySpy.wait());
+	QCOMPARE(reply->error(), QNetworkReply::NoError);
+	QCOMPARE(reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt(), 200);
+
+	QJsonParseError e;
+	auto repData = QJsonDocument::fromJson(reply->readAll(), &e).object();
+	QCOMPARE(e.error, QJsonParseError::NoError);
+	QCOMPARE(repData, repJson);
 
 	reply->deleteLater();
 }

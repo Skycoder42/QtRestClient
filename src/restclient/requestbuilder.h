@@ -69,6 +69,11 @@ public:
 	//! Sets the HTTP-Verb to be used by the generated network request
 	RequestBuilder &setVerb(const QByteArray &verb);
 
+	//! Adds a post parameter to the body
+	RequestBuilder &addPostParameter(const QString &name, const QString &value, bool setContentAndVerb = true);
+	//! Adds post parameters to the body
+	RequestBuilder &addPostParameters(const QUrlQuery &parameters, bool setContentAndVerb = true);
+
 	//! Creates a URL from the builder settings
 	QUrl buildUrl() const;
 	//! Creates a network request from the builder settings

@@ -1,5 +1,6 @@
 #include "requestbuilder.h"
 #include "restreply_p.h"
+#include "restclass.h"
 
 #include <QtCore/QBuffer>
 #include <QtCore/QJsonDocument>
@@ -11,6 +12,7 @@ struct RequestBuilderPrivate : public QSharedData
 {
 	static const QByteArray ContentType;
 	static const QByteArray ContentTypeJson;
+	static const QByteArray ContentTypeUrlEncoded;
 
 	QNetworkAccessManager *nam;
 
@@ -27,6 +29,7 @@ struct RequestBuilderPrivate : public QSharedData
 	QSslConfiguration sslConfig;
 	QByteArray body;
 	QByteArray verb;
+	QUrlQuery postQuery;
 
 	inline RequestBuilderPrivate(QUrl baseUrl = QUrl(), QNetworkAccessManager *nam = nullptr) :
 		QSharedData(),
@@ -37,7 +40,7 @@ struct RequestBuilderPrivate : public QSharedData
 		query(baseUrl.query()),
 		fragment(baseUrl.fragment()),
 		sslConfig(QSslConfiguration::defaultConfiguration()),
-		verb("GET")
+		verb(RestClass::GetVerb)
 	{}
 
 	inline RequestBuilderPrivate(const RequestBuilderPrivate &other) = default;
@@ -45,6 +48,7 @@ struct RequestBuilderPrivate : public QSharedData
 
 const QByteArray RequestBuilderPrivate::ContentType = "Content-Type";
 const QByteArray RequestBuilderPrivate::ContentTypeJson = "application/json";
+const QByteArray RequestBuilderPrivate::ContentTypeUrlEncoded = "application/x-www-form-urlencoded";
 
 }
 
@@ -197,6 +201,27 @@ RequestBuilder &RequestBuilder::setVerb(const QByteArray &verb)
 	return *this;
 }
 
+RequestBuilder &RequestBuilder::addPostParameter(const QString &name, const QString &value, bool setContentAndVerb)
+{
+	d->postQuery.addQueryItem(name, value);
+	if(setContentAndVerb) {
+		d->headers.insert(RequestBuilderPrivate::ContentType, RequestBuilderPrivate::ContentTypeUrlEncoded);
+		d->verb = RestClass::PostVerb;
+	}
+	return *this;
+}
+
+RequestBuilder &RequestBuilder::addPostParameters(const QUrlQuery &parameters, bool setContentAndVerb)
+{
+	for(const auto &param : parameters.queryItems())
+		d->postQuery.addQueryItem(param.first, param.second);
+	if(setContentAndVerb) {
+		d->headers.insert(RequestBuilderPrivate::ContentType, RequestBuilderPrivate::ContentTypeUrlEncoded);
+		d->verb = RestClass::PostVerb;
+	}
+	return *this;
+}
+
 QUrl RequestBuilder::buildUrl() const
 {
 	auto url = d->base;
@@ -238,6 +263,11 @@ QNetworkReply *RequestBuilder::send() const
 	if(!d->body.isEmpty()) {
 		buffer = new QBuffer();
 		buffer->setData(d->body);
+		buffer->open(QIODevice::ReadOnly);
+	} else if(d->headers.value(RequestBuilderPrivate::ContentType) == RequestBuilderPrivate::ContentTypeUrlEncoded &&
+			  !d->postQuery.isEmpty()) {
+		buffer = new QBuffer();
+		buffer->setData(d->postQuery.query().toUtf8());
 		buffer->open(QIODevice::ReadOnly);
 	}
 

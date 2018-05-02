@@ -215,12 +215,7 @@ QJsonValue HttpServer::applyDataImpl(bool isPut, QByteArrayList path, QJsonValue
 HttpConnection::HttpConnection(QTcpSocket *socket, HttpServer *parent) :
 	QObject(parent),
 	_server(parent),
-	_socket(socket),
-	_verb(),
-	_path(),
-	_hdrDone(false),
-	_len(0),
-	_content()
+	_socket(socket)
 {
 	_socket->setParent(this);
 
@@ -251,6 +246,8 @@ void HttpConnection::readyRead()
 				}
 			} else if(nextLine.startsWith("Content-Length: "))
 				_len = nextLine.mid(16).toInt();
+			else if(nextLine.startsWith("Content-Type: "))
+				_contentType = nextLine.mid(14);
 		}
 	}
 }
@@ -269,18 +266,30 @@ void HttpConnection::reply()
 				return;
 			_content = _content.trimmed();
 
-			QJsonParseError e;
-			auto obj = QJsonDocument::fromJson(_content, &e).object();
-			if(e.error != QJsonParseError::NoError)
-				throw QString(QStringLiteral("Parser-Error: ") + e.errorString());
-			_server->applyData(_verb, segments, obj);
+			if(_contentType == "application/json") {
+				QJsonParseError e;
+				auto obj = QJsonDocument::fromJson(_content, &e).object();
+				if(e.error != QJsonParseError::NoError)
+					throw QString(QStringLiteral("Parser-Error: ") + e.errorString());
+				_server->applyData(_verb, segments, obj);
+			} else if(_contentType == "application/x-www-form-urlencoded") {
+				QUrlQuery query;
+				query.setQuery(QString::fromUtf8(_content));
+				QJsonObject resObj;
+				for(const auto &param : query.queryItems())
+					resObj.insert(param.first, param.second);
+				doc = QJsonDocument(resObj).toJson(QJsonDocument::Compact);
+			} else
+				throw QString(QStringLiteral("Unknown Content-Type: ") + QString::fromUtf8(_contentType));
 		}
 
-		QJsonValue subValue = _server->obtainData(segments);
-		if(subValue.isObject())
-			doc = QJsonDocument(subValue.toObject()).toJson(QJsonDocument::Compact);
-		else
-			doc = QJsonDocument(subValue.toArray()).toJson(QJsonDocument::Compact);
+		if(_contentType.isEmpty() || _contentType == "application/json") {
+			QJsonValue subValue = _server->obtainData(segments);
+			if(subValue.isObject())
+				doc = QJsonDocument(subValue.toObject()).toJson(QJsonDocument::Compact);
+			else
+				doc = QJsonDocument(subValue.toArray()).toJson(QJsonDocument::Compact);
+		}
 
 		_socket->write("HTTP/1.1 200 OK\r\n");
 	} catch(QString &e) {

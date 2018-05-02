@@ -23,9 +23,10 @@ private:
 	QByteArray _verb;
 	QByteArray _path;
 
-	bool _hdrDone;
-	qint64 _len;
+	bool _hdrDone = false;
+	qint64 _len = 0;
 	QByteArray _content;
+	QByteArray _contentType;
 };
 
 class HttpServer : public QTcpServer
