@@ -19,11 +19,11 @@ public:
 	static QNetworkReply *compatSend(QNetworkAccessManager *nam, QNetworkRequest request, QByteArray verb, QIODevice *buffer);
 
 	QPointer<QNetworkReply> networkReply;
-	bool autoDelete;
-	int retryDelay;
+	bool autoDelete = true;
+	int retryDelay = -1;
 
 	RestReplyPrivate(QNetworkReply *networkReply, RestReply *q_ptr);
-	~RestReplyPrivate();
+	~RestReplyPrivate() override;
 
 	void connectReply(QNetworkReply *reply);
 

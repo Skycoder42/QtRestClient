@@ -13,7 +13,7 @@ class MetaComponent
 {
 public:
 #if !defined(Q_OS_WIN) || defined(__MINGW32__)
-	typedef std::false_type is_meta;
+	using is_meta = std::false_type;
 #endif
 };
 
@@ -22,7 +22,7 @@ template <typename T>
 class MetaComponent<T*, typename std::enable_if<std::is_base_of<QObject, T>::value>::type>
 {
 public:
-	typedef std::true_type is_meta;
+	using is_meta = std::true_type;
 	static inline void deleteLater(T *obj) {
 		obj->deleteLater();
 	}
@@ -37,7 +37,7 @@ template <typename T>
 class MetaComponent<T, typename std::enable_if<std::is_void<typename T::QtGadgetHelper>::value>::type>
 {
 public:
-	typedef std::true_type is_meta;
+	using is_meta = std::true_type;
 	static inline void deleteLater(T) {}
 	static inline void deleteAllLater(const QList<T> &) {}
 };

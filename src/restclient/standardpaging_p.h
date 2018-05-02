@@ -24,7 +24,9 @@ class Q_RESTCLIENT_EXPORT StandardPaging : public IPaging
 public:
 	//! Creates a standard paging from a valid json object
 	StandardPaging();
-	~StandardPaging();
+	StandardPaging(const StandardPaging &other);
+	StandardPaging(StandardPaging &&other);
+	~StandardPaging() override;
 
 	QJsonArray items() const override;
 	int total() const override;

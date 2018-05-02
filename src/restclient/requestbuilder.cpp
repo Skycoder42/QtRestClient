@@ -6,10 +6,11 @@
 using namespace QtRestClient;
 
 namespace QtRestClient {
+
 struct RequestBuilderPrivate : public QSharedData
 {
-	static QByteArray ContentType;
-	static QByteArray ContentTypeJson;
+	static const QByteArray ContentType;
+	static const QByteArray ContentTypeJson;
 
 	QNetworkAccessManager *nam;
 
@@ -18,7 +19,7 @@ struct RequestBuilderPrivate : public QSharedData
 	QString user;
 	QString pass;
 	QStringList path;
-	bool trailingSlash;
+	bool trailingSlash = false;
 	QUrlQuery query;
 	QString fragment;
 	HeaderHash headers;
@@ -31,52 +32,31 @@ struct RequestBuilderPrivate : public QSharedData
 		QSharedData(),
 		nam(nam),
 		base(baseUrl),
-		version(),
 		user(baseUrl.userName()),
 		pass(baseUrl.password()),
-		path(),
-		trailingSlash(false),
 		query(baseUrl.query()),
 		fragment(baseUrl.fragment()),
-		headers(),
-		attributes(),
 		sslConfig(QSslConfiguration::defaultConfiguration()),
-		body(),
 		verb("GET")
 	{}
 
-	inline RequestBuilderPrivate(const RequestBuilderPrivate &other) :
-		QSharedData(other),
-		nam(other.nam),
-		base(other.base),
-		version(other.version),
-		user(other.user),
-		pass(other.pass),
-		path(other.path),
-		trailingSlash(other.trailingSlash),
-		query(other.query),
-		fragment(other.fragment),
-		headers(other.headers),
-		attributes(other.attributes),
-		sslConfig(other.sslConfig),
-		body(other.body),
-		verb(other.verb)
-	{}
+	inline RequestBuilderPrivate(const RequestBuilderPrivate &other) = default;
 };
 
-QByteArray RequestBuilderPrivate::ContentType = "Content-Type";
-QByteArray RequestBuilderPrivate::ContentTypeJson = "application/json";
+const QByteArray RequestBuilderPrivate::ContentType = "Content-Type";
+const QByteArray RequestBuilderPrivate::ContentTypeJson = "application/json";
+
 }
 
 RequestBuilder::RequestBuilder(const QUrl &baseUrl, QNetworkAccessManager *nam) :
 	d(new RequestBuilderPrivate(baseUrl, nam))
 {}
 
-RequestBuilder::RequestBuilder(const RequestBuilder &other) :
-	d(other.d)
-{}
+RequestBuilder::RequestBuilder(const RequestBuilder &other) = default;
 
-RequestBuilder::~RequestBuilder() {}
+RequestBuilder::RequestBuilder(RequestBuilder &&other) = default;
+
+RequestBuilder::~RequestBuilder() = default;
 
 RequestBuilder &RequestBuilder::setVersion(const QVersionNumber &version)
 {

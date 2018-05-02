@@ -17,7 +17,7 @@ RestClass::RestClass(RestClient *client, QStringList subPath, QObject *parent) :
 			this, &RestClass::deleteLater);
 }
 
-RestClass::~RestClass() {}
+RestClass::~RestClass() = default;
 
 RestClient *RestClass::client() const
 {
@@ -187,5 +187,5 @@ QUrlQuery RestClassPrivate::hashToQuery(const QVariantHash &hash)
 
 RestClassPrivate::RestClassPrivate(RestClient *client, QStringList subPath) :
 	client(client),
-	subPath(subPath)
+	subPath(std::move(subPath))
 {}

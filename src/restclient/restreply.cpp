@@ -201,8 +201,6 @@ QNetworkReply *RestReplyPrivate::compatSend(QNetworkAccessManager *nam, QNetwork
 RestReplyPrivate::RestReplyPrivate(QNetworkReply *networkReply, RestReply *q_ptr) :
 	QObject(q_ptr),
 	networkReply(networkReply),
-	autoDelete(true),
-	retryDelay(-1),
 	q(q_ptr)
 {}
 

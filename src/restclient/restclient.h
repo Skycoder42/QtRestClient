@@ -39,7 +39,7 @@ class Q_RESTCLIENT_EXPORT RestClient : public QObject
 public:
 	//! Constructor
 	explicit RestClient(QObject *parent = nullptr);
-	~RestClient();
+	~RestClient() override;
 
 	//! Creates a new rest class for the given path and parent
 	RestClass *createClass(const QString &path, QObject *parent = nullptr);

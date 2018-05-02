@@ -1,11 +1,12 @@
 #include "ipaging.h"
+#include <limits>
 using namespace QtRestClient;
 
-IPaging::~IPaging() {}
+IPaging::~IPaging() = default;
 
 int IPaging::total() const
 {
-	return INT_MAX;
+	return std::numeric_limits<int>::max();
 }
 
 int IPaging::offset() const
@@ -23,4 +24,4 @@ QUrl IPaging::previous() const
 	return QUrl();
 }
 
-PagingFactory::~PagingFactory() {}
+PagingFactory::~PagingFactory() = default;

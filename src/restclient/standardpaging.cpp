@@ -1,15 +1,15 @@
+#include <limits>
 #include <QtJsonSerializer/QJsonSerializer>
 #include "standardpaging_p.h"
 using namespace QtRestClient;
 
 namespace QtRestClient {
+
 class StandardPagingPrivate
 {
 public:
-	StandardPagingPrivate();
-
-	int total;
-	int offset;
+	int total = std::numeric_limits<int>::max();
+	int offset = -1;
 	QUrl prev;
 	QUrl next;
 	QJsonArray items;
@@ -23,7 +23,11 @@ StandardPaging::StandardPaging() :
 	d(new StandardPagingPrivate())
 {}
 
-StandardPaging::~StandardPaging() {}
+StandardPaging::StandardPaging(const StandardPaging &other) = default;
+
+StandardPaging::StandardPaging(StandardPaging &&other) = default;
+
+StandardPaging::~StandardPaging() = default;
 
 QJsonArray StandardPaging::items() const
 {
@@ -122,14 +126,3 @@ bool StandardPagingFactory::validateUrl(const QJsonValue &value)
 	else
 		return false;
 }
-
-// ------------- Private Implementation -------------
-
-StandardPagingPrivate::StandardPagingPrivate() :
-	total(INT_MAX),
-	offset(-1),
-	prev(),
-	next(),
-	items(),
-	json()
-{}

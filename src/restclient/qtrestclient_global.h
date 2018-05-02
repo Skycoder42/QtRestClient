@@ -20,7 +20,7 @@ class RestClient;
 class RestClass;
 
 //! A typedef for a collection of HTTP-Request headers
-typedef QHash<QByteArray, QByteArray> HeaderHash;
+using HeaderHash = QHash<QByteArray, QByteArray>;
 
 //! Makes the given API available under the given name
 Q_RESTCLIENT_EXPORT bool addGlobalApi(const QString &name, RestClient *client);

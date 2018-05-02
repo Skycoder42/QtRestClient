@@ -18,7 +18,7 @@ RestClient::RestClient(QObject *parent) :
 #endif
 }
 
-RestClient::~RestClient() {}
+RestClient::~RestClient() = default;
 
 RestClass *RestClient::createClass(const QString &path, QObject *parent)
 {
@@ -210,11 +210,6 @@ void RestClient::removeRequestAttribute(QNetworkRequest::Attribute attribute)
 QHash<QString, RestClient*> RestClientPrivate::globalApis;
 
 RestClientPrivate::RestClientPrivate(RestClient *q_ptr) :
-	baseUrl(),
-	apiVersion(),
-	headers(),
-	query(),
-	attribs(),
 	sslConfig(QSslConfiguration::defaultConfiguration()),
 	nam(new QNetworkAccessManager(q_ptr)),
 	serializer(new QJsonSerializer(q_ptr)),

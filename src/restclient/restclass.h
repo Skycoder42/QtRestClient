@@ -31,7 +31,7 @@ public:
 	//! A constant for the HTTP-PATCH verb
 	static const QByteArray PatchVerb;
 
-	~RestClass();
+	~RestClass() override;
 
 	//! Returns the rest client this class operates with
 	RestClient *client() const;
