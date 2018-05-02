@@ -12,9 +12,7 @@ struct JphUser
 	Q_PROPERTY(QString name MEMBER name)
 
 public:
-	JphUser();
-
-	int id;
+	int id = -1;
 	QString name;
 };
 
@@ -26,11 +24,9 @@ struct JphUserSimple : public QtRestClient::Simple<JphUser>
 	Q_PROPERTY(QUrl href MEMBER href)
 
 public:
-	JphUserSimple();
-
 	QUrl extensionHref() const override;
 
-	int id;
+	int id = -1;
 	QUrl href;
 };
 

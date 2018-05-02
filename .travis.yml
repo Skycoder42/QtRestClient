@@ -38,6 +38,7 @@ matrix:
     - os: linux
       env:
         - PLATFORM=static
+        - DOCKER_IMAGE=
     - os: osx
       env:
         - PLATFORM=static
