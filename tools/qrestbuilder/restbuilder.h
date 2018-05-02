@@ -20,8 +20,8 @@ protected:
 	virtual void build() = 0;
 	virtual QString specialPrefix() = 0;
 
-	QJsonObject readJson(const QString &fileName);
-	void throwFile(const QFile &file);
+	QJsonObject readJson(const QString &filePath);
+	Q_NORETURN void throwFile(const QFile &file);
 
 	QStringList readIncludes();
 	void writeIncludes(QTextStream &stream, const QStringList &includes);

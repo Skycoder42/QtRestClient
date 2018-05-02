@@ -24,6 +24,9 @@ public:
 	//! Copy Constructor
 	RequestBuilder(const RequestBuilder &other);
 	RequestBuilder(RequestBuilder &&other);
+	//! Assignment operator
+	RequestBuilder &operator=(const RequestBuilder &other);
+	RequestBuilder &operator=(RequestBuilder &&other);
 	~RequestBuilder();
 
 	//! Sets the credentails of the URL
@@ -72,9 +75,6 @@ public:
 	QNetworkRequest build() const;
 	//! reates a network request and sends it with the builder settings
 	QNetworkReply *send() const;
-
-	//! Assignment operator
-	RequestBuilder &operator =(const RequestBuilder &other);
 
 private:
 	QSharedDataPointer<RequestBuilderPrivate> d;

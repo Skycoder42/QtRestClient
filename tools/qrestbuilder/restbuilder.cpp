@@ -44,16 +44,16 @@ void RestBuilder::build(const QString &in, const QString &hOut, const QString &c
 	source.device()->close();
 }
 
-QJsonObject RestBuilder::readJson(const QString &fileName)
+QJsonObject RestBuilder::readJson(const QString &filePath)
 {
-	QFile file(fileName);
+	QFile file(filePath);
 	if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
 		throwFile(file);
 
 	QJsonParseError error;
 	auto doc = QJsonDocument::fromJson(file.readAll(), &error);
 	if(error.error != QJsonParseError::NoError)
-		throw tr("%1: %2").arg(fileName).arg(error.errorString());
+		throw tr("%1: %2").arg(filePath).arg(error.errorString());
 	file.close();
 
 	return doc.object();
@@ -67,8 +67,7 @@ void RestBuilder::throwFile(const QFile &file)
 QStringList RestBuilder::readIncludes()
 {
 	QStringList res;
-	auto includes = root[specialPrefix() + QStringLiteral("includes")].toArray();
-	for(auto include : includes)
+	for(auto include : root[specialPrefix() + QStringLiteral("includes")].toArray())
 		res.append(include.toString());
 	return res;
 }
@@ -94,7 +93,7 @@ void RestBuilder::writeIncGuardEnd()
 
 void RestBuilder::writeIncludes(QTextStream &stream, const QStringList &includes)
 {
-	for(auto inc : QSet<QString>::fromList(includes)) {
+	for(const auto &inc : QSet<QString>::fromList(includes)) {
 		if(inc.startsWith(QLatin1Char('>'))) {
 			stream << "#include \""
 				   << inc.mid(1)

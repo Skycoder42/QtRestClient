@@ -56,6 +56,10 @@ RequestBuilder::RequestBuilder(const RequestBuilder &other) = default;
 
 RequestBuilder::RequestBuilder(RequestBuilder &&other) = default;
 
+RequestBuilder &RequestBuilder::operator=(const RequestBuilder &other) = default;
+
+RequestBuilder &RequestBuilder::operator=(RequestBuilder &&other) = default;
+
 RequestBuilder::~RequestBuilder() = default;
 
 RequestBuilder &RequestBuilder::setVersion(const QVersionNumber &version)
@@ -101,7 +105,7 @@ RequestBuilder &RequestBuilder::updateFromRelativeUrl(const QUrl &url, bool merg
 	d->path.clear();
 	if(mergeQuery) {
 		QUrlQuery query(url.query());
-		for(auto item : query.queryItems())
+		for(const auto &item : query.queryItems())
 			d->query.addQueryItem(item.first, item.second);
 	} else
 		d->query = QUrlQuery(url.query());
@@ -118,7 +122,7 @@ RequestBuilder &RequestBuilder::addParameter(const QString &name, const QString 
 
 RequestBuilder &RequestBuilder::addParameters(const QUrlQuery &parameters)
 {
-	for(auto param : parameters.queryItems())
+	for(const auto &param : parameters.queryItems())
 		d->query.addQueryItem(param.first, param.second);
 	return *this;
 }
@@ -238,10 +242,4 @@ QNetworkReply *RequestBuilder::send() const
 	}
 
 	return RestReplyPrivate::compatSend(d->nam, request, d->verb, buffer);
-}
-
-RequestBuilder &RequestBuilder::operator =(const RequestBuilder &other)
-{
-	d = other.d;
-	return *this;
 }

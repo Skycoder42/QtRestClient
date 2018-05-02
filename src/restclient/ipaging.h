@@ -6,6 +6,7 @@
 #include <QtCore/qjsonarray.h>
 #include <QtCore/qjsonobject.h>
 #include <QtCore/qurl.h>
+#include <QtCore/qvariant.h>
 class QJsonSerializer;
 
 namespace QtRestClient {
