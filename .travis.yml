@@ -5,7 +5,7 @@ services:
 
 sudo: required
 dist: trusty
-osx_image: xcode9.2
+osx_image: xcode9.3
 
 env:
   global:
@@ -14,6 +14,7 @@ env:
     - EXTRA_MODULES=.skycoder42.jsonserializer
     - STATIC_QT_MODS=qttools
     - STATIC_EXTRA_MODS=qtjsonserializer
+    - DOCKER_IMAGE=json
 
 matrix:
   include:
@@ -21,6 +22,7 @@ matrix:
       env:
         - PLATFORM=gcc_64
         - BUILD_DOC=true
+        - BUILD_EXAMPLES=true
     - os: linux
       env:
         - PLATFORM=android_armv7
@@ -42,8 +44,8 @@ matrix:
 
 before_install:
   - git clone https://github.com/Skycoder42/QtModules.git ./qtmodules-travis
-  - ./tests/ci/setup.sh #osx only
-  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then travis_wait 40 ./qtmodules-travis/ci/$TRAVIS_OS_NAME/setup.sh; else ./qtmodules-travis/ci/$TRAVIS_OS_NAME/setup.sh; fi
+  - ./tests/ci/setup.sh
+  - travis_wait 40 ./qtmodules-travis/ci/$TRAVIS_OS_NAME/setup.sh
 
 script:
   - ./qtmodules-travis/ci/$TRAVIS_OS_NAME/build.sh
@@ -64,7 +66,8 @@ deploy:
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
-  - rm -fr $QPMX_CACHE_DIR/locks
+  - rm -rf $QPMX_CACHE_DIR/locks
+  - rm -rf $QPMX_CACHE_DIR/tmp
 cache:
   directories:
     - $HOME/.gradle/caches/
