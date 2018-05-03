@@ -416,6 +416,7 @@ void RequestBuilderTest::setPostParamsSending()
 	auto builder = QtRestClient::RequestBuilder(server->url("posts/baum"), nam);
 	builder.setAttribute(QNetworkRequest::HTTP2AllowedAttribute, false);
 
+	builder.setVerb("POST");
 	builder.addPostParameter(QStringLiteral("username"), QStringLiteral("user"));
 	builder.addPostParameter(QStringLiteral("password"), QStringLiteral("super secret"));
 

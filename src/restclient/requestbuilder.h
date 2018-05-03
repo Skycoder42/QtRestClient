@@ -70,9 +70,9 @@ public:
 	RequestBuilder &setVerb(const QByteArray &verb);
 
 	//! Adds a post parameter to the body
-	RequestBuilder &addPostParameter(const QString &name, const QString &value, bool setContentAndVerb = true);
+	RequestBuilder &addPostParameter(const QString &name, const QString &value);
 	//! Adds post parameters to the body
-	RequestBuilder &addPostParameters(const QUrlQuery &parameters, bool setContentAndVerb = true);
+	RequestBuilder &addPostParameters(const QUrlQuery &parameters);
 
 	//! Creates a URL from the builder settings
 	QUrl buildUrl() const;

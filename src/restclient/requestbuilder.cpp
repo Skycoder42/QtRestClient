@@ -177,6 +177,7 @@ RequestBuilder &RequestBuilder::setSslConfig(const QSslConfiguration &sslConfig)
 RequestBuilder &RequestBuilder::setBody(const QByteArray &body, const QByteArray &contentType)
 {
 	d->body = body;
+	d->postQuery.clear();
 	d->headers.insert(RequestBuilderPrivate::ContentType, contentType);
 	return *this;
 }
@@ -184,6 +185,7 @@ RequestBuilder &RequestBuilder::setBody(const QByteArray &body, const QByteArray
 RequestBuilder &RequestBuilder::setBody(const QJsonObject &body)
 {
 	d->body = QJsonDocument(body).toJson(QJsonDocument::Compact);
+	d->postQuery.clear();
 	d->headers.insert(RequestBuilderPrivate::ContentType, RequestBuilderPrivate::ContentTypeJson);
 	return *this;
 }
@@ -191,6 +193,7 @@ RequestBuilder &RequestBuilder::setBody(const QJsonObject &body)
 RequestBuilder &RequestBuilder::setBody(const QJsonArray &body)
 {
 	d->body = QJsonDocument(body).toJson(QJsonDocument::Compact);
+	d->postQuery.clear();
 	d->headers.insert(RequestBuilderPrivate::ContentType, RequestBuilderPrivate::ContentTypeJson);
 	return *this;
 }
@@ -201,24 +204,20 @@ RequestBuilder &RequestBuilder::setVerb(const QByteArray &verb)
 	return *this;
 }
 
-RequestBuilder &RequestBuilder::addPostParameter(const QString &name, const QString &value, bool setContentAndVerb)
+RequestBuilder &RequestBuilder::addPostParameter(const QString &name, const QString &value)
 {
 	d->postQuery.addQueryItem(name, value);
-	if(setContentAndVerb) {
-		d->headers.insert(RequestBuilderPrivate::ContentType, RequestBuilderPrivate::ContentTypeUrlEncoded);
-		d->verb = RestClass::PostVerb;
-	}
+	d->body.clear();
+	d->headers.insert(RequestBuilderPrivate::ContentType, RequestBuilderPrivate::ContentTypeUrlEncoded);
 	return *this;
 }
 
-RequestBuilder &RequestBuilder::addPostParameters(const QUrlQuery &parameters, bool setContentAndVerb)
+RequestBuilder &RequestBuilder::addPostParameters(const QUrlQuery &parameters)
 {
 	for(const auto &param : parameters.queryItems())
 		d->postQuery.addQueryItem(param.first, param.second);
-	if(setContentAndVerb) {
-		d->headers.insert(RequestBuilderPrivate::ContentType, RequestBuilderPrivate::ContentTypeUrlEncoded);
-		d->verb = RestClass::PostVerb;
-	}
+	d->body.clear();
+	d->headers.insert(RequestBuilderPrivate::ContentType, RequestBuilderPrivate::ContentTypeUrlEncoded);
 	return *this;
 }
 
