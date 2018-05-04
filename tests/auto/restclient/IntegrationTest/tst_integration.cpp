@@ -193,39 +193,21 @@ static void DO_NOT_CALL_compilation_test_template()
 	postClass->post<T>(QStringLiteral("test"), object);
 	postClass->post<T>(QStringLiteral("test"), list);
 	postClass->post<T>(QStringLiteral("test"), RestClass::concatParams("baum", 42));
-	postClass->post<T>(QStringLiteral("test"), object, RestClass::concatParams("baum", 42));
-	postClass->post<T>(QStringLiteral("test"), list, RestClass::concatParams("baum", 42));
 	postClass->post<T>();
 	postClass->post<T>(object);
 	postClass->post<T>(list);
 	postClass->post<T>(RestClass::concatParams("baum", 42));
-	postClass->post<T>(object, RestClass::concatParams("baum", 42));
-	postClass->post<T>(list, RestClass::concatParams("baum", 42));
 	postClass->post<T>(QUrl("test"));
 	postClass->post<T>(QUrl("test"), object);
 	postClass->post<T>(QUrl("test"), list);
 	postClass->post<T>(QUrl("test"), RestClass::concatParams("baum", 42));
-	postClass->post<T>(QUrl("test"), object, RestClass::concatParams("baum", 42));
-	postClass->post<T>(QUrl("test"), list, RestClass::concatParams("baum", 42));
 
-	postClass->put<T>(QStringLiteral("test"));
 	postClass->put<T>(QStringLiteral("test"), object);
 	postClass->put<T>(QStringLiteral("test"), list);
-	postClass->put<T>(QStringLiteral("test"), RestClass::concatParams("baum", 42));
-	postClass->put<T>(QStringLiteral("test"), object, RestClass::concatParams("baum", 42));
-	postClass->put<T>(QStringLiteral("test"), list, RestClass::concatParams("baum", 42));
-	postClass->put<T>();
 	postClass->put<T>(object);
 	postClass->put<T>(list);
-	postClass->put<T>(RestClass::concatParams("baum", 42));
-	postClass->put<T>(object, RestClass::concatParams("baum", 42));
-	postClass->put<T>(list, RestClass::concatParams("baum", 42));
-	postClass->put<T>(QUrl("test"));
 	postClass->put<T>(QUrl("test"), object);
 	postClass->put<T>(QUrl("test"), list);
-	postClass->put<T>(QUrl("test"), RestClass::concatParams("baum", 42));
-	postClass->put<T>(QUrl("test"), object, RestClass::concatParams("baum", 42));
-	postClass->put<T>(QUrl("test"), list, RestClass::concatParams("baum", 42));
 
 	postClass->deleteResource<T>(QStringLiteral("test"));
 	postClass->deleteResource<T>(QStringLiteral("test"), RestClass::concatParams("baum", 42));
@@ -234,24 +216,12 @@ static void DO_NOT_CALL_compilation_test_template()
 	postClass->deleteResource<T>(QUrl("test"));
 	postClass->deleteResource<T>(QUrl("test"), RestClass::concatParams("baum", 42));
 
-	postClass->patch<T>(QStringLiteral("test"));
 	postClass->patch<T>(QStringLiteral("test"), object);
 	postClass->patch<T>(QStringLiteral("test"), list);
-	postClass->patch<T>(QStringLiteral("test"), RestClass::concatParams("baum", 42));
-	postClass->patch<T>(QStringLiteral("test"), object, RestClass::concatParams("baum", 42));
-	postClass->patch<T>(QStringLiteral("test"), list, RestClass::concatParams("baum", 42));
-	postClass->patch<T>();
 	postClass->patch<T>(object);
 	postClass->patch<T>(list);
-	postClass->patch<T>(RestClass::concatParams("baum", 42));
-	postClass->patch<T>(object, RestClass::concatParams("baum", 42));
-	postClass->patch<T>(list, RestClass::concatParams("baum", 42));
-	postClass->patch<T>(QUrl("test"));
 	postClass->patch<T>(QUrl("test"), object);
 	postClass->patch<T>(QUrl("test"), list);
-	postClass->patch<T>(QUrl("test"), RestClass::concatParams("baum", 42));
-	postClass->patch<T>(QUrl("test"), object, RestClass::concatParams("baum", 42));
-	postClass->patch<T>(QUrl("test"), list, RestClass::concatParams("baum", 42));
 }
 
 static void DO_NOT_CALL_compilation_test()

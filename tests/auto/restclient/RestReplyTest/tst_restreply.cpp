@@ -124,7 +124,7 @@ void RestReplyTest::testReplyWrapping()
 
 void RestReplyTest::testReplyError()
 {
-	QNetworkRequest request(QStringLiteral("https://invalid.jsonplaceholder.typicode.com"));
+	QNetworkRequest request(QStringLiteral("https://skycoder42.de/invalid"));
 	request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
 
 	bool called = false;
@@ -133,7 +133,7 @@ void RestReplyTest::testReplyError()
 	reply->onAllErrors([&](QString, int code, QtRestClient::RestReply::ErrorType type){
 		called = true;
 		QCOMPARE(type, QtRestClient::RestReply::NetworkError);
-		QCOMPARE(code, (int)QNetworkReply::HostNotFoundError);
+		QCOMPARE(code, (int)QNetworkReply::ContentNotFoundError);
 	});
 
 	QSignalSpy deleteSpy(reply, &QtRestClient::RestReply::destroyed);
@@ -143,7 +143,7 @@ void RestReplyTest::testReplyError()
 
 void RestReplyTest::testReplyRetry()
 {
-	QNetworkRequest request(QStringLiteral("https://invalid.jsonplaceholder.typicode.com"));
+	QNetworkRequest request(QStringLiteral("https://skycoder42.de/invalid"));
 	request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
 
 	auto retryCount = 0;
@@ -152,7 +152,7 @@ void RestReplyTest::testReplyRetry()
 	reply->onAllErrors([&](QString, int code, QtRestClient::RestReply::ErrorType type){
 		retryCount++;
 		QCOMPARE(type, QtRestClient::RestReply::NetworkError);
-		QCOMPARE(code, (int)QNetworkReply::HostNotFoundError);
+		QCOMPARE(code, (int)QNetworkReply::ContentNotFoundError);
 		if(retryCount < 3)
 			reply->retryAfter((retryCount - 1) * 1500);//first 0, the 1500
 	});
