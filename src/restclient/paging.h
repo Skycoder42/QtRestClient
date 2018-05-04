@@ -14,12 +14,12 @@ template <typename T>
 class PagingData : public QSharedData
 {
 public:
-	PagingData();
-	PagingData(const PagingData &other);
+	PagingData() = default;
+	PagingData(const PagingData &other) = default;
 
 	QSharedPointer<IPaging> iPaging;
 	QList<T> data;
-	RestClient *client;
+	RestClient *client = nullptr;
 };
 
 template<typename T>
@@ -28,9 +28,16 @@ Paging<T>::Paging() :
 {}
 
 template<typename T>
-Paging<T>::Paging(const Paging<T> &other) :
-	d(other.d)
-{}
+Paging<T>::Paging(const Paging<T> &other) = default;
+
+template<typename T>
+Paging<T>::Paging(Paging<T> &&other) = default;
+
+template<typename T>
+Paging<T> &Paging<T>::operator=(const Paging<T> &other) = default;
+
+template<typename T>
+Paging<T> &Paging<T>::operator=(Paging<T> &&other) = default;
 
 template<typename T>
 Paging<T>::Paging(IPaging *iPaging, const QList<T> &data, RestClient *client) :
@@ -123,7 +130,7 @@ void Paging<T>::iterate(std::function<bool (T, int)> iterator, int to, int from)
 
 template<typename T>
 template<typename EO>
-void Paging<T>::iterate(std::function<bool(T, int)> iterator, std::function<void(QString, int, RestReply::ErrorType)> errorHandler, std::function<QString (EO, int)> failureTransformer, int to, int from) const
+void Paging<T>::iterate(const std::function<bool(T, int)> &iterator, const std::function<void(QString, int, RestReply::ErrorType)> &errorHandler, const std::function<QString (EO, int)> &failureTransformer, int to, int from) const
 {
 	Q_ASSERT(from >= d->iPaging->offset());
 
@@ -151,7 +158,7 @@ void Paging<T>::iterate(std::function<bool(T, int)> iterator, std::function<void
 
 template<typename T>
 template<typename EO>
-void Paging<T>::iterate(std::function<bool(T, int)> iterator, std::function<void(int, EO)> failureHandler, std::function<void(QString, int, RestReply::ErrorType)> errorHandler, std::function<void(QJsonSerializerException &)> exceptionHandler, int to, int from) const
+void Paging<T>::iterate(const std::function<bool(T, int)> &iterator, const std::function<void(int, EO)> &failureHandler, const std::function<void(QString, int, RestReply::ErrorType)> &errorHandler, const std::function<void(QJsonSerializerException &)> &exceptionHandler, int to, int from) const
 {
 	Q_ASSERT(from >= d->iPaging->offset());
 
@@ -235,22 +242,6 @@ int Paging<T>::internalIterate(std::function<bool (T, int)> iterator, int to, in
 	else
 		return 0;
 }
-
-template<typename T>
-PagingData<T>::PagingData() :
-	QSharedData(),
-	iPaging(nullptr),
-	data(),
-	client(nullptr)
-{}
-
-template<typename T>
-PagingData<T>::PagingData(const PagingData &other) :
-	QSharedData(other),
-	iPaging(other.iPaging),
-	data(other.data),
-	client(other.client)
-{}
 
 }
 

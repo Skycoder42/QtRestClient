@@ -24,4 +24,6 @@ QUrl IPaging::previous() const
 	return QUrl();
 }
 
+PagingFactory::PagingFactory() = default;
+
 PagingFactory::~PagingFactory() = default;

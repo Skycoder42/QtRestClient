@@ -41,7 +41,10 @@ public:
 //! An interface for a factory to create paging objects
 class Q_RESTCLIENT_EXPORT PagingFactory
 {
+	Q_DISABLE_COPY(PagingFactory)
+
 public:
+	PagingFactory();
 	virtual ~PagingFactory();
 
 	//! Creates a new paging object of the given data

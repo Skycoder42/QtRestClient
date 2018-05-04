@@ -30,6 +30,9 @@ public:
 	Paging();
 	//! Copy Constructor
 	Paging(const Paging<T> &other);
+	Paging(Paging<T> &&other);
+	Paging<T> &operator=(const Paging<T> &other);
+	Paging<T> &operator=(Paging<T> &&other);
 	//! Constructs a paging from the interface, the data and a client
 	Paging(IPaging *iPaging, const QList<T> &data, RestClient *client);
 
@@ -64,17 +67,17 @@ public:
 	void iterate(std::function<bool(T, int)> iterator, int to = -1, int from = 0) const;
 	//! Iterates over all paging objects, with error handling
 	template<typename EO = QObject*>
-	void iterate(std::function<bool(T, int)> iterator,
-				 std::function<void(QString, int, RestReply::ErrorType)> errorHandler,
-				 std::function<QString(EO, int)> failureTransformer = {},
+	void iterate(const std::function<bool(T, int)> &iterator,
+				 const std::function<void(QString, int, RestReply::ErrorType)> &errorHandler,
+				 const std::function<QString(EO, int)> &failureTransformer = {},
 				 int to = -1,
 				 int from = 0) const;
 	//! Iterates over all paging objects, with error handling
 	template<typename EO = QObject*>
-	void iterate(std::function<bool(T, int)> iterator,
-				 std::function<void(int, EO)> failureHandler,
-				 std::function<void(QString, int, RestReply::ErrorType)> errorHandler = {},
-				 std::function<void(QJsonSerializerException &)> exceptionHandler = {},
+	void iterate(const std::function<bool(T, int)> &iterator,
+				 const std::function<void(int, EO)> &failureHandler,
+				 const std::function<void(QString, int, RestReply::ErrorType)> &errorHandler = {},
+				 const std::function<void(QJsonSerializerException &)> &exceptionHandler = {},
 				 int to = -1,
 				 int from = 0) const;
 
