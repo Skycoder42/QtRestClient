@@ -1,7 +1,8 @@
 #include "classbuilder.h"
 #include <QJsonArray>
 
-ClassBuilder::ClassBuilder() :
+ClassBuilder::ClassBuilder(QObject *parent) :
+	RestBuilder(parent),
 	defaultExcept(QStringLiteral("QObject*"))
 {}
 

@@ -8,7 +8,7 @@ class ClassBuilder : public RestBuilder
 	Q_OBJECT
 
 public:
-	ClassBuilder();
+	explicit ClassBuilder(QObject *parent = nullptr);
 
 private:
 	struct MethodInfo {

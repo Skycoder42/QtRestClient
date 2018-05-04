@@ -7,8 +7,8 @@
 #include <QJsonObject>
 #include <QJsonArray>
 
-RestBuilder::RestBuilder() :
-	QObject()
+RestBuilder::RestBuilder(QObject *parent) :
+	QObject(parent)
 {}
 
 void RestBuilder::build(const QString &in, const QString &hOut, const QString &cppOut)
@@ -53,7 +53,7 @@ QJsonObject RestBuilder::readJson(const QString &filePath)
 	QJsonParseError error;
 	auto doc = QJsonDocument::fromJson(file.readAll(), &error);
 	if(error.error != QJsonParseError::NoError)
-		throw tr("%1: %2").arg(filePath).arg(error.errorString());
+		throw tr("%1: %2").arg(filePath, error.errorString());
 	file.close();
 
 	return doc.object();
@@ -61,13 +61,15 @@ QJsonObject RestBuilder::readJson(const QString &filePath)
 
 void RestBuilder::throwFile(const QFile &file)
 {
-	throw tr("%1: %2").arg(file.fileName()).arg(file.errorString());
+	throw tr("%1: %2").arg(file.fileName(), file.errorString());
 }
 
 QStringList RestBuilder::readIncludes()
 {
 	QStringList res;
-	for(auto include : root[specialPrefix() + QStringLiteral("includes")].toArray())
+	auto incArray = root[specialPrefix() + QStringLiteral("includes")].toArray();
+	res.reserve(incArray.size());
+	for(auto include : incArray)
 		res.append(include.toString());
 	return res;
 }

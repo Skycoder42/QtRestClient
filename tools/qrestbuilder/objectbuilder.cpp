@@ -3,7 +3,8 @@
 #include <QFileInfo>
 #include <QJsonArray>
 
-ObjectBuilder::ObjectBuilder() :
+ObjectBuilder::ObjectBuilder(QObject *parent) :
+	RestBuilder(parent),
 	members(),
 	testEquality(true)
 {}

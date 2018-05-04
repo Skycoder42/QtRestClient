@@ -8,7 +8,7 @@ class ObjectBuilder : public RestBuilder
 	Q_OBJECT
 
 public:
-	explicit ObjectBuilder();
+	explicit ObjectBuilder(QObject *parent = nullptr);
 
 private:
 	QHash<QString, QString> members;

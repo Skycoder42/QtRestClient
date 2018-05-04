@@ -12,7 +12,7 @@ class RestBuilder : public QObject
 	Q_OBJECT
 
 public:
-	explicit RestBuilder();
+	explicit RestBuilder(QObject *parent = nullptr);
 
 	void build(const QString &in, const QString &hOut, const QString &cppOut);
 
