@@ -44,3 +44,6 @@ unix:!mac:!static_host_build {
 	LIBS += -L$$[QT_INSTALL_LIBS] -licui18n
 	LIBS += -L$$[QT_INSTALL_LIBS] -licuuc
 }
+
+DISTFILES += \
+    restobject.xsd

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:annotation>
+		<xs:documentation>Created with EditiX (http://www.editix.com) at Fri May 04 22:20:46 CEST 2018</xs:documentation>
+	</xs:annotation>
+	<xs:complexType name="RestContent">
+		<xs:sequence>
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="Enum">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element maxOccurs="unbounded" minOccurs="1" name="Key">
+							<xs:complexType>
+								<xs:simpleContent>
+									<xs:extension base="xs:string">
+										<xs:attribute name="value" type="xs:string" use="optional"/>
+									</xs:extension>
+								</xs:simpleContent>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+					<xs:attribute name="name" type="xs:string" use="required"/>
+					<xs:attribute default="int" name="base" type="xs:string" use="optional"/>
+					<xs:attribute default="false" name="isFlags" type="xs:boolean" use="optional"/>
+				</xs:complexType>
+			</xs:element>
+			<xs:element maxOccurs="unbounded" minOccurs="1" name="Property">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="key" type="xs:string" use="required"/>
+							<xs:attribute name="type" type="xs:string" use="required"/>
+							<xs:attribute default="false" name="asStr" type="xs:boolean" use="optional"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="name" type="xs:string" use="required"/>
+		<xs:attribute default="QObject" name="base" type="xs:string" use="optional"/>
+		<xs:attribute name="export" type="xs:string" use="optional"/>
+		<xs:attribute default="true" name="registerConverters" type="xs:boolean" use="optional"/>
+		<xs:attribute default="true" name="testEquality" type="xs:boolean" use="optional"/>
+		<xs:attribute default="false" name="generateEquals" type="xs:boolean" use="optional"/>
+	</xs:complexType>
+	<xs:element name="RestObject" type="RestContent"/>
+	<xs:element name="RestGadget" type="RestContent"/>
+</xs:schema>
