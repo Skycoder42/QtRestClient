@@ -28,3 +28,9 @@ REST_API_CLASSES += test_api.json \
 
 HEADERS += \
 	testmacro.h
+
+DISTFILES += \
+    user.rc.xml \
+    post.rc.xml \
+    api_posts.rc.xml \
+    test_api.rc.xml

@@ -20,7 +20,7 @@
 			"returns": "Post"
 		},
 		"addPost": {
-			"verb": "POST",
+			"verb": "PUT",
 			"body": "Post"
 		}
 	}

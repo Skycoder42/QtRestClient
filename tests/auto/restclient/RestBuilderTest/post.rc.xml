@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RestGadget name="Post"
+			export="TEST_EXPORT">
+	<Include>QVersionNumber</Include>
+	<Include local="true">user.h</Include>
+	<Include local="true">testmacro.h</Include>
+
+	<Property key="id" type="int">-1</Property>
+	<Property key="title" type="QString"/>
+	<Property key="version" type="QVersionNumber"/>
+	<Property key="body" type="QString"/>
+	<Property key="user" type="User*">nullptr</Property>
+</RestGadget>

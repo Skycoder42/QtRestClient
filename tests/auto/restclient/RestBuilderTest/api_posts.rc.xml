@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RestClass name="PostClass"
+		   base="QObject"
+		   export="TEST_EXPORT">
+	<Include local="true">post.h</Include>
+
+	<Path expr="false">posts</Path>
+
+	<Method name="listPosts"
+			verb="GET"
+			returns="QList&lt;Post&gt;" />
+	<Method name="post"
+			returns="Post">
+		<PathParam key="id" type="int"/>
+		<Path>full</Path>
+		<!-- Are combined as: <restclass_path>/<id>/full -->
+	</Method>
+	<Method name="addPost"
+			verb="PUT"
+			body="Post">
+		<Url>../post-add&amp;complete=true</Url>
+	</Method>
+</RestClass>

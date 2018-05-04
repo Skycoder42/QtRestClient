@@ -2,13 +2,15 @@
 	"$type": "gadget",
 	"$name": "Post",
 	"$includes": [
-		"user.h",
+		"QVersionNumber",
+		">user.h",
 		">testmacro.h"
 	],
 	"$export": "TEST_EXPORT",
 
 	"id": "int",
 	"title": "QString",
+	"version": "QVersionNumber",
 	"body": "QString",
 	"user": "User*"
 }
