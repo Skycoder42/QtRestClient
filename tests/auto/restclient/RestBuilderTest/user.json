@@ -14,7 +14,8 @@
 				"Person:0x00",
 				"Sir:0x01",
 				"Doctor:0x02",
-				"Professor:0x04"
+				"Professor:0x04",
+				"Dictator:(Person|Sir|Doctor|Professor)"
 			]
 		}
 	},

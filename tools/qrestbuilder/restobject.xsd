@@ -5,6 +5,15 @@
 	</xs:annotation>
 	<xs:complexType name="RestContent">
 		<xs:sequence>
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="Include">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute default="false" name="local" type="xs:boolean" use="optional"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
 			<xs:element maxOccurs="unbounded" minOccurs="0" name="Enum">
 				<xs:complexType>
 					<xs:sequence>

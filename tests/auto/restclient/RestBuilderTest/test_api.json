@@ -10,8 +10,10 @@
 	"export": "TEST_EXPORT",
 	"globalName": "localhost",
 	"autoCreate": true,
+
 	"baseUrl": "http://localhost:45715",
-	"apiVersion": "",
+	"apiVersion": "1.0",
+
 	"parameters": {
 		"limit": "$QByteArray::number(LIMIT)"
 	},

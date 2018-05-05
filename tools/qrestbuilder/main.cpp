@@ -7,6 +7,9 @@
 #include <QDir>
 #include <QLibraryInfo>
 #include <QTranslator>
+#include <QXmlStreamReader>
+
+#include "xmlconverter.h"
 
 int main(int argc, char *argv[])
 {
@@ -44,6 +47,12 @@ int main(int argc, char *argv[])
 						 QCoreApplication::translate("PARSER", "Set the builders mode to build an api object")
 					 });
 	parser.addOption({
+						 {QStringLiteral("c"), QStringLiteral("convert")},
+						 QCoreApplication::translate("PARSER", "Convert a legacy json file of <type> to the new XML format. "
+						 "Use --impl to specify the name of the RC-XML file to be created."),
+						 QCoreApplication::translate("PARSER", "type")
+					 });
+	parser.addOption({
 						 QStringLiteral("in"),
 						 QCoreApplication::translate("PARSER", "The input JSON <file> containing the API definition"),
 						 QCoreApplication::translate("PARSER", "file")
@@ -62,6 +71,14 @@ int main(int argc, char *argv[])
 	parser.process(a);
 
 	try {
+		if(parser.isSet(QStringLiteral("convert"))) {
+			XmlConverter converter;
+			converter.convert(parser.value(QStringLiteral("convert")),
+							  parser.value(QStringLiteral("in")),
+							  parser.value(QStringLiteral("impl")));
+			return EXIT_SUCCESS;
+		}
+
 		QScopedPointer<RestBuilder> builder;
 		if(parser.isSet(QStringLiteral("class")))
 			builder.reset(new ClassBuilder());

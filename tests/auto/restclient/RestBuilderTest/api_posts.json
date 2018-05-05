@@ -2,7 +2,7 @@
 	"type": "class",
 	"name": "PostClass",
 	"includes": [
-		"post.h"
+		">post.h"
 	],
 	"parent": "QObject",
 	"path": "posts",

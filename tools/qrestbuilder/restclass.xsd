@@ -74,23 +74,38 @@
 		<xs:attribute default="QObject" name="base" type="xs:string" use="optional"/>
 		<xs:attribute default="QObject*" name="except" type="xs:string" use="optional"/>
 	</xs:complexType>
-	<xs:element name="RestClass" type="RestAccess">
+	<xs:element name="RestClass">
 		<xs:complexType>
-			<xs:sequence>
-				<xs:element maxOccurs="1" minOccurs="0" name="Path" type="Expression"/>
-			</xs:sequence>
+			<xs:complexContent>
+				<xs:extension base="RestAccess">
+					<xs:sequence>
+						<xs:element maxOccurs="1" minOccurs="0" name="Path" type="Expression"/>
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="RestApi" type="RestAccess">
+	<xs:element name="RestApi">
 		<xs:complexType>
-			<xs:sequence>
-				<xs:element maxOccurs="1" minOccurs="0" name="BaseUrl" type="Expression"/>
-				<xs:element maxOccurs="unbounded" minOccurs="0" name="Parameter" type="FixedParamType"/>
-				<xs:element maxOccurs="unbounded" minOccurs="0" name="Header" type="FixedParamType"/>
-			</xs:sequence>
-			<xs:attribute name="apiVersion" type="xs:string" use="optional"/>
-			<xs:attribute name="globalName" type="xs:string" use="optional"/>
-			<xs:attribute default="true" name="autoCreate" type="xs:boolean" use="optional"/>
+			<xs:complexContent>
+				<xs:extension base="RestAccess">
+					<xs:sequence>
+						<xs:element maxOccurs="1" minOccurs="1" name="BaseUrl">
+							<xs:complexType>
+								<xs:complexContent>
+									<xs:extension base="Expression">
+										<xs:attribute name="apiVersion" type="xs:string" use="optional"/>
+									</xs:extension>
+								</xs:complexContent>
+							</xs:complexType>
+						</xs:element>
+						<xs:element maxOccurs="unbounded" minOccurs="0" name="Parameter" type="FixedParamType"/>
+						<xs:element maxOccurs="unbounded" minOccurs="0" name="Header" type="FixedParamType"/>
+					</xs:sequence>
+					<xs:attribute name="globalName" type="xs:string" use="optional"/>
+					<xs:attribute default="true" name="autoCreate" type="xs:boolean" use="optional"/>
+				</xs:extension>
+			</xs:complexContent>
 		</xs:complexType>
 	</xs:element>
 </xs:schema>
