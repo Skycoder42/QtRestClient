@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:annotation>
+		<xs:documentation>Created with EditiX (http://www.editix.com) at Sat May 05 10:30:03 CEST 2018</xs:documentation>
+	</xs:annotation>
+	<xs:complexType name="BaseParam">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="key" type="xs:string" use="required"/>
+				<xs:attribute name="type" type="xs:string" use="required"/>
+				<xs:attribute default="false" name="asStr" type="xs:boolean" use="optional"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="FixedParamType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="key" type="xs:string" use="required"/>
+				<xs:attribute default="false" name="expr" type="xs:boolean" use="optional"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="Expression">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute default="false" name="expr" type="xs:boolean" use="optional"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="RestAccess">
+		<xs:sequence>
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="Include">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute default="false" name="local" type="xs:boolean" use="optional"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="Class">
+				<xs:complexType>
+					<xs:attribute name="key" type="xs:string" use="required"/>
+					<xs:attribute name="type" type="xs:string" use="required"/>
+				</xs:complexType>
+			</xs:element>
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="Method">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:choice maxOccurs="1" minOccurs="0">
+							<xs:sequence>
+								<xs:choice maxOccurs="unbounded" minOccurs="0">
+									<xs:element name="Path" type="Expression"/>
+									<xs:element name="PathParam" type="BaseParam"/>
+								</xs:choice>
+							</xs:sequence>
+							<xs:element name="Url" type="Expression"/>
+						</xs:choice>
+						<xs:element maxOccurs="unbounded" minOccurs="0" name="Param" type="BaseParam"/>
+						<xs:element maxOccurs="unbounded" minOccurs="0" name="Header" type="FixedParamType"/>
+					</xs:sequence>
+					<xs:attribute name="name" type="xs:string" use="required"/>
+					<xs:attribute default="GET" name="verb" type="xs:string" use="optional"/>
+					<xs:attribute name="body" type="xs:string" use="optional"/>
+					<xs:attribute name="returns" type="xs:string" use="optional"/>
+					<xs:attribute default="QObject*" name="except" type="xs:string" use="optional"/>
+					<xs:attribute name="postParams" type="xs:boolean" use="optional"/>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="name" type="xs:boolean" use="required"/>
+		<xs:attribute name="export" type="xs:string" use="optional"/>
+		<xs:attribute default="QObject" name="base" type="xs:string" use="optional"/>
+		<xs:attribute default="QObject*" name="except" type="xs:string" use="optional"/>
+	</xs:complexType>
+	<xs:element name="RestClass" type="RestAccess">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element maxOccurs="1" minOccurs="0" name="Path" type="Expression"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="RestApi" type="RestAccess">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element maxOccurs="1" minOccurs="0" name="BaseUrl" type="Expression"/>
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="Parameter" type="FixedParamType"/>
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="Header" type="FixedParamType"/>
+			</xs:sequence>
+			<xs:attribute name="apiVersion" type="xs:string" use="optional"/>
+			<xs:attribute name="globalName" type="xs:string" use="optional"/>
+			<xs:attribute default="true" name="autoCreate" type="xs:boolean" use="optional"/>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

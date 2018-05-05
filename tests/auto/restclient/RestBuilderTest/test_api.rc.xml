@@ -4,21 +4,20 @@
 		 export="TEST_EXPORT"
 		 autoCreate="true"
 		 except="User*"
-		 version=""
+		 apiVersion=""
 		 globalName="localhost">
 	<Include local="true">user.h</Include>
 	<Include local="true">api_posts.h</Include>
 	<Include local="true">testmacro.h</Include>
 
 	<BaseUrl>http://localhost:45715</BaseUrl>
-	<Header key="Secret" expr="true">APP_SECRET</Header>
 	<Parameter key="limit" expr="true">QByteArray::number(LIMIT)</Parameter>
+	<Header key="Secret" expr="true">APP_SECRET</Header>
 
 	<Class key="posts" type="PostClass"/>
 
 	<Method name="createUser"
 			verb="POST"
-			url="http://localhost:3000/user"
 			returns="User*"
 			except="QObject*"
 			postParams="true">
