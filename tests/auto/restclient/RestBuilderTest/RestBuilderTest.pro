@@ -18,19 +18,20 @@ TEMPLATE = app
 
 include(../tests.pri)
 
-SOURCES += tst_restbuilder.cpp
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
+
+HEADERS += \
+	testmacro.h
+
+SOURCES += tst_restbuilder.cpp
+
+REST_API_FILES += \
+	user.xml \
+	post.xml# \
+#	api_posts.xml \
+#	test_api.xml
 
 REST_API_OBJECTS += post.json \
 	user.json
 REST_API_CLASSES += test_api.json \
 	api_posts.json
-
-HEADERS += \
-	testmacro.h
-
-DISTFILES += \
-    user.rc.xml \
-    post.rc.xml \
-    api_posts.rc.xml \
-    test_api.rc.xml

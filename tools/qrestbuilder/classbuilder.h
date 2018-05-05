@@ -39,7 +39,6 @@ private:
 	QString defaultExcept;
 
 	void build() override;
-	QString specialPrefix() override;
 
 	static QString expr(const QString &expression, bool stringLiteral);
 

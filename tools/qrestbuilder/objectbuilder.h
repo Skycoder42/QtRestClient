@@ -8,14 +8,15 @@ class ObjectBuilder : public RestBuilder
 	Q_OBJECT
 
 public:
-	explicit ObjectBuilder(QObject *parent = nullptr);
+	explicit ObjectBuilder(QXmlStreamReader &inStream, QObject *parent = nullptr);
+
+	static bool canReadType(const QString &type);
 
 private:
 	QHash<QString, QString> members;
 	bool testEquality;
 
 	void build() override;
-	QString specialPrefix() override;
 
 	void generateApiObject();
 	void generateApiGadget();
@@ -30,14 +31,14 @@ private:
 	void writeWriteDeclarations();
 	void writeEqualsDeclaration(bool asGadget);
 	void writeNotifyDeclarations();
-	void writeMemberDeclarations(QTextStream &stream);
+	void writeMemberDeclarations(QTextStream &reader);
 	void writeSourceIncludes();
 	void writeReadDefinitions(bool asGadget);
 	void writeWriteDefinitions(bool asGadget);
 	void writeEqualsDefinition(bool asGadget);
 	void writeDataClass();
-	void writeMemberDefinitions(QTextStream &stream);
-	void writeMemberCopyDefinitions(QTextStream &stream);
+	void writeMemberDefinitions(QTextStream &reader);
+	void writeMemberCopyDefinitions(QTextStream &reader);
 	void writeListConverter(bool asGadget);
 };
 

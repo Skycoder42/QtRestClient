@@ -20,14 +20,14 @@ SOURCES += \
 	main.cpp \
 	restbuilder.cpp \
 	objectbuilder.cpp \
-	classbuilder.cpp \
-    xmlconverter.cpp
+#	classbuilder.cpp \
+	xmlconverter.cpp
 
 HEADERS += \
 	restbuilder.h \
 	objectbuilder.h \
-	classbuilder.h \
-    xmlconverter.h
+#	classbuilder.h \
+	xmlconverter.h
 
 include(translations/translations.pri)
 
@@ -48,4 +48,5 @@ unix:!mac:!static_host_build {
 }
 
 DISTFILES += \
-    restobject.xsd
+	restobject.xsd \
+	restclass.xsd

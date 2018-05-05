@@ -11,25 +11,35 @@ debug_and_release {
 QRESTBUILDER_DIR = $$QRESTBUILDER_DIR$$SUFFIX
 
 {
-qrestbuilder_c.name = QRESTBUILDER class ${QMAKE_FILE_IN}.h
-qrestbuilder_c.input = REST_API_CLASSES
+#qrestbuilder_c.name = QRESTBUILDER class ${QMAKE_FILE_IN}.h
+#qrestbuilder_c.input = REST_API_CLASSES
+#qrestbuilder_c.variable_out = QRESTBUILDER_HEADERS
+#qrestbuilder_c.commands = $$QMAKE_QRESTBUILDER --class --in ${QMAKE_FILE_IN} --header ${QMAKE_FILE_OUT} --impl $$QRESTBUILDER_DIR/${QMAKE_FILE_BASE}$${first(QMAKE_EXT_CPP)}
+#qrestbuilder_c.output = $$QRESTBUILDER_DIR/${QMAKE_FILE_BASE}$${first(QMAKE_EXT_H)}
+#qrestbuilder_c.CONFIG += target_predeps
+#qrestbuilder_c.depends += $$QMAKE_QRESTBUILDER_EXE
+
+#QMAKE_EXTRA_COMPILERS += qrestbuilder_c
+
+#qrestbuilder_o.name = QRESTBUILDER object ${QMAKE_FILE_IN}.h
+#qrestbuilder_o.input = REST_API_OBJECTS
+#qrestbuilder_o.variable_out = QRESTBUILDER_HEADERS
+#qrestbuilder_o.commands = $$QMAKE_QRESTBUILDER --object --in ${QMAKE_FILE_IN} --header ${QMAKE_FILE_OUT} --impl $$QRESTBUILDER_DIR/${QMAKE_FILE_BASE}$${first(QMAKE_EXT_CPP)}
+#qrestbuilder_o.output = $$QRESTBUILDER_DIR/${QMAKE_FILE_BASE}$${first(QMAKE_EXT_H)}
+#qrestbuilder_o.CONFIG += target_predeps
+#qrestbuilder_o.depends += $$QMAKE_QRESTBUILDER_EXE
+
+#QMAKE_EXTRA_COMPILERS += qrestbuilder_o
+
+qrestbuilder_c.name = QRESTBUILDER ${QMAKE_FILE_IN}.h
+qrestbuilder_c.input = REST_API_FILES
 qrestbuilder_c.variable_out = QRESTBUILDER_HEADERS
-qrestbuilder_c.commands = $$QMAKE_QRESTBUILDER --class --in ${QMAKE_FILE_IN} --header ${QMAKE_FILE_OUT} --impl $$QRESTBUILDER_DIR/${QMAKE_FILE_BASE}$${first(QMAKE_EXT_CPP)}
+qrestbuilder_c.commands = $$QMAKE_QRESTBUILDER --in ${QMAKE_FILE_IN} --header ${QMAKE_FILE_OUT} --impl $$QRESTBUILDER_DIR/${QMAKE_FILE_BASE}$${first(QMAKE_EXT_CPP)}
 qrestbuilder_c.output = $$QRESTBUILDER_DIR/${QMAKE_FILE_BASE}$${first(QMAKE_EXT_H)}
 qrestbuilder_c.CONFIG += target_predeps
 qrestbuilder_c.depends += $$QMAKE_QRESTBUILDER_EXE
 
 QMAKE_EXTRA_COMPILERS += qrestbuilder_c
-
-qrestbuilder_o.name = QRESTBUILDER object ${QMAKE_FILE_IN}.h
-qrestbuilder_o.input = REST_API_OBJECTS
-qrestbuilder_o.variable_out = QRESTBUILDER_HEADERS
-qrestbuilder_o.commands = $$QMAKE_QRESTBUILDER --object --in ${QMAKE_FILE_IN} --header ${QMAKE_FILE_OUT} --impl $$QRESTBUILDER_DIR/${QMAKE_FILE_BASE}$${first(QMAKE_EXT_CPP)}
-qrestbuilder_o.output = $$QRESTBUILDER_DIR/${QMAKE_FILE_BASE}$${first(QMAKE_EXT_H)}
-qrestbuilder_o.CONFIG += target_predeps
-qrestbuilder_o.depends += $$QMAKE_QRESTBUILDER_EXE
-
-QMAKE_EXTRA_COMPILERS += qrestbuilder_o
 
 qrestbuilder_m.name = QRESTBUILDER_MOC ${QMAKE_FILE_IN}
 qrestbuilder_m.input = QRESTBUILDER_HEADERS

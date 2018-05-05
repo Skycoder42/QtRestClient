@@ -39,14 +39,6 @@ int main(int argc, char *argv[])
 	parser.addHelpOption();
 
 	parser.addOption({
-						 QStringLiteral("class"),
-						 QCoreApplication::translate("PARSER", "Set the builders mode to build an api class")
-					 });
-	parser.addOption({
-						 QStringLiteral("object"),
-						 QCoreApplication::translate("PARSER", "Set the builders mode to build an api object")
-					 });
-	parser.addOption({
 						 {QStringLiteral("c"), QStringLiteral("convert")},
 						 QCoreApplication::translate("PARSER", "Convert a legacy json file of <type> to the new XML format. "
 						 "Use --impl to specify the name of the RC-XML file to be created."),
@@ -79,13 +71,19 @@ int main(int argc, char *argv[])
 			return EXIT_SUCCESS;
 		}
 
+		QFile inFile(parser.value(QStringLiteral("in")));
+		if(!inFile.open(QIODevice::ReadOnly | QIODevice::Text))
+			throw QCoreApplication::translate("PARSER", "%1: %2").arg(inFile.fileName(), inFile.errorString());
+		QXmlStreamReader reader(&inFile);
+
+		auto type = RestBuilder::readType(reader);
 		QScopedPointer<RestBuilder> builder;
-		if(parser.isSet(QStringLiteral("class")))
-			builder.reset(new ClassBuilder());
-		else if(parser.isSet(QStringLiteral("object")))
-			builder.reset(new ObjectBuilder());
+		if(ObjectBuilder::canReadType(type))
+			builder.reset(new ObjectBuilder(reader));
+//		else if(parser.isSet(QStringLiteral("class")))
+//			builder.reset(new ClassBuilder());
 		else
-			throw QCoreApplication::translate("PARSER", "Invalid mode! You must specify either --class or --object");
+			throw QCoreApplication::translate("PARSER", "Unsupported document type: %1").arg(type);
 
 		builder->build(parser.value(QStringLiteral("in")),
 					   parser.value(QStringLiteral("header")),
