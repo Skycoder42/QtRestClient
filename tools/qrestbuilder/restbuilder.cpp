@@ -24,12 +24,6 @@ void RestBuilder::build(const QString &in, const QString &hOut, const QString &c
 {
 	QFileInfo inInfo(in);
 	fileName = inInfo.baseName();
-	className = reader.attributes().value(QStringLiteral("name")).toString();
-	exportedClassName = reader.attributes().value(QStringLiteral("export")).toString();
-	if(exportedClassName.isEmpty())
-		exportedClassName = className;
-	else
-		exportedClassName += QLatin1Char(' ') + className;
 
 	QSaveFile headerFile(hOut, this);
 	if(!headerFile.open(QIODevice::WriteOnly | QIODevice::Text))
@@ -60,7 +54,7 @@ void RestBuilder::build(const QString &in, const QString &hOut, const QString &c
 }
 
 template<>
-bool RestBuilder::readAttrib<bool>(const QString &key, const bool &defaultValue) const
+bool RestBuilder::readAttrib<bool>(const QString &key, const bool &defaultValue, bool required) const
 {
 	if(reader.attributes().hasAttribute(key)) {
 		if(reader.attributes().value(key) == QStringLiteral("true"))
@@ -69,8 +63,18 @@ bool RestBuilder::readAttrib<bool>(const QString &key, const bool &defaultValue)
 			return false;
 		else
 			throwReader(tr("Value of attribute \"%1\" is not a xs:boolean!").arg(key));
-	} else
+	} else if(required)
+		throwReader(tr("Required attribute \"%1\" but was not set").arg(key));
+	else
 		return defaultValue;
+}
+
+RestBuilder::Include RestBuilder::readInclude()
+{
+	auto local = readAttrib<bool>(QStringLiteral("local"), false);
+	auto include = reader.readElementText();
+	checkError();
+	return {local, include};
 }
 
 void RestBuilder::throwFile(const QFileDevice &file) const
@@ -103,32 +107,22 @@ void RestBuilder::checkError()
 		throwReader();
 }
 
-void RestBuilder::transformIncludes(const QStringList &extras)
+QString RestBuilder::exportedName(const QString &name, const QString &exportKey) const
 {
-	for(const auto &inc : extras)
-		header << "#include <" << inc << ">\n";
+	if(exportKey.isEmpty())
+		return name;
+	else
+		return exportKey + QLatin1Char(' ') + name;
+}
 
-	while(reader.readNextStartElement()) {
-		checkError();
-
-		if(reader.name() != QStringLiteral("Include"))
-			break;
-		auto local = readAttrib<bool>(QStringLiteral("local"), false);
-		auto include = reader.readElementText();
-		checkError();
-
-		if(!extras.contains(include)) {
-			if(local)
-				header << "#include \"" << include << "\"\n";
-			else
-				header << "#include <" << include << ">\n";
-		}
-
-		if(reader.readNextStartElement())
-			throwChild();
+void RestBuilder::writeIncludes(const QList<Include> &includes)
+{
+	for(const auto &inc : includes) {
+		if(inc.local)
+			header << "#include \"" << inc.include << "\"\n";
+		else
+			header << "#include <" << inc.include << ">\n";
 	}
-
-	checkError();
 	header << "\n";
 }
 

@@ -13,33 +13,70 @@ public:
 	static bool canReadType(const QString &type);
 
 private:
-	QHash<QString, QString> members;
-	bool testEquality;
+	struct XmlContent {
+		bool isObject = false;
+		QString name;
+		QString base;
+		QString exportKey;
+		bool registerConverters = false;
+		bool testEquality = false;
+		bool generateEquals = false;
+		bool generateReset = false;
+
+		QList<Include> includes;
+
+		struct Enum {
+			QString name;
+			QString base;
+			bool isFlags = false;
+
+			struct Key {
+				QString key;
+				QString value;
+			};
+			QList<Key> keys;
+		};
+		QList<Enum> enums;
+
+		struct Property {
+			QString key;
+			QString type;
+			bool asStr = false;
+			QString defaultValue;
+		};
+		QList<Property> properties;
+	} data;
 
 	void build() override;
 
+	void readData();
+	void readEnum();
+	void readProperty();
+
 	void generateApiObject();
 	void generateApiGadget();
-	void readMembers();
 
 	QString setter(const QString &name);
 
 	void writeEnums();
 	void writeFlagOperators();
-	void writeProperties(bool withNotify);
+	void writeProperties();
 	void writeReadDeclarations();
 	void writeWriteDeclarations();
-	void writeEqualsDeclaration(bool asGadget);
+	void writeResetDeclarations();
 	void writeNotifyDeclarations();
-	void writeMemberDeclarations(QTextStream &reader);
+	void writeMemberDeclarations();
+	void writeEqualsDeclaration();
 	void writeSourceIncludes();
-	void writeReadDefinitions(bool asGadget);
-	void writeWriteDefinitions(bool asGadget);
-	void writeEqualsDefinition(bool asGadget);
+	void writeReadDefinitions();
+	void writeWriteDefinitions();
+	void writeResetDefinitions();
+	void writeEqualsDefinition();
+	void writePrivateClass();
 	void writeDataClass();
-	void writeMemberDefinitions(QTextStream &reader);
-	void writeMemberCopyDefinitions(QTextStream &reader);
-	void writeListConverter(bool asGadget);
+	void writeMemberDefault(const XmlContent::Property &prop);
+	void writeMemberDefinitions(bool skipComma);
+	void writeListConverter();
 };
 
 #endif // OBJECTBUILDER_H

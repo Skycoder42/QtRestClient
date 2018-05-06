@@ -20,10 +20,16 @@ public:
 	void build(const QString &in, const QString &hOut, const QString &cppOut);
 
 protected:
+	struct Include {
+		bool local;
+		QString include;
+	};
+
 	virtual void build() = 0;
 
 	template <typename T = QString>
-	T readAttrib(const QString &key, const T &defaultValue = {}) const;
+	T readAttrib(const QString &key, const T &defaultValue = {}, bool required = false) const;
+	Include readInclude();
 
 	Q_NORETURN void throwFile(const QFileDevice &file) const;
 	Q_NORETURN void throwReader(const QString &overwriteError = {}) const;
@@ -31,11 +37,11 @@ protected:
 	Q_NORETURN void throwChild();
 	void checkError();
 
-	void transformIncludes(const QStringList &extras = {});
+	QString exportedName(const QString &name, const QString &exportKey) const;
+
+	void writeIncludes(const QList<Include> &includes = {});
 
 	QString fileName;
-	QString className;
-	QString exportedClassName;
 	QXmlStreamReader &reader;
 	QTextStream header;
 	QTextStream source;
@@ -46,15 +52,17 @@ private:
 };
 
 template<typename T>
-T RestBuilder::readAttrib(const QString &key, const T &defaultValue) const
+T RestBuilder::readAttrib(const QString &key, const T &defaultValue, bool required) const
 {
 	if(reader.attributes().hasAttribute(key))
 		return QVariant(reader.attributes().value(key).toString()).template value<T>();
+	else if(required)
+		throwReader(tr("Required attribute \"%1\" but was not set").arg(key));
 	else
 		return defaultValue;
 }
 
 template<>
-bool RestBuilder::readAttrib<bool>(const QString &key, const bool &defaultValue) const;
+bool RestBuilder::readAttrib<bool>(const QString &key, const bool &defaultValue, bool required) const;
 
 #endif // RESTBUILDER_H

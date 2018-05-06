@@ -3,7 +3,8 @@
 			base="QObject"
 			registerConverters="true"
 			testEquality="false"
-			generateEquals="true">
+			generateEquals="true"
+			generateReset="true">
 	<Enum name="GenderType">
 		<Key>Male</Key>
 		<Key>Female</Key>
@@ -18,6 +19,6 @@
 
 	<Property key="id" type="int">-1</Property>
 	<Property key="name" type="QString" asStr="true">Anonymous</Property>
-	<Property key="gender" type="User::GenderType">Male</Property>
-	<Property key="title" type="User::UserTypes">Person</Property>
+	<Property key="gender" type="User::GenderType">User::Male</Property>
+	<Property key="title" type="User::UserTypes">User::Person</Property>
 </RestObject>

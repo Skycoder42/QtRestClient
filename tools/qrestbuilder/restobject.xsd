@@ -50,6 +50,7 @@
 		<xs:attribute default="true" name="registerConverters" type="xs:boolean" use="optional"/>
 		<xs:attribute default="true" name="testEquality" type="xs:boolean" use="optional"/>
 		<xs:attribute default="false" name="generateEquals" type="xs:boolean" use="optional"/>
+		<xs:attribute default="false" name="generateReset" type="xs:boolean" use="optional"/>
 	</xs:complexType>
 	<xs:element name="RestObject" type="RestContent"/>
 	<xs:element name="RestGadget" type="RestContent"/>
