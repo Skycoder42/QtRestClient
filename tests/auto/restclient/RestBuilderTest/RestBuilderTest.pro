@@ -27,9 +27,9 @@ SOURCES += tst_restbuilder.cpp
 
 REST_API_FILES += \
 	user.xml \
-	post.xml# \
-#	api_posts.xml \
-#	test_api.xml
+	post.xml \
+	api_posts.xml \
+	test_api.xml
 
 REST_API_OBJECTS += post.json \
 	user.json

@@ -80,8 +80,8 @@ int main(int argc, char *argv[])
 		QScopedPointer<RestBuilder> builder;
 		if(ObjectBuilder::canReadType(type))
 			builder.reset(new ObjectBuilder(reader));
-//		else if(parser.isSet(QStringLiteral("class")))
-//			builder.reset(new ClassBuilder());
+		else if(ClassBuilder::canReadType(type))
+			builder.reset(new ClassBuilder(reader));
 		else
 			throw QCoreApplication::translate("PARSER", "Unsupported document type: %1").arg(type);
 

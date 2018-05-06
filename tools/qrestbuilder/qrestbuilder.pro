@@ -20,13 +20,13 @@ SOURCES += \
 	main.cpp \
 	restbuilder.cpp \
 	objectbuilder.cpp \
-#	classbuilder.cpp \
+	classbuilder.cpp \
 	xmlconverter.cpp
 
 HEADERS += \
 	restbuilder.h \
 	objectbuilder.h \
-#	classbuilder.h \
+	classbuilder.h \
 	xmlconverter.h
 
 include(translations/translations.pri)

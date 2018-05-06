@@ -3,11 +3,8 @@
 #include <QFileInfo>
 #include <QJsonArray>
 
-#define toBool(defaultValue) .toString() == ""
-
 ObjectBuilder::ObjectBuilder(QXmlStreamReader &inStream, QObject *parent) :
-	RestBuilder(inStream, parent),
-	data()
+	RestBuilder(inStream, parent)
 {}
 
 bool ObjectBuilder::canReadType(const QString &type)
@@ -81,7 +78,7 @@ void ObjectBuilder::readEnum()
 
 void ObjectBuilder::readProperty()
 {
-	XmlContent::Property property;
+	BaseParam property;
 	property.key = readAttrib(QStringLiteral("key"), {}, true);
 	property.type = readAttrib(QStringLiteral("type"), {}, true);
 	property.asStr = readAttrib<bool>(QStringLiteral("asStr"), false);
@@ -338,7 +335,7 @@ void ObjectBuilder::writeResetDefinitions()
 		if(prop.defaultValue.isEmpty())
 			source << prop.type << "{}";
 		else
-			writeMemberDefault(prop);
+			writeParamDefault(prop);
 		source << "));\n"
 			   << "}\n";
 	}
@@ -400,14 +397,6 @@ void ObjectBuilder::writeDataClass()
 	source << "};\n\n";
 }
 
-void ObjectBuilder::writeMemberDefault(const XmlContent::Property &prop)
-{
-	if(prop.asStr)
-		source << "QVariant(QStringLiteral(\"" << prop.defaultValue << "\")).value<" << prop.type << ">()";
-	else
-		source << prop.defaultValue;
-}
-
 void ObjectBuilder::writeMemberDefinitions(bool skipComma)
 {
 	for(const auto &prop : qAsConst(data.properties)) {
@@ -417,7 +406,7 @@ void ObjectBuilder::writeMemberDefinitions(bool skipComma)
 		} else
 			source << "\t\t," << prop.key << "{";
 		if(!prop.defaultValue.isEmpty())
-			writeMemberDefault(prop);
+			writeParamDefault(prop);
 		source << "}\n";
 	}
 }

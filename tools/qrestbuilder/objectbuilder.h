@@ -38,13 +38,7 @@ private:
 		};
 		QList<Enum> enums;
 
-		struct Property {
-			QString key;
-			QString type;
-			bool asStr = false;
-			QString defaultValue;
-		};
-		QList<Property> properties;
+		QList<BaseParam> properties;
 	} data;
 
 	void build() override;
@@ -74,7 +68,6 @@ private:
 	void writeEqualsDefinition();
 	void writePrivateClass();
 	void writeDataClass();
-	void writeMemberDefault(const XmlContent::Property &prop);
 	void writeMemberDefinitions(bool skipComma);
 	void writeListConverter();
 };

@@ -126,6 +126,14 @@ void RestBuilder::writeIncludes(const QList<Include> &includes)
 	header << "\n";
 }
 
+void RestBuilder::writeParamDefault(const BaseParam &prop)
+{
+	if(prop.asStr)
+		source << "QVariant(QStringLiteral(\"" << prop.defaultValue << "\")).value<" << prop.type << ">()";
+	else
+		source << prop.defaultValue;
+}
+
 void RestBuilder::writeIncGuardBegin()
 {
 	QString guard = fileName.toUpper() + QStringLiteral("_H");

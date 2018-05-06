@@ -25,6 +25,13 @@ protected:
 		QString include;
 	};
 
+	struct BaseParam {
+		QString key;
+		QString type;
+		bool asStr = false;
+		QString defaultValue;
+	};
+
 	virtual void build() = 0;
 
 	template <typename T = QString>
@@ -40,6 +47,7 @@ protected:
 	QString exportedName(const QString &name, const QString &exportKey) const;
 
 	void writeIncludes(const QList<Include> &includes = {});
+	void writeParamDefault(const BaseParam &prop);
 
 	QString fileName;
 	QXmlStreamReader &reader;
