@@ -44,8 +44,7 @@ private:
 	void build() override;
 
 	void readData();
-	void readEnum();
-	void readProperty();
+	XmlContent::Enum readEnum();
 
 	void generateApiObject();
 	void generateApiGadget();

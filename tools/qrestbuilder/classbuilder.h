@@ -48,10 +48,11 @@ private:
 			QString body;
 			QString returns;
 			QString except;
-			bool postParams = false;
+			bool postParams = false; //TODO use in code
 
 #if __cplusplus >= 201703L
-			using PathInfo = std::variant<QList<std::variant<Expression, BaseParam>>, QString>;
+			using PathInfoBase = QList<std::variant<Expression, BaseParam>>;
+			using PathInfo = std::variant<PathInfoBase, QString>;
 #else
 			struct {
 				bool isParams = false;
@@ -94,33 +95,27 @@ private:
 	void build() override;
 
 	void readData();
-	void readClass();
-	void readMethod();
-
-	void readApiUrl();
-	void readApiParameter();
-	void readApiHeader();
-
-	void readClassPath();
-
-	static QString expr(const QString &expression, bool stringLiteral);
+	Expression readExpression();
+	FixedParam readFixedParam();
+	RestAccess::Class readClass();
+	RestAccess::Method readMethod();
 
 	void generateClass();
 	void generateApi();
 
-	void writeClassBeginDeclaration(const QString &parent);
+	void writeClassBeginDeclaration();
 	void writeClassMainDeclaration();
 	void writeClassBeginDefinition();
-	void writeClassMainDefinition(const QString &parent);
+	void writeClassMainDefinition();
 
-	void readClasses();
-	void readMethods();
+	QString writeExpression(const Expression &expression, bool asString);
 
 	void generateFactoryDeclaration();
 	void writeFactoryDeclarations();
 	void writeClassDeclarations();
 	void writeMethodDeclarations();
 	void writeMemberDeclarations();
+	void writePrivateDefinitions();
 	void generateFactoryDefinition();
 	void writeFactoryDefinitions();
 	void writeClassDefinitions();

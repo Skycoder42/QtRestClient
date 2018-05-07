@@ -37,6 +37,7 @@ protected:
 	template <typename T = QString>
 	T readAttrib(const QString &key, const T &defaultValue = {}, bool required = false) const;
 	Include readInclude();
+	BaseParam readBaseParam();
 
 	Q_NORETURN void throwFile(const QFileDevice &file) const;
 	Q_NORETURN void throwReader(const QString &overwriteError = {}) const;
@@ -47,7 +48,8 @@ protected:
 	QString exportedName(const QString &name, const QString &exportKey) const;
 
 	void writeIncludes(const QList<Include> &includes = {});
-	void writeParamDefault(const BaseParam &prop);
+	QString writeParamDefault(const BaseParam &param);
+	QString writeParamArg(const BaseParam &param);
 
 	QString fileName;
 	QXmlStreamReader &reader;

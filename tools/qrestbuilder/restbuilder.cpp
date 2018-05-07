@@ -77,6 +77,17 @@ RestBuilder::Include RestBuilder::readInclude()
 	return {local, include};
 }
 
+RestBuilder::BaseParam RestBuilder::readBaseParam()
+{
+	BaseParam param;
+	param.key = readAttrib(QStringLiteral("key"), {}, true);
+	param.type = readAttrib(QStringLiteral("type"), {}, true);
+	param.asStr = readAttrib<bool>(QStringLiteral("asStr"), false);
+	param.defaultValue = reader.readElementText();
+	checkError();
+	return param;
+}
+
 void RestBuilder::throwFile(const QFileDevice &file) const
 {
 	throw tr("%1: %2").arg(file.fileName(), file.errorString());
@@ -126,12 +137,20 @@ void RestBuilder::writeIncludes(const QList<Include> &includes)
 	header << "\n";
 }
 
-void RestBuilder::writeParamDefault(const BaseParam &prop)
+QString RestBuilder::writeParamDefault(const BaseParam &param)
 {
-	if(prop.asStr)
-		source << "QVariant(QStringLiteral(\"" << prop.defaultValue << "\")).value<" << prop.type << ">()";
+	if(param.asStr)
+		return QStringLiteral("QVariant(QStringLiteral(\"") + param.defaultValue + QStringLiteral("\")).value<") + param.type + QStringLiteral(">()");
 	else
-		source << prop.defaultValue;
+		return param.defaultValue;
+}
+
+QString RestBuilder::writeParamArg(const RestBuilder::BaseParam &param)
+{
+	QString res = param.type + QLatin1Char(' ') + param.key;
+	if(!param.defaultValue.isEmpty())
+		res += QStringLiteral(" = ") + writeParamDefault(param);
+	return res;
 }
 
 void RestBuilder::writeIncGuardBegin()

@@ -50,16 +50,16 @@ void ObjectBuilder::readData()
 		if(reader.name() == QStringLiteral("Include"))
 			data.includes.append(readInclude());
 		else if(reader.name() == QStringLiteral("Enum"))
-			readEnum();
+			data.enums.append(readEnum());
 		else if(reader.name() == QStringLiteral("Property"))
-			readProperty();
+			data.properties.append(readBaseParam());
 		else
 			throwChild();
 	}
 	checkError();
 }
 
-void ObjectBuilder::readEnum()
+ObjectBuilder::XmlContent::Enum ObjectBuilder::readEnum()
 {
 	XmlContent::Enum enumElement;
 	enumElement.name = readAttrib(QStringLiteral("name"), {}, true);
@@ -72,19 +72,7 @@ void ObjectBuilder::readEnum()
 		enumElement.keys.append({reader.readElementText(), value});
 		checkError();
 	}
-
-	data.enums.append(enumElement);
-}
-
-void ObjectBuilder::readProperty()
-{
-	BaseParam property;
-	property.key = readAttrib(QStringLiteral("key"), {}, true);
-	property.type = readAttrib(QStringLiteral("type"), {}, true);
-	property.asStr = readAttrib<bool>(QStringLiteral("asStr"), false);
-	property.defaultValue = reader.readElementText();
-	checkError();
-	data.properties.append(property);
+	return enumElement;
 }
 
 void ObjectBuilder::generateApiObject()
@@ -270,7 +258,7 @@ void ObjectBuilder::writeResetDeclarations()
 void ObjectBuilder::writeNotifyDeclarations()
 {
 	for(const auto &prop : qAsConst(data.properties))
-		header << "\tvoid " << prop.key << "Changed(" << prop.type << " " << prop.key << ");\n";
+		header << "\tvoid " << prop.key << "Changed(const " << prop.type << " &" << prop.key << ");\n";
 }
 
 void ObjectBuilder::writeMemberDeclarations()
@@ -331,12 +319,12 @@ void ObjectBuilder::writeResetDefinitions()
 	for(const auto &prop : qAsConst(data.properties)) {
 		source << "\nvoid " << data.name << "::re" << setter(prop.key) << "()\n"
 			   << "{\n"
-			   << "\t" << setter(prop.key) << "(std::move(";
+			   << "\t" << setter(prop.key) << "(";
 		if(prop.defaultValue.isEmpty())
 			source << prop.type << "{}";
 		else
-			writeParamDefault(prop);
-		source << "));\n"
+			source << writeParamDefault(prop);
+		source << ");\n"
 			   << "}\n";
 	}
 }
@@ -406,7 +394,7 @@ void ObjectBuilder::writeMemberDefinitions(bool skipComma)
 		} else
 			source << "\t\t," << prop.key << "{";
 		if(!prop.defaultValue.isEmpty())
-			writeParamDefault(prop);
+			source << writeParamDefault(prop);
 		source << "}\n";
 	}
 }

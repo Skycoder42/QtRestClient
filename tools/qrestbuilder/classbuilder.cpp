@@ -42,6 +42,7 @@ void ClassBuilder::readData()
 	data.includes = {
 		{false, QStringLiteral("QtCore/QString")},
 		{false, QStringLiteral("QtCore/QStringList")},
+		{false, QStringLiteral("QtCore/QScopedPointer")},
 		{false, QStringLiteral("QtRestClient/RestClient")},
 		{false, QStringLiteral("QtRestClient/RestClass")}
 	};
@@ -52,24 +53,44 @@ void ClassBuilder::readData()
 		if(reader.name() == QStringLiteral("Include"))
 			data.includes.append(readInclude());
 		else if(reader.name() == QStringLiteral("Class"))
-			readClass();
+			data.classes.append(readClass());
 		else if(reader.name() == QStringLiteral("Method"))
-			readMethod();
-		else if(isApi && reader.name() == QStringLiteral("BaseUrl"))
-			readApiUrl();
-		else if(isApi && reader.name() == QStringLiteral("Parameter"))
-			readApiParameter();
+			data.methods.append(readMethod());
+		else if(isApi && reader.name() == QStringLiteral("BaseUrl")) {
+			apiData.apiVersion = readAttrib<QVersionNumber>(QStringLiteral("apiVersion"));
+			apiData.baseUrl = readExpression();
+		} else if(isApi && reader.name() == QStringLiteral("Parameter"))
+			apiData.params.append(readFixedParam());
 		else if(isApi && reader.name() == QStringLiteral("Header"))
-			readApiHeader();
+			apiData.headers.append(readFixedParam());
 		else if(!isApi && reader.name() == QStringLiteral("Path"))
-			readClassPath();
+			classData.path = readExpression();
 		else
 			throwChild();
 	}
 	checkError();
 }
 
-void ClassBuilder::readClass()
+ClassBuilder::Expression ClassBuilder::readExpression()
+{
+	Expression expr;
+	expr.expr = readAttrib<bool>(QStringLiteral("expr"), false);
+	expr.value = reader.readElementText();
+	checkError();
+	return expr;
+}
+
+ClassBuilder::FixedParam ClassBuilder::readFixedParam()
+{
+	FixedParam param;
+	param.key = readAttrib(QStringLiteral("key"), {}, true);
+	param.expr = readAttrib<bool>(QStringLiteral("expr"), false);
+	param.value = reader.readElementText();
+	checkError();
+	return param;
+}
+
+ClassBuilder::RestAccess::Class ClassBuilder::readClass()
 {
 	RestAccess::Class restClass;
 	restClass.key = readAttrib(QStringLiteral("key"), {}, true);
@@ -77,83 +98,59 @@ void ClassBuilder::readClass()
 	if(reader.readNextStartElement())
 		throwChild();
 	checkError();
-	data.classes.append(restClass);
+	return restClass;
 }
 
-void ClassBuilder::readMethod()
+ClassBuilder::RestAccess::Method ClassBuilder::readMethod()
 {
 	RestAccess::Method method;
 	method.name = readAttrib(QStringLiteral("name"), {}, true);
 	method.verb = readAttrib(QStringLiteral("verb"), QStringLiteral("GET"));
 	method.body = readAttrib(QStringLiteral("body"));
-	method.returns = readAttrib(QStringLiteral("returns"));
+	method.returns = readAttrib(QStringLiteral("returns"), QStringLiteral("void"));
 	method.except = readAttrib(QStringLiteral("except"), data.except);
 	method.postParams = readAttrib<bool>(QStringLiteral("postParams"), method.verb == QStringLiteral("POST"));
 
+	enum { None, Url, Path } mode = None;
 	while(reader.readNextStartElement()) {
 		checkError();
-		if(reader.name() == QStringLiteral("Url"))
-			;//data.includes.append(readInclude());
-		else if(reader.name() == QStringLiteral("Path"))
-			;//readClass();
-		else if(reader.name() == QStringLiteral("PathParam"))
-			;//readMethod();
-		else if(isApi && reader.name() == QStringLiteral("Param"))
-			;//readApiUrl();
-		else if(isApi && reader.name() == QStringLiteral("Header"))
-			;//readApiParameter();
+		if(reader.name() == QStringLiteral("Url")) {
+			if(mode != None)
+				throwReader(tr("You cannot specify a single <Url> element per method, and only if you haven't already used <Path> or <PathParam>"));
+			mode = Url;
+			method.path = reader.readElementText();
+			checkError();
+		} else if(reader.name() == QStringLiteral("Path")) {
+			if(mode == Url)
+				throwReader(tr("You cannot specify a <Path> element if you already used <Url>"));
+			mode = Path;
+			std::get<RestAccess::Method::PathInfoBase>(method.path).append(readExpression());
+		} else if(reader.name() == QStringLiteral("PathParam")) {
+			if(mode == Url)
+				throwReader(tr("You cannot specify a <PathParam> element if you already used <Url>"));
+			mode = Path;
+			std::get<RestAccess::Method::PathInfoBase>(method.path).append(readBaseParam());
+		} else if(reader.name() == QStringLiteral("Param"))
+			method.params.append(readBaseParam());
+		else if(reader.name() == QStringLiteral("Header"))
+			method.headers.append(readFixedParam());
 		else
 			throwChild();
 	}
 	checkError();
-
-	data.methods.append(method);
-}
-
-void ClassBuilder::readApiUrl()
-{
-
-}
-
-void ClassBuilder::readApiParameter()
-{
-
-}
-
-void ClassBuilder::readApiHeader()
-{
-
-}
-
-void ClassBuilder::readClassPath()
-{
-
-}
-
-QString ClassBuilder::expr(const QString &expression, bool stringLiteral)
-{
-//	if(expression.startsWith(QLatin1Char('$')))
-//		return expression.mid(1);
-//	else if(stringLiteral)
-//		return QStringLiteral("QStringLiteral(\"") + expression + QStringLiteral("\")");
-//	else
-//		return QLatin1Char('"') + expression + QLatin1Char('"');
+	return method;
 }
 
 void ClassBuilder::generateClass()
 {
-//	readClasses();
-//	readMethods();
-//	auto parent = root[QStringLiteral("parent")].toString(QStringLiteral("QObject"));
+	//write header
+	writeClassBeginDeclaration();
+	writeClassMainDeclaration();
+	header << "};\n\n";
 
-//	//write header
-//	writeClassBeginDeclaration(parent);
-//	writeClassMainDeclaration();
-//	header << "};\n\n";
-
-//	//write source
-//	writeClassBeginDefinition();
-//	writeClassMainDefinition(parent);
+	//write source
+	writeClassBeginDefinition();
+	writeClassMainDefinition();
 }
 
 void ClassBuilder::generateApi()
@@ -189,197 +186,198 @@ void ClassBuilder::generateApi()
 //		writeLocalApiGeneration();
 }
 
-void ClassBuilder::writeClassBeginDeclaration(const QString &parent)
+void ClassBuilder::writeClassBeginDeclaration()
 {
-//	auto includes = readIncludes();
-//	includes.append(QStringLiteral("QtRestClient/restclient.h"));
-//	includes.append(QStringLiteral("QtRestClient/restclass.h"));
-//	includes.append(QStringLiteral("QtCore/qstring.h"));
-//	includes.append(QStringLiteral("QtCore/qstringlist.h"));
-
-//	writeIncludes(header, includes);
-//	header << "class " << exportedClassName << " : public " << parent << "\n"
-//		   << "{\n"
-//		   << "\tQ_OBJECT\n\n"
-//		   << "public:\n";
-//	generateFactoryDeclaration();
+	writeIncludes(data.includes);
+	header << "class " << data.name << "Private;\n"
+		   << "class " << data.name << "Private::Factory;\n"
+		   << "class " << exportedName(data.name, data.exportKey) << " : public " << data.base << "\n"
+		   << "{\n"
+		   << "\tQ_OBJECT\n\n"
+		   << "public:\n";
+	generateFactoryDeclaration();
 }
 
 void ClassBuilder::writeClassMainDeclaration()
 {
-//	header << "\t" << className << "(QtRestClient::RestClass *restClass, QObject *parent);\n\n"
-//		   << "\tQtRestClient::RestClient *restClient() const;\n"
-//		   << "\tQtRestClient::RestClass *restClass() const;\n\n";
-//	writeClassDeclarations();
-//	writeMethodDeclarations();
-//	header << "\tvoid setErrorTranslator(const std::function<QString(" << defaultExcept << ", int)> &fn);\n\n"
-//		   << "Q_SIGNALS:\n"
-//		   << "\tvoid apiError(const QString &errorString, int errorCode, QtRestClient::RestReply::ErrorType errorType);\n\n"
-//		   << "private:\n"
-//		   << "\tQtRestClient::RestClass *_restClass;\n"
-//		   << "\tstd::function<QString(" << defaultExcept << ", int)> _errorTranslator;\n";
-//	writeMemberDeclarations();
+	header << "\t" << data.name << "(QtRestClient::RestClass *restClass, QObject *parent);\n\n"
+		   << "\tQtRestClient::RestClient *restClient() const;\n"
+		   << "\tQtRestClient::RestClass *restClass() const;\n\n";
+	writeClassDeclarations();
+	writeMethodDeclarations();
+	header << "\tvoid setErrorTranslator(const std::function<QString(" << data.except << ", int)> &fn);\n\n"
+		   << "Q_SIGNALS:\n"
+		   << "\tvoid apiError(const QString &errorString, int errorCode, QtRestClient::RestReply::ErrorType errorType);\n\n"
+		   << "private:\n"
+		   << "\tQScopedPointer<" << data.name << "Private> d;\n";
+	writeMemberDeclarations();
 }
 
 void ClassBuilder::writeClassBeginDefinition()
 {
-//	source << "#include \"" << fileName << ".h\"\n\n"
-//		   << "#include <QtCore/qcoreapplication.h>\n"
-//		   << "#include <QtCore/qtimer.h>\n"
-//		   << "#include <QtCore/qpointer.h>\n"
-//		   << "using namespace QtRestClient;\n\n"
-//		   << "const QString " << className << "::Path(" << expr(root[QStringLiteral("path")].toString(), true) << ");\n";
-//	generateFactoryDefinition();
+	source << "#include \"" << fileName << ".h\"\n\n"
+		   << "#include <QtCore/QCoreApplication>\n"
+		   << "#include <QtCore/QTimer>\n"
+		   << "#include <QtCore/QPointer>\n"
+		   << "using namespace QtRestClient;\n\n"
+		   << "const QString " << data.name << "::Path{" << writeExpression(classData.path, true) << "};\n";
+	writePrivateDefinitions();
+	generateFactoryDefinition();
 }
 
-void ClassBuilder::writeClassMainDefinition(const QString &parent)
+void ClassBuilder::writeClassMainDefinition()
 {
-//	source << "\n" << className << "::" << className << "(RestClass *restClass, QObject *parent) :\n"
-//		   << "\t" << parent << "(parent)\n"
-//		   << "\t,_restClass(restClass)\n"
-//		   << "\t,_errorTranslator()\n";
-//	writeMemberDefinitions();
-//	source << "{\n"
-//		   << "\t_restClass->setParent(this);\n"
-//		   << "}\n";
-//	source << "\nRestClient *" << className << "::restClient() const\n"
-//		   << "{\n"
-//		   << "\treturn _restClass->client();\n"
-//		   << "}\n";
-//	source << "\nRestClass *" << className << "::restClass() const\n"
-//		   << "{\n"
-//		   << "\treturn _restClass;\n"
-//		   << "}\n";
-//	writeClassDefinitions();
+	source << "\n" << data.name << "::" << data.name << "(RestClass *restClass, QObject *parent) :\n"
+		   << "\t" << data.base << "(parent),\n"
+		   << "\td{new " << data.name << "Private{restClass}}\n"
+		   << "{\n"
+		   << "\td->restClass->setParent(this);\n"
+		   << "}\n";
+	source << "\nRestClient *" << data.name << "::restClient() const\n"
+		   << "{\n"
+		   << "\treturn d->restClass->client();\n"
+		   << "}\n";
+	source << "\nRestClass *" << data.name << "::restClass() const\n"
+		   << "{\n"
+		   << "\treturn d->restClass;\n"
+		   << "}\n";
+	writeClassDefinitions();
 //	writeMethodDefinitions();
 //	source << "\nvoid " << className << "::setErrorTranslator(const std::function<QString(" << defaultExcept << ", int)> &fn)\n"
 //		   << "{\n"
 //		   << "\t_errorTranslator = fn;\n"
-//		   << "}\n";
+	//		   << "}\n";
 }
 
-void ClassBuilder::readClasses()
+QString ClassBuilder::writeExpression(const ClassBuilder::Expression &expression, bool asString)
 {
-//	auto cls = root[QStringLiteral("classes")].toObject();
-//	for(auto it = cls.constBegin(); it != cls.constEnd(); it++)
-//		classes.insert(it.key(), it.value().toString());
-}
-
-void ClassBuilder::readMethods()
-{
-//	defaultExcept = root[QStringLiteral("except")].toString(defaultExcept);
-//	auto member = root[QStringLiteral("methods")].toObject();
-//	for(auto it = member.constBegin(); it != member.constEnd(); it++) {
-//		auto obj = it.value().toObject();
-//		MethodInfo info;
-//		info.path = obj[QStringLiteral("path")].toString(info.path);
-//		info.url = obj[QStringLiteral("url")].toString(info.url);
-//		if(!info.path.isEmpty() && !info.url.isEmpty())
-//			throw tr("You can only use either path or url, not both!");
-//		info.verb = obj[QStringLiteral("verb")].toString(info.verb);
-//		for(auto value : obj[QStringLiteral("pathParams")].toArray())
-//			info.pathParams.append(value.toString());
-//		for(auto value : obj[QStringLiteral("parameters")].toArray())
-//			info.parameters.append(value.toString());
-//		auto headers = obj[QStringLiteral("headers")].toObject();
-//		for(auto jt = headers.constBegin(); jt != headers.constEnd(); jt++)
-//			info.headers.insert(jt.key(), jt.value().toString());
-//		info.body = obj[QStringLiteral("body")].toString(info.body);
-//		info.returns = obj[QStringLiteral("returns")].toString(info.returns);
-//		info.except = obj[QStringLiteral("except")].toString(defaultExcept);
-
-//		methods.insert(it.key(), info);
-//	}
+	if(expression.expr)
+		return expression.value;
+	else if(asString)
+		return QStringLiteral("QStringLiteral(\"") + expression.value + QStringLiteral("\")");
+	else
+		return QLatin1Char('"') + expression.value + QLatin1Char('"');
 }
 
 void ClassBuilder::generateFactoryDeclaration()
 {
-//	header << "\tstatic const QString Path;\n\n"
-//		   << "\tclass Factory\n"
-//		   << "\t{\n"
-//		   << "\tpublic:\n"
-//		   << "\t\tFactory(QtRestClient::RestClient *client, const QStringList &parentPath);\n\n";
-//	writeFactoryDeclarations();
-//	header << "\t\t" << className << " *instance(QObject *parent = nullptr) const;\n\n"
-//		   << "\tprivate:\n"
-//		   << "\t\tQtRestClient::RestClient *client;\n"
-//		   << "\t\tQStringList subPath;\n"
-//		   << "\t};\n\n";
+	//TODO make factory an "rvalue" class
+	header << "\tstatic const QString Path;\n\n"
+		   << "\tclass " << exportedName(QStringLiteral("Factory"), data.exportKey) << "\n"
+		   << "\t{\n"
+		   << "\tpublic:\n"
+		   << "\t\tFactory(QtRestClient::RestClient *client, QStringList parentPath);\n\n";
+	writeFactoryDeclarations();
+	header << "\t\t" << data.name << " *instance(QObject *parent = nullptr) const;\n\n"
+		   << "\tprivate:\n"
+		   << "\t\tQScopedPointer<" << data.name << "Private::Factory> d;\n"
+		   << "\t};\n\n";
 }
 
 void ClassBuilder::writeFactoryDeclarations()
 {
-//	for(auto it = classes.constBegin(); it != classes.constEnd(); it++)
-//		header << "\t\t" << it.value() << "::Factory " << it.key() << "() const;\n";
-//	if(!classes.isEmpty())
-//		header << '\n';
+	for(const auto &subClass : qAsConst(data.classes))
+		header << "\t\t" << subClass.type << "::Factory " << subClass.key << "() const;\n";
+	if(!data.classes.isEmpty())
+		header << '\n';
 }
 
 void ClassBuilder::writeClassDeclarations()
 {
-//	for(auto it = classes.constBegin(); it != classes.constEnd(); it++)
-//		header << "\t" << it.value() << " *" << it.key() << "() const;\n";
-//	if(!classes.isEmpty())
-//		header << '\n';
+	for(const auto &subClass : qAsConst(data.classes))
+		header << "\t" << subClass.type << " *" << subClass.key << "() const;\n";
+	if(!data.classes.isEmpty())
+		header << '\n';
 }
 
 void ClassBuilder::writeMethodDeclarations()
 {
-//	for(auto it = methods.constBegin(); it != methods.constEnd(); it++) {
-//		header << "\tQtRestClient::GenericRestReply<" << it->returns << ", " << it->except << "> *" << it.key() << "(";
-//		QStringList parameters;
-//		if(!it->body.isEmpty())
-//			parameters.append(it->body + QStringLiteral(" __body"));
-//		for(const auto &path : it->pathParams)
-//			parameters.append(path.write(true));
-//		for(const auto &param : it->parameters)
-//			parameters.append(param.write(true));
-//		header << parameters.join(QStringLiteral(", ")) << ");\n";
-//	}
-//	if(!methods.isEmpty())
-//		header << '\n';
+	//TODO check param as value or const ref EVERYWHERE
+	for(const auto &method : qAsConst(data.methods)) {
+		header << "\tQtRestClient::GenericRestReply<" << method.returns << ", " << method.except << "> *" << method.name << "(";
+		QStringList parameters;
+		if(!method.body.isEmpty())
+			parameters.append(method.body + QStringLiteral(" __body"));
+		// add path parameters
+		if(std::holds_alternative<RestAccess::Method::PathInfoBase>(method.path)) {
+			for(const auto &seg : qAsConst(std::get<RestAccess::Method::PathInfoBase>(method.path))) {
+				if(std::holds_alternative<BaseParam>(seg))
+					parameters.append(writeParamArg(std::get<BaseParam>(seg)));
+			}
+		}
+		// add normal parameters
+		for(const auto &param : method.params)
+			parameters.append(writeParamArg(param));
+		header << parameters.join(QStringLiteral(", ")) << ");\n";
+	}
+	if(!data.methods.isEmpty())
+		header << '\n';
 }
 
 void ClassBuilder::writeMemberDeclarations()
 {
-//	for(auto it = classes.constBegin(); it != classes.constEnd(); it++)
-//		header << "\t" << it.value() << " *_" << it.key() << ";\n";
+	for(const auto &subClass : qAsConst(data.classes))
+		header << '\t' << subClass.type << " *" << subClass.key << " = nullptr;\n";
+}
+
+void ClassBuilder::writePrivateDefinitions()
+{
+	source << "\nclass " << data.name << "Private\n"
+		   << "{\n"
+		   << "public:\n";
+	source << "\tclass Factory\n"
+		   << "\t{\n"
+		   << "\tpublic:\n"
+		   << "\t\tinline Factory(RestClient *client, QStringList &&subPath) :\n"
+		   << "\t\t\tclient{client},\n"
+		   << "\t\t\tsubPath{std::move(subPath)}\n"
+		   << "\t\t{}\n\n"
+		   << "\t\tRestClient *client;\n"
+		   << "\t\tQStringList subPath;\n"
+		   << "\t};\n\n";
+	source << "\tinline " << data.name << "Private(RestClass *restClass) : \n"
+		   << "\t\trestClass{restClass}\n"
+		   << "\t{}\n\n"
+		   << "\tRestClass *restClass;\n"
+		   << "\tstd::function<QString(QObject*, int)> errorTranslator;\n";
+	writeMemberDeclarations();
+	source << "};\n";
 }
 
 void ClassBuilder::generateFactoryDefinition()
 {
-//	source << "\n" << className << "::Factory::Factory(RestClient *client, const QStringList &parentPath) :\n"
-//		   << "\tclient(client),\n"
-//		   << "\tsubPath(parentPath)\n"
-//		   << "{\n"
-//		   << "\tsubPath.append(" << className << "::Path);\n"
-//		   << "}\n";
-//	writeFactoryDefinitions();
-//	source << "\n" << className << " *" << className << "::Factory::instance(QObject *parent) const\n"
-//		   << "{\n"
-//		   << "\tauto rClass = client->createClass(subPath.join('/'));\n"
-//		   << "\treturn new " << className << "(rClass, parent);\n"
-//		   << "}\n";
+	source << "\n" << data.name << "::Factory::Factory(RestClient *client, QStringList parentPath) :\n"
+		   << "\td{new " << data.name << "Private::Factory{client, std::move(parentPath)}},\n"
+		   << "{\n"
+		   << "\td->subPath.append(" << data.name << "::Path);\n"
+		   << "}\n";
+	writeFactoryDefinitions();
+	source << "\n" << data.name << " *" << data.name << "::Factory::instance(QObject *parent) const\n"
+		   << "{\n"
+		   << "\treturn new " << data.name << "{d->client->createClass(d->subPath.join(QLatin1Char('/'))), parent};\n"
+		   << "}\n";
 }
 
 void ClassBuilder::writeFactoryDefinitions()
 {
-//	for(auto it = classes.constBegin(); it != classes.constEnd(); it++) {
-//		source << "\n" << it.value() << "::Factory " << className << "::Factory::" << it.key() << "() const\n"
-//			   << "{\n"
-//			   << "\treturn " << it.value() << "::Factory(client, subPath);\n"
-//			   << "}\n";
-//	}
+	for(const auto &subClass : qAsConst(data.classes)) {
+		source << "\n" << subClass.type << "::Factory " << data.name << "::Factory::" << subClass.key << "() const\n"
+			   << "{\n"
+			   << "\treturn {d->client, d->subPath};\n"
+			   << "}\n";
+	}
 }
 
 void ClassBuilder::writeClassDefinitions()
 {
-//	for(auto it = classes.constBegin(); it != classes.constEnd(); it++){
-//		source << "\n" << it.value() << " *" << className << "::" << it.key() << "() const\n"
-//			   << "{\n"
-//			   << "\treturn _" << it.key() << ";\n"
-//			   << "}\n";
-//	}
+	for(const auto &subClass : qAsConst(data.classes)) {
+		source << "\n" << subClass.type << " *" << data.name << "::" << subClass.key << "() const\n"
+			   << "{\n"
+			   << "\tif(!d->" << subClass.key << ")\n"
+			   << "\t\td->" << subClass.key << " = d->restClass->subClass(" << subClass.type << "::Path, this);\n"
+			   << "\treturn d->" << subClass.key << ";\n"
+			   << "}\n";
+	}
 }
 
 void ClassBuilder::writeMethodDefinitions()
@@ -433,12 +431,6 @@ void ClassBuilder::writeMethodDefinitions()
 //		source << "\treturn __reply;\n"
 //			   << "}\n";
 //	}
-}
-
-void ClassBuilder::writeMemberDefinitions()
-{
-//	for(auto it = classes.constBegin(); it != classes.constEnd(); it++)
-//		source << "\t,_" << it.key() << "(new " << it.value() << "(_restClass->subClass(" << it.value() << "::Path), this))\n";
 }
 
 void ClassBuilder::writeLocalApiGeneration()
