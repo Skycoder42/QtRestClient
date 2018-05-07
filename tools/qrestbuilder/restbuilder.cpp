@@ -145,10 +145,10 @@ QString RestBuilder::writeParamDefault(const BaseParam &param)
 		return param.defaultValue;
 }
 
-QString RestBuilder::writeParamArg(const RestBuilder::BaseParam &param)
+QString RestBuilder::writeParamArg(const RestBuilder::BaseParam &param, bool withDefault)
 {
-	QString res = param.type + QLatin1Char(' ') + param.key;
-	if(!param.defaultValue.isEmpty())
+	QString res = QStringLiteral("const ") + param.type + QStringLiteral(" &") + param.key;
+	if(withDefault && !param.defaultValue.isEmpty())
 		res += QStringLiteral(" = ") + writeParamDefault(param);
 	return res;
 }

@@ -49,7 +49,7 @@ protected:
 
 	void writeIncludes(const QList<Include> &includes = {});
 	QString writeParamDefault(const BaseParam &param);
-	QString writeParamArg(const BaseParam &param);
+	QString writeParamArg(const BaseParam &param, bool withDefault);
 
 	QString fileName;
 	QXmlStreamReader &reader;

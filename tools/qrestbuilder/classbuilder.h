@@ -22,10 +22,8 @@ private:
 		QString value;
 	};
 
-	struct FixedParam {
+	struct FixedParam : public Expression {
 		QString key;
-		bool expr = false;
-		QString value;
 	};
 
 	struct RestAccess {
@@ -108,6 +106,7 @@ private:
 	void writeClassBeginDefinition();
 	void writeClassMainDefinition();
 
+	void methodParams(const RestAccess::Method &method);
 	QString writeExpression(const Expression &expression, bool asString);
 
 	void generateFactoryDeclaration();
@@ -123,10 +122,10 @@ private:
 	void writeMemberDefinitions();
 
 	void writeLocalApiGeneration();
-	void writeGlobalApiGeneration(const QString &globalName);
+	void writeGlobalApiGeneration();
 	void writeApiCreation();
 
-	bool writeMethodPath();
+	bool writeMethodPath(const ClassBuilder::RestAccess::Method::PathInfo &info);
 };
 
 #if __cplusplus < 201703L

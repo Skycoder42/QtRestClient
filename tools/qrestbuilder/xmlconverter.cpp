@@ -165,7 +165,7 @@ void XmlConverter::writeClassXml(const QJsonObject &data, QXmlStreamWriter &writ
 	for(auto it = jMethods.constBegin(); it != jMethods.constEnd(); it++) {
 		auto method = it->toObject();
 		writer.writeStartElement(QStringLiteral("Method"));
-		writer.writeAttribute(QStringLiteral("key"), it.key());
+		writer.writeAttribute(QStringLiteral("name"), it.key());
 		writeAttrIfAny(method, writer, QStringLiteral("verb"));
 		writeAttrIfAny(method, writer, QStringLiteral("body"));
 		writeAttrIfAny(method, writer, QStringLiteral("returns"));
