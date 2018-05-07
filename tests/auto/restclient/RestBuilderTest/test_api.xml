@@ -4,14 +4,13 @@
 		 export="TEST_EXPORT"
 		 autoCreate="true"
 		 except="User*"
-		 apiVersion=""
 		 globalName="localhost">
 	<Include local="true">user.h</Include>
 	<Include local="true">api_posts.h</Include>
 	<Include local="true">testmacro.h</Include>
 
-	<BaseUrl>http://localhost:45715</BaseUrl>
-	<Parameter key="limit" expr="true">QByteArray::number(LIMIT)</Parameter>
+	<BaseUrl apiVersion="1.0">http://localhost:45715</BaseUrl>
+	<Parameter key="limit" expr="true">QString::number(LIMIT)</Parameter>
 	<Header key="Secret" expr="true">APP_SECRET</Header>
 
 	<Class key="posts" type="PostClass"/>

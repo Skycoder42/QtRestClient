@@ -30,6 +30,7 @@ void RestBuilderTest::initTestCase()
 	server->verifyRunning();
 
 	QJsonObject root;
+	QJsonObject vRoot;
 	QJsonArray posts;
 	for(auto i = 0; i < 100; i++) {
 		posts.append(QJsonObject {
@@ -42,7 +43,8 @@ void RestBuilderTest::initTestCase()
 						 {QStringLiteral("body"), QStringLiteral("Body%1").arg(i)}
 					 });
 	}
-	root[QStringLiteral("posts")] = posts;
+	vRoot[QStringLiteral("posts")] = posts;
+	root[QStringLiteral("v1")] = vRoot;
 	server->setData(root);
 
 	qRegisterMetaType<QtRestClient::RestReply::ErrorType>();

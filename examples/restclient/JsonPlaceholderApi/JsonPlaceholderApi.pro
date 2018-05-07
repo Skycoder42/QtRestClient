@@ -10,6 +10,10 @@ HEADERS  += mainwindow.h
 
 FORMS    += mainwindow.ui
 
+REST_API_FILES += post.xml \
+	api.xml \
+	api_posts.xml
+
 REST_API_OBJECTS += post.json
 REST_API_CLASSES += api.json \
 	api_posts.json

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RestGadget xmlns="https://skycoder42.de/QtRestClient/RestObject" name="Post">
+	<Property key="body" type="QString"/>
+	<Property key="id" type="int"/>
+	<Property key="title" type="QString"/>
+	<Property key="userId" type="int"/>
+</RestGadget>
