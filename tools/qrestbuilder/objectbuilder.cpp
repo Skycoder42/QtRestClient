@@ -270,7 +270,7 @@ void ObjectBuilder::writeMemberDeclarations()
 void ObjectBuilder::writeEqualsDeclaration()
 {
 	if(data.isObject) {
-		header << "\n\tbool equals(const " << data.name << " *other) const;\n";
+		header << "\n\tQ_INVOKABLE bool equals(const " << data.name << " *other) const;\n";
 	} else {
 		header << "\n\tbool operator==(const " << data.name << " &other) const;\n";
 		header << "\tbool operator!=(const " << data.name << " &other) const;\n";

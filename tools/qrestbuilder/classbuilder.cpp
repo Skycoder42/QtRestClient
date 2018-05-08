@@ -215,7 +215,7 @@ void ClassBuilder::generateApi()
 	writeClassBeginDefinition();
 	source << "\n" << data.name << "::Factory " << data.name << "::factory()\n"
 		   << "{\n"
-		   << "\treturn " << data.name << "::Factory{generateClient(), {}};\n"
+		   << "\treturn {generateClient(), {}};\n"
 		   << "}\n";
 	source << "\n" << data.name << "::" << data.name << "(QObject *parent) :\n"
 		   << "\t" << data.name << "{generateClient()->createClass({}), parent}\n"
