@@ -3,8 +3,10 @@
 
 #include "restbuilder.h"
 #include <QVersionNumber>
-#if __cplusplus >= 201703L
+#if QT_HAS_INCLUDE(<variant>) //&& __cplusplus >= 201703L
 #include <variant>
+#else
+#error std variant is required
 #endif
 
 class ClassBuilder : public RestBuilder
@@ -48,7 +50,7 @@ private:
 			QString except;
 			bool postParams = false; //TODO use in code
 
-#if __cplusplus >= 201703L
+#if QT_HAS_INCLUDE(<variant>) //__cplusplus >= 201703L
 			using PathInfoBase = QList<std::variant<Expression, BaseParam>>;
 			using PathInfo = std::variant<PathInfoBase, QString>;
 #else
