@@ -16,8 +16,8 @@ namespace QtRestClient {
 template <typename DataClassType, typename ErrorClassType = QObject*>
 class GenericRestReply : public RestReply
 {
-	static_assert(MetaComponent<DataClassType>::is_meta::value, "DataClassType must inherit QObject or have Q_GADGET!");
-	static_assert(MetaComponent<ErrorClassType>::is_meta::value, "ErrorClassType must inherit QObject or have Q_GADGET!");
+	static_assert(MetaComponent<DataClassType>::value, "DataClassType must inherit QObject or have Q_GADGET!");
+	static_assert(MetaComponent<ErrorClassType>::value, "ErrorClassType must inherit QObject or have Q_GADGET!");
 public:
 	//! Creates a generic reply based on a network reply and for a client
 	GenericRestReply(QNetworkReply *networkReply,
@@ -53,7 +53,7 @@ private:
 template <typename ErrorClassType>
 class GenericRestReply<void, ErrorClassType> : public RestReply
 {
-	static_assert(MetaComponent<ErrorClassType>::is_meta::value, "DataClassType must inherit QObject or have Q_GADGET!");
+	static_assert(MetaComponent<ErrorClassType>::value, "DataClassType must inherit QObject or have Q_GADGET!");
 public:
 	//! @copydoc GenericRestReply::GenericRestReply
 	GenericRestReply(QNetworkReply *networkReply,
@@ -90,8 +90,8 @@ private:
 template <typename DataClassType, typename ErrorClassType>
 class GenericRestReply<QList<DataClassType>, ErrorClassType> : public RestReply
 {
-	static_assert(MetaComponent<DataClassType>::is_meta::value, "DataClassType must inherit QObject or have Q_GADGET!");
-	static_assert(MetaComponent<ErrorClassType>::is_meta::value, "DataClassType must inherit QObject or have Q_GADGET!");
+	static_assert(MetaComponent<DataClassType>::value, "DataClassType must inherit QObject or have Q_GADGET!");
+	static_assert(MetaComponent<ErrorClassType>::value, "DataClassType must inherit QObject or have Q_GADGET!");
 public:
 	//! @copydoc GenericRestReply::GenericRestReply
 	GenericRestReply(QNetworkReply *networkReply,
@@ -129,8 +129,8 @@ private:
 template <typename DataClassType, typename ErrorClassType>
 class GenericRestReply<Paging<DataClassType>, ErrorClassType> : public RestReply
 {
-	static_assert(MetaComponent<DataClassType>::is_meta::value, "DataClassType must inherit QObject or have Q_GADGET!");
-	static_assert(MetaComponent<ErrorClassType>::is_meta::value, "DataClassType must inherit QObject or have Q_GADGET!");
+	static_assert(MetaComponent<DataClassType>::value, "DataClassType must inherit QObject or have Q_GADGET!");
+	static_assert(MetaComponent<ErrorClassType>::value, "DataClassType must inherit QObject or have Q_GADGET!");
 public:
 	//! @copydoc GenericRestReply::GenericRestReply
 	GenericRestReply(QNetworkReply *networkReply,

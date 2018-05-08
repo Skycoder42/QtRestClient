@@ -24,7 +24,7 @@ class PagingData;
 template<typename T>
 class Paging
 {
-	static_assert(MetaComponent<T>::is_meta::value, "T must inherit QObject or have Q_GADGET!");
+	static_assert(MetaComponent<T>::value, "T must inherit QObject or have Q_GADGET!");
 public:
 	//! Default Constructor
 	Paging();

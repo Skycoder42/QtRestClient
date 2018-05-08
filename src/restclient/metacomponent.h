@@ -4,25 +4,24 @@
 #include "QtRestClient/qtrestclient_global.h"
 
 #include <QtCore/qobject.h>
+#include <QtJsonSerializer/qjsonserializer_helpertypes.h>
 
 namespace QtRestClient {
 
 //! @private
-template <typename T, typename = void>
-class MetaComponent
+template <typename T>
+class MetaComponent : public _qjsonserializer_helpertypes::gadget_helper<T>
 {
 public:
-#if !defined(Q_OS_WIN) || defined(__MINGW32__)
-	using is_meta = std::false_type;
-#endif
+	static inline void deleteLater(T) {}
+	static inline void deleteAllLater(const QList<T> &) {}
 };
 
 //! @private
 template <typename T>
-class MetaComponent<T*, typename std::enable_if<std::is_base_of<QObject, T>::value>::type>
+class MetaComponent<T*> : public std::is_base_of<QObject, T>
 {
 public:
-	using is_meta = std::true_type;
 	static inline void deleteLater(T *obj) {
 		obj->deleteLater();
 	}
@@ -30,16 +29,6 @@ public:
 		for(T *obj : list)
 			obj->deleteLater();
 	}
-};
-
-//! @private
-template <typename T>
-class MetaComponent<T, typename std::enable_if<std::is_void<typename T::QtGadgetHelper>::value>::type>
-{
-public:
-	using is_meta = std::true_type;
-	static inline void deleteLater(T) {}
-	static inline void deleteAllLater(const QList<T> &) {}
 };
 
 }

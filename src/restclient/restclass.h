@@ -364,7 +364,7 @@ GenericRestReply<DT, ET> *RestClass::call(const QByteArray &verb, const QString 
 template<typename DT, typename ET, typename RO>
 GenericRestReply<DT, ET> *RestClass::call(const QByteArray &verb, const QString &methodPath, const RO &body, const QVariantHash &parameters, const HeaderHash &headers)
 {
-	static_assert(MetaComponent<RO>::is_meta::value, "RO must inherit QObject or have Q_GADGET!");
+	static_assert(MetaComponent<RO>::value, "RO must inherit QObject or have Q_GADGET!");
 	return new GenericRestReply<DT, ET>(create(verb,
 											   methodPath,
 											   client()->serializer()->serialize(body),
@@ -377,7 +377,7 @@ GenericRestReply<DT, ET> *RestClass::call(const QByteArray &verb, const QString 
 template<typename DT, typename ET, typename RO>
 GenericRestReply<DT, ET> *RestClass::call(const QByteArray &verb, const QString &methodPath, const QList<RO> &body, const QVariantHash &parameters, const HeaderHash &headers)
 {
-	static_assert(MetaComponent<RO>::is_meta::value, "RO must inherit QObject or have Q_GADGET!");
+	static_assert(MetaComponent<RO>::value, "RO must inherit QObject or have Q_GADGET!");
 	return new GenericRestReply<DT, ET>(create(verb,
 											   methodPath,
 											   client()->serializer()->serialize(body),
@@ -401,7 +401,7 @@ GenericRestReply<DT, ET> *RestClass::call(const QByteArray &verb, const QVariant
 template<typename DT, typename ET, typename RO>
 GenericRestReply<DT, ET> *RestClass::call(const QByteArray &verb, const RO &body, const QVariantHash &parameters, const HeaderHash &headers)
 {
-	static_assert(MetaComponent<RO>::is_meta::value, "RO must inherit QObject or have Q_GADGET!");
+	static_assert(MetaComponent<RO>::value, "RO must inherit QObject or have Q_GADGET!");
 	return new GenericRestReply<DT, ET>(create(verb,
 											   client()->serializer()->serialize(body),
 											   parameters,
@@ -413,7 +413,7 @@ GenericRestReply<DT, ET> *RestClass::call(const QByteArray &verb, const RO &body
 template<typename DT, typename ET, typename RO>
 GenericRestReply<DT, ET> *RestClass::call(const QByteArray &verb, const QList<RO> &body, const QVariantHash &parameters, const HeaderHash &headers)
 {
-	static_assert(MetaComponent<RO>::is_meta::value, "RO must inherit QObject or have Q_GADGET!");
+	static_assert(MetaComponent<RO>::value, "RO must inherit QObject or have Q_GADGET!");
 	return new GenericRestReply<DT, ET>(create(verb,
 											   client()->serializer()->serialize(body),
 											   parameters,
@@ -437,7 +437,7 @@ GenericRestReply<DT, ET> *RestClass::call(const QByteArray &verb, const QUrl &re
 template<typename DT, typename ET, typename RO>
 GenericRestReply<DT, ET> *RestClass::call(const QByteArray &verb, const QUrl &relativeUrl, const RO &body, const QVariantHash &parameters, const HeaderHash &headers)
 {
-	static_assert(MetaComponent<RO>::is_meta::value, "RO must inherit QObject or have Q_GADGET!");
+	static_assert(MetaComponent<RO>::value, "RO must inherit QObject or have Q_GADGET!");
 	return new GenericRestReply<DT, ET>(create(verb,
 											   relativeUrl,
 											   client()->serializer()->serialize(body),
@@ -450,7 +450,7 @@ GenericRestReply<DT, ET> *RestClass::call(const QByteArray &verb, const QUrl &re
 template<typename DT, typename ET, typename RO>
 GenericRestReply<DT, ET> *RestClass::call(const QByteArray &verb, const QUrl &relativeUrl, const QList<RO> &body, const QVariantHash &parameters, const HeaderHash &headers)
 {
-	static_assert(MetaComponent<RO>::is_meta::value, "RO must inherit QObject or have Q_GADGET!");
+	static_assert(MetaComponent<RO>::value, "RO must inherit QObject or have Q_GADGET!");
 	return new GenericRestReply<DT, ET>(create(verb,
 											   relativeUrl,
 											   client()->serializer()->serialize(body),

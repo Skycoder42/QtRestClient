@@ -446,8 +446,6 @@ void ClassBuilder::writeClassDefinitions()
 
 void ClassBuilder::writeMethodDefinitions()
 {
-	//TODO QVariant::fromValue on enums will not work? test out and maybe fix
-	//TODO use param_type as param to automatically determine value/ref
 	for(const auto &method : data.methods) {
 		source << "\nQtRestClient::GenericRestReply<" << method.returns << ", " << method.except << "> *" << data.name << "::" << method.name << "(";
 		QStringList parameters;

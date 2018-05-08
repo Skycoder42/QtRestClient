@@ -30,8 +30,3 @@ REST_API_FILES += \
 	post.xml \
 	api_posts.xml \
 	test_api.xml
-
-REST_API_OBJECTS += post.json \
-	user.json
-REST_API_CLASSES += test_api.json \
-	api_posts.json
