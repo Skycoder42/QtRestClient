@@ -5,44 +5,34 @@
 
 @tableofcontents
 
-# What it does {#generator_features}
-The `qrestbuilder` reads in a json file, and generates a header and a source from it. Those will, depending on the input, contain either
-an [object](#generator_doc_object) or a [class](#generator_doc_class). This allows an easy and fast creation of wrappers for any REST-API.
-The [pro-feature](#generator_doc_pro) makes use of the builder, and automatically adds the files to moc and the normal c++ compiler. This way
+@section generator_features What it does
+The `qrestbuilder` reads in a xml file, and generates a header and a source from it. Those will, depending on the input, contain either
+an @ref generator_doc_object "object" or a @ref generator_doc_class "class". This allows an easy and fast creation of wrappers for any REST-API.
+In order to use the tool as custom compiler, ou can simply create the XML files and add the to the pro file using
+@code{.pro}
+REST_API_FILES += # your xml files
+@endcode
 
-# Getting Started {#generator_start}
+@section generator_start Getting Started
 The easiest way to get started is to check out the JsonPlaceholderApi example. It will teach you the general system behind the generator.
 You can then study this documentation to see, what you can do with it.
 
-# File Syntax documentation  {#generator_doc}
-The following sections show a detailed documentation of what you can do with the tool, and explain the syntax of the json files.
+@section generator_doc File Syntax documentation
+The following sections show a detailed documentation of what you can do with the tool, and explain the syntax of the xml files.
 You can check the following locations for some sample files:
 - [README.md](@ref index)
 - `example/JsonPlaceholderApi`
 - `tests/auto/restclient/RestBuilderTest`
 
-## Project file setup {#generator_doc_pro}
-In order to use the tool as custom compiler, the features needs to be loaded. This is done by putting
-@code{.pro}
-load(qrestbuilder)
-@endcode
+There are also W3C XML Schema definitions available, see `tools/qrestbuilder/restobject.xsd` and `tools/qrestbuilder/restclass.xsd`
 
-Into your pro file.
+@subsection generator_doc_object Generate objects
+An object is simply a "data type" class. It will be generated with a bunch of properties (Q_PROPERTY), and methods to access them. They are
+generated in an optimized way, an can be used by the rest client as data classes. It allows a simple, fast and easy creation of those objects.
+You can generate them in two ways: As a Q_GADGET or a QObject. The gadget has the advantage of beeing a value type and using shared data, but
+on the other side does not really allow inheritance and does not support change signals or dynamic properties, which the QObject classes do.
 
-Once that is done, you can simply create the JSON files and add the to the pro file using
-@code{.pro}
-REST_API_OBJECTS += # for objects
-REST_API_CLASSES += # for classes
-@endcode
-
-## Generate objects {#generator_doc_object}
-Objects are added to the pro file by using the `REST_API_OBJECTS` variable. An object is simply a "data type" class. It will be generated with a
-bunch of properties (Q_PROPERTY), and methods to access them. They are generated in an optimized way, an can be used by the rest client as data
-classes. It allows a simple, fast and easy creation of those objects. You can generate them in two ways: As a Q_GADGET or a QObject. The gadget
-has the advantage of beeing a value type and using shared data, but on the other side does not really allow inheritance and does not support
-change signals or dynamic properties, which the QObject classes do.
-
-Your JSON files will need to have the following structure:
+Your XML files will need to have the following structure:
 
 ### Type: object {#generator_doc_o_object}
 The root element of any object to be generated. It allows the following elements:

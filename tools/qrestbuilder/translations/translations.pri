@@ -13,5 +13,4 @@ trInstall.path = $$[QT_INSTALL_TRANSLATIONS]
 trInstall.files = $$PWD/qrestbuilder_de.qm \
 	$$PWD/qrestbuilder_template.ts
 trInstall.CONFIG += no_check_exist
-trInstall.depends = releaseTarget
 INSTALLS += trInstall

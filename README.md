@@ -14,7 +14,7 @@ A library for generic JSON-based REST-APIs, with a mechanism to map JSON to Qt o
 	- paging objects
 - Allows to create API class representations to wrap specific parts of the api
 - Reply-based system - use either signal/slot or a more functional approach
-- Custom compiler to generate API objects, classes and methods from simple JSON files
+- Custom compiler to generate API objects, classes and methods from simple XML files
 
 ## Download/Installation
 There are multiple ways to install the Qt module, sorted by preference:
@@ -35,14 +35,17 @@ There are multiple ways to install the Qt module, sorted by preference:
 		- On Windows: https://install.skycoder42.de/qtmodules/windows_x86
 		- On Mac: https://install.skycoder42.de/qtmodules/mac_x64
 	5. Press `Ok`, make shure `Add or remove components` is still selected, and continue the install (`Next >`)
-	6. A new entry appears under all supported Qt Versions (e.g. `Qt > Qt 5.8 > Skycoder42 Qt modules`)
+	6. A new entry appears under all supported Qt Versions (e.g. `Qt > Qt 5.10.1 > Skycoder42 Qt modules`)
 	7. You can install either all of my modules, or select the one you need: `Qt Rest Client`
 	8. Continue the setup and thats it! you can now use the module for all of your installed Kits for that Qt Version
 3. Download the compiled modules from the release page. **Note:** You will have to add the correct ones yourself and may need to adjust some paths to fit your installation!
 4. Build it yourself! **Note:** This requires perl to be installed. If you don't have/need cmake, you can ignore the related warnings. To automatically build and install to your Qt installation, run:
 	- `qmake`
 	- `make qmake_all`
-	- `make`
+	- `make` (If you want the tests/examples/etc. run `make all`)
+	- Optional steps:
+		- `make doxygen` to generate the documentation
+		- `make lrelease` to generate the translations
 	- `make install`
 
 ## Usage
@@ -51,7 +54,7 @@ The restclient is provided as a Qt module. Thus, all you have to do is add the m
 The API consists of 3 main classes:
 - **RestClient:** Set up the API, i.e. how to access it, the base URL and headers
 - **RestClass:** A subset of the API, allows to make requests
-- **RestReply:** The reply control returned for every request, to obtain the result and react on errors
+- **RestReply/GenericRestReply:** The reply control returned for every request, to obtain the result and react on errors
 
 ### Example
 The following example shows an example request made to [JSONPlaceholder](https://jsonplaceholder.typicode.com/).
@@ -107,84 +110,56 @@ restClass->get<Post>("42")->onSucceeded([](RestReply *reply, int statusCode, Pos
 And thats all you need for a basic API access. Check the documentation for more and *important* details about the client, the class and the replies!
 
 ### API-Generator
-The library comes with a tool to create API data classes and wrapper classes over the rest client. Those are generated from JSON files and allow an easy creation of APIs in your application. The tool is build as a custom compiler and added to qmake. To use the tool simply add the json files to you pro file, and the sources will be automatically generated and compiled into your application!
+The library comes with a tool to create API data classes and wrapper classes over the rest client. Those are generated from XML files and allow an easy creation of APIs in your application. The tool is build as a custom compiler and added to qmake. To use the tool simply add the json files to you pro file, and the sources will be automatically generated and compiled into your application!
 
 #### Example
-The following example shows a JSON file to generate the post type from above (with shared data optimizations, automatic registration, etc.). It could be named `post.json`:
-```json
-{
-	"$type": "gadget",
-	"$name": "Post",
-
-	"id": "int",
-	"userId": "int",
-	"title": "QString",
-	"body": "QString"
-}
+The following example shows a XML file to generate the post type from above (with shared data optimizations, automatic registration, etc.). It could be named `post.xml`:
+```xml
+<RestGadget name="Post">
+	<Property key="id" type="int">-1</Property>
+	<Property key="userId" type="int">-1</Property>
+	<Property key="title" type="QString"/>
+	<Property key="body" type="QString"/>
+</RestGadget>
 ```
 
-A definition for a very simple API, that allows some simple operations for posts, could look like this. It could be named `api.json`:
-```json
-{
-	"type": "api",
-	"name": "ExampleApi",
-	"includes": ["api_posts.h"],
-	"globalName": "jsonplaceholder",
-	"baseUrl": "https://jsonplaceholder.typicode.com",
+A definition for a very simple API, that allows some simple operations for posts, could look like this. It could be named `api.xml`:
+```xml
+<RestApi name="ExampleApi" globalName="jsonplaceholder">
+	<Include local="true">api_posts.h</Include>
+	<BaseUrl>https://jsonplaceholder.typicode.com</BaseUrl>
 
-	"classes": {
-		"posts": "PostClass"
-	}
-}
+	<Class key="posts" type="PostClass"/>
+</RestApi>
 ```
 
-You can either directly add the methods to the API, or, like I did in this example, split the classes into different files. It could be named `api_posts.json`:
-```json
-{
-	"type": "class",
-	"name": "PostClass",
-	"includes": ["post.h"],
-	"path": "posts",
+You can either directly add the methods to the API, or, like I did in this example, split the classes into different files. It could be named `api_posts.xml`:
+```xml
+<RestClass name="PostClass">
+	<Include local="true">post.h</Include>
+	<Path>posts</Path>
 
-	"methods": {
-		"listPosts": {
-			"verb": "GET",
-			"returns": "QList<Post>"
-		},
-		"post": {
-			"verb": "GET",
-			"pathParams": ["id,int"],
-			"returns": "Post"
-		},
-		"savePost": {
-			"verb": "POST",
-			"body": "Post",
-			"returns": "Post"
-		},
-		"updatePost": {
-			"verb": "PUT",
-			"pathParams": ["id,int"],
-			"body": "Post",
-			"returns": "Post"
-		},
-		"deletePost": {
-			"verb": "DELETE",
-			"pathParams": ["id,int"],
-			"returns": "void"
-		}
-	}
-}
-
+	<Method name="listPosts" verb="GET" returns="QList&lt;Post&gt;"/>
+	<Method name="post" returns="Post">
+		<PathParam key="id" type="int"/>
+	</Method>
+	<Method name="savePost" verb="POST" body="Post" returns="Post"/>
+	<Method name="updatePost" verb="PUT" body="Post" returns="Post">
+		<PathParam key="id" type="int"/>
+	</Method>
+	<Method name="deletePost" verb="DELETE">
+		<PathParam key="id" type="int"/>
+	</Method>
+</RestClass>
 ```
 
 These files are added to the `.pro` file as follows:
 ```pro
-# Load the feature
-load(qrestbuilder)
+QT += restclient
 
-REST_API_OBJECTS += post.json
-REST_API_CLASSES += api.json \
-	api_posts.json
+REST_API_FILES += post.xml \
+	api.xml \
+	api_posts.xml
 ```
 
 And thats it! once you run qmake and compile your application, those APIs will be generated for you. The usage is fairly simple:

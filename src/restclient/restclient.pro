@@ -1,7 +1,7 @@
 TARGET = QtRestClient
 
 QT = core network jsonserializer
-MODULE_CONFIG += c++11 qrestbuilder
+MODULE_CONFIG += c++14 qrestbuilder
 
 HEADERS +=  \
 	restclass_p.h \

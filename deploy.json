@@ -9,5 +9,8 @@
 	"license": {
 		"name": "BSD-3-Clause",
 		"path": "LICENSE"
+	},
+	"installs": {
+		"qbs/Qt/restbuilder": "Tools/QtCreator/share/qtcreator/qbs/share/qbs/modules/Qt/restbuilder"
 	}
 }
