@@ -1,6 +1,51 @@
 #include "classbuilder.h"
 #include <QJsonArray>
 
+#if !QT_HAS_INCLUDE(<variant>)
+template <>
+const ClassBuilder::Expression &ClassBuilder::get(const ClassBuilder::RestAccess::Method::PathInfoBase &info) {
+	Q_ASSERT(!info.isParams);
+	return info.path;
+}
+template <>
+const RestBuilder::BaseParam &ClassBuilder::get(const ClassBuilder::RestAccess::Method::PathInfoBase &info) {
+	Q_ASSERT(info.isParams);
+	return info.pathParams;
+}
+template <>
+ClassBuilder::RestAccess::Method::PathInfoList &ClassBuilder::get(ClassBuilder::RestAccess::Method::PathInfo &info) {
+	Q_ASSERT(info.isPath);
+	return info.path;
+}
+template <>
+const ClassBuilder::RestAccess::Method::PathInfoList &ClassBuilder::get(const ClassBuilder::RestAccess::Method::PathInfo &info) {
+	Q_ASSERT(info.isPath);
+	return info.path;
+}
+template <>
+const QString &ClassBuilder::get(const ClassBuilder::RestAccess::Method::PathInfo &info) {
+	Q_ASSERT(!info.isPath);
+	return info.url;
+}
+
+template <>
+bool ClassBuilder::is<ClassBuilder::Expression>(const ClassBuilder::RestAccess::Method::PathInfoBase &info) {
+	return !info.isParams;
+}
+template <>
+bool ClassBuilder::is<RestBuilder::BaseParam>(const ClassBuilder::RestAccess::Method::PathInfoBase &info) {
+	return info.isParams;
+}
+template <>
+bool ClassBuilder::is<ClassBuilder::RestAccess::Method::PathInfoList>(const ClassBuilder::RestAccess::Method::PathInfo &info) {
+	return info.isPath;
+}
+template <>
+bool ClassBuilder::is<QString>(const ClassBuilder::RestAccess::Method::PathInfo &info) {
+	return !info.isPath;
+}
+#endif
+
 ClassBuilder::ClassBuilder(QXmlStreamReader &reader, QObject *parent) :
 	RestBuilder(reader, parent)
 {}
@@ -127,12 +172,12 @@ ClassBuilder::RestAccess::Method ClassBuilder::readMethod()
 			if(mode == Url)
 				throwReader(tr("You cannot specify a <Path> element if you already used <Url>"));
 			mode = Path;
-			std::get<RestAccess::Method::PathInfoBase>(method.path).append(readExpression());
+			get<RestAccess::Method::PathInfoList>(method.path).append(readExpression());
 		} else if(reader.name() == QStringLiteral("PathParam")) {
 			if(mode == Url)
 				throwReader(tr("You cannot specify a <PathParam> element if you already used <Url>"));
 			mode = Path;
-			std::get<RestAccess::Method::PathInfoBase>(method.path).append(readBaseParam());
+			get<RestAccess::Method::PathInfoList>(method.path).append(readBaseParam());
 		} else if(reader.name() == QStringLiteral("Param"))
 			method.params.append(readBaseParam());
 		else if(reader.name() == QStringLiteral("Header"))
@@ -299,17 +344,16 @@ void ClassBuilder::writeClassDeclarations()
 
 void ClassBuilder::writeMethodDeclarations()
 {
-	//TODO check param as value or const ref EVERYWHERE
 	for(const auto &method : qAsConst(data.methods)) {
 		header << "\tQtRestClient::GenericRestReply<" << method.returns << ", " << method.except << "> *" << method.name << "(";
 		QStringList parameters;
 		if(!method.body.isEmpty())
 			parameters.append(QStringLiteral("const ") + method.body + QStringLiteral(" &__body"));
 		// add path parameters
-		if(std::holds_alternative<RestAccess::Method::PathInfoBase>(method.path)) {
-			for(const auto &seg : qAsConst(std::get<RestAccess::Method::PathInfoBase>(method.path))) {
-				if(std::holds_alternative<BaseParam>(seg))
-					parameters.append(writeParamArg(std::get<BaseParam>(seg), true));
+		if(is<RestAccess::Method::PathInfoList>(method.path)) {
+			for(const auto &seg : qAsConst(get<RestAccess::Method::PathInfoList>(method.path))) {
+				if(is<BaseParam>(seg))
+					parameters.append(writeParamArg(get<BaseParam>(seg), true));
 			}
 		}
 		// add normal parameters
@@ -410,10 +454,10 @@ void ClassBuilder::writeMethodDefinitions()
 		if(!method.body.isEmpty())
 			parameters.append(QStringLiteral("const ") + method.body + QStringLiteral(" &__body"));
 		// add path parameters
-		if(std::holds_alternative<RestAccess::Method::PathInfoBase>(method.path)) {
-			for(const auto &seg : qAsConst(std::get<RestAccess::Method::PathInfoBase>(method.path))) {
-				if(std::holds_alternative<BaseParam>(seg)) {
-					const auto &param = std::get<BaseParam>(seg);
+		if(is<RestAccess::Method::PathInfoList>(method.path)) {
+			for(const auto &seg : qAsConst(get<RestAccess::Method::PathInfoList>(method.path))) {
+				if(is<BaseParam>(seg)) {
+					const auto &param = get<BaseParam>(seg);
 					parameters.append(writeParamArg(param, false));
 				}
 			}
@@ -518,22 +562,22 @@ void ClassBuilder::writeApiCreation()
 
 bool ClassBuilder::writeMethodPath(const RestAccess::Method::PathInfo &info)
 {
-	if(std::holds_alternative<RestAccess::Method::PathInfoBase>(info)) {
-		const auto &pathList = std::get<RestAccess::Method::PathInfoBase>(info);
+	if(is<RestAccess::Method::PathInfoList>(info)) {
+		const auto &pathList = get<RestAccess::Method::PathInfoList>(info);
 		if(pathList.isEmpty())
 			return false;
 		else {
 			source << "\tQString __path = QStringList {\n";
 			for(const auto &seg : pathList) {
-				if(std::holds_alternative<BaseParam>(seg))
-					source << "\t\tQVariant::fromValue(" << std::get<BaseParam>(seg).key << ").toString(),\n";
-				else if(std::holds_alternative<Expression>(seg))
-					source << "\t\t" << writeExpression(std::get<Expression>(seg), true) << ",\n";
+				if(is<BaseParam>(seg))
+					source << "\t\tQVariant::fromValue(" << get<BaseParam>(seg).key << ").toString(),\n";
+				else if(is<Expression>(seg))
+					source << "\t\t" << writeExpression(get<Expression>(seg), true) << ",\n";
 			}
 			source << "\t}.join(QLatin1Char('/'));\n\n";
 		}
-	} else if(std::holds_alternative<QString>(info))
-		source << "\tQUrl __path {QStringLiteral(\"" << std::get<QString>(info) << "\")};\n\n";
+	} else if(is<QString>(info))
+		source << "\tQUrl __path {QStringLiteral(\"" << get<QString>(info) << "\")};\n\n";
 	else
 		return false;
 	return true;

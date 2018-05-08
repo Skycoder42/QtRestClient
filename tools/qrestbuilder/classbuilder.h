@@ -3,10 +3,8 @@
 
 #include "restbuilder.h"
 #include <QVersionNumber>
-#if QT_HAS_INCLUDE(<variant>) //&& __cplusplus >= 201703L
+#if QT_HAS_INCLUDE(<variant>)
 #include <variant>
-#else
-#error std variant is required
 #endif
 
 class ClassBuilder : public RestBuilder
@@ -48,26 +46,47 @@ private:
 			QString body;
 			QString returns;
 			QString except;
-			bool postParams = false; //TODO use in code
+			bool postParams = false;
 
-#if QT_HAS_INCLUDE(<variant>) //__cplusplus >= 201703L
-			using PathInfoBase = QList<std::variant<Expression, BaseParam>>;
-			using PathInfo = std::variant<PathInfoBase, QString>;
+#if QT_HAS_INCLUDE(<variant>)
+			using PathInfoBase = std::variant<Expression, BaseParam>;
+			using PathInfoList = QList<PathInfoBase>;
+			using PathInfo = std::variant<PathInfoList, QString>;
 #else
-			struct {
+			struct PathInfoBase {
 				bool isParams = false;
-				union {
-					Expression path;
-					BaseParam pathParams;
-				};
-			} PathInfoBase;
-			struct {
-				bool isPath = false;
-				union {
-					QList<PathInfoBase> path;
-					QString url;
-				};
-			} PathInfo;
+				Expression path;
+				BaseParam pathParams;
+
+				inline PathInfoBase() = default;
+				inline PathInfoBase(const PathInfoBase &other) = default;
+
+				inline PathInfoBase(Expression expr) :
+					isParams{false},
+					path{std::move(expr)}
+				{}
+				inline PathInfoBase(BaseParam param) :
+					isParams{true},
+					pathParams{std::move(param)}
+				{}
+			};
+			using PathInfoList = QList<PathInfoBase>;
+			struct PathInfo {
+				bool isPath = true;
+				PathInfoList path;
+				QString url;
+
+				inline PathInfo &operator=(PathInfoList &&list) {
+					path = list;
+					isPath = true;
+					return *this;
+				}
+				inline PathInfo &operator=(QString &&str) {
+					url = str;
+					isPath = false;
+					return *this;
+				}
+			};
 #endif
 			PathInfo path;
 			QList<BaseParam> params;
@@ -128,10 +147,29 @@ private:
 	void writeApiCreation();
 
 	bool writeMethodPath(const ClassBuilder::RestAccess::Method::PathInfo &info);
-};
 
-#if __cplusplus < 201703L
-#error implement std::get and std::holds_alternative
+#if QT_HAS_INCLUDE(<variant>)
+	template <typename TVariant, typename TInfo>
+	static constexpr TVariant &get(TInfo &info) {
+		return std::get<TVariant>(info);
+	}
+	template <typename TVariant, typename TInfo>
+	static constexpr const TVariant &get(const TInfo &info) {
+		return std::get<TVariant>(info);
+	}
+	template <typename TVariant, typename TInfo>
+	static constexpr bool is(const TInfo &info) {
+		return std::holds_alternative<TVariant>(info);
+	}
+#else
+	template <typename TVariant, typename TInfo>
+	static TVariant &get(TInfo &info);
+	template <typename TVariant, typename TInfo>
+	static const TVariant &get(const TInfo &info);
+	template <typename TVariant, typename TInfo>
+	static constexpr bool is(const TInfo &info);
 #endif
+
+};
 
 #endif // CLASSBUILDER_H
