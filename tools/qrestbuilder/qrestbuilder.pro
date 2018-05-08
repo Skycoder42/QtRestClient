@@ -50,3 +50,6 @@ unix:!mac:!static_host_build {
 DISTFILES += \
 	restobject.xsd \
 	restclass.xsd
+
+# DEBUG
+win32:message($$CONFIG)
