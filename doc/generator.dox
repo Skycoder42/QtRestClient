@@ -67,6 +67,10 @@ how the final c++ code is beeing generated.
  Enum		| @ref generator_doc_Enum "Enum"			| 0 - ∞		| Custom enums to be created as part of the generated class
  Property	| @ref generator_doc_BaseParam "BaseParam"	| 1 - ∞		| The actual properties the class is composed of
 
+@subsection generator_doc_RestClass Element Type: RestClass
+
+@subsection generator_doc_RestApi Element Type: RestApi
+
 @subsection generator_doc_Include Element Type: Include
 Describes a file to be included via a c++ include directive. You can use them if you want to make use of special classes in your
 generated classes. Both global includes (`#include <header>`) and local includes (`#include "header"`) are supported <br/>
@@ -79,35 +83,6 @@ generated classes. Both global includes (`#include <header>`) and local includes
 @subsubsection generator_doc_Include_content Content
 The content of this element must be a string. More specific the header to be included. It becomes the content
 of the include directive. Specifiy it without the braces or quores, as thoes are added automatically.
-
-@subsection generator_doc_Enum Element Type: Enum
-If you want to use custom enum types in you class, use this element. It allows you to generate enums and flags
-that are automatically registered with Qt.
-
-@subsubsection generator_doc_Enum_attribs Attributes
- Name		| Allowed values				| Default/Required	| Description
-------------|-------------------------------|-------------------|-------------
- name		| c++ class name				| <i>required</i>	| The c++ name of the generated enum
- base		| name of a valid parent class	| <i>none</i>		| If you need a custom base class for your enum, use this property. But remember that Qt discourages this!
- isFlags	| bool							| false				| If set to true, a QFlag type is generated and registered instead of a normal enum
-
-@subsubsection generator_doc_Enum_children Allowed Child Elements
-Name	| XML-Type								| Limits	| Description
---------|---------------------------------------|-----------|-------------
-Key		| @ref generator_doc_EnumKey "EnumKey"	| 1 - ∞		| The actual elements of the enum/flags to be generated
-
-@subsection generator_doc_EnumKey Element Type: EnumKey
-Describes a key/element within an enum.
-
-@subsubsection generator_doc_EnumKey_attribs Attributes
- Name	| Allowed values	| Default/Required	| Description
---------|-------------------|-------------------|-------------
- name	| c++ enum key name	| <i>required</i>	| The name of the key, i.e. the actual enum key.
-
-@subsubsection generator_doc_EnumKey_content Content
-The content is optional. You can specify a custom value for your enum element (is placed after the = sign). The content
-must be a valid c++ constexpr, i.e. code that can be evaluated at compile time and that results in a value of the base
-type your enum is of (Or int, if no base type is given).
 
 @subsection generator_doc_BaseParam Element Type: BaseParam
 A base param is a method parameter or a Q_PROPERTY to be added to the generated class/method.
@@ -139,6 +114,44 @@ That string is used to initialize a QVariant that is then converted to `type` - 
 variant convertible from a string. This can be used to, for example, create a `QDate` from a string with the default
 value of `2018-05-09`.
 
+@subsection generator_doc_Enum Element Type: Enum
+If you want to use custom enum types in you class, use this element. It allows you to generate enums and flags
+that are automatically registered with Qt.
+
+@subsubsection generator_doc_Enum_attribs Attributes
+ Name		| Allowed values				| Default/Required	| Description
+------------|-------------------------------|-------------------|-------------
+ name		| c++ class name				| <i>required</i>	| The c++ name of the generated enum
+ base		| name of a valid parent class	| <i>none</i>		| If you need a custom base class for your enum, use this property. But remember that Qt discourages this!
+ isFlags	| bool							| false				| If set to true, a QFlag type is generated and registered instead of a normal enum
+
+@subsubsection generator_doc_Enum_children Allowed Child Elements
+Name	| XML-Type								| Limits	| Description
+--------|---------------------------------------|-----------|-------------
+Key		| @ref generator_doc_EnumKey "EnumKey"	| 1 - ∞		| The actual elements of the enum/flags to be generated
+
+@subsection generator_doc_EnumKey Element Type: EnumKey
+Describes a key/element within an enum.
+
+@subsubsection generator_doc_EnumKey_attribs Attributes
+ Name	| Allowed values	| Default/Required	| Description
+--------|-------------------|-------------------|-------------
+ name	| c++ enum key name	| <i>required</i>	| The name of the key, i.e. the actual enum key.
+
+@subsubsection generator_doc_EnumKey_content Content
+The content is optional. You can specify a custom value for your enum element (is placed after the = sign). The content
+must be a valid c++ constexpr, i.e. code that can be evaluated at compile time and that results in a value of the base
+type your enum is of (Or int, if no base type is given).
+
+@subsection generator_doc_Expression Element Type: Expression
+
+@subsection generator_doc_FixedParam Element Type: FixedParam
+
+@subsection generator_doc_Class Element Type: Class
+
+@subsection generator_doc_Method Element Type: Method
+
+@subsection generator_doc_BaseUrl Element Type: BaseUrl
 
 
 
