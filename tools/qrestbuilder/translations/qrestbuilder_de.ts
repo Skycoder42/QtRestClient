@@ -4,50 +4,42 @@
 <context>
     <name>ClassBuilder</name>
     <message>
-        <location filename="../classbuilder.cpp" line="+17"/>
-        <source>REST_API_CLASSES must be either of type api or class</source>
-        <translation>REST_API_CLASSES müssen entweder vom Typ &quot;api&quot; oder &quot;class&quot; sein</translation>
+        <location filename="../classbuilder.cpp" line="+160"/>
+        <source>You cannot have post params AND a method body at the same time</source>
+        <translation>postParams können nicht mit body kombiniert werden</translation>
     </message>
     <message>
-        <location line="+153"/>
-        <source>You can only use either path or url, not both!</source>
-        <translation>Sie können nur entweder pfad oder URL verwenden, nicht beides!</translation>
+        <location line="+7"/>
+        <source>You can only specify a single &lt;Url&gt; element per method, and only if you haven&apos;t already used &lt;Path&gt; or &lt;PathParam&gt;</source>
+        <translation>Es nur ein &lt;Url&gt; element pro methode geben, und es kann nicht mit &lt;Path&gt; oder &lt;PathParam&gt; kombiniert werden</translation>
     </message>
     <message>
-        <location line="+249"/>
-        <source>Element in pathParams must be of format &quot;name;type[;default]&gt;&quot;</source>
-        <translation>Elemente in &quot;pathParams&quot; müssen das Format &quot;name;typ[;default]&gt;&quot; haben</translation>
-    </message>
-</context>
-<context>
-    <name>ObjectBuilder</name>
-    <message>
-        <location filename="../objectbuilder.cpp" line="+19"/>
-        <source>REST_API_OBJECTS must be either of type object or gadget</source>
-        <translation>REST_API_OBJECTS müssen entweder vom Typ &quot;object&quot; oder &quot;gadget&quot; sein</translation>
+        <location line="+6"/>
+        <source>You cannot specify a &lt;Path&gt; element if you already used &lt;Url&gt;</source>
+        <translation>Es kann kein &lt;Path&gt; verwendet werden, wenn bereits &lt;Url&gt; benutzt wurde</translation>
     </message>
     <message>
-        <location line="+157"/>
-        <source>Enum values can have at most 2 elments!</source>
-        <translation>Enum Werte können maximal 2 Elemente haben!</translation>
+        <location line="+5"/>
+        <source>You cannot specify a &lt;PathParam&gt; element if you already used &lt;Url&gt;</source>
+        <translation>Es kann kein &lt;PathParam&gt; verwendet werden, wenn bereits &lt;Url&gt; benutzt wurde</translation>
     </message>
 </context>
 <context>
     <name>PARSER</name>
     <message>
-        <location filename="../main.cpp" line="+18"/>
+        <location filename="../main.cpp" line="+37"/>
         <source>A tool to create code for a rest API based on an API description</source>
         <translation>Ein Werkzeug zur Erzeugung von C++ Code für eine REST-API, basierend auf einer API-Beschreibung</translation>
     </message>
     <message>
         <location line="+6"/>
-        <source>Set the builders mode to build an api class</source>
-        <translation>Lässt das Tool eine API-Klasse erstellen</translation>
+        <source>Convert a legacy json file of &lt;type&gt; to the new XML format. Use --impl to specify the name of the RC-XML file to be created.</source>
+        <translation>Konvertiert eine alte json-Datei von &lt;typ&gt; zu dem neuen XML format. Verwenden Sie --impl um den Namen der RC-XML Datei anzugeben, die erzeugt werden soll.</translation>
     </message>
     <message>
-        <location line="+4"/>
-        <source>Set the builders mode to build an api object</source>
-        <translation>Lässt das Tool ein API-Objekt erstellen</translation>
+        <location line="+2"/>
+        <source>type</source>
+        <translation>typ</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -76,18 +68,59 @@
         <translation>Der &lt;Name&gt; der zu erstellenden Implementierungs-Datei</translation>
     </message>
     <message>
-        <location line="+13"/>
-        <source>Invalid mode! You must specify either --class or --object</source>
-        <translation>Ungültiger Modus! Sie können nur entweder &quot;--class&quot; oder &quot;--object&quot; spezifizieren</translation>
+        <location line="+17"/>
+        <source>%1: %2</source>
+        <translation>%1: %2</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Unsupported document type: %1</source>
+        <translation>Unbekannter Dokument-Typ: %1</translation>
     </message>
 </context>
 <context>
     <name>RestBuilder</name>
     <message>
-        <location filename="../restbuilder.cpp" line="+56"/>
-        <location line="+8"/>
+        <location filename="../restbuilder.cpp" line="+93"/>
         <source>%1: %2</source>
         <translation>%1: %2</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>%1:%2:%3: %4</source>
+        <translation>%1:%2:%3: %4</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Unexpected child element: %1</source>
+        <translation>Unerwartetes Element: %1</translation>
+    </message>
+    <message>
+        <location filename="../restbuilder.h" line="+70"/>
+        <source>Required attribute &quot;%1&quot; but was not set</source>
+        <translation>Attribut &quot;%1&quot; wurde erwartet, aber ist nicht gesetzt</translation>
+    </message>
+</context>
+<context>
+    <name>XmlConverter</name>
+    <message>
+        <location filename="../xmlconverter.cpp" line="+15"/>
+        <location line="+5"/>
+        <location line="+5"/>
+        <location line="+14"/>
+        <source>%1: %2</source>
+        <translation>%1: %2</translation>
+    </message>
+    <message>
+        <location line="-3"/>
+        <source>Invalid conversion input type: %1. Must be either &quot;object&quot; or &quot;class&quot;</source>
+        <translation>Ungültiger typ angegeben: %1. Muss entweder &quot;object&quot; oder &quot;class&quot; sein</translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <location line="+66"/>
+        <source>Unknown type: %1</source>
+        <translation>Unbekannter Typ: %1</translation>
     </message>
 </context>
 </TS>

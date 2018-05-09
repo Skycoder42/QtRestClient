@@ -164,7 +164,7 @@ ClassBuilder::RestAccess::Method ClassBuilder::readMethod()
 		checkError();
 		if(reader.name() == QStringLiteral("Url")) {
 			if(mode != None)
-				throwReader(tr("You cannot specify a single <Url> element per method, and only if you haven't already used <Path> or <PathParam>"));
+				throwReader(tr("You can only specify a single <Url> element per method, and only if you haven't already used <Path> or <PathParam>"));
 			mode = Url;
 			method.path = reader.readElementText();
 			checkError();
