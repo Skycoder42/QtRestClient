@@ -67,9 +67,62 @@ how the final c++ code is beeing generated.
  Enum		| @ref generator_doc_Enum "Enum"			| 0 - ∞		| Custom enums to be created as part of the generated class
  Property	| @ref generator_doc_BaseParam "BaseParam"	| 1 - ∞		| The actual properties the class is composed of
 
+
+
 @subsection generator_doc_RestClass Element Type: RestClass
+This class is an extension of @ref generator_doc_RestAccess "RestAccess". This means all the attributes and allowed child
+elements of RestAccess can/must also be used for a RestClass, include the additional attributes and child elements defined here.
+
+The rest class is a sub class that is a part of a greater api.
+
+@subsubsection generator_doc_RestClass_children Allowed Child Elements
+ Name	| XML-Type										| Limits	| Description
+--------|-----------------------------------------------|-----------|-------------
+ Path	| @ref generator_doc_Expression "Expression"	| 0 - 1		| The sub-path of this class, relative to it's parent class/api (QString)
+
+
 
 @subsection generator_doc_RestApi Element Type: RestApi
+This class is an extension of @ref generator_doc_RestAccess "RestAccess". This means all the attributes and allowed child
+elements of RestAccess can/must also be used for a RestClass, include the additional attributes and child elements defined here.
+
+The rest api is basically a root class with additional properties to create the apis root RestClient.
+
+@subsubsection generator_doc_RestApi_attribs Attributes
+ Name		| Allowed values	| Default/Required							| Description
+------------|-------------------|-------------------------------------------|-------------
+ globalName	| string			| <i>none</i>								| The APIs global name. If specified the api is made available globally by using QtRestClient::addGlobalApi with that name
+ autoCreate	| bool				| true if `globalName` is set, else false	| <i>Requires `globalName` to be set.</i> If set to true, the API will be automatically registered on application start. If not, it happens on first use
+
+@subsubsection generator_doc_RestApi_children Allowed Child Elements
+ Name		| XML-Type										| Limits	| Description
+------------|-----------------------------------------------|-----------|-------------
+ BaseUrl	| @ref generator_doc_BaseUrl "BaseUrl"			| 1			| The primary base URL for the api to base all subpaths on (required)
+ Parameter	| @ref generator_doc_FixedParam "FixedParam"	| 0 - ∞		| Additional URL query parameters to be added to the base URL
+ Header		| @ref generator_doc_FixedParam "FixedParam"	| 0 - ∞		| Additional HTTP-Headers to be added to every HTTP request
+
+
+
+@subsection generator_doc_RestAccess Element Type: RestAccess
+This type is a virtual type that you will never use directly. Instead is serves as a base class for @ref generator_doc_RestApi "RestApi" and
+@ref generator_doc_RestClass "RestClass". All the attributes and children defined here can/must be used on those two element types.
+
+@subsubsection generator_doc_RestAccess_attribs Attributes
+ Name		| Allowed values		| Default/Required	| Description
+------------|-----------------------|-------------------|-------------
+ name		| c++ class name		| <i>required</i>	| The class name of the generated class
+ export		| string				| <i>none</i>		| Sepcify an export macro. The value is put before the class/factory definition, if you want to export the generated classes from a dynamic library
+ base		| name of a base class	| "QObject"			| If you need a custom base class, use this property
+ except		| c++ class name		| "Object*"			| The default value for "except" of all @ref generator_doc_Method "Method" Elementshappens on first use
+
+@subsubsection generator_doc_RestAccess_children Allowed Child Elements
+ Name		| XML-Type								| Limits	| Description
+------------|---------------------------------------|-----------|-------------
+ Include	| @ref generator_doc_Include "Include"	| 0 - ∞		| Additional header files to be included in the generated header
+ Class		| @ref generator_doc_Class "Class"		| 0 - ∞		| The child classes to generate methods for
+ Method		| @ref generator_doc_Method "Method"	| 0 - ∞		| The Actual REST-Methods to access the api within the current class
+
+
 
 @subsection generator_doc_Include Element Type: Include
 Describes a file to be included via a c++ include directive. You can use them if you want to make use of special classes in your
@@ -83,6 +136,8 @@ generated classes. Both global includes (`#include <header>`) and local includes
 @subsubsection generator_doc_Include_content Content
 The content of this element must be a string. More specific the header to be included. It becomes the content
 of the include directive. Specifiy it without the braces or quores, as thoes are added automatically.
+
+
 
 @subsection generator_doc_BaseParam Element Type: BaseParam
 A base param is a method parameter or a Q_PROPERTY to be added to the generated class/method.
@@ -105,14 +160,16 @@ is used to initialize (and reset) the base param. How the content is interpreted
 If it is set to false (the default), the content must be c++ code and is copied to the generated class as is. The
 code must be an expression that evalutes to a single value that is implicitly convertible to the given `type`. If
 type was for example `int`, valid expressions could be:
-- `-1`
-- `10 + 20`
-- `qRand()`
+- `<BaseParam>-1</BaseParam>`
+- `<BaseParam>10 + 20</BaseParam>`
+- `<BaseParam>qRand()</BaseParam>`
 
 If set to true, the content is assumed to be a string. You don't need to specify quotation marks around the string.
 That string is used to initialize a QVariant that is then converted to `type` - in other words, the type you use must be
 variant convertible from a string. This can be used to, for example, create a `QDate` from a string with the default
-value of `2018-05-09`.
+value of `<BaseParam asStr="true">2018-05-09</BaseParam>`.<br/>
+
+
 
 @subsection generator_doc_Enum Element Type: Enum
 If you want to use custom enum types in you class, use this element. It allows you to generate enums and flags
@@ -130,6 +187,8 @@ Name	| XML-Type								| Limits	| Description
 --------|---------------------------------------|-----------|-------------
 Key		| @ref generator_doc_EnumKey "EnumKey"	| 1 - ∞		| The actual elements of the enum/flags to be generated
 
+
+
 @subsection generator_doc_EnumKey Element Type: EnumKey
 Describes a key/element within an enum.
 
@@ -143,125 +202,89 @@ The content is optional. You can specify a custom value for your enum element (i
 must be a valid c++ constexpr, i.e. code that can be evaluated at compile time and that results in a value of the base
 type your enum is of (Or int, if no base type is given).
 
+
+
 @subsection generator_doc_Expression Element Type: Expression
+An expression can be any arbitrary element. It is defined as s string, that can optionally be a c++
+expression that evaluates to a string instead.
+
+@subsubsection generator_doc_Expression_attribs Attributes
+ Name	| Allowed values	| Default/Required	| Description
+--------|-------------------|-------------------|-------------
+ expr	| bool				| false				| Specify whether a string or an expression is given.
+
+@subsubsection generator_doc_Expression_content Content
+The content is the actual string to be returned. If `expr` is false (the default), the content is
+the final string (excluding the sourrounding quotation marks), for example `<Expression>42</Expression>`.
+However, if it is set to true, then the content of this element is interpreted as a c++ expression. The
+expression must evaluate to a single result that is implicitly convertible to either QString or QByteArray,
+depending on the context it is beeing used in. A simple example for an expression would be:
+`<Expression expr="true">QString::number(42)</Expression>`<br/>
+
+
 
 @subsection generator_doc_FixedParam Element Type: FixedParam
+A FixedParam is basically an @ref generator_doc_Expression "Expression" with an additional attribute, key,
+to give the expression an identity. So besides that extra attribute, it behaves just like an expression.
+
+@subsubsection generator_doc_FixedParam_attribs Attributes
+ Name	| Allowed values	| Default/Required	| Description
+--------|-------------------|-------------------|-------------
+ key	| string			| <i>required</i>	| The name/key of the parameter you are specifying
+
+
 
 @subsection generator_doc_Class Element Type: Class
-
-@subsection generator_doc_Method Element Type: Method
-
-@subsection generator_doc_BaseUrl Element Type: BaseUrl
-
-
-
-
-
-
-
-
-## Generate classes {#generator_doc_class}
-Classes are added to the pro file by using the REST_API_CLASSES variable. A class is a wrapper around QtRestClient::RestClass, that encapsulates the
-rather generic methods into custom methods with adjusted parameters etc. This creates a c++ class, with simple methods to do HTTP-Request. In addition
-to that, you can build hieracical trees with classes, and those are represented by methods in the classes, allowing you to follow that tree in c++ as well.
-For the "root-class", you can use the api version, which allows you to specify the basic properties of a QtRestClient::RestClient.
-
-Your JSON files will need to have the following structure:
-
-### Type: class {#generator_doc_c_class}
-The root element of any object to be generated. depending on the `type` you choose, it will be extended by some additional properties.
-
-All types allow the following elements:
-
- Name		| Allowed values							| Default/Required	| Description
-------------|-------------------------------------------|-------------------|--------------------------------------------------------------------
- type		| "api" or "class"							| "class"			| Define the type to generate - a class or an api
- name		| any valid c++ class name					| file name			| The class name of the generated class
- includes	| list of strings							| []				| specify a list of includes for the header file.<br>By default, the are included with `<...>`. To include as `"..."`, prepend "&gt;" to the include.<br>(Example: `>myClass.h` to get `#include "myClass.h"` instead of `#include <myClass.h>`)
- export		| string									| <i>none</i>		| Sepcify an export macro. The value is put before the class definition, if you want to export the generated classes
- parent		| name of a valid parent class				| "QObject"			| If you need a custom parent, use this property
- except		| The default execpt value					| "QObject*"		| The default value for "except" of all [method](#generator_doc_c_method) elements
- classes	| [classes-object](#generator_doc_c_cobj)	| {}				| The child-classes. See [Type: classes-object](#generator_doc_c_cobj)
- methods	| [methods-object](#generator_doc_c_mobj)	| {}				| The child-methods. See [Type: methods-object](#generator_doc_c_mobj)
-
-If the type is `class` the following properties are available as well:
-
- Name		| Allowed values					| Default/Required	| Description
-------------|-----------------------------------|-------------------|--------------------------------------------------------------------
- path		| [expression](#generator_doc_expr)	| ""				| Set the path of this class, relative to **it's parent**. Empty means same as parent
-
-If the type is `api` the following properties are available as well:
-
- Name		| Allowed values							| Default/Required	| Description
-------------|-------------------------------------------|-------------------|--------------------------------------------------------------------
- baseUrl	| URL ([expression](#generator_doc_expr))	| <i>required</i>	| The base URL of the API. Will be set as QtRestClient::RestClient::baseUrl
- apiVersion	| version [expression](#generator_doc_expr)	| no version		| The version of the API. Will be set as QtRestClient::RestClient::apiVersion
- parameters	| object									| {}				| Parameters in key-value format. Will be set as QtRestClient::RestClient::globalParameters. Values are of type [expression](#generator_doc_expr)
- headers	| object									| {}				| Headers in key-value format. Will be set as QtRestClient::RestClient::globalHeaders, UTF-8 encoded. Values are of type [expression](#generator_doc_expr)
- globalName	| [expression](#generator_doc_expr)			| none				| If specified, the API will be registered by that name using QtRestClient::addGlobalApi
- autoCreate	| bool										| true				| <i>Requires `globalName` to be set.</i> If set to true, the API will be automatically registered on application start. If not, it happens on first use
-
-### Type: classes-object {#generator_doc_c_cobj}
-This type allows you to add "child-classes" to your class/api in form of key-value pairs. The key is the name of the
-method in your class that should return the class. The Value is the class type. You will have to add it as include. The
+A class element is simply a reference to another @ref generator_doc_RestClass "RestClass" to be made
+avilable as subclass of the current class/api. You will have to add the class type it as include. The
 type must be class generated by the tool as well. It is possible to use an api as child class as well, but it will ignore
 the API-aspect, and simply interpret it as class. However, it is not recommended to do so.
 
-The following snippet shows an example. It assumes an `myclass.json`, holding a class definition with name `MyClass`:
-@code{.json}
-{
-	"include": ["myclass.h", ...]
-	"classes": {
-		"myClass": "MyClass",
-		...
-	}
-}
-@endcode
+@subsubsection generator_doc_Class_attribs Attributes
+ Name	| Allowed values	| Default/Required	| Description
+--------|-------------------|-------------------|-------------
+ key	| c++ method name	| <i>required</i>	| The name of the method that returns the class
+ type	| c++ class name	| <i>required</i>	| The type of the class to return by the method
 
-### Type: Expressions {#generator_doc_expr}
-In the following sections, you will often find `expression` as a type. This allows you to enter c++ expressions where strings are expected. An expression can
-either be interpret as a string or as an expression.
 
-If you pass a normal string, i.e. `"myString"`, it is interpreted as a string. In the generated code, the json string will be put as is.
 
-If you however prepend the `$`-sign, it becomes an expression. As an expression, whatever comes after the $, will be used as C++ code, and not as a string.
-For Example, `"$MyClass::myFunction()"` will insert the function call `MyClass::myFunction()`, instead of a string. You can escape strings in this synax using
-`$myFunc(\"string\")`. An expression can contain anything, as long as the result is compilable. You may need to add additional includes for your expressions.
+@subsection generator_doc_Method Element Type: Method
+The main aspect of your class are the methods. They define what can be done by your class. They define a HTTP-request, that will
+be wrapped into a c++ method by the builder.
 
-### Type: methods-object {#generator_doc_c_mobj}
-The main aspect of your class are the methods. They define what can be done by your class. The define a HTTP-request, that will
-be wrapped into a c++ method by the builder. Like most other elements, the methods are key-value pairs as well, with the key
-beeing the methods name, and the value a `method-object`, that can contain the following elements:
+@subsubsection generator_doc_Method_attribs Attributes
+ Name		| Allowed values		| Default/Required											| Description
+------------|-----------------------|-----------------------------------------------------------|-------------
+ name		| c++ method name		| <i>required</i>											| The name of the method to be generated
+ verb		| string (HTTP verb)	| "GET"														| The HTTP-Verb to be used for the request
+ body		| c++ class name		| <i>none</i>												| An optional body, to be sent with the request. Must be serializable and included
+ returns	| c++ class name		| void														| The type of the reply entity. Must be serializable and included, or void
+ except		| c++ class name		| @ref generator_doc_RestAccess_attribs "RestAccess.except"	| The type of a reply with an error. Must be serializable and included. Defaults to the classes except property
+ postParams	| bool					| verb == "POST"											| Specify if the `<Param>` elements should be send as URL query or POST parameter.<br/>
 
- Name		| Allowed values								| Default/Required							| Description
-------------|-----------------------------------------------|-------------------------------------------|--------------------------------------------------------------------
- path		| [expression](#generator_doc_expr)				| none										| A subpath, append to the classes path. **must not be combined with `url`**
- url		| URL ([expression](#generator_doc_expr))		| none										| A (relative) url, resolved to the classes path. **must not be combined with `path`**
- verb		| HTTP-Verb ([expression](#generator_doc_expr))	| "GET"										| The HTTP-Verb to be used for the request
- body		| name of a c++ object							| none										| An optional body, to be sent with the request. Must be serializable and included
- pathParams	| [param-list](#generator_doc_param)			| []										| A list of parameters, where each parameter becomes a segment, appended to the requests path. See [Type: param-list](#generator_doc_param)
- parameters	| [param-list](#generator_doc_param)			| []										| A list of parameters, added as QUrlQuery parameters. See [Type: param-list](#generator_doc_param)
- headers	| object										| {}										| Headers in key-value format. Will be added as additional HTTP-Headers, UTF-8 encoded. Values are of type [expression](#generator_doc_expr)
- returns	| name of a c++ object							| "QObject*"								| The type of the reply entity. Must be serializable and included, or void
- except		| name of a c++ object							| [class](#generator_doc_c_class).except	| The type of a reply with an error. Must be serializable and included. Defaults to the classes except property
+@subsubsection generator_doc_Method_children Allowed Child Elements
+Name		| XML-Type										| Limits	| Description
+------------|-----------------------------------------------|-----------|-------------
+ Path		| @ref generator_doc_Expression "Expression"	| 0 - ∞		| A fixed path segment to be added to the requests url path
+ PathParam	| @ref generator_doc_BaseParam "BaseParam"		| 0 - ∞		| A path segment as method parameter to be added to the requests url path
+ Url		| @ref generator_doc_Expression "Expression"	| 0 - 1		| A fixed URL to be resolved relative to the classes sub URL
+ Param		| @ref generator_doc_BaseParam "BaseParam"		| 0 - ∞		| Additional method parameters to be used as query or past params for the request (Depending on `postParams`)
+ Header		| @ref generator_doc_FixedParam "FixedParam"	| 0 - ∞		| Additional HTTP-Headers to be added to the HTTP-Request
 
-If neither `path` nor `url` are specified, the request will use the classes path without modifications
+@attention You cannot combine `<Path>/<PathParam>` with `<Url>`. Either you use a combination of `<Path>/<PathParam>` elements
+to build a combine path from them, or you use a single `<Url>` to specify a whole, unparametrized URL. You can of couse specify
+neither as well
 
-### Type: param-list {#generator_doc_param}
-In order to specify parameters, that are added to the method in the same order they have been specified, a param-list is used.
-It's a list of strings, were each string has the format `<name>;<type>[;<default>]`. The name will be the name of the parameter, and type
-it's type. Please note that the type must be convertible to string via QVariant. The default part is optional, and ca be used to provide a default
-argument for the parameter. Please note that the rules of default arguments of C++ apply here. See http://en.cppreference.com/w/cpp/language/default_arguments
 
-The following snippet shows an example of such parameters:
-@code{.json}
-{
-	"include": ["QDateTime", ...]
-	"parameters": [
-		"id;int",
-		"name;QString",
-		"date;QDateTime"
-	]
-}
-@endcode
+
+@subsection generator_doc_BaseUrl Element Type: BaseUrl
+A BaseUrl is basically an @ref generator_doc_Expression "Expression" with an additional attribute, apiVersion,
+to give the URL an optional, C++-validated version number, which can be accessed via the RestClient.
+So besides that extra attribute, it behaves just like an expression.
+
+@subsubsection generator_doc_BaseUrl_attribs Attributes
+ Name		| Allowed values		| Default/Required	| Description
+------------|-----------------------|-------------------|-------------
+ apiVersion	| QVersionNumber string	| <i>none</i>		| An optional API version to be appended to the base URL as extra path segment
+
 */
