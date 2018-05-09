@@ -325,10 +325,11 @@ public:
 	static QVariantHash concatParams(const QString &key, const QVariant &value, Args... parameters);
 	//! @}
 
+protected:
+	explicit RestClass(RestClient *client, QStringList subPath, QObject *parent);
+
 private:
 	QScopedPointer<RestClassPrivate> d;
-
-	explicit RestClass(RestClient *client, QStringList subPath, QObject *parent);
 
 	QNetworkReply *create(QByteArray verb, const QString &methodPath, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody); //MAJOR merge methods
 	Q_DECL_DEPRECATED QNetworkReply *create(QByteArray verb, const QString &methodPath, const QVariantHash &parameters, const HeaderHash &headers);

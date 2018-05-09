@@ -17,7 +17,7 @@ public:
 	Q_INVOKABLE SimpleJphPost(QObject *parent = nullptr);
 	SimpleJphPost(int id, QString title, QUrl href, QObject *parent = nullptr);
 
-	QTRESTCLIENT_EXT_HREF_PROP("href")
+	QTRESTCLIENT_EXT_HREF_PROP(href)
 
 	int id;
 	QString title;

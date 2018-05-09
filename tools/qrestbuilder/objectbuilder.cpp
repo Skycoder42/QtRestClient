@@ -157,7 +157,8 @@ void ObjectBuilder::generateApiGadget()
 		writeEqualsDeclaration();
 	header << "\nprivate:\n"
 		   << "\t QSharedDataPointer<" << data.name << "Data> d;\n"
-		   << "};\n\n";
+		   << "};\n\n"
+		   << "Q_DECLARE_METATYPE(" << data.name << ")\n\n";
 	writeFlagOperators();
 
 	//write source

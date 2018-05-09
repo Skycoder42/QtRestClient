@@ -53,4 +53,6 @@ public:
 
 }
 
+Q_DECLARE_METATYPE(QtRestClient::IPaging*)
+
 #endif // QTRESTCLIENT_IPAGING_H

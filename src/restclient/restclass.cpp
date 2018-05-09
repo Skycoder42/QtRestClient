@@ -11,7 +11,7 @@ const QByteArray RestClass::PatchVerb("PATCH");
 
 RestClass::RestClass(RestClient *client, QStringList subPath, QObject *parent) :
 	QObject(parent),
-	d(new RestClassPrivate(client, subPath))
+	d(new RestClassPrivate(client, std::move(subPath)))
 {
 	connect(client, &RestClient::destroyed,
 			this, &RestClass::deleteLater);

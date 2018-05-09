@@ -114,7 +114,7 @@ private:
 //! A simple macro to implement Simple::extensionHref by reading the property with the name x
 #define QTRESTCLIENT_EXT_HREF_PROP(x) \
 	inline QUrl extensionHref() const override { \
-		return property(x).toUrl();\
+		return property(#x).toUrl();\
 	}
 
 // ------------- Generic Implementation object -------------
