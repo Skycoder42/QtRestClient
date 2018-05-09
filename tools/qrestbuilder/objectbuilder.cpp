@@ -68,8 +68,8 @@ ObjectBuilder::XmlContent::Enum ObjectBuilder::readEnum()
 
 	while(reader.readNextStartElement()) {
 		checkError();
-		auto value = readAttrib(QStringLiteral("value"));
-		enumElement.keys.append({reader.readElementText(), value});
+		auto name = readAttrib(QStringLiteral("name"));
+		enumElement.keys.append({name, reader.readElementText()});
 		checkError();
 	}
 	return enumElement;

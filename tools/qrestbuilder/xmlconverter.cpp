@@ -55,7 +55,7 @@ void XmlConverter::writeObjectXml(const QJsonObject &data, QXmlStreamWriter &wri
 		writer.writeStartElement(QStringLiteral("RestObject"));
 	else
 		writer.writeStartElement(QStringLiteral("RestGadget"));
-	writer.writeDefaultNamespace(QStringLiteral("https://skycoder42.de/QtRestClient/RestObject"));
+	writer.writeDefaultNamespace(QStringLiteral("https://skycoder42.de/QtRestClient/qrestbuilder"));
 
 	// copy normal attributes
 	writeAttrIf(data, writer, QStringLiteral("$name"));
@@ -84,15 +84,11 @@ void XmlConverter::writeObjectXml(const QJsonObject &data, QXmlStreamWriter &wri
 		}
 		for(const auto value : values) {
 			auto vStr = value.toString().split(QLatin1Char(':'));
-			if(vStr.size() == 1)
-				writer.writeTextElement(QStringLiteral("Key"), vStr.first());
-			else {
-				auto key = vStr.takeFirst();
-				writer.writeStartElement(QStringLiteral("Key"));
-				writer.writeAttribute(QStringLiteral("value"), vStr.join(QLatin1Char(':')));
-				writer.writeCharacters(key);
-				writer.writeEndElement();
-			}
+			writer.writeStartElement(QStringLiteral("Key"));
+			writer.writeAttribute(QStringLiteral("name"), vStr.takeFirst());
+			if(!vStr.isEmpty())
+				writer.writeCharacters(vStr.join(QLatin1Char(':')));
+			writer.writeEndElement();
 		}
 		writer.writeEndElement();
 	}
@@ -125,7 +121,7 @@ void XmlConverter::writeClassXml(const QJsonObject &data, QXmlStreamWriter &writ
 		writer.writeStartElement(QStringLiteral("RestApi"));
 	else
 		writer.writeStartElement(QStringLiteral("RestClass"));
-	writer.writeDefaultNamespace(QStringLiteral("https://skycoder42.de/QtRestClient/RestClass"));
+	writer.writeDefaultNamespace(QStringLiteral("https://skycoder42.de/QtRestClient/qrestbuilder"));
 
 	// copy normal attributes
 	writeAttrIfAny(data, writer, QStringLiteral("name"));

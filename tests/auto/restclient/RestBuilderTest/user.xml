@@ -5,15 +5,15 @@
 			testEquality="false"
 			generateEquals="true">
 	<Enum name="GenderType">
-		<Key>Male</Key>
-		<Key>Female</Key>
+		<Key name="Male"/>
+		<Key name="Female"/>
 	</Enum>
 	<Enum name="UserType" base="int" isFlags="true">
-		<Key value="0x00">Person</Key>
-		<Key value="0x01">Sir</Key>
-		<Key value="0x02">Doctor</Key>
-		<Key value="0x04">Professor</Key>
-		<Key value="(Person|Sir|Doctor|Professor)">Dictator</Key>
+		<Key name="Person">0x00</Key>
+		<Key name="Sir">0x01</Key>
+		<Key name="Doctor">0x02</Key>
+		<Key name="Professor">0x04</Key>
+		<Key name="Dictator">(Person|Sir|Doctor|Professor)</Key>
 	</Enum>
 
 	<Property key="id" type="int">-1</Property>

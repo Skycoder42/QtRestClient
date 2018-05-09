@@ -7,7 +7,7 @@
 
 @section generator_features What it does
 The `qrestbuilder` reads in a xml file, and generates a header and a source from it. Those will, depending on the input, contain either
-an @ref generator_doc_object "object" or a @ref generator_doc_class "class". This allows an easy and fast creation of wrappers for any REST-API.
+an "object", "gadget", "class" or "api". This allows an easy and fast creation of wrappers for any REST-API.
 In order to use the tool as custom compiler, ou can simply create the XML files and add the to the pro file using
 @code{.pro}
 REST_API_FILES += # your xml files
@@ -33,7 +33,7 @@ Your document must start with one of the following 4 root elements:
 - `<RestObject>` - will generate an api object based on QObject
 - `<RestGadget>` - will generate an api object based on Q_GADGET
 - `<RestClass>` - will generate an api subclass
-- `<RestApi>` - will generate the api root class</br>
+- `<RestApi>` - will generate the api root class<br/>
 
 An object is simply a "data type" class. It will be generated with a bunch of properties (Q_PROPERTY), and methods to access them. They are
 generated in an optimized way, an can be used by the rest client as data classes. It allows a simple, fast and easy creation of those objects.
@@ -65,11 +65,11 @@ how the final c++ code is beeing generated.
 ------------|-------------------------------------------|-----------|-------------
  Include	| @ref generator_doc_Include "Include"		| 0 - ∞		| Additional header files to be included in the generated header
  Enum		| @ref generator_doc_Enum "Enum"			| 0 - ∞		| Custom enums to be created as part of the generated class
- Property	| @ref generator_doc_Property "Property"	| 1 - ∞		| The actual properties the class is composed of
+ Property	| @ref generator_doc_BaseParam "BaseParam"	| 1 - ∞		| The actual properties the class is composed of
 
 @subsection generator_doc_Include Element Type: Include
 Describes a file to be included via a c++ include directive. You can use them if you want to make use of special classes in your
-generated classes. Both global includes (`#include <header>`) and local includes (`#include "header"`) are supported </br>
+generated classes. Both global includes (`#include <header>`) and local includes (`#include "header"`) are supported <br/>
 
 @subsubsection generator_doc_Include_attribs Attributes
  Name	| Allowed values	| Default/Required	| Description
@@ -102,26 +102,30 @@ Describes a key/element within an enum.
 @subsubsection generator_doc_EnumKey_attribs Attributes
  Name	| Allowed values	| Default/Required	| Description
 --------|-------------------|-------------------|-------------
- value	| value expression	| <i>none</i>		| Specify a custom value for your enum element (is placed after the = sign)
+ name	| c++ enum key name	| <i>required</i>	| The name of the key, i.e. the actual enum key.
 
 @subsubsection generator_doc_EnumKey_content Content
-The content of an enum key is the name of the key, i.e. the actual enum key.
+The content is optional. You can specify a custom value for your enum element (is placed after the = sign). The content
+must be a valid c++ constexpr, i.e. code that can be evaluated at compile time and that results in a value of the base
+type your enum is of (Or int, if no base type is given).
 
-@subsection generator_doc_Property Element Type: Property
-A property is a Q_PROPERTY to be added to the generated class. For each such property, getters and setters
-are generated as well, and depending on the configuration even notify signals and reset methods.
+@subsection generator_doc_BaseParam Element Type: BaseParam
+A base param is a method parameter or a Q_PROPERTY to be added to the generated class/method.
+For each such property, getters and setters are generated as well, and depending on the configuration
+even notify signals and reset methods. For method parameters, it determines the name and type of the
+parameter, as well as the parameters default value, if wanted.
 
-@subsubsection generator_doc_Property_attribs Attributes
- Name	| Allowed values	| Default/Required	| Description
---------|-------------------|-------------------|-------------
- key	| property name		| <i>required</i>	| The property name
- type	| c++ type name		| <i>required</i>	| The properties type
- asStr	| bool				| false				| Specify how the element content should be interpreted
+@subsubsection generator_doc_BaseParam_attribs Attributes
+ Name	| Allowed values			| Default/Required	| Description
+--------|---------------------------|-------------------|-------------
+ key	| property/parameter name	| <i>required</i>	| The property or parameter name
+ type	| c++ type name				| <i>required</i>	| The properties/parameters type
+ asStr	| bool						| false				| Specify how the element content should be interpreted
 
-@subsubsection generator_doc_Property_content Content
-The content of a property is optional, and it represents the default value of the property.
-If not specified, the property will be initialize with it's default constructor. If specified, the content
-is used to initialize (and reset) the property. How the content is interpreted depends on the `asStr` attribute.
+@subsubsection generator_doc_BaseParam_content Content
+The content of a base param is optional, and it represents the default value of the property/parameter.
+If not specified, the base param will be initialize with it's default constructor. If specified, the content
+is used to initialize (and reset) the base param. How the content is interpreted depends on the `asStr` attribute.
 
 If it is set to false (the default), the content must be c++ code and is copied to the generated class as is. The
 code must be an expression that evalutes to a single value that is implicitly convertible to the given `type`. If

@@ -13,12 +13,21 @@
 			</xs:extension>
 		</xs:simpleContent>
 	</xs:complexType>
+	<xs:complexType name="BaseParam">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="key" type="xs:string" use="required"/>
+				<xs:attribute name="type" type="xs:string" use="required"/>
+				<xs:attribute default="false" name="asStr" type="xs:boolean" use="optional"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
 	
 	<!-- object/gadget types -->
 	<xs:complexType name="EnumKey">
 		<xs:simpleContent>
 			<xs:extension base="xs:string">
-				<xs:attribute name="value" type="xs:string" use="optional"/>
+				<xs:attribute name="name" type="xs:string" use="required"/>
 			</xs:extension>
 		</xs:simpleContent>
 	</xs:complexType>
@@ -30,21 +39,12 @@
 		<xs:attribute default="int" name="base" type="xs:string" use="optional"/>
 		<xs:attribute default="false" name="isFlags" type="xs:boolean" use="optional"/>
 	</xs:complexType>
-	<xs:complexType name="Property">
-		<xs:simpleContent>
-			<xs:extension base="xs:string">
-				<xs:attribute name="key" type="xs:string" use="required"/>
-				<xs:attribute name="type" type="xs:string" use="required"/>
-				<xs:attribute default="false" name="asStr" type="xs:boolean" use="optional"/>
-			</xs:extension>
-		</xs:simpleContent>
-	</xs:complexType>
 	
 	<xs:complexType name="RestContent">
 		<xs:sequence>
 			<xs:element maxOccurs="unbounded" minOccurs="0" name="Include" type="Include"/>
 			<xs:element maxOccurs="unbounded" minOccurs="0" name="Enum" type="Enum"/>
-			<xs:element maxOccurs="unbounded" minOccurs="1" name="Property" type="Property"/>
+			<xs:element maxOccurs="unbounded" minOccurs="1" name="Property" type="BaseParam"/>
 		</xs:sequence>
 		<xs:attribute name="name" type="xs:string" use="required"/>
 		<xs:attribute default="QObject" name="base" type="xs:string" use="optional"/>
@@ -56,29 +56,19 @@
 	</xs:complexType>
 	
 	<!-- class/api types -->
-	<xs:complexType name="BaseParam">
-		<xs:simpleContent>
-			<xs:extension base="xs:string">
-				<xs:attribute name="key" type="xs:string" use="required"/>
-				<xs:attribute name="type" type="xs:string" use="required"/>
-				<xs:attribute default="false" name="asStr" type="xs:boolean" use="optional"/>
-			</xs:extension>
-		</xs:simpleContent>
-	</xs:complexType>
-	<xs:complexType name="FixedParam">
-		<xs:simpleContent>
-			<xs:extension base="xs:string">
-				<xs:attribute name="key" type="xs:string" use="required"/>
-				<xs:attribute default="false" name="expr" type="xs:boolean" use="optional"/>
-			</xs:extension>
-		</xs:simpleContent>
-	</xs:complexType>
 	<xs:complexType name="Expression">
 		<xs:simpleContent>
 			<xs:extension base="xs:string">
 				<xs:attribute default="false" name="expr" type="xs:boolean" use="optional"/>
 			</xs:extension>
 		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="FixedParam">
+		<xs:complexContent>
+			<xs:extension base="Expression">
+				<xs:attribute name="key" type="xs:string" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
 	</xs:complexType>
 	
 	<xs:complexType name="Class">
