@@ -38,13 +38,21 @@ private:
 		};
 		QList<Enum> enums;
 
-		QList<BaseParam> properties;
+		struct Property : public BaseParam {
+			bool generateReset = false;
+
+			inline Property(const BaseParam &base = {}) :
+				BaseParam(base)
+			{}
+		};
+		QList<Property> properties;
 	} data;
 
 	void build() override;
 
 	void readData();
 	XmlContent::Enum readEnum();
+	XmlContent::Property readProperty();
 
 	void generateApiObject();
 	void generateApiGadget();

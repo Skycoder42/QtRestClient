@@ -6,7 +6,7 @@
 	<Include local="true">user.h</Include>
 	<Include local="true">testmacro.h</Include>
 
-	<Property key="id" type="int">-1</Property>
+	<Property key="id" type="int" generateReset="true">-1</Property>
 	<Property key="title" type="QString"/>
 	<Property key="version" type="QVersionNumber"/>
 	<Property key="body" type="QString"/>

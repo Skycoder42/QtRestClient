@@ -41,7 +41,7 @@ created by a RestClass
 */
 
 /*!
-@fn QtRestClient::Paging::iterate(std::function<bool(T, int)>, int, int) const
+@fn QtRestClient::Paging::iterate(const std::function<bool(T, int)>&, int, int) const
 
 @param iterator The iterator to be be called for every element iterated over
 @param to The upper limit of how far the iteration should go (-1 means no limit)
@@ -69,22 +69,22 @@ The iterators parameters are:
 */
 
 /*!
-@fn QtRestClient::Paging::iterate(std::function<bool(T, int)>, std::function<void(QString, int, RestReply::ErrorType)>, std::function<QString(EO, int)>, int, int) const
+@fn QtRestClient::Paging::iterate(const std::function<bool(T, int)> &, const std::function<void(QString, int, RestReply::ErrorType)> &, const std::function<QString(EO, int)>&, int, int) const
 
 @tparam EO The type of the negative result
 @param errorHandler Will be passed to GenericRestReply::onAllErrors for all replies
 @param failureTransformer Will be passed to GenericRestReply::onAllErrors for all replies
 
-@copydetails QtRestClient::Paging::iterate(std::function<bool(T, int)>, int, int) const
+@copydetails QtRestClient::Paging::iterate(const std::function<bool(T, int)>&, int, int) const
 */
 
 /*!
-@fn QtRestClient::Paging::iterate(std::function<bool(T, int)>, std::function<void(int, EO)>, std::function<void(QString, int, RestReply::ErrorType)>, std::function<void(QJsonSerializerException &)>, int, int) const
+@fn QtRestClient::Paging::iterate(const std::function<bool(T, int)>&, const std::function<void(int, EO)>&, const std::function<void(QString, int, RestReply::ErrorType)>&, const std::function<void(QJsonSerializerException &)>&, int, int) const
 
 @tparam EO The type of the negative result
 @param failureHandler Will be passed to GenericRestReply::onFailed for all replies
 @param errorHandler Will be passed to GenericRestReply::onError for all replies
 @param exceptionHandler Will be passed to GenericRestReply::onSerializeException for all replies
 
-@copydetails QtRestClient::Paging::iterate(std::function<bool(T, int)>, int, int) const
+@copydetails QtRestClient::Paging::iterate(const std::function<bool(T, int)>&, int, int) const
 */

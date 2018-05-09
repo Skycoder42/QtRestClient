@@ -30,8 +30,11 @@ public:
 	Paging();
 	//! Copy Constructor
 	Paging(const Paging<T> &other);
+	//! Move Constructor
 	Paging(Paging<T> &&other);
+	//! Copy assignment operator
 	Paging<T> &operator=(const Paging<T> &other);
+	//! Move assignment operator
 	Paging<T> &operator=(Paging<T> &&other);
 	//! Constructs a paging from the interface, the data and a client
 	Paging(IPaging *iPaging, const QList<T> &data, RestClient *client);
@@ -64,7 +67,7 @@ public:
 	QUrl previousUrl() const;
 
 	//! Iterates over all paging objects
-	void iterate(std::function<bool(T, int)> iterator, int to = -1, int from = 0) const;
+	void iterate(const std::function<bool(T, int)> &iterator, int to = -1, int from = 0) const;
 	//! Iterates over all paging objects, with error handling
 	template<typename EO = QObject*>
 	void iterate(const std::function<bool(T, int)> &iterator,

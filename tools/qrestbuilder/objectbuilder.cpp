@@ -52,7 +52,7 @@ void ObjectBuilder::readData()
 		else if(reader.name() == QStringLiteral("Enum"))
 			data.enums.append(readEnum());
 		else if(reader.name() == QStringLiteral("Property"))
-			data.properties.append(readBaseParam());
+			data.properties.append(readProperty());
 		else
 			throwChild();
 	}
@@ -75,6 +75,14 @@ ObjectBuilder::XmlContent::Enum ObjectBuilder::readEnum()
 	return enumElement;
 }
 
+ObjectBuilder::XmlContent::Property ObjectBuilder::readProperty()
+{
+	auto generateReset = readAttrib<bool>(QStringLiteral("generateReset"), data.generateReset);
+	XmlContent::Property prop = readBaseParam();
+	prop.generateReset = generateReset;
+	return prop;
+}
+
 void ObjectBuilder::generateApiObject()
 {
 	//write header
@@ -94,10 +102,8 @@ void ObjectBuilder::generateApiObject()
 		writeEqualsDeclaration();
 	header << "\npublic Q_SLOTS:\n";
 	writeWriteDeclarations();
-	if(data.generateReset) {
-		header << '\n';
-		writeResetDeclarations();
-	}
+	writeResetDeclarations();
+
 	header << "\nQ_SIGNALS:\n";
 	writeNotifyDeclarations();
 	header << "\nprivate:\n"
@@ -117,8 +123,7 @@ void ObjectBuilder::generateApiObject()
 	if(data.generateEquals)
 		writeEqualsDefinition();
 	writeWriteDefinitions();
-	if(data.generateReset)
-		writeResetDefinitions();
+	writeResetDefinitions();
 	if(data.registerConverters)
 		writeListConverter();
 }
@@ -147,10 +152,7 @@ void ObjectBuilder::generateApiGadget()
 	writeReadDeclarations();
 	header << '\n';
 	writeWriteDeclarations();
-	if(data.generateReset) {
-		header << '\n';
-		writeResetDeclarations();
-	}
+	writeResetDeclarations();
 	if(data.generateEquals)
 		writeEqualsDeclaration();
 	header << "\nprivate:\n"
@@ -173,8 +175,7 @@ void ObjectBuilder::generateApiGadget()
 		   << data.name << " &" << data.name << "::operator=(" << data.name << " &&other) = default;\n";
 	writeReadDefinitions();
 	writeWriteDefinitions();
-	if(data.generateReset)
-		writeResetDefinitions();
+	writeResetDefinitions();
 	if(data.generateEquals)
 		writeEqualsDefinition();
 	if(data.registerConverters)
@@ -229,7 +230,7 @@ void ObjectBuilder::writeProperties()
 		header << "\tQ_PROPERTY(" << prop.type << " " << prop.key
 			   << " READ " << prop.key
 			   << " WRITE " << setter(prop.key);
-		if(data.generateReset)
+		if(prop.generateReset)
 			header << " RESET re" << setter(prop.key);
 		if(data.isObject)
 			header << " NOTIFY " << prop.key << "Changed";
@@ -251,8 +252,16 @@ void ObjectBuilder::writeWriteDeclarations()
 
 void ObjectBuilder::writeResetDeclarations()
 {
-	for(const auto &prop : qAsConst(data.properties))
+	auto once = true;
+	for(const auto &prop : qAsConst(data.properties)) {
+		if(!prop.generateReset)
+			continue;
+		if(once) {
+			once = false;
+			header << '\n';
+		}
 		header << "\tvoid re" << setter(prop.key) << "();\n";
+	}
 }
 
 void ObjectBuilder::writeNotifyDeclarations()
@@ -317,6 +326,9 @@ void ObjectBuilder::writeWriteDefinitions()
 void ObjectBuilder::writeResetDefinitions()
 {
 	for(const auto &prop : qAsConst(data.properties)) {
+		if(!prop.generateReset)
+			continue;
+
 		source << "\nvoid " << data.name << "::re" << setter(prop.key) << "()\n"
 			   << "{\n"
 			   << "\t" << setter(prop.key) << "(";

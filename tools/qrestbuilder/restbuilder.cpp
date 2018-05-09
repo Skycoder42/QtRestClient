@@ -139,9 +139,14 @@ void RestBuilder::writeIncludes(const QList<Include> &includes)
 
 QString RestBuilder::writeParamDefault(const BaseParam &param)
 {
-	if(param.asStr)
-		return QStringLiteral("QVariant(QStringLiteral(\"") + param.defaultValue + QStringLiteral("\")).value<") + param.type + QStringLiteral(">()");
-	else
+	if(param.asStr) {
+		if(param.type == QStringLiteral("QString"))
+			return QStringLiteral("QStringLiteral(\"") + param.defaultValue + QStringLiteral("\")");
+		else if(param.type == QStringLiteral("QByteArray"))
+			return QStringLiteral("QByteArrayLiteral(\"") + param.defaultValue + QStringLiteral("\")");
+		else
+			return QStringLiteral("QVariant(QStringLiteral(\"") + param.defaultValue + QStringLiteral("\")).value<") + param.type + QStringLiteral(">()");
+	} else
 		return param.defaultValue;
 }
 

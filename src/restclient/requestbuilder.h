@@ -21,11 +21,13 @@ class Q_RESTCLIENT_EXPORT RequestBuilder
 public:
 	//! Constructs a builder with the given base url
 	RequestBuilder(const QUrl &baseUrl, QNetworkAccessManager *nam = nullptr);
-	//! Copy Constructor
+	//! Copy constructor
 	RequestBuilder(const RequestBuilder &other);
+	//! Move constructor
 	RequestBuilder(RequestBuilder &&other);
-	//! Assignment operator
+	//! Copy assignment operator
 	RequestBuilder &operator=(const RequestBuilder &other);
+	//! Move assignment operator
 	RequestBuilder &operator=(RequestBuilder &&other);
 	~RequestBuilder();
 

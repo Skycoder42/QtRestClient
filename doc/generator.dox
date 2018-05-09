@@ -58,14 +58,14 @@ how the final c++ code is beeing generated.
  registerConverters	| bool					| true									| If true, automatically registers the list converters for this type
  testEquality		| bool					| true									| Setter methods check if the value did actually change before assigning it.<br/>This can fail if a used type does not have equality operators.
  generateEquals		| bool					| true for `RestGadget`, else false		| If enabled, default-generated equality operators are added
- generateReset		| bool					| true									| If enabled, reset methods are generated for all properties
+ generateReset		| bool					| true									| If enabled, reset methods are generated for all properties. Can still be set per property
 
 @subsubsection generator_doc_RestObject_children Allowed Child Elements
  Name		| XML-Type									| Limits	| Description
 ------------|-------------------------------------------|-----------|-------------
  Include	| @ref generator_doc_Include "Include"		| 0 - ∞		| Additional header files to be included in the generated header
  Enum		| @ref generator_doc_Enum "Enum"			| 0 - ∞		| Custom enums to be created as part of the generated class
- Property	| @ref generator_doc_BaseParam "BaseParam"	| 1 - ∞		| The actual properties the class is composed of
+ Property	| @ref generator_doc_Property "Property"	| 1 - ∞		| The actual properties the class is composed of
 
 
 
@@ -168,6 +168,17 @@ If set to true, the content is assumed to be a string. You don't need to specify
 That string is used to initialize a QVariant that is then converted to `type` - in other words, the type you use must be
 variant convertible from a string. This can be used to, for example, create a `QDate` from a string with the default
 value of `<BaseParam asStr="true">2018-05-09</BaseParam>`.<br/>
+
+
+
+@subsection generator_doc_Property Element Type: Property
+The Property element is an extension of the @ref generator_doc_BaseParam "BaseParam" type. This means it's the same as
+a base param, but with an addition property, that is specific to properties.
+
+@subsubsection generator_doc_Property_attribs Attributes
+ Name			| Allowed values	| Default/Required													| Description
+----------------|-------------------|-------------------------------------------------------------------|-------------
+ generateReset	| bool				| @ref generator_doc_RestObject_attribs "RestObject.generateReset" 	| Specify whether a reset accessor method should be generated. This value is inherited from the one specified in the parent rest object or gadget. If that one is not specified, the default is true
 
 
 

@@ -1,5 +1,5 @@
 /*!
-@fn QtRestClient::RestClass::callJson(QByteArray, const QString &, const QVariantHash &, const HeaderHash &)
+@fn QtRestClient::RestClass::callJson(QByteArray, const QString &, const QVariantHash &, const HeaderHash &, bool)
 
 @note Not all parameters may apply to all overloads - choose the matching ones
 
@@ -9,6 +9,7 @@
 @param body The JSON body to be sent together with the request
 @param parameters A collection of query parameters to be added to the request URL
 @param headers Additional HTTP-headers to be added to the request
+@param paramsAsBody Pass the `parameters` as POST-parameter method body instead of as a query url parametery
 @returns A reply object, to handle the reply to this request
 
 This basic version allows to perform low-level JSON calls and replies. The following table shows,
@@ -25,7 +26,7 @@ relativeUrl	| `../prod`			| `http://api.example.com/prod`
 */
 
 /*!
-@fn QtRestClient::RestClass::call(QByteArray, const QString &, const QVariantHash &, const HeaderHash &)
+@fn QtRestClient::RestClass::call(QByteArray, const QString &, const QVariantHash &, const HeaderHash &, bool)
 
 @note Not all parameters may apply to all overloads - choose the matching ones
 
@@ -39,6 +40,7 @@ relativeUrl	| `../prod`			| `http://api.example.com/prod`
 @param body The body object to be sent together with the request
 @param parameters A collection of query parameters to be added to the request URL
 @param headers Additional HTTP-headers to be added to the request
+@param paramsAsBody Pass the `parameters` as POST-parameter method body instead of as a query url parametery
 
 @returns A generic reply object for `DT` and `ET`, to handle the reply to this request
 @throw QJsonSerializationException Will be thrown, if the `body` cannot be serializer to JSON

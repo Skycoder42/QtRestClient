@@ -4,7 +4,7 @@
 	<xs:annotation>
 		<xs:documentation>Created with EditiX (http://www.editix.com) at Sat May 05 10:30:03 CEST 2018</xs:documentation>
 	</xs:annotation>
-	
+
 	<!-- Shared datatypes -->
 	<xs:complexType name="Include">
 		<xs:simpleContent>
@@ -22,7 +22,7 @@
 			</xs:extension>
 		</xs:simpleContent>
 	</xs:complexType>
-	
+
 	<!-- object/gadget types -->
 	<xs:complexType name="EnumKey">
 		<xs:simpleContent>
@@ -39,12 +39,19 @@
 		<xs:attribute default="int" name="base" type="xs:string" use="optional"/>
 		<xs:attribute default="false" name="isFlags" type="xs:boolean" use="optional"/>
 	</xs:complexType>
-	
+	<xs:complexType name="Property">
+		<xs:complexContent>
+			<xs:extension base="BaseParam">
+				<xs:attribute default="false" name="generateReset" type="xs:boolean" use="optional"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
 	<xs:complexType name="RestContent">
 		<xs:sequence>
 			<xs:element maxOccurs="unbounded" minOccurs="0" name="Include" type="Include"/>
 			<xs:element maxOccurs="unbounded" minOccurs="0" name="Enum" type="Enum"/>
-			<xs:element maxOccurs="unbounded" minOccurs="1" name="Property" type="BaseParam"/>
+			<xs:element maxOccurs="unbounded" minOccurs="1" name="Property" type="Property"/>
 		</xs:sequence>
 		<xs:attribute name="name" type="xs:string" use="required"/>
 		<xs:attribute default="QObject" name="base" type="xs:string" use="optional"/>
@@ -54,7 +61,7 @@
 		<xs:attribute default="false" name="generateEquals" type="xs:boolean" use="optional"/>
 		<xs:attribute default="true" name="generateReset" type="xs:boolean" use="optional"/>
 	</xs:complexType>
-	
+
 	<!-- class/api types -->
 	<xs:complexType name="Expression">
 		<xs:simpleContent>
@@ -70,7 +77,7 @@
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
-	
+
 	<xs:complexType name="Class">
 		<xs:attribute name="key" type="xs:string" use="required"/>
 		<xs:attribute name="type" type="xs:string" use="required"/>
@@ -96,7 +103,7 @@
 		<xs:attribute default="QObject*" name="except" type="xs:string" use="optional"/>
 		<xs:attribute name="postParams" type="xs:boolean" use="optional"/>
 	</xs:complexType>
-	
+
 	<xs:complexType name="RestAccess">
 		<xs:sequence>
 			<xs:element maxOccurs="unbounded" minOccurs="0" name="Include" type="Include"/>
@@ -108,7 +115,7 @@
 		<xs:attribute default="QObject" name="base" type="xs:string" use="optional"/>
 		<xs:attribute default="QObject*" name="except" type="xs:string" use="optional"/>
 	</xs:complexType>
-	
+
 	<!-- class only types -->
 	<xs:complexType name="RestClass">
 		<xs:complexContent>
@@ -119,7 +126,7 @@
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
-	
+
 	<!-- API only types -->
 	<xs:complexType name="BaseUrl">
 		<xs:complexContent>
@@ -141,7 +148,7 @@
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
-	
+
 	<!-- root elements-->
 	<xs:element name="RestObject" type="RestContent"/>
 	<xs:element name="RestGadget" type="RestContent"/>
