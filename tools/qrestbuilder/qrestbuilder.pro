@@ -47,9 +47,7 @@ unix:!mac:!static_host_build {
 	LIBS += -L$$[QT_INSTALL_LIBS] -licuuc
 }
 
-DISTFILES += \
-	restobject.xsd \
-	restclass.xsd
+DISTFILES += qrestbuilder.xsd
 
 # DEBUG
 win32:message($$CONFIG)

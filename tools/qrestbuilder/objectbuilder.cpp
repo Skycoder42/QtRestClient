@@ -37,7 +37,7 @@ void ObjectBuilder::readData()
 	data.registerConverters = readAttrib<bool>(QStringLiteral("registerConverters"), true);
 	data.testEquality = readAttrib<bool>(QStringLiteral("testEquality"), true);
 	data.generateEquals = readAttrib<bool>(QStringLiteral("generateEquals"), !data.isObject);
-	data.generateReset = readAttrib<bool>(QStringLiteral("generateReset"), false);
+	data.generateReset = readAttrib<bool>(QStringLiteral("generateReset"), true);
 
 	data.includes = {
 		{false, QStringLiteral("QtCore/QObject")},

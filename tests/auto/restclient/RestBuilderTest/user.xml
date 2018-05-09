@@ -3,8 +3,7 @@
 			base="QObject"
 			registerConverters="true"
 			testEquality="false"
-			generateEquals="true"
-			generateReset="true">
+			generateEquals="true">
 	<Enum name="GenderType">
 		<Key>Male</Key>
 		<Key>Female</Key>

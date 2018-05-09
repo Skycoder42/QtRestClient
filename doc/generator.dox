@@ -24,75 +24,124 @@ You can check the following locations for some sample files:
 - `example/JsonPlaceholderApi`
 - `tests/auto/restclient/RestBuilderTest`
 
-There are also W3C XML Schema definitions available, see `tools/qrestbuilder/restobject.xsd` and `tools/qrestbuilder/restclass.xsd`
+There are also W3C XML Schema definitions available, see `tools/qrestbuilder/restclient.xsd` (TODO also attached to the end of this page).
+Please note that while in the XSD sequences are used, generally the order of elements in the xml files can be whatever you want it to be.
+The only elements where the order actually has any effect are the `<Path>/<PathParam>` elements of the `<Method>` element - but this is
+specified in more detail in their documentation.
 
-@subsection generator_doc_object Generate objects
+Your document must start with one of the following 4 root elements:
+- `<RestObject>` - will generate an api object based on QObject
+- `<RestGadget>` - will generate an api object based on Q_GADGET
+- `<RestClass>` - will generate an api subclass
+- `<RestApi>` - will generate the api root class</br>
+
 An object is simply a "data type" class. It will be generated with a bunch of properties (Q_PROPERTY), and methods to access them. They are
 generated in an optimized way, an can be used by the rest client as data classes. It allows a simple, fast and easy creation of those objects.
 You can generate them in two ways: As a Q_GADGET or a QObject. The gadget has the advantage of beeing a value type and using shared data, but
 on the other side does not really allow inheritance and does not support change signals or dynamic properties, which the QObject classes do.
 
-Your XML files will need to have the following structure:
+A class is a wrapper around QtRestClient::RestClass, that encapsulates the rather generic methods into custom methods with adjusted parameters etc.
+This creates a c++ class, with simple methods to do HTTP-Request. In addition to that, you can build hieracical trees with classes, and those are
+represented by methods in the classes, allowing you to follow that tree in c++ as well. For the "root-class", you can use the api version, which
+allows you to specify the basic properties of a QtRestClient::RestClient.
 
-### Type: object {#generator_doc_o_object}
-The root element of any object to be generated. It allows the following elements:
+@subsection generator_doc_RestObject Element Type: RestObject (and RestGadget)
+The RestObject and RestGadget elements are of the same datatype and thus support the same attributes and children. The only difference is
+how the final c++ code is beeing generated.
 
- Name					| Allowed values						| Default/Required						| Description
-------------------------|---------------------------------------|---------------------------------------|--------------------------------------------------------------------
- $name					| any valid c++ class name				| file name								| The class name of the generated class
- $type					| "gadget", "object"					| "gadget"								| Define the type of class to generate - Q_GADGET or QObject
- $includes				| list of strings						| []									| Specify a list of includes for the header file.<br>By default, the are included with `<...>`. To include as `"..."`, prepend "&gt;" to the include.<br>(Example: `>myClass.h` to get `#include "myClass.h"` instead of `#include <myClass.h>`)
- $export				| string								| <i>none</i>							| Sepcify an export macro. The value is put before the class definition, if you want to export the generated classes
- $parent				| name of a valid parent class			| "QObject" for objects, "" for gadgets	| If you need a custom parent, use this property
- $registerConverters	| bool									| true									| If true, automatically registers the list converters for this type
- $testEquality			| bool									| true									| Setter methods check if the value did actually change before assigning it.<br>This can fail if a used type does not have equality operators.
- $generateEquals		| bool									| $type == "gadget"						| If enabled, default-generated equality operators are added
- $enums					| [enum-object](#generator_doc_o_enum)	| {}									| Allows you to add enums to the class. See [Type: enum-object](#generator_doc_o_enum)
- &lt;properties&gt;		| [properties](#generator_doc_o_props)	| <i>none</i>							| See [Object Properties](#generator_doc_o_props)
+@subsubsection generator_doc_RestObject_attribs Attributes
+ Name				| Allowed values		| Default/Required						| Description
+--------------------|-----------------------|---------------------------------------|-------------
+ name				| c++ class name		| <i>required</i>						| The class name of the generated class
+ export				| string				| <i>none</i>							| Sepcify an export macro. The value is put before the class definition, if you want to export the generated classes from a dynamic library
+ base				| name of a base class	| "QObject" for objects, "" for gadgets	| If you need a custom base class, use this property
+ registerConverters	| bool					| true									| If true, automatically registers the list converters for this type
+ testEquality		| bool					| true									| Setter methods check if the value did actually change before assigning it.<br/>This can fail if a used type does not have equality operators.
+ generateEquals		| bool					| true for `RestGadget`, else false		| If enabled, default-generated equality operators are added
+ generateReset		| bool					| true									| If enabled, reset methods are generated for all properties
 
-#### Object Properties {#generator_doc_o_props}
-You can basically specify **any** property in the object. Anything that does not start with a `$` is interpret as a property for the generated object.
-For each such property, the key will be the name of the property in the object, and the value is a string containing the properties type. All default
-types and QString are available by default, for other types, you will have to add includes.
+@subsubsection generator_doc_RestObject_children Allowed Child Elements
+ Name		| XML-Type									| Limits	| Description
+------------|-------------------------------------------|-----------|-------------
+ Include	| @ref generator_doc_Include "Include"		| 0 - ∞		| Additional header files to be included in the generated header
+ Enum		| @ref generator_doc_Enum "Enum"			| 0 - ∞		| Custom enums to be created as part of the generated class
+ Property	| @ref generator_doc_Property "Property"	| 1 - ∞		| The actual properties the class is composed of
 
-Here is an example of a few properties:
-@code{.json}
-{
-	"$includes": ["QDateTime"],
-	"id": "int",
-	"name": "QString",
-	"date": "QDateTime"
-}
-@endcode
+@subsection generator_doc_Include Element Type: Include
+Describes a file to be included via a c++ include directive. You can use them if you want to make use of special classes in your
+generated classes. Both global includes (`#include <header>`) and local includes (`#include "header"`) are supported </br>
 
-### Type: enum-object {#generator_doc_o_enum}
-If you want to use custom enum types in you class, use this object. It allows you to add key-value pairs of enums.
-The key is the name of the enum in the generated c++ class. The value can either be an [enum-value-list](#generator_doc_o_enum_value)
-or an [enum](#generator_doc_o_enum_obj).
+@subsubsection generator_doc_Include_attribs Attributes
+ Name	| Allowed values	| Default/Required	| Description
+--------|-------------------|-------------------|-------------
+ local	| bool				| false				| Specifies whether the include is a global or a local include
 
-#### Type: enum-value-list {#generator_doc_o_enum_value}
-For simple enums, simply use the enums name as the key, and a list of strings as value. By default, the actual value of
-the enum keys, is determined by the compiler, but you can optionally specify the value by using `:` as seperator:
-- Normal Key: `"MyValue"`
-- Value Key: `"MyValue:42"`
+@subsubsection generator_doc_Include_content Content
+The content of this element must be a string. More specific the header to be included. It becomes the content
+of the include directive. Specifiy it without the braces or quores, as thoes are added automatically.
 
-The following snippet shows how to use it:
-@code{.json}
-{
-	"MyEnum": ["Value1:1", "Value2", ...],
-	...
-}
-@endcode
+@subsection generator_doc_Enum Element Type: Enum
+If you want to use custom enum types in you class, use this element. It allows you to generate enums and flags
+that are automatically registered with Qt.
 
-#### Type: enum {#generator_doc_o_enum_obj}
-If your enum needs more than just the keys, i.e. custom value, or you need flags, you can also use an enum object
-as value for you enum. They are defined as follows:
+@subsubsection generator_doc_Enum_attribs Attributes
+ Name		| Allowed values				| Default/Required	| Description
+------------|-------------------------------|-------------------|-------------
+ name		| c++ class name				| <i>required</i>	| The c++ name of the generated enum
+ base		| name of a valid parent class	| <i>none</i>		| If you need a custom base class for your enum, use this property. But remember that Qt discourages this!
+ isFlags	| bool							| false				| If set to true, a QFlag type is generated and registered instead of a normal enum
 
- Name		| Allowed values									| Default/Required			| Description
-------------|---------------------------------------------------|---------------------------|-------------------------------------------------------------------
- isFlags	| bool												| false						| If set to true, a QFlags type will be generated
- base		| name of a valid enum parent class					| none (compiler default)	| If you need a custom base, use this property
- values		| [enum-value-list](#generator_doc_o_enum_value)	| <i>required</i>			| The actual enum values. See [Type: enum-value-list](#generator_doc_o_enum_value)
+@subsubsection generator_doc_Enum_children Allowed Child Elements
+Name	| XML-Type								| Limits	| Description
+--------|---------------------------------------|-----------|-------------
+Key		| @ref generator_doc_EnumKey "EnumKey"	| 1 - ∞		| The actual elements of the enum/flags to be generated
+
+@subsection generator_doc_EnumKey Element Type: EnumKey
+Describes a key/element within an enum.
+
+@subsubsection generator_doc_EnumKey_attribs Attributes
+ Name	| Allowed values	| Default/Required	| Description
+--------|-------------------|-------------------|-------------
+ value	| value expression	| <i>none</i>		| Specify a custom value for your enum element (is placed after the = sign)
+
+@subsubsection generator_doc_EnumKey_content Content
+The content of an enum key is the name of the key, i.e. the actual enum key.
+
+@subsection generator_doc_Property Element Type: Property
+A property is a Q_PROPERTY to be added to the generated class. For each such property, getters and setters
+are generated as well, and depending on the configuration even notify signals and reset methods.
+
+@subsubsection generator_doc_Property_attribs Attributes
+ Name	| Allowed values	| Default/Required	| Description
+--------|-------------------|-------------------|-------------
+ key	| property name		| <i>required</i>	| The property name
+ type	| c++ type name		| <i>required</i>	| The properties type
+ asStr	| bool				| false				| Specify how the element content should be interpreted
+
+@subsubsection generator_doc_Property_content Content
+The content of a property is optional, and it represents the default value of the property.
+If not specified, the property will be initialize with it's default constructor. If specified, the content
+is used to initialize (and reset) the property. How the content is interpreted depends on the `asStr` attribute.
+
+If it is set to false (the default), the content must be c++ code and is copied to the generated class as is. The
+code must be an expression that evalutes to a single value that is implicitly convertible to the given `type`. If
+type was for example `int`, valid expressions could be:
+- `-1`
+- `10 + 20`
+- `qRand()`
+
+If set to true, the content is assumed to be a string. You don't need to specify quotation marks around the string.
+That string is used to initialize a QVariant that is then converted to `type` - in other words, the type you use must be
+variant convertible from a string. This can be used to, for example, create a `QDate` from a string with the default
+value of `2018-05-09`.
+
+
+
+
+
+
+
+
 
 ## Generate classes {#generator_doc_class}
 Classes are added to the pro file by using the REST_API_CLASSES variable. A class is a wrapper around QtRestClient::RestClass, that encapsulates the
