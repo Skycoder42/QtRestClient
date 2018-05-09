@@ -198,6 +198,25 @@ If this property is not set, the HTTP-GET will be used as default
 */
 
 /*!
+@fn QtRestClient::RequestBuilder::addPostParameter
+
+@param name The parameters name
+@param value The parameters value
+@returns A reference to this builder
+
+@sa RestClient::globalParameters, QUrl::setQuery(const QUrlQuery &)
+*/
+
+/*!
+@fn QtRestClient::RequestBuilder::addPostParameters
+
+@param parameters The parameters to be set
+@returns A reference to this builder
+
+@sa RestClient::globalParameters, QUrl::setQuery(const QUrlQuery &)
+*/
+
+/*!
 @fn QtRestClient::RequestBuilder::buildUrl
 
 @returns The generated URL

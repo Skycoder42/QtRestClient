@@ -26,7 +26,7 @@ relativeUrl	| `../prod`			| `http://api.example.com/prod`
 */
 
 /*!
-@fn QtRestClient::RestClass::call(QByteArray, const QString &, const QVariantHash &, const HeaderHash &, bool)
+@fn QtRestClient::RestClass::call(const QByteArray &, const QString &, const QVariantHash &, const HeaderHash &, bool)
 
 @note Not all parameters may apply to all overloads - choose the matching ones
 
