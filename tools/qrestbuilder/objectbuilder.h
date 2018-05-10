@@ -18,6 +18,7 @@ private:
 		QString name;
 		QString base;
 		QString exportKey;
+		QString nspace;
 		bool registerConverters = false;
 		bool testEquality = false;
 		bool generateEquals = false;

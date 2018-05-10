@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <RestGadget name="Post"
 			export="TEST_EXPORT"
-			generateReset="false">
+			generateReset="false"
+			namespace="TestSpace">
 	<Include>QVersionNumber</Include>
 	<Include local="true">user.h</Include>
 	<Include local="true">testmacro.h</Include>

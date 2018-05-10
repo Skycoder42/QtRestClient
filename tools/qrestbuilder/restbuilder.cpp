@@ -126,6 +126,14 @@ QString RestBuilder::exportedName(const QString &name, const QString &exportKey)
 		return exportKey + QLatin1Char(' ') + name;
 }
 
+QString RestBuilder::nsName(const QString &name, const QString &nspace) const
+{
+	if(nspace.isEmpty())
+		return name;
+	else
+		return nspace + QStringLiteral("::") + name;
+}
+
 void RestBuilder::writeIncludes(const QList<Include> &includes)
 {
 	for(const auto &inc : includes) {

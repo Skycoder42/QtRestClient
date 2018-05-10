@@ -3,6 +3,7 @@
 #include <post.h>
 #include <api_posts.h>
 #include <test_api.h>
+using namespace TestSpace;
 
 class RestBuilderTest : public QObject
 {

@@ -60,6 +60,7 @@
 		<xs:attribute default="true" name="testEquality" type="xs:boolean" use="optional"/>
 		<xs:attribute default="false" name="generateEquals" type="xs:boolean" use="optional"/>
 		<xs:attribute default="true" name="generateReset" type="xs:boolean" use="optional"/>
+		<xs:attribute name="namespace" type="xs:string" use="optional"/>
 	</xs:complexType>
 
 	<!-- class/api types -->
@@ -114,6 +115,7 @@
 		<xs:attribute name="export" type="xs:string" use="optional"/>
 		<xs:attribute default="QObject" name="base" type="xs:string" use="optional"/>
 		<xs:attribute default="QObject*" name="except" type="xs:string" use="optional"/>
+		<xs:attribute name="namespace" type="xs:string" use="optional"/>
 	</xs:complexType>
 
 	<!-- class only types -->

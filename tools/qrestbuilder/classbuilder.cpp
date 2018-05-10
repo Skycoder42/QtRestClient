@@ -79,6 +79,7 @@ void ClassBuilder::readData()
 	data.base = readAttrib(QStringLiteral("base"), QStringLiteral("QObject"));
 	data.except = readAttrib(QStringLiteral("except"), QStringLiteral("QObject*"));
 	data.exportKey = readAttrib(QStringLiteral("export"));
+	data.nspace = readAttrib(QStringLiteral("namespace"));
 	if(isApi) {
 		apiData.globalName = readAttrib(QStringLiteral("globalName"));
 		apiData.autoCreate = readAttrib<bool>(QStringLiteral("autoCreate"), !apiData.globalName.isEmpty());
@@ -195,6 +196,8 @@ void ClassBuilder::generateClass()
 	writeClassBeginDeclaration();
 	writeClassMainDeclaration();
 	header << "};\n\n";
+	if(!data.nspace.isEmpty())
+		header << "}\n\n";
 
 	//write source
 	writeClassBeginDefinition();
@@ -210,6 +213,8 @@ void ClassBuilder::generateApi()
 	writeClassMainDeclaration();
 	header << "\n\tstatic QtRestClient::RestClient *generateClient();\n"
 		   << "};\n\n";
+	if(!data.nspace.isEmpty())
+		header << "}\n\n";
 
 	//write source
 	writeClassBeginDefinition();
@@ -232,6 +237,8 @@ void ClassBuilder::generateApi()
 void ClassBuilder::writeClassBeginDeclaration()
 {
 	writeIncludes(data.includes);
+	if(!data.nspace.isEmpty())
+		header << "namespace " << data.nspace << " {\n\n";
 	header << "class " << data.name << "Private;\n"
 		   << "class " << data.name << "PrivateFactory;\n"
 		   << "class " << exportedName(data.name, data.exportKey) << " : public " << data.base << "\n"
@@ -264,11 +271,13 @@ void ClassBuilder::writeClassBeginDefinition()
 			   << "#include <QtCore/QTimer>\n";
 	}
 	source << "#include <QtCore/QPointer>\n"
-		   << "using namespace QtRestClient;\n\n";
+		   << "using namespace QtRestClient;\n";
+	if(!data.nspace.isEmpty())
+		source << "using namespace " << data.nspace << ";\n";
 	if(isApi || classData.path.value.isEmpty())
-		source << "const QString " << data.name << "::Path;\n";
+		source << "\nconst QString " << data.name << "::Path;\n";
 	else
-		source << "const QString " << data.name << "::Path{" << writeExpression(classData.path, true) << "};\n";
+		source << "\nconst QString " << data.name << "::Path{" << writeExpression(classData.path, true) << "};\n";
 	writePrivateDefinitions();
 	generateFactoryDefinition();
 }
@@ -374,6 +383,8 @@ void ClassBuilder::writeMemberDeclarations()
 void ClassBuilder::writePrivateDefinitions()
 {
 	// class
+	if(!data.nspace.isEmpty())
+		source << "\nnamespace " << data.nspace << " {\n";
 	source << "\nclass " << data.name << "Private\n"
 		   << "{\n"
 		   << "public:\n"
@@ -395,7 +406,9 @@ void ClassBuilder::writePrivateDefinitions()
 		   << "\t{}\n\n"
 		   << "\tRestClient *client;\n"
 		   << "\tQStringList subPath;\n"
-		   << "};\n\n";
+		   << "};\n";
+	if(!data.nspace.isEmpty())
+		source << "\n}\n";
 }
 
 void ClassBuilder::generateFactoryDefinition()

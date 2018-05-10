@@ -55,6 +55,7 @@ how the final c++ code is beeing generated.
  name				| c++ class name		| <i>required</i>						| The class name of the generated class
  export				| string				| <i>none</i>							| Sepcify an export macro. The value is put before the class definition, if you want to export the generated classes from a dynamic library
  base				| name of a base class	| "QObject" for objects, "" for gadgets	| If you need a custom base class, use this property
+ namespace			| c++ namespace name	| <i>none</i>							| An optional namespace to place the generated objects into
  registerConverters	| bool					| true									| If true, automatically registers the list converters for this type
  testEquality		| bool					| true									| Setter methods check if the value did actually change before assigning it.<br/>This can fail if a used type does not have equality operators.
  generateEquals		| bool					| true for `RestGadget`, else false		| If enabled, default-generated equality operators are added
@@ -113,6 +114,7 @@ This type is a virtual type that you will never use directly. Instead is serves 
  name		| c++ class name		| <i>required</i>	| The class name of the generated class
  export		| string				| <i>none</i>		| Sepcify an export macro. The value is put before the class/factory definition, if you want to export the generated classes from a dynamic library
  base		| name of a base class	| "QObject"			| If you need a custom base class, use this property
+ namespace	| c++ namespace name	| <i>none</i>		| An optional namespace to place the generated objects into
  except		| c++ class name		| "Object*"			| The default value for "except" of all @ref generator_doc_Method "Method" Elementshappens on first use
 
 @subsubsection generator_doc_RestAccess_children Allowed Child Elements

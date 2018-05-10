@@ -34,6 +34,7 @@ void ObjectBuilder::readData()
 	data.name = readAttrib(QStringLiteral("name"), {}, true);
 	data.base = readAttrib(QStringLiteral("base"), data.isObject ? QStringLiteral("QObject") : QString{});
 	data.exportKey = readAttrib(QStringLiteral("export"));
+	data.nspace = readAttrib(QStringLiteral("namespace"));
 	data.registerConverters = readAttrib<bool>(QStringLiteral("registerConverters"), true);
 	data.testEquality = readAttrib<bool>(QStringLiteral("testEquality"), true);
 	data.generateEquals = readAttrib<bool>(QStringLiteral("generateEquals"), !data.isObject);
@@ -87,6 +88,8 @@ void ObjectBuilder::generateApiObject()
 {
 	//write header
 	writeIncludes(data.includes);
+	if(!data.nspace.isEmpty())
+		header << "namespace " << data.nspace << " {\n\n";
 	header << "class " << data.name << "Private;\n"
 		   << "class " << exportedName(data.name, data.exportKey) << " : public " << data.base << "\n"
 		   << "{\n"
@@ -109,6 +112,8 @@ void ObjectBuilder::generateApiObject()
 	header << "\nprivate:\n"
 		   << "\tQScopedPointer<" << data.name << "Private> d;\n"
 		   << "};\n\n";
+	if(!data.nspace.isEmpty())
+		header << "}\n\n";
 	writeFlagOperators();
 
 	//write source
@@ -132,6 +137,8 @@ void ObjectBuilder::generateApiGadget()
 {
 	//write header
 	writeIncludes(data.includes);
+	if(!data.nspace.isEmpty())
+		header << "namespace " << data.nspace << " {\n\n";
 	header << "class " << data.name << "Data;\n";
 	if(data.base.isEmpty())
 		header << "class " << exportedName(data.name, data.exportKey) << "\n";
@@ -157,8 +164,10 @@ void ObjectBuilder::generateApiGadget()
 		writeEqualsDeclaration();
 	header << "\nprivate:\n"
 		   << "\t QSharedDataPointer<" << data.name << "Data> d;\n"
-		   << "};\n\n"
-		   << "Q_DECLARE_METATYPE(" << data.name << ")\n\n";
+		   << "};\n\n";
+	if(!data.nspace.isEmpty())
+		header << "}\n\n";
+	header << "Q_DECLARE_METATYPE(" << nsName(data.name, data.nspace) << ")\n\n";
 	writeFlagOperators();
 
 	//write source
@@ -217,7 +226,7 @@ void ObjectBuilder::writeFlagOperators()
 	for(const auto &eElem : qAsConst(data.enums)) {
 		if(eElem.isFlags){
 			hasFlags = true;
-			header << "Q_DECLARE_OPERATORS_FOR_FLAGS(" << data.name << "::" << eElem.name << "s)\n";
+			header << "Q_DECLARE_OPERATORS_FOR_FLAGS(" << nsName(data.name, data.nspace) << "::" << eElem.name << "s)\n";
 		}
 	}
 
@@ -295,6 +304,8 @@ void ObjectBuilder::writeSourceIncludes()
 		source << "#include <QtCore/QCoreApplication>\n"
 			   << "#include <QtJsonSerializer/QJsonSerializer>\n";
 	}
+	if(!data.nspace.isEmpty())
+		source << "using namespace " << data.nspace << ";\n";
 	source << '\n';
 }
 
@@ -372,6 +383,8 @@ void ObjectBuilder::writeEqualsDefinition()
 void ObjectBuilder::writePrivateClass()
 {
 	QString name = data.name + QStringLiteral("Private");
+	if(!data.nspace.isEmpty())
+		source << "namespace " << data.nspace << " {\n\n";
 	source << "class " << name << "\n"
 		   << "{\n"
 		   << "public:\n"
@@ -380,11 +393,15 @@ void ObjectBuilder::writePrivateClass()
 	source << "\t{}\n\n";
 	writeMemberDeclarations();
 	source << "};\n\n";
+	if(!data.nspace.isEmpty())
+		source << "}\n\n";
 }
 
 void ObjectBuilder::writeDataClass()
 {
 	QString name = data.name + QStringLiteral("Data");
+	if(!data.nspace.isEmpty())
+		source << "namespace " << data.nspace << " {\n\n";
 	source << "class " << name << " : public QSharedData\n"
 		   << "{\n"
 		   << "public:\n"
@@ -396,6 +413,8 @@ void ObjectBuilder::writeDataClass()
 		   << "\t" << name << "(" << name << " &&other) = default;\n\n";
 	writeMemberDeclarations();
 	source << "};\n\n";
+	if(!data.nspace.isEmpty())
+		source << "}\n\n";
 }
 
 void ObjectBuilder::writeMemberDefinitions(bool skipComma)

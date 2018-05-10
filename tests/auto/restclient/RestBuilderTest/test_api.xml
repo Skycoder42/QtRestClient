@@ -13,7 +13,7 @@
 	<Parameter key="limit" expr="true">QString::number(LIMIT)</Parameter>
 	<Header key="Secret" expr="true">APP_SECRET</Header>
 
-	<Class key="posts" type="PostClass"/>
+	<Class key="posts" type="TestSpace::PostClass"/>
 
 	<Method name="createUser"
 			verb="POST"

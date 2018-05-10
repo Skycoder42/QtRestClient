@@ -29,6 +29,7 @@ private:
 	struct RestAccess {
 		QString name;
 		QString exportKey;
+		QString nspace;
 		QString base;
 		QString except;
 
