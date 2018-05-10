@@ -4,7 +4,8 @@
 		 export="TEST_EXPORT"
 		 autoCreate="true"
 		 except="User*"
-		 globalName="localhost">
+		 globalName="localhost"
+		 qmlUri="de.skycoder42.qtrestclient.test 1.3">
 	<Include local="true">user.h</Include>
 	<Include local="true">api_posts.h</Include>
 	<Include local="true">testmacro.h</Include>

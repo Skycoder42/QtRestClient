@@ -19,6 +19,7 @@ private:
 		QString base;
 		QString exportKey;
 		QString nspace;
+		QString qmlUri;
 		bool registerConverters = false;
 		bool testEquality = false;
 		bool generateEquals = false;
@@ -78,7 +79,7 @@ private:
 	void writePrivateClass();
 	void writeDataClass();
 	void writeMemberDefinitions(bool skipComma);
-	void writeListConverter();
+	void writeSetupHooks();
 };
 
 #endif // OBJECTBUILDER_H

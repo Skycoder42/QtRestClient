@@ -6,7 +6,7 @@
 
 CONFIG += qrestbuilder
 
-QT       += testlib
+QT       += testlib qml
 
 QT       -= gui
 

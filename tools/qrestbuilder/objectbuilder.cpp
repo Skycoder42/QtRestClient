@@ -2,6 +2,7 @@
 
 #include <QFileInfo>
 #include <QJsonArray>
+#include <QVersionNumber>
 
 ObjectBuilder::ObjectBuilder(QXmlStreamReader &inStream, QObject *parent) :
 	RestBuilder(inStream, parent)
@@ -35,6 +36,7 @@ void ObjectBuilder::readData()
 	data.base = readAttrib(QStringLiteral("base"), data.isObject ? QStringLiteral("QObject") : QString{});
 	data.exportKey = readAttrib(QStringLiteral("export"));
 	data.nspace = readAttrib(QStringLiteral("namespace"));
+	data.qmlUri = readAttrib(QStringLiteral("qmlUri"));
 	data.registerConverters = readAttrib<bool>(QStringLiteral("registerConverters"), true);
 	data.testEquality = readAttrib<bool>(QStringLiteral("testEquality"), true);
 	data.generateEquals = readAttrib<bool>(QStringLiteral("generateEquals"), !data.isObject);
@@ -130,8 +132,7 @@ void ObjectBuilder::generateApiObject()
 		writeEqualsDefinition();
 	writeWriteDefinitions();
 	writeResetDefinitions();
-	if(data.registerConverters)
-		writeListConverter();
+	writeSetupHooks();
 }
 
 void ObjectBuilder::generateApiGadget()
@@ -189,8 +190,7 @@ void ObjectBuilder::generateApiGadget()
 	writeResetDefinitions();
 	if(data.generateEquals)
 		writeEqualsDefinition();
-	if(data.registerConverters)
-		writeListConverter();
+	writeSetupHooks();
 }
 
 QString ObjectBuilder::setter(const QString &name)
@@ -307,6 +307,8 @@ void ObjectBuilder::writeSourceIncludes()
 		source << "#include <QtCore/QCoreApplication>\n"
 			   << "#include <QtJsonSerializer/QJsonSerializer>\n";
 	}
+	if(!data.qmlUri.isEmpty())
+		source << "#include <QtQml/qqml.h>\n";
 	if(!data.nspace.isEmpty())
 		source << "using namespace " << data.nspace << ";\n";
 	source << '\n';
@@ -440,13 +442,35 @@ void ObjectBuilder::writeMemberDefinitions(bool skipComma)
 	}
 }
 
-void ObjectBuilder::writeListConverter()
+void ObjectBuilder::writeSetupHooks()
 {
+	if(!data.registerConverters && !data.qmlUri.isEmpty())
+		return;
+
 	source << "\nnamespace {\n\n"
-		   << "void __" << data.name << "_list_conv_registrator()\n"
-		   << "{\n"
-		   << "\tQJsonSerializer::registerListConverters<" << data.name << (data.isObject ? "*" : "") << ">();\n"
-		   << "}\n\n"
+		   << "void __" << data.name << "_setup_hook()\n"
+		   << "{\n";
+
+	if(data.registerConverters)
+		source << "\tQJsonSerializer::registerListConverters<" << data.name << (data.isObject ? "*" : "") << ">();\n";
+	if(!data.qmlUri.isEmpty()) {
+		auto uriParts = data.qmlUri.split(QLatin1Char(' '), QString::SkipEmptyParts);
+		auto uriPath = uriParts.takeFirst();
+		auto uriVersion = QVersionNumber::fromString(uriParts.join(QLatin1Char(' ')));
+		if(uriVersion.isNull())
+			uriVersion = {1,0};
+		if(data.isObject) {
+			source << "\tqmlRegisterType<" << data.name << ">(\""
+				   << uriPath << "\", " << uriVersion.majorVersion() << ", " << uriVersion.minorVersion()
+				   << ", \"" << data.name << "\");\n";
+		} else {
+			source << "\tqmlRegisterUncreatableType<" << data.name << ">(\""
+				   << uriPath << "\", " << uriVersion.majorVersion() << ", " << uriVersion.minorVersion()
+				   << ", \"" << data.name << "\", QStringLiteral(\"Q_GADGETs cannot be created from QML\"));\n";
+		}
+	}
+
+	source << "}\n\n"
 		   << "}\n"
-		   << "Q_COREAPP_STARTUP_FUNCTION(__" << data.name << "_list_conv_registrator)\n";
+		   << "Q_COREAPP_STARTUP_FUNCTION(__" << data.name << "_setup_hook)\n";
 }

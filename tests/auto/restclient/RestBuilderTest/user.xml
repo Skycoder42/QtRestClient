@@ -3,7 +3,8 @@
 			base="QObject"
 			registerConverters="true"
 			testEquality="false"
-			generateEquals="true">
+			generateEquals="true"
+			qmlUri="de.skycoder42.qtrestclient.test 1.3">
 	<Enum name="GenderType">
 		<Key name="Male"/>
 		<Key name="Female"/>
