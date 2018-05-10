@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RestGadget name="SimplePost"
+			export="TEST_EXPORT"
+			base="QtRestClient::Simple&lt;Post&gt;"
+			simpleHref="href"
+			namespace="TestSpace">
+	<Include>QtRestClient/Simple</Include>
+	<Include local="true">post.h</Include>
+
+	<Property key="id" type="int">-1</Property>
+	<Property key="title" type="QString"/>
+	<Property key="href" type="QUrl"/>
+</RestGadget>

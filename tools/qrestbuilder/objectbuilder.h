@@ -23,6 +23,7 @@ private:
 		bool testEquality = false;
 		bool generateEquals = false;
 		bool generateReset = false;
+		QString simpleHref;
 
 		QList<Include> includes;
 

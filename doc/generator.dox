@@ -60,6 +60,7 @@ how the final c++ code is beeing generated.
  testEquality		| bool					| true									| Setter methods check if the value did actually change before assigning it.<br/>This can fail if a used type does not have equality operators.
  generateEquals		| bool					| true for `RestGadget`, else false		| If enabled, default-generated equality operators are added
  generateReset		| bool					| true									| If enabled, reset methods are generated for all properties. Can still be set per property
+ simpleHref			| c++ property name		| <i>none</i>							| Optional name of the property that holds the href to extend a simple object. Can only be used if base is or extends QtRestClient::Simple
 
 @subsubsection generator_doc_RestObject_children Allowed Child Elements
  Name		| XML-Type									| Limits	| Description

@@ -61,6 +61,7 @@
 		<xs:attribute default="false" name="generateEquals" type="xs:boolean" use="optional"/>
 		<xs:attribute default="true" name="generateReset" type="xs:boolean" use="optional"/>
 		<xs:attribute name="namespace" type="xs:string" use="optional"/>
+		<xs:attribute name="simpleHref" type="xs:string" use="optional"/>
 	</xs:complexType>
 
 	<!-- class/api types -->

@@ -39,6 +39,7 @@ void ObjectBuilder::readData()
 	data.testEquality = readAttrib<bool>(QStringLiteral("testEquality"), true);
 	data.generateEquals = readAttrib<bool>(QStringLiteral("generateEquals"), !data.isObject);
 	data.generateReset = readAttrib<bool>(QStringLiteral("generateReset"), true);
+	data.simpleHref = readAttrib(QStringLiteral("simpleHref"));
 
 	data.includes = {
 		{false, QStringLiteral("QtCore/QObject")},
@@ -252,6 +253,8 @@ void ObjectBuilder::writeReadDeclarations()
 {
 	for(const auto &prop : qAsConst(data.properties))
 		header << "\t" << prop.type << " " << prop.key << "() const;\n";
+	if(!data.simpleHref.isEmpty())
+		header << "\n\tQUrl extensionHref() const override;\n";
 }
 
 void ObjectBuilder::writeWriteDeclarations()
@@ -315,6 +318,12 @@ void ObjectBuilder::writeReadDefinitions()
 		source << "\n" << prop.type << " " << data.name << "::" << prop.key << "() const\n"
 			   << "{\n"
 			   << "\treturn d->" << prop.key << ";\n"
+			   << "}\n";
+	}
+	if(!data.simpleHref.isEmpty()) {
+		source << "\nQUrl " << data.name << "::extensionHref() const\n"
+			   << "{\n"
+			   << "\treturn d->" << data.simpleHref << ";\n"
 			   << "}\n";
 	}
 }
