@@ -1,6 +1,7 @@
 #ifndef QTRESTCLIENT_QMLRESTCLASS_H
 #define QTRESTCLIENT_QMLRESTCLASS_H
 
+#include <tuple>
 #include <QtCore/QObject>
 #include <QtQml/QQmlParserStatus>
 #include <QtQml/QQmlListProperty>
@@ -30,6 +31,24 @@ public:
 	void classBegin() override;
 	void componentComplete() override;
 
+	Q_INVOKABLE QtRestClient::RestReply *call(const QString &verb, const QVariant &postArg0 = {}, const QVariant &postArg1 = {}, const QVariant &postArg2 = {}, const QVariant &postArg3 = {});
+	Q_INVOKABLE QtRestClient::RestReply *call(const QVariantMap &body, const QString &verb, const QVariant &postArg0 = {}, const QVariant &postArg1 = {}, const QVariant &postArg2 = {});
+	Q_INVOKABLE QtRestClient::RestReply *call(const QVariantList &body, const QString &verb, const QVariant &postArg0 = {}, const QVariant &postArg1 = {}, const QVariant &postArg2 = {});
+
+	Q_INVOKABLE QtRestClient::RestReply *get(const QVariant &postArg0 = {}, const QVariant &postArg1 = {}, const QVariant &postArg2 = {});
+
+	Q_INVOKABLE QtRestClient::RestReply *post(const QVariant &postArg0 = {}, const QVariant &postArg1 = {}, const QVariant &postArg2 = {});
+	Q_INVOKABLE QtRestClient::RestReply *post(const QVariantMap &body, const QVariant &postArg0 = {}, const QVariant &postArg1 = {}, const QVariant &postArg2 = {});
+	Q_INVOKABLE QtRestClient::RestReply *post(const QVariantList &body, const QVariant &postArg0 = {}, const QVariant &postArg1 = {}, const QVariant &postArg2 = {});
+
+	Q_INVOKABLE QtRestClient::RestReply *put(const QVariantMap &body, const QVariant &postArg0 = {}, const QVariant &postArg1 = {}, const QVariant &postArg2 = {});
+	Q_INVOKABLE QtRestClient::RestReply *put(const QVariantList &body, const QVariant &postArg0 = {}, const QVariant &postArg1 = {}, const QVariant &postArg2 = {});
+
+	Q_INVOKABLE QtRestClient::RestReply *deleteResource(const QVariant &postArg0 = {}, const QVariant &postArg1 = {}, const QVariant &postArg2 = {});
+
+	Q_INVOKABLE QtRestClient::RestReply *patch(const QVariantMap &body, const QVariant &postArg0 = {}, const QVariant &postArg1 = {}, const QVariant &postArg2 = {});
+	Q_INVOKABLE QtRestClient::RestReply *patch(const QVariantList &body, const QVariant &postArg0 = {}, const QVariant &postArg1 = {}, const QVariant &postArg2 = {});
+
 public Q_SLOTS:
 	void setPath(QString path);
 
@@ -44,6 +63,12 @@ private:
 	RestClass *_class = nullptr;
 	QString _path;
 	QList<QmlRestClass*> _childClasses;
+	bool _init = false;
+
+	// [path], [params, [asPost], [headers]]
+	std::tuple<QString, QVariantHash, HeaderHash, bool> extractParams(const QVariant &arg0, const QVariant &arg1, const QVariant &arg2, const QVariant &arg3 = {});
+	template <typename... Args>
+	RestReply *callImpl(const QByteArray &verb, const QString &path, Args... args);
 };
 
 }

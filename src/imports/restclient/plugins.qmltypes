@@ -9,6 +9,58 @@ import QtQuick.tooling 1.2
 Module {
     dependencies: ["QtQml 2.2"]
     Component {
+        name: "QtRestClient::QmlPaging"
+        exports: ["de.skycoder42.RestClient/Paging 1.3"]
+        isCreatable: false
+        exportMetaObjectRevisions: [0]
+        Property { name: "items"; type: "QVariantList"; isReadonly: true }
+        Property { name: "total"; type: "int"; isReadonly: true }
+        Property { name: "offset"; type: "int"; isReadonly: true }
+        Property { name: "hasNext"; type: "bool"; isReadonly: true }
+        Property { name: "nextUrl"; type: "QUrl"; isReadonly: true }
+        Property { name: "hasPrevious"; type: "bool"; isReadonly: true }
+        Property { name: "previousUrl"; type: "QUrl"; isReadonly: true }
+        Property { name: "properties"; type: "QVariantMap"; isReadonly: true }
+        Method {
+            name: "iterate"
+            Parameter { name: "iterator"; type: "QJSValue" }
+            Parameter { name: "to"; type: "int" }
+            Parameter { name: "from"; type: "int" }
+        }
+        Method {
+            name: "iterate"
+            Parameter { name: "iterator"; type: "QJSValue" }
+            Parameter { name: "to"; type: "int" }
+        }
+        Method {
+            name: "iterate"
+            Parameter { name: "iterator"; type: "QJSValue" }
+        }
+        Method {
+            name: "iterate"
+            Parameter { name: "iterator"; type: "QJSValue" }
+            Parameter { name: "failureHandler"; type: "QJSValue" }
+            Parameter { name: "errorHandler"; type: "QJSValue" }
+            Parameter { name: "to"; type: "int" }
+            Parameter { name: "from"; type: "int" }
+        }
+        Method {
+            name: "iterate"
+            Parameter { name: "iterator"; type: "QJSValue" }
+            Parameter { name: "failureHandler"; type: "QJSValue" }
+            Parameter { name: "errorHandler"; type: "QJSValue" }
+            Parameter { name: "to"; type: "int" }
+        }
+        Method {
+            name: "iterate"
+            Parameter { name: "iterator"; type: "QJSValue" }
+            Parameter { name: "failureHandler"; type: "QJSValue" }
+            Parameter { name: "errorHandler"; type: "QJSValue" }
+        }
+        Method { name: "next"; type: "QtRestClient::RestReply*" }
+        Method { name: "previous"; type: "QtRestClient::RestReply*" }
+    }
+    Component {
         name: "QtRestClient::QmlRestClass"
         defaultProperty: "classes"
         prototype: "QObject"
@@ -29,6 +81,314 @@ Module {
             name: "setPath"
             Parameter { name: "path"; type: "string" }
         }
+        Method {
+            name: "call"
+            type: "QtRestClient::RestReply*"
+            Parameter { name: "verb"; type: "string" }
+            Parameter { name: "postArg0"; type: "QVariant" }
+            Parameter { name: "postArg1"; type: "QVariant" }
+            Parameter { name: "postArg2"; type: "QVariant" }
+            Parameter { name: "postArg3"; type: "QVariant" }
+        }
+        Method {
+            name: "call"
+            type: "QtRestClient::RestReply*"
+            Parameter { name: "verb"; type: "string" }
+            Parameter { name: "postArg0"; type: "QVariant" }
+            Parameter { name: "postArg1"; type: "QVariant" }
+            Parameter { name: "postArg2"; type: "QVariant" }
+        }
+        Method {
+            name: "call"
+            type: "QtRestClient::RestReply*"
+            Parameter { name: "verb"; type: "string" }
+            Parameter { name: "postArg0"; type: "QVariant" }
+            Parameter { name: "postArg1"; type: "QVariant" }
+        }
+        Method {
+            name: "call"
+            type: "QtRestClient::RestReply*"
+            Parameter { name: "verb"; type: "string" }
+            Parameter { name: "postArg0"; type: "QVariant" }
+        }
+        Method {
+            name: "call"
+            type: "QtRestClient::RestReply*"
+            Parameter { name: "verb"; type: "string" }
+        }
+        Method {
+            name: "call"
+            type: "QtRestClient::RestReply*"
+            Parameter { name: "body"; type: "QVariantMap" }
+            Parameter { name: "verb"; type: "string" }
+            Parameter { name: "postArg0"; type: "QVariant" }
+            Parameter { name: "postArg1"; type: "QVariant" }
+            Parameter { name: "postArg2"; type: "QVariant" }
+        }
+        Method {
+            name: "call"
+            type: "QtRestClient::RestReply*"
+            Parameter { name: "body"; type: "QVariantMap" }
+            Parameter { name: "verb"; type: "string" }
+            Parameter { name: "postArg0"; type: "QVariant" }
+            Parameter { name: "postArg1"; type: "QVariant" }
+        }
+        Method {
+            name: "call"
+            type: "QtRestClient::RestReply*"
+            Parameter { name: "body"; type: "QVariantMap" }
+            Parameter { name: "verb"; type: "string" }
+            Parameter { name: "postArg0"; type: "QVariant" }
+        }
+        Method {
+            name: "call"
+            type: "QtRestClient::RestReply*"
+            Parameter { name: "body"; type: "QVariantMap" }
+            Parameter { name: "verb"; type: "string" }
+        }
+        Method {
+            name: "call"
+            type: "QtRestClient::RestReply*"
+            Parameter { name: "body"; type: "QVariantList" }
+            Parameter { name: "verb"; type: "string" }
+            Parameter { name: "postArg0"; type: "QVariant" }
+            Parameter { name: "postArg1"; type: "QVariant" }
+            Parameter { name: "postArg2"; type: "QVariant" }
+        }
+        Method {
+            name: "call"
+            type: "QtRestClient::RestReply*"
+            Parameter { name: "body"; type: "QVariantList" }
+            Parameter { name: "verb"; type: "string" }
+            Parameter { name: "postArg0"; type: "QVariant" }
+            Parameter { name: "postArg1"; type: "QVariant" }
+        }
+        Method {
+            name: "call"
+            type: "QtRestClient::RestReply*"
+            Parameter { name: "body"; type: "QVariantList" }
+            Parameter { name: "verb"; type: "string" }
+            Parameter { name: "postArg0"; type: "QVariant" }
+        }
+        Method {
+            name: "call"
+            type: "QtRestClient::RestReply*"
+            Parameter { name: "body"; type: "QVariantList" }
+            Parameter { name: "verb"; type: "string" }
+        }
+        Method {
+            name: "get"
+            type: "QtRestClient::RestReply*"
+            Parameter { name: "postArg0"; type: "QVariant" }
+            Parameter { name: "postArg1"; type: "QVariant" }
+            Parameter { name: "postArg2"; type: "QVariant" }
+        }
+        Method {
+            name: "get"
+            type: "QtRestClient::RestReply*"
+            Parameter { name: "postArg0"; type: "QVariant" }
+            Parameter { name: "postArg1"; type: "QVariant" }
+        }
+        Method {
+            name: "get"
+            type: "QtRestClient::RestReply*"
+            Parameter { name: "postArg0"; type: "QVariant" }
+        }
+        Method { name: "get"; type: "QtRestClient::RestReply*" }
+        Method {
+            name: "post"
+            type: "QtRestClient::RestReply*"
+            Parameter { name: "postArg0"; type: "QVariant" }
+            Parameter { name: "postArg1"; type: "QVariant" }
+            Parameter { name: "postArg2"; type: "QVariant" }
+        }
+        Method {
+            name: "post"
+            type: "QtRestClient::RestReply*"
+            Parameter { name: "postArg0"; type: "QVariant" }
+            Parameter { name: "postArg1"; type: "QVariant" }
+        }
+        Method {
+            name: "post"
+            type: "QtRestClient::RestReply*"
+            Parameter { name: "postArg0"; type: "QVariant" }
+        }
+        Method { name: "post"; type: "QtRestClient::RestReply*" }
+        Method {
+            name: "post"
+            type: "QtRestClient::RestReply*"
+            Parameter { name: "body"; type: "QVariantMap" }
+            Parameter { name: "postArg0"; type: "QVariant" }
+            Parameter { name: "postArg1"; type: "QVariant" }
+            Parameter { name: "postArg2"; type: "QVariant" }
+        }
+        Method {
+            name: "post"
+            type: "QtRestClient::RestReply*"
+            Parameter { name: "body"; type: "QVariantMap" }
+            Parameter { name: "postArg0"; type: "QVariant" }
+            Parameter { name: "postArg1"; type: "QVariant" }
+        }
+        Method {
+            name: "post"
+            type: "QtRestClient::RestReply*"
+            Parameter { name: "body"; type: "QVariantMap" }
+            Parameter { name: "postArg0"; type: "QVariant" }
+        }
+        Method {
+            name: "post"
+            type: "QtRestClient::RestReply*"
+            Parameter { name: "body"; type: "QVariantMap" }
+        }
+        Method {
+            name: "post"
+            type: "QtRestClient::RestReply*"
+            Parameter { name: "body"; type: "QVariantList" }
+            Parameter { name: "postArg0"; type: "QVariant" }
+            Parameter { name: "postArg1"; type: "QVariant" }
+            Parameter { name: "postArg2"; type: "QVariant" }
+        }
+        Method {
+            name: "post"
+            type: "QtRestClient::RestReply*"
+            Parameter { name: "body"; type: "QVariantList" }
+            Parameter { name: "postArg0"; type: "QVariant" }
+            Parameter { name: "postArg1"; type: "QVariant" }
+        }
+        Method {
+            name: "post"
+            type: "QtRestClient::RestReply*"
+            Parameter { name: "body"; type: "QVariantList" }
+            Parameter { name: "postArg0"; type: "QVariant" }
+        }
+        Method {
+            name: "post"
+            type: "QtRestClient::RestReply*"
+            Parameter { name: "body"; type: "QVariantList" }
+        }
+        Method {
+            name: "put"
+            type: "QtRestClient::RestReply*"
+            Parameter { name: "body"; type: "QVariantMap" }
+            Parameter { name: "postArg0"; type: "QVariant" }
+            Parameter { name: "postArg1"; type: "QVariant" }
+            Parameter { name: "postArg2"; type: "QVariant" }
+        }
+        Method {
+            name: "put"
+            type: "QtRestClient::RestReply*"
+            Parameter { name: "body"; type: "QVariantMap" }
+            Parameter { name: "postArg0"; type: "QVariant" }
+            Parameter { name: "postArg1"; type: "QVariant" }
+        }
+        Method {
+            name: "put"
+            type: "QtRestClient::RestReply*"
+            Parameter { name: "body"; type: "QVariantMap" }
+            Parameter { name: "postArg0"; type: "QVariant" }
+        }
+        Method {
+            name: "put"
+            type: "QtRestClient::RestReply*"
+            Parameter { name: "body"; type: "QVariantMap" }
+        }
+        Method {
+            name: "put"
+            type: "QtRestClient::RestReply*"
+            Parameter { name: "body"; type: "QVariantList" }
+            Parameter { name: "postArg0"; type: "QVariant" }
+            Parameter { name: "postArg1"; type: "QVariant" }
+            Parameter { name: "postArg2"; type: "QVariant" }
+        }
+        Method {
+            name: "put"
+            type: "QtRestClient::RestReply*"
+            Parameter { name: "body"; type: "QVariantList" }
+            Parameter { name: "postArg0"; type: "QVariant" }
+            Parameter { name: "postArg1"; type: "QVariant" }
+        }
+        Method {
+            name: "put"
+            type: "QtRestClient::RestReply*"
+            Parameter { name: "body"; type: "QVariantList" }
+            Parameter { name: "postArg0"; type: "QVariant" }
+        }
+        Method {
+            name: "put"
+            type: "QtRestClient::RestReply*"
+            Parameter { name: "body"; type: "QVariantList" }
+        }
+        Method {
+            name: "deleteResource"
+            type: "QtRestClient::RestReply*"
+            Parameter { name: "postArg0"; type: "QVariant" }
+            Parameter { name: "postArg1"; type: "QVariant" }
+            Parameter { name: "postArg2"; type: "QVariant" }
+        }
+        Method {
+            name: "deleteResource"
+            type: "QtRestClient::RestReply*"
+            Parameter { name: "postArg0"; type: "QVariant" }
+            Parameter { name: "postArg1"; type: "QVariant" }
+        }
+        Method {
+            name: "deleteResource"
+            type: "QtRestClient::RestReply*"
+            Parameter { name: "postArg0"; type: "QVariant" }
+        }
+        Method { name: "deleteResource"; type: "QtRestClient::RestReply*" }
+        Method {
+            name: "patch"
+            type: "QtRestClient::RestReply*"
+            Parameter { name: "body"; type: "QVariantMap" }
+            Parameter { name: "postArg0"; type: "QVariant" }
+            Parameter { name: "postArg1"; type: "QVariant" }
+            Parameter { name: "postArg2"; type: "QVariant" }
+        }
+        Method {
+            name: "patch"
+            type: "QtRestClient::RestReply*"
+            Parameter { name: "body"; type: "QVariantMap" }
+            Parameter { name: "postArg0"; type: "QVariant" }
+            Parameter { name: "postArg1"; type: "QVariant" }
+        }
+        Method {
+            name: "patch"
+            type: "QtRestClient::RestReply*"
+            Parameter { name: "body"; type: "QVariantMap" }
+            Parameter { name: "postArg0"; type: "QVariant" }
+        }
+        Method {
+            name: "patch"
+            type: "QtRestClient::RestReply*"
+            Parameter { name: "body"; type: "QVariantMap" }
+        }
+        Method {
+            name: "patch"
+            type: "QtRestClient::RestReply*"
+            Parameter { name: "body"; type: "QVariantList" }
+            Parameter { name: "postArg0"; type: "QVariant" }
+            Parameter { name: "postArg1"; type: "QVariant" }
+            Parameter { name: "postArg2"; type: "QVariant" }
+        }
+        Method {
+            name: "patch"
+            type: "QtRestClient::RestReply*"
+            Parameter { name: "body"; type: "QVariantList" }
+            Parameter { name: "postArg0"; type: "QVariant" }
+            Parameter { name: "postArg1"; type: "QVariant" }
+        }
+        Method {
+            name: "patch"
+            type: "QtRestClient::RestReply*"
+            Parameter { name: "body"; type: "QVariantList" }
+            Parameter { name: "postArg0"; type: "QVariant" }
+        }
+        Method {
+            name: "patch"
+            type: "QtRestClient::RestReply*"
+            Parameter { name: "body"; type: "QVariantList" }
+        }
     }
     Component {
         name: "QtRestClient::QmlRestClient"
@@ -37,6 +397,64 @@ Module {
         exports: ["de.skycoder42.RestClient/RestClient 1.3"]
         exportMetaObjectRevisions: [0]
         Property { name: "classes"; type: "QtRestClient::QmlRestClass"; isList: true; isReadonly: true }
+    }
+    Component {
+        name: "QtRestClient::QmlRestClientGlobal"
+        prototype: "QObject"
+        exports: ["de.skycoder42.RestClient/QtRestClient 1.3"]
+        isCreatable: false
+        isSingleton: true
+        exportMetaObjectRevisions: [0]
+        Method {
+            name: "addGlobalApi"
+            type: "bool"
+            Parameter { name: "name"; type: "string" }
+            Parameter { name: "client"; type: "QtRestClient::RestClient"; isPointer: true }
+        }
+        Method {
+            name: "removeGlobalApi"
+            Parameter { name: "name"; type: "string" }
+            Parameter { name: "deleteClient"; type: "bool" }
+        }
+        Method {
+            name: "removeGlobalApi"
+            Parameter { name: "name"; type: "string" }
+        }
+        Method {
+            name: "apiClient"
+            type: "QtRestClient::RestClient*"
+            Parameter { name: "name"; type: "string" }
+        }
+        Method {
+            name: "apiRootClass"
+            type: "QtRestClient::QmlRestClass*"
+            Parameter { name: "name"; type: "string" }
+            Parameter { name: "parent"; type: "QObject"; isPointer: true }
+        }
+        Method {
+            name: "apiRootClass"
+            type: "QtRestClient::QmlRestClass*"
+            Parameter { name: "name"; type: "string" }
+        }
+        Method {
+            name: "createApiClass"
+            type: "QtRestClient::QmlRestClass*"
+            Parameter { name: "name"; type: "string" }
+            Parameter { name: "path"; type: "string" }
+            Parameter { name: "parent"; type: "QObject"; isPointer: true }
+        }
+        Method {
+            name: "createApiClass"
+            type: "QtRestClient::QmlRestClass*"
+            Parameter { name: "name"; type: "string" }
+            Parameter { name: "path"; type: "string" }
+        }
+        Method {
+            name: "createPaging"
+            type: "QmlPaging"
+            Parameter { name: "client"; type: "QtRestClient::RestClient"; isPointer: true }
+            Parameter { name: "data"; type: "QVariantMap" }
+        }
     }
     Component {
         name: "QtRestClient::RestClient"

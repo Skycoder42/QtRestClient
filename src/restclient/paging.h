@@ -125,7 +125,7 @@ QUrl Paging<T>::previousUrl() const
 template<typename T>
 void Paging<T>::iterate(const std::function<bool (T, int)> &iterator, int to, int from) const
 {
-	return iterate(iterator, {}, {}, to, from);
+	iterate(iterator, {}, {}, to, from);
 }
 
 template<typename T>

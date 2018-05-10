@@ -9,12 +9,16 @@ DEFINES += "VERSION_MINOR=$$MODULE_VERSION_MINOR"
 HEADERS += \
 		qtrestclient_plugin.h \
     qmlrestclass.h \
-    qmlrestclient.h
+    qmlrestclient.h \
+    qmlrestclientglobal.h \
+    qmlpaging.h
 
 SOURCES += \
 		qtrestclient_plugin.cpp \
     qmlrestclass.cpp \
-    qmlrestclient.cpp
+    qmlrestclient.cpp \
+    qmlrestclientglobal.cpp \
+    qmlpaging.cpp
 
 OTHER_FILES += qmldir
 
