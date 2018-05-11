@@ -30,6 +30,7 @@ private:
 		QString name;
 		QString exportKey;
 		QString nspace;
+		QString qmlUri;
 		QString base;
 		QString except;
 
@@ -120,6 +121,9 @@ private:
 	RestAccess::Class readClass();
 	RestAccess::Method readMethod();
 
+	bool hasNs();
+	bool hasQml();
+
 	void generateClass();
 	void generateApi();
 
@@ -128,8 +132,8 @@ private:
 	void writeClassBeginDefinition();
 	void writeClassMainDefinition();
 
-	void methodParams(const RestAccess::Method &method);
 	QString writeExpression(const Expression &expression, bool asString);
+	QString writeMethodParams(const RestAccess::Method &method, bool withDefaults);
 
 	void generateFactoryDeclaration();
 	void writeFactoryDeclarations();
@@ -142,10 +146,14 @@ private:
 	void writeClassDefinitions();
 	void writeMethodDefinitions();
 	void writeMemberDefinitions();
+	void writeStartupCode();
 
 	void writeLocalApiGeneration();
 	void writeGlobalApiGeneration();
 	void writeApiCreation();
+
+	void writeQmlDeclaration();
+	void writeQmlDefinitions();
 
 	bool writeMethodPath(const ClassBuilder::RestAccess::Method::PathInfo &info);
 
@@ -170,7 +178,6 @@ private:
 	template <typename TVariant, typename TInfo>
 	static constexpr bool is(const TInfo &info);
 #endif
-
 };
 
 #endif // CLASSBUILDER_H

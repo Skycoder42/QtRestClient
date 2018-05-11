@@ -1,5 +1,5 @@
-#ifndef QMLPAGING_H
-#define QMLPAGING_H
+#ifndef QTRESTCLIENT_QMLPAGING_H
+#define QTRESTCLIENT_QMLPAGING_H
 
 #include <QtCore/QObject>
 #include <QtQml/QJSValue>
@@ -58,4 +58,4 @@ private:
 
 }
 
-#endif // QMLPAGING_H
+#endif // QTRESTCLIENT_QMLPAGING_H

@@ -8,6 +8,7 @@
 #include "qmlrestclient.h"
 #include "qmlpaging.h"
 #include "qmlrestclientglobal.h"
+#include "qmlgenericrestreply.h"
 
 namespace {
 
@@ -26,8 +27,11 @@ void QtRestClientDeclarativeModule::registerTypes(const char *uri)
 {
 	Q_ASSERT(qstrcmp(uri, "de.skycoder42.RestClient") == 0);
 
+	qRegisterMetaType<QtRestClient::QmlGenericRestReply*>();
+
 	//Version 1.3
 	qmlRegisterUncreatableType<QtRestClient::RestReply>(uri, 1, 3, "RestReply", QStringLiteral("RestReplies can only be returned from restclass methods"));
+	qmlRegisterUncreatableType<QtRestClient::QmlGenericRestReply>(uri, 1, 3, "GenericRestReply", QStringLiteral("GenericRestReplies can only be returned from generated restclass methods"));
 	qmlRegisterUncreatableType<QtRestClient::QmlPaging>(uri, 1, 3, "Paging", QStringLiteral("Pagings can only be returned from the QtRestClient singleton"));
 
 	qmlRegisterType<QtRestClient::QmlRestClient>(uri, 1, 3, "RestClient");

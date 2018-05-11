@@ -11,6 +11,7 @@
 namespace QtRestClient {
 
 class RestReplyPrivate;
+class QmlGenericRestReply; //needed for QML bindings
 //! A class to handle replies for JSON requests
 class Q_RESTCLIENT_EXPORT RestReply : public QObject
 {

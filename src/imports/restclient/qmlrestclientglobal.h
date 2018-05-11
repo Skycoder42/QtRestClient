@@ -1,5 +1,5 @@
-#ifndef QMLRESTCLIENTGLOBAL_H
-#define QMLRESTCLIENTGLOBAL_H
+#ifndef QTRESTCLIENT_QMLRESTCLIENTGLOBAL_H
+#define QTRESTCLIENT_QMLRESTCLIENTGLOBAL_H
 
 #include <QtCore/QObject>
 #include <QtRestClient/qtrestclient_global.h>
@@ -29,4 +29,4 @@ private:
 
 }
 
-#endif // QMLRESTCLIENTGLOBAL_H
+#endif // QTRESTCLIENT_QMLRESTCLIENTGLOBAL_H

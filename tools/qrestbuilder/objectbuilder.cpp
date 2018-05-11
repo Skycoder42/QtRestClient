@@ -87,11 +87,21 @@ ObjectBuilder::XmlContent::Property ObjectBuilder::readProperty()
 	return prop;
 }
 
+bool ObjectBuilder::hasNs()
+{
+	return !data.nspace.isEmpty();
+}
+
+bool ObjectBuilder::hasQml()
+{
+	return !data.qmlUri.isEmpty();
+}
+
 void ObjectBuilder::generateApiObject()
 {
 	//write header
 	writeIncludes(data.includes);
-	if(!data.nspace.isEmpty())
+	if(hasNs())
 		header << "namespace " << data.nspace << " {\n\n";
 	header << "class " << data.name << "Private;\n"
 		   << "class " << exportedName(data.name, data.exportKey) << " : public " << data.base << "\n"
@@ -115,7 +125,7 @@ void ObjectBuilder::generateApiObject()
 	header << "\nprivate:\n"
 		   << "\tQScopedPointer<" << data.name << "Private> d;\n"
 		   << "};\n\n";
-	if(!data.nspace.isEmpty())
+	if(hasNs())
 		header << "}\n\n";
 	writeFlagOperators();
 
@@ -139,7 +149,7 @@ void ObjectBuilder::generateApiGadget()
 {
 	//write header
 	writeIncludes(data.includes);
-	if(!data.nspace.isEmpty())
+	if(hasNs())
 		header << "namespace " << data.nspace << " {\n\n";
 	header << "class " << data.name << "Data;\n";
 	if(data.base.isEmpty())
@@ -167,7 +177,7 @@ void ObjectBuilder::generateApiGadget()
 	header << "\nprivate:\n"
 		   << "\t QSharedDataPointer<" << data.name << "Data> d;\n"
 		   << "};\n\n";
-	if(!data.nspace.isEmpty())
+	if(hasNs())
 		header << "}\n\n";
 	header << "Q_DECLARE_METATYPE(" << nsName(data.name, data.nspace) << ")\n\n";
 	writeFlagOperators();
@@ -307,9 +317,9 @@ void ObjectBuilder::writeSourceIncludes()
 		source << "#include <QtCore/QCoreApplication>\n"
 			   << "#include <QtJsonSerializer/QJsonSerializer>\n";
 	}
-	if(!data.qmlUri.isEmpty())
+	if(hasQml())
 		source << "#include <QtQml/qqml.h>\n";
-	if(!data.nspace.isEmpty())
+	if(hasNs())
 		source << "using namespace " << data.nspace << ";\n";
 	source << '\n';
 }
@@ -394,7 +404,7 @@ void ObjectBuilder::writeEqualsDefinition()
 void ObjectBuilder::writePrivateClass()
 {
 	QString name = data.name + QStringLiteral("Private");
-	if(!data.nspace.isEmpty())
+	if(hasNs())
 		source << "namespace " << data.nspace << " {\n\n";
 	source << "class " << name << "\n"
 		   << "{\n"
@@ -404,14 +414,14 @@ void ObjectBuilder::writePrivateClass()
 	source << "\t{}\n\n";
 	writeMemberDeclarations();
 	source << "};\n\n";
-	if(!data.nspace.isEmpty())
+	if(hasNs())
 		source << "}\n\n";
 }
 
 void ObjectBuilder::writeDataClass()
 {
 	QString name = data.name + QStringLiteral("Data");
-	if(!data.nspace.isEmpty())
+	if(hasNs())
 		source << "namespace " << data.nspace << " {\n\n";
 	source << "class " << name << " : public QSharedData\n"
 		   << "{\n"
@@ -424,7 +434,7 @@ void ObjectBuilder::writeDataClass()
 		   << "\t" << name << "(" << name << " &&other) = default;\n\n";
 	writeMemberDeclarations();
 	source << "};\n\n";
-	if(!data.nspace.isEmpty())
+	if(hasNs())
 		source << "}\n\n";
 }
 
@@ -444,7 +454,7 @@ void ObjectBuilder::writeMemberDefinitions(bool skipComma)
 
 void ObjectBuilder::writeSetupHooks()
 {
-	if(!data.registerConverters && !data.qmlUri.isEmpty())
+	if(!data.registerConverters && !hasQml())
 		return;
 
 	source << "\nnamespace {\n\n"
@@ -453,7 +463,7 @@ void ObjectBuilder::writeSetupHooks()
 
 	if(data.registerConverters)
 		source << "\tQJsonSerializer::registerListConverters<" << data.name << (data.isObject ? "*" : "") << ">();\n";
-	if(!data.qmlUri.isEmpty()) {
+	if(hasQml()) {
 		auto uriParts = data.qmlUri.split(QLatin1Char(' '), QString::SkipEmptyParts);
 		auto uriPath = uriParts.takeFirst();
 		auto uriVersion = QVersionNumber::fromString(uriParts.join(QLatin1Char(' ')));

@@ -47,6 +47,7 @@ protected:
 
 	QString exportedName(const QString &name, const QString &exportKey) const;
 	QString nsName(const QString &name, const QString &nspace) const;
+	QString nsInject(const QString &name, const QString &prefix) const;
 
 	void writeIncludes(const QList<Include> &includes = {});
 	QString writeParamDefault(const BaseParam &param);

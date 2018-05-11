@@ -11,14 +11,16 @@ HEADERS += \
     qmlrestclass.h \
     qmlrestclient.h \
     qmlrestclientglobal.h \
-    qmlpaging.h
+    qmlpaging.h \
+    qmlgenericrestreply.h
 
 SOURCES += \
 		qtrestclient_plugin.cpp \
     qmlrestclass.cpp \
     qmlrestclient.cpp \
     qmlrestclientglobal.cpp \
-    qmlpaging.cpp
+    qmlpaging.cpp \
+    qmlgenericrestreply.cpp
 
 OTHER_FILES += qmldir
 

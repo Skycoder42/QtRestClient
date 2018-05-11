@@ -134,6 +134,13 @@ QString RestBuilder::nsName(const QString &name, const QString &nspace) const
 		return nspace + QStringLiteral("::") + name;
 }
 
+QString RestBuilder::nsInject(const QString &name, const QString &prefix) const
+{
+	auto nList = name.split(QStringLiteral("::"));
+	nList.last().prepend(prefix);
+	return nList.join(QStringLiteral("::"));
+}
+
 void RestBuilder::writeIncludes(const QList<Include> &includes)
 {
 	for(const auto &inc : includes) {

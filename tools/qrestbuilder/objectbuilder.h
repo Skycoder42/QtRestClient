@@ -57,6 +57,9 @@ private:
 	XmlContent::Enum readEnum();
 	XmlContent::Property readProperty();
 
+	bool hasNs();
+	bool hasQml();
+
 	void generateApiObject();
 	void generateApiGadget();
 

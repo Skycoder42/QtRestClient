@@ -9,6 +9,32 @@ import QtQuick.tooling 1.2
 Module {
     dependencies: ["QtQml 2.2"]
     Component {
+        name: "QtRestClient::QmlGenericRestReply"
+        prototype: "QObject"
+        exports: ["de.skycoder42.RestClient/GenericRestReply 1.3"]
+        isCreatable: false
+        exportMetaObjectRevisions: [0]
+        Property { name: "reply"; type: "QtRestClient::RestReply"; isReadonly: true; isPointer: true }
+        Property { name: "returnType"; type: "string"; isReadonly: true }
+        Property { name: "errorType"; type: "string"; isReadonly: true }
+        Method {
+            name: "addCompletedHandler"
+            Parameter { name: "completedHandler"; type: "QJSValue" }
+        }
+        Method {
+            name: "addSucceededHandler"
+            Parameter { name: "succeededHandler"; type: "QJSValue" }
+        }
+        Method {
+            name: "addFailedHandler"
+            Parameter { name: "failedHandler"; type: "QJSValue" }
+        }
+        Method {
+            name: "addErrorHandler"
+            Parameter { name: "errorHandler"; type: "QJSValue" }
+        }
+    }
+    Component {
         name: "QtRestClient::QmlPaging"
         exports: ["de.skycoder42.RestClient/Paging 1.3"]
         isCreatable: false
