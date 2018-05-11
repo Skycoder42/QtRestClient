@@ -31,7 +31,7 @@ struct RequestBuilderPrivate : public QSharedData
 	QByteArray verb;
 	QUrlQuery postQuery;
 
-	inline RequestBuilderPrivate(QUrl baseUrl = QUrl(), QNetworkAccessManager *nam = nullptr) :
+	inline RequestBuilderPrivate(const QUrl &baseUrl = QUrl(), QNetworkAccessManager *nam = nullptr) :
 		QSharedData(),
 		nam(nam),
 		base(baseUrl),
@@ -66,16 +66,16 @@ RequestBuilder &RequestBuilder::operator=(RequestBuilder &&other) = default;
 
 RequestBuilder::~RequestBuilder() = default;
 
-RequestBuilder &RequestBuilder::setVersion(const QVersionNumber &version)
+RequestBuilder &RequestBuilder::setCredentials(QString user, QString password)
 {
-	d->version = version;
+	d->user = std::move(user);
+	d->pass = std::move(password);
 	return *this;
 }
 
-RequestBuilder &RequestBuilder::setCredentials(const QString &user, const QString &password)
+RequestBuilder &RequestBuilder::setVersion(QVersionNumber version)
 {
-	d->user = user;
-	d->pass = password;
+	d->version = std::move(version);
 	return *this;
 }
 
@@ -131,9 +131,9 @@ RequestBuilder &RequestBuilder::addParameters(const QUrlQuery &parameters)
 	return *this;
 }
 
-RequestBuilder &RequestBuilder::setFragment(const QString &fragment)
+RequestBuilder &RequestBuilder::setFragment(QString fragment)
 {
-	d->fragment = fragment;
+	d->fragment = std::move(fragment);
 	return *this;
 }
 
@@ -168,15 +168,15 @@ RequestBuilder &RequestBuilder::setAttributes(const QHash<QNetworkRequest::Attri
 	return *this;
 }
 
-RequestBuilder &RequestBuilder::setSslConfig(const QSslConfiguration &sslConfig)
+RequestBuilder &RequestBuilder::setSslConfig(QSslConfiguration sslConfig)
 {
-	d->sslConfig = sslConfig;
+	d->sslConfig = std::move(sslConfig);
 	return *this;
 }
 
-RequestBuilder &RequestBuilder::setBody(const QByteArray &body, const QByteArray &contentType)
+RequestBuilder &RequestBuilder::setBody(QByteArray body, const QByteArray &contentType)
 {
-	d->body = body;
+	d->body = std::move(body);
 	d->postQuery.clear();
 	d->headers.insert(RequestBuilderPrivate::ContentType, contentType);
 	return *this;
@@ -198,9 +198,9 @@ RequestBuilder &RequestBuilder::setBody(const QJsonArray &body)
 	return *this;
 }
 
-RequestBuilder &RequestBuilder::setVerb(const QByteArray &verb)
+RequestBuilder &RequestBuilder::setVerb(QByteArray verb)
 {
-	d->verb = verb;
+	d->verb = std::move(verb);
 	return *this;
 }
 

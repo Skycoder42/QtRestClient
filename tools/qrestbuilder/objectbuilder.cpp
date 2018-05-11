@@ -121,7 +121,8 @@ void ObjectBuilder::generateApiObject()
 	writeResetDeclarations();
 
 	header << "\nQ_SIGNALS:\n";
-	writeNotifyDeclarations();
+	for(const auto &prop : qAsConst(data.properties))
+		header << "\tvoid " << prop.key << "Changed(const " << prop.type << " &" << prop.key << ");\n";
 	header << "\nprivate:\n"
 		   << "\tQScopedPointer<" << data.name << "Private> d;\n"
 		   << "};\n\n";
@@ -285,12 +286,6 @@ void ObjectBuilder::writeResetDeclarations()
 		}
 		header << "\tvoid re" << setter(prop.key) << "();\n";
 	}
-}
-
-void ObjectBuilder::writeNotifyDeclarations()
-{
-	for(const auto &prop : qAsConst(data.properties))
-		header << "\tvoid " << prop.key << "Changed(const " << prop.type << " &" << prop.key << ");\n";
 }
 
 void ObjectBuilder::writeMemberDeclarations()

@@ -7,6 +7,7 @@
 
 #include <QtCore/qpointer.h>
 #include <QtCore/qsharedpointer.h>
+#include <QtCore/qscopedpointer.h>
 #include <functional>
 
 namespace QtRestClient {
@@ -59,7 +60,9 @@ public:
 				const std::function<QString(ET, int)> &failureTransformer = {});
 
 private:
-	QPointer<T> cExt;
+	QSharedPointer<QPointer<T>> _ext;
+	inline QPointer<T> &ext();
+	inline const QPointer<T> &ext() const;
 };
 
 //! A base class to create a simply type version for a normal one. Q_GADGET version
@@ -102,11 +105,13 @@ public:
 	template<typename ET = QObject*>
 	void extend(RestClient *client,
 				const std::function<void(T, bool)> &extensionHandler,
-				const std::function<void(RestReply*, QString, int, RestReply::ErrorType)> &errorHandler = {},
+				const std::function<void(QString, int, RestReply::ErrorType)> &errorHandler = {},
 				const std::function<QString(ET, int)> &failureTransformer = {});
 
 private:
-	QSharedPointer<T> cExt;
+	QSharedPointer<QScopedPointer<T>> _ext;
+	inline QScopedPointer<T> &ext();
+	inline const QScopedPointer<T> &ext() const;
 };
 
 }
@@ -124,7 +129,7 @@ namespace QtRestClient {
 template<typename T>
 Simple<T*, typename std::enable_if<std::is_base_of<QObject, T>::value>::type>::Simple(QObject *parent) :
 	QObject(parent),
-	cExt(nullptr)
+	_ext(new QPointer<T>{})
 {}
 
 template<typename T>
@@ -136,13 +141,13 @@ bool Simple<T*, typename std::enable_if<std::is_base_of<QObject, T>::value>::typ
 template<typename T>
 bool Simple<T*, typename std::enable_if<std::is_base_of<QObject, T>::value>::type>::isExtended() const
 {
-	return cExt;
+	return ext();
 }
 
 template<typename T>
 T *Simple<T*, typename std::enable_if<std::is_base_of<QObject, T>::value>::type>::currentExtended() const
 {
-	return cExt;
+	return ext();
 }
 
 template<typename T>
@@ -150,9 +155,11 @@ template<typename ET>
 GenericRestReply<T*, ET> *Simple<T*, typename std::enable_if<std::is_base_of<QObject, T>::value>::type>::extend(RestClient *client)
 {
 	if(hasExtension()) {
+		QWeakPointer<QPointer<T>> extRef = _ext;
 		return client->rootClass()->get<T*, ET>(extensionHref())
-				->onSucceeded([=](int, T *data){
-					cExt = data;
+				->onSucceeded([extRef](int, T *data) {
+					if(auto ext = extRef.toStrongRef())
+						*ext = data;
 				});
 	} else
 		return nullptr;
@@ -162,23 +169,37 @@ template<typename T>
 template<typename ET>
 void Simple<T*, typename std::enable_if<std::is_base_of<QObject, T>::value>::type>::extend(RestClient *client, const std::function<void (T *, bool)> &extensionHandler, const std::function<void (QString, int, RestReply::ErrorType)> &errorHandler, const std::function<QString (ET, int)> &failureTransformer)
 {
-	if(cExt)
-		extensionHandler(cExt, false);
+	if(ext())
+		extensionHandler(ext(), false);
 	else if(hasExtension()) {
+		QWeakPointer<QPointer<T>> extRef = _ext;
 		client->rootClass()->get<T*, ET>(extensionHref())
-				->onSucceeded([=](int, T *data){
-					cExt = data;
+				->onSucceeded([extRef, extensionHandler](int, T *data){
+					if(auto ext = extRef.toStrongRef())
+						*ext = data;
 					extensionHandler(data, true);
 				})
 				->onAllErrors(errorHandler, failureTransformer);
 	}
 }
 
+template<typename T>
+QPointer<T> &QtRestClient::Simple<T*, typename std::enable_if<std::is_base_of<QObject, T>::value>::type>::ext()
+{
+	return *_ext;
+}
+
+template<typename T>
+const QPointer<T> &QtRestClient::Simple<T*, typename std::enable_if<std::is_base_of<QObject, T>::value>::type>::ext() const
+{
+	return *_ext;
+}
+
 // ------------- Generic Implementation gadget -------------
 
 template<typename T>
 Simple<T, typename std::enable_if<std::is_void<typename T::QtGadgetHelper>::value>::type>::Simple() :
-	cExt(nullptr)
+	_ext(new QScopedPointer<T>{nullptr})
 {}
 
 template<typename T>
@@ -190,14 +211,14 @@ bool Simple<T, typename std::enable_if<std::is_void<typename T::QtGadgetHelper>:
 template<typename T>
 bool Simple<T, typename std::enable_if<std::is_void<typename T::QtGadgetHelper>::value>::type>::isExtended() const
 {
-	return cExt;
+	return ext();
 }
 
 template<typename T>
 T Simple<T, typename std::enable_if<std::is_void<typename T::QtGadgetHelper>::value>::type>::currentExtended() const
 {
-	if(cExt)
-		return *cExt;
+	if(ext())
+		return *(ext().data());
 	else
 		return T();
 }
@@ -207,9 +228,11 @@ template<typename ET>
 GenericRestReply<T, ET> *Simple<T, typename std::enable_if<std::is_void<typename T::QtGadgetHelper>::value>::type>::extend(RestClient *client)
 {
 	if(hasExtension()) {
+		QWeakPointer<QScopedPointer<T>> extRef = _ext;
 		return client->rootClass()->get<T, ET>(extensionHref())
-				->onSucceeded([=](int, T data){
-					cExt.reset(new T(data));
+				->onSucceeded([extRef](int, T data){
+					if(auto ext = extRef.toStrongRef())
+						ext.data()->reset(new T(data));
 				});
 	} else
 		return nullptr;
@@ -217,18 +240,32 @@ GenericRestReply<T, ET> *Simple<T, typename std::enable_if<std::is_void<typename
 
 template<typename T>
 template<typename ET>
-void Simple<T, typename std::enable_if<std::is_void<typename T::QtGadgetHelper>::value>::type>::extend(RestClient *client, const std::function<void (T, bool)> &extensionHandler, const std::function<void (RestReply *, QString, int, RestReply::ErrorType)> &errorHandler, const std::function<QString (ET, int)> &failureTransformer)
+void Simple<T, typename std::enable_if<std::is_void<typename T::QtGadgetHelper>::value>::type>::extend(RestClient *client, const std::function<void (T, bool)> &extensionHandler, const std::function<void (QString, int, RestReply::ErrorType)> &errorHandler, const std::function<QString (ET, int)> &failureTransformer)
 {
-	if(cExt)
-		extensionHandler(*cExt, false);
+	if(ext())
+		extensionHandler(*(ext().data()), false);
 	else if(hasExtension()) {
+		QWeakPointer<QScopedPointer<T>> extRef = _ext;
 		client->rootClass()->get<T, ET>(extensionHref())
-				->onSucceeded([=](int, T data){
-					cExt.reset(new T(data));
+				->onSucceeded([extRef, extensionHandler](int, T data){
+					if(auto ext = extRef.toStrongRef())
+						ext.data()->reset(new T(data));
 					extensionHandler(data, true);
 				})
 				->onAllErrors(errorHandler, failureTransformer);
 	}
+}
+
+template<typename T>
+QScopedPointer<T> &QtRestClient::Simple<T, typename std::enable_if<std::is_void<typename T::QtGadgetHelper>::value>::type>::ext()
+{
+	return *_ext;
+}
+
+template<typename T>
+const QScopedPointer<T> &QtRestClient::Simple<T, typename std::enable_if<std::is_void<typename T::QtGadgetHelper>::value>::type>::ext() const
+{
+	return *_ext;
 }
 
 }

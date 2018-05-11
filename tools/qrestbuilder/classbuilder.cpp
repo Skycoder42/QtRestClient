@@ -266,7 +266,7 @@ void ClassBuilder::writeClassBeginDeclaration()
 		   << "{\n"
 		   << "\tQ_OBJECT\n\n"
 		   << "public:\n";
-	generateFactoryDeclaration();
+	writeFactoryDeclaration();
 }
 
 void ClassBuilder::writeClassMainDeclaration()
@@ -275,8 +275,19 @@ void ClassBuilder::writeClassMainDeclaration()
 		   << "\t~" << data.name << "() override;\n\n"
 		   << "\tQtRestClient::RestClient *restClient() const;\n"
 		   << "\tQtRestClient::RestClass *restClass() const;\n\n";
-	writeClassDeclarations();
-	writeMethodDeclarations();
+
+	for(const auto &subClass : qAsConst(data.classes))
+		header << "\t" << subClass.type << " *" << subClass.key << "() const;\n";
+	if(!data.classes.isEmpty())
+		header << '\n';
+
+	for(const auto &method : qAsConst(data.methods)) {
+		header << "\tQtRestClient::GenericRestReply<" << method.returns << ", " << method.except << "> *" << method.name
+			   << "(" << writeMethodParams(method, true) << ");\n";
+	}
+	if(!data.methods.isEmpty())
+		header << '\n';
+
 	header << "\tvoid setErrorTranslator(std::function<QString(" << data.except << ", int)> fn);\n\n";
 	header << "Q_SIGNALS:\n"
 		   << "\tvoid apiError(const QString &errorString, int errorCode, QtRestClient::RestReply::ErrorType errorType);\n\n"
@@ -302,7 +313,7 @@ void ClassBuilder::writeClassBeginDefinition()
 	else
 		source << "\nconst QString " << data.name << "::Path{" << writeExpression(classData.path, true) << "};\n";
 	writePrivateDefinitions();
-	generateFactoryDefinition();
+	writeFactoryDefinition();
 }
 
 void ClassBuilder::writeClassMainDefinition()
@@ -361,7 +372,7 @@ QString ClassBuilder::writeMethodParams(const RestAccess::Method &method, bool a
 	return parameters.join(QStringLiteral(", "));
 }
 
-void ClassBuilder::generateFactoryDeclaration()
+void ClassBuilder::writeFactoryDeclaration()
 {
 	header << "\tstatic const QString Path;\n\n"
 		   << "\tclass " << exportedName(QStringLiteral("Factory"), data.exportKey) << "\n"
@@ -372,43 +383,14 @@ void ClassBuilder::generateFactoryDeclaration()
 		   << "\t\tFactory(Factory &&other);\n"
 		   << "\t\tFactory &operator=(Factory &&other);\n"
 		   << "\t\t~Factory();\n\n";
-	writeFactoryDeclarations();
-	header << "\t\t" << data.name << " *instance(QObject *parent = nullptr) const;\n\n"
-		   << "\tprivate:\n"
-		   << "\t\tQScopedPointer<" << data.name << "PrivateFactory> d;\n"
-		   << "\t};\n\n";
-}
-
-void ClassBuilder::writeFactoryDeclarations()
-{
 	for(const auto &subClass : qAsConst(data.classes))
 		header << "\t\t" << subClass.type << "::Factory " << subClass.key << "() const;\n";
 	if(!data.classes.isEmpty())
 		header << '\n';
-}
-
-void ClassBuilder::writeClassDeclarations()
-{
-	for(const auto &subClass : qAsConst(data.classes))
-		header << "\t" << subClass.type << " *" << subClass.key << "() const;\n";
-	if(!data.classes.isEmpty())
-		header << '\n';
-}
-
-void ClassBuilder::writeMethodDeclarations()
-{
-	for(const auto &method : qAsConst(data.methods)) {
-		header << "\tQtRestClient::GenericRestReply<" << method.returns << ", " << method.except << "> *" << method.name
-			   << "(" << writeMethodParams(method, true) << ");\n";
-	}
-	if(!data.methods.isEmpty())
-		header << '\n';
-}
-
-void ClassBuilder::writeMemberDeclarations()
-{
-	for(const auto &subClass : qAsConst(data.classes))
-		source << '\t' << subClass.type << " *" << subClass.key << " = nullptr;\n";
+	header << "\t\t" << data.name << " *instance(QObject *parent = nullptr) const;\n\n"
+		   << "\tprivate:\n"
+		   << "\t\tQScopedPointer<" << data.name << "PrivateFactory> d;\n"
+		   << "\t};\n\n";
 }
 
 void ClassBuilder::writePrivateDefinitions()
@@ -424,7 +406,8 @@ void ClassBuilder::writePrivateDefinitions()
 		   << "\t{}\n\n"
 		   << "\tRestClass *restClass;\n"
 		   << "\tstd::function<QString(" << data.except << ", int)> errorTranslator;\n";
-	writeMemberDeclarations();
+	for(const auto &subClass : qAsConst(data.classes))
+		source << '\t' << subClass.type << " *" << subClass.key << " = nullptr;\n";
 	source << "};\n\n";
 
 	// factory
@@ -443,7 +426,7 @@ void ClassBuilder::writePrivateDefinitions()
 		source << "}\n";
 }
 
-void ClassBuilder::generateFactoryDefinition()
+void ClassBuilder::writeFactoryDefinition()
 {
 	source << "\n" << data.name << "::Factory::Factory(RestClient *client, QStringList &&parentPath) :\n"
 		   << "\td{new " << data.name << "PrivateFactory{client, std::move(parentPath)}}\n"
@@ -460,21 +443,16 @@ void ClassBuilder::generateFactoryDefinition()
 		   << "\treturn *this;\n"
 		   << "}\n\n"
 		   << data.name << "::Factory::~Factory() = default;\n";
-	writeFactoryDefinitions();
-	source << "\n" << data.name << " *" << data.name << "::Factory::instance(QObject *parent) const\n"
-		   << "{\n"
-		   << "\treturn new " << data.name << "{d->client->createClass(d->subPath.join(QLatin1Char('/'))), parent};\n"
-		   << "}\n";
-}
-
-void ClassBuilder::writeFactoryDefinitions()
-{
 	for(const auto &subClass : qAsConst(data.classes)) {
 		source << "\n" << subClass.type << "::Factory " << data.name << "::Factory::" << subClass.key << "() const\n"
 			   << "{\n"
 			   << "\treturn {d->client, std::move(d->subPath)};\n"
 			   << "}\n";
 	}
+	source << "\n" << data.name << " *" << data.name << "::Factory::instance(QObject *parent) const\n"
+		   << "{\n"
+		   << "\treturn new " << data.name << "{d->client->createClass(d->subPath.join(QLatin1Char('/'))), parent};\n"
+		   << "}\n";
 }
 
 void ClassBuilder::writeClassDefinitions()

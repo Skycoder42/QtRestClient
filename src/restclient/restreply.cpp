@@ -15,69 +15,69 @@ RestReply::RestReply(QNetworkReply *networkReply, QObject *parent) :
 	d->connectReply(networkReply);
 }
 
-RestReply *RestReply::onSucceeded(std::function<void (int, QJsonObject)> handler)
+RestReply *RestReply::onSucceeded(const std::function<void (int, QJsonObject)> &handler)
 {
 	if(!handler)
 		return this;
-	connect(this, &RestReply::succeeded, this, [=](int code, const QJsonValue &value){
+	connect(this, &RestReply::succeeded, this, [handler](int code, const QJsonValue &value){
 		handler(code, value.toObject());
 	});
 	return this;
 }
 
-RestReply *RestReply::onSucceeded(std::function<void (int, QJsonArray)> handler)
+RestReply *RestReply::onSucceeded(const std::function<void (int, QJsonArray)> &handler)
 {
 	if(!handler)
 		return this;
-	connect(this, &RestReply::succeeded, this, [=](int code, const QJsonValue &value){
+	connect(this, &RestReply::succeeded, this, [handler](int code, const QJsonValue &value){
 		handler(code, value.toArray());
 	});
 	return this;
 }
 
-RestReply *RestReply::onFailed(std::function<void (int, QJsonObject)> handler)
+RestReply *RestReply::onFailed(const std::function<void (int, QJsonObject)> &handler)
 {
 	if(!handler)
 		return this;
-	connect(this, &RestReply::failed, this, [=](int code, const QJsonValue &value){
+	connect(this, &RestReply::failed, this, [handler](int code, const QJsonValue &value){
 		handler(code, value.toObject());
 	});
 	return this;
 }
 
-RestReply *RestReply::onFailed(std::function<void (int, QJsonArray)> handler)
+RestReply *RestReply::onFailed(const std::function<void (int, QJsonArray)> &handler)
 {
 	if(!handler)
 		return this;
-	connect(this, &RestReply::failed, this, [=](int code, const QJsonValue &value){
+	connect(this, &RestReply::failed, this, [handler](int code, const QJsonValue &value){
 		handler(code, value.toArray());
 	});
 	return this;
 }
 
-RestReply *RestReply::onCompleted(std::function<void (int)> handler)
+RestReply *RestReply::onCompleted(const std::function<void (int)> &handler)
 {
 	if(!handler)
 		return this;
-	connect(this, &RestReply::completed, this, [=](int code, const QJsonValue &){
+	connect(this, &RestReply::completed, this, [handler](int code, const QJsonValue &){
 		handler(code);
 	});
 	return this;
 }
 
-RestReply *RestReply::onError(std::function<void (QString, int, ErrorType)> handler)
+RestReply *RestReply::onError(const std::function<void (QString, int, ErrorType)> &handler)
 {
 	if(!handler)
 		return this;
-	connect(this, &RestReply::error, this, [=](QString errorString, int error, ErrorType type){
+	connect(this, &RestReply::error, this, [handler](const QString &errorString, int error, ErrorType type){
 		handler(errorString, error, type);
 	});
 	return this;
 }
 
-RestReply *RestReply::onAllErrors(std::function<void (QString, int, RestReply::ErrorType)> handler, std::function<QString (QJsonObject, int)> failureTransformer)
+RestReply *RestReply::onAllErrors(const std::function<void (QString, int, RestReply::ErrorType)> &handler, const std::function<QString (QJsonObject, int)> &failureTransformer)
 {
-	this->onFailed([=](int code, QJsonObject obj){
+	this->onFailed([handler, failureTransformer](int code, const QJsonObject &obj){
 		if(failureTransformer)
 			handler(failureTransformer(obj, code), code, FailureError);
 		else
@@ -87,9 +87,9 @@ RestReply *RestReply::onAllErrors(std::function<void (QString, int, RestReply::E
 	return this;
 }
 
-RestReply *RestReply::onAllErrors(std::function<void (QString, int, RestReply::ErrorType)> handler, std::function<QString (QJsonArray, int)> failureTransformer)
+RestReply *RestReply::onAllErrors(const std::function<void (QString, int, RestReply::ErrorType)> &handler, const std::function<QString (QJsonArray, int)> &failureTransformer)
 {
-	this->onFailed([=](int code, QJsonArray array){
+	this->onFailed([handler, failureTransformer](int code, const QJsonArray &array){
 		if(failureTransformer)
 			handler(failureTransformer(array, code), code, FailureError);
 		else
@@ -161,35 +161,14 @@ QByteArray RestReply::jsonTypeName(QJsonValue::Type type)
 const QByteArray RestReplyPrivate::PropertyVerb("__QtRestClient_RestReplyPrivate_PropertyVerb");
 const QByteArray RestReplyPrivate::PropertyBuffer("__QtRestClient_RestReplyPrivate_PropertyBuffer");
 
-QIODevice *RestReplyPrivate::cloneDevice(QIODevice *device)
-{
-	if(device->isSequential())
-		return nullptr;
-	else {
-		auto rPos = device->pos();
-		device->seek(0);
-
-		auto buffer = new QBuffer();
-		buffer->setData(device->readAll());
-		buffer->open(QIODevice::ReadOnly);
-
-		device->seek(rPos);
-
-		return buffer;
-	}
-}
-
-QNetworkReply *RestReplyPrivate::compatSend(QNetworkAccessManager *nam, QNetworkRequest request, QByteArray verb, QIODevice *buffer)
+QNetworkReply *RestReplyPrivate::compatSend(QNetworkAccessManager *nam, const QNetworkRequest &request, const QByteArray &verb, QIODevice *buffer)
 {
 	auto reply = nam->sendCustomRequest(request, verb, buffer);
 	if(reply) {
 		reply->setProperty(PropertyVerb, verb);
 		if(buffer) {
+			buffer->setParent(reply);
 			reply->setProperty(PropertyBuffer, QVariant::fromValue(buffer));
-			QObject::connect(reply, &QNetworkReply::destroyed, [=](){
-				buffer->close();
-				buffer->deleteLater();
-			});
 		}
 	} else if(buffer) {
 		buffer->close();
@@ -286,7 +265,7 @@ void RestReplyPrivate::retryReply()
 		verb = "GET";
 	auto buffer = networkReply->property(PropertyBuffer).value<QIODevice*>();
 	if(buffer)
-		buffer = cloneDevice(buffer);
+		buffer->setParent(nullptr);//prevent deletion
 
 	networkReply->deleteLater();
 	networkReply = compatSend(nam, request, verb, buffer);

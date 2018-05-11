@@ -71,7 +71,6 @@ private:
 	void writeReadDeclarations();
 	void writeWriteDeclarations();
 	void writeResetDeclarations();
-	void writeNotifyDeclarations();
 	void writeMemberDeclarations();
 	void writeEqualsDeclaration();
 	void writeSourceIncludes();

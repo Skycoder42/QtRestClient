@@ -135,14 +135,9 @@ private:
 	QString writeExpression(const Expression &expression, bool asString);
 	QString writeMethodParams(const RestAccess::Method &method, bool withDefaults);
 
-	void generateFactoryDeclaration();
-	void writeFactoryDeclarations();
-	void writeClassDeclarations();
-	void writeMethodDeclarations();
-	void writeMemberDeclarations();
+	void writeFactoryDeclaration();
 	void writePrivateDefinitions();
-	void generateFactoryDefinition();
-	void writeFactoryDefinitions();
+	void writeFactoryDefinition();
 	void writeClassDefinitions();
 	void writeMethodDefinitions();
 	void writeMemberDefinitions();

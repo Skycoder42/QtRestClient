@@ -29,7 +29,7 @@ public:
 	//! @copybrief RestReply::onFailed(std::function<void(int, QJsonObject)>)
 	GenericRestReply<DataClassType, ErrorClassType> *onFailed(const std::function<void(int, ErrorClassType)> &handler);
 	//! Set a handler to be called on deserialization exceptions
-	GenericRestReply<DataClassType, ErrorClassType> *onSerializeException(const std::function<void(QJsonSerializerException &)> &handler);
+	GenericRestReply<DataClassType, ErrorClassType> *onSerializeException(std::function<void(QJsonSerializerException&)>handler);
 	//! @copybrief onAllErrors(std::function<void(QString, int, ErrorType)>, std::function<QString(QJsonObject, int)>)
 	GenericRestReply<DataClassType, ErrorClassType> *onAllErrors(const std::function<void(QString, int, ErrorType)> &handler,
 																 const std::function<QString(ErrorClassType, int)> &failureTransformer = {});
@@ -65,7 +65,7 @@ public:
 	//! @copydoc GenericRestReply::onFailed
 	GenericRestReply<void, ErrorClassType> *onFailed(const std::function<void(int, ErrorClassType)> &handler);
 	//! @copydoc GenericRestReply::onSerializeException
-	GenericRestReply<void, ErrorClassType> *onSerializeException(const std::function<void(QJsonSerializerException &)> &handler);
+	GenericRestReply<void, ErrorClassType> *onSerializeException(std::function<void(QJsonSerializerException&)>handler);
 	//! @copydoc GenericRestReply::onAllErrors
 	GenericRestReply<void, ErrorClassType> *onAllErrors(const std::function<void(QString, int, ErrorType)> &handler,
 														const std::function<QString(ErrorClassType, int)> &failureTransformer = {});
@@ -103,7 +103,7 @@ public:
 	//! @copydoc GenericRestReply::onFailed
 	GenericRestReply<QList<DataClassType>, ErrorClassType> *onFailed(const std::function<void(int, ErrorClassType)> &handler);
 	//! @copydoc GenericRestReply::onSerializeException
-	GenericRestReply<QList<DataClassType>, ErrorClassType> *onSerializeException(const std::function<void(QJsonSerializerException &)> &handler);
+	GenericRestReply<QList<DataClassType>, ErrorClassType> *onSerializeException(std::function<void(QJsonSerializerException&)>handler);
 	//! @copydoc GenericRestReply::onAllErrors
 	GenericRestReply<QList<DataClassType>, ErrorClassType> *onAllErrors(const std::function<void(QString, int, ErrorType)> &handler,
 																		const std::function<QString(ErrorClassType, int)> &failureTransformer = {});
@@ -142,7 +142,7 @@ public:
 	//! @copydoc GenericRestReply::onFailed
 	GenericRestReply<Paging<DataClassType>, ErrorClassType> *onFailed(const std::function<void(int, ErrorClassType)> &handler);
 	//! @copydoc GenericRestReply::onSerializeException
-	GenericRestReply<Paging<DataClassType>, ErrorClassType> *onSerializeException(const std::function<void(QJsonSerializerException &)> &handler);
+	GenericRestReply<Paging<DataClassType>, ErrorClassType> *onSerializeException(std::function<void(QJsonSerializerException&)>handler);
 	//! @copydoc GenericRestReply::onAllErrors
 	GenericRestReply<Paging<DataClassType>, ErrorClassType> *onAllErrors(const std::function<void(QString, int, ErrorType)> &handler,
 																		 const std::function<QString(ErrorClassType, int)> &failureTransformer = {});
@@ -218,9 +218,9 @@ GenericRestReply<DataClassType, ErrorClassType> *GenericRestReply<DataClassType,
 }
 
 template<typename DataClassType, typename ErrorClassType>
-GenericRestReply<DataClassType, ErrorClassType> *GenericRestReply<DataClassType, ErrorClassType>::onSerializeException(const std::function<void (QJsonSerializerException &)> &handler)
+GenericRestReply<DataClassType, ErrorClassType> *GenericRestReply<DataClassType, ErrorClassType>::onSerializeException(std::function<void(QJsonSerializerException&)>handler)
 {
-	exceptionHandler = handler;
+	exceptionHandler = std::move(handler);
 	return this;
 }
 
@@ -301,9 +301,9 @@ GenericRestReply<void, ErrorClassType> *GenericRestReply<void, ErrorClassType>::
 }
 
 template<typename ErrorClassType>
-GenericRestReply<void, ErrorClassType> *GenericRestReply<void, ErrorClassType>::onSerializeException(const std::function<void (QJsonSerializerException &)> &handler)
+GenericRestReply<void, ErrorClassType> *GenericRestReply<void, ErrorClassType>::onSerializeException(std::function<void(QJsonSerializerException&)>handler)
 {
-	exceptionHandler = handler;
+	exceptionHandler = std::move(handler);
 	return this;
 }
 
@@ -391,9 +391,9 @@ GenericRestReply<QList<DataClassType>, ErrorClassType> *GenericRestReply<QList<D
 }
 
 template<typename DataClassType, typename ErrorClassType>
-GenericRestReply<QList<DataClassType>, ErrorClassType> *GenericRestReply<QList<DataClassType>, ErrorClassType>::onSerializeException(const std::function<void (QJsonSerializerException &)> &handler)
+GenericRestReply<QList<DataClassType>, ErrorClassType> *GenericRestReply<QList<DataClassType>, ErrorClassType>::onSerializeException(std::function<void(QJsonSerializerException&)>handler)
 {
-	exceptionHandler = handler;
+	exceptionHandler = std::move(handler);
 	return this;
 }
 
@@ -484,9 +484,9 @@ GenericRestReply<Paging<DataClassType>, ErrorClassType> *GenericRestReply<Paging
 }
 
 template<typename DataClassType, typename ErrorClassType>
-GenericRestReply<Paging<DataClassType>, ErrorClassType> *GenericRestReply<Paging<DataClassType>, ErrorClassType>::onSerializeException(const std::function<void (QJsonSerializerException &)> &handler)
+GenericRestReply<Paging<DataClassType>, ErrorClassType> *GenericRestReply<Paging<DataClassType>, ErrorClassType>::onSerializeException(std::function<void(QJsonSerializerException&)>handler)
 {
-	exceptionHandler = handler;
+	exceptionHandler = std::move(handler);
 	return this;
 }
 

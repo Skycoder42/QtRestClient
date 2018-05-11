@@ -109,8 +109,8 @@ void RestClient::setBaseUrl(QUrl baseUrl)
 	if (d->baseUrl == baseUrl)
 		return;
 
-	d->baseUrl = baseUrl;
-	emit baseUrlChanged(baseUrl, {});
+	d->baseUrl = std::move(baseUrl);
+	emit baseUrlChanged(d->baseUrl, {});
 }
 
 void RestClient::setApiVersion(QVersionNumber apiVersion)
@@ -118,8 +118,8 @@ void RestClient::setApiVersion(QVersionNumber apiVersion)
 	if (d->apiVersion == apiVersion)
 		return;
 
-	d->apiVersion = apiVersion;
-	emit apiVersionChanged(apiVersion, {});
+	d->apiVersion = std::move(apiVersion);
+	emit apiVersionChanged(d->apiVersion, {});
 }
 
 void RestClient::setGlobalHeaders(HeaderHash globalHeaders)
@@ -127,8 +127,8 @@ void RestClient::setGlobalHeaders(HeaderHash globalHeaders)
 	if (d->headers == globalHeaders)
 		return;
 
-	d->headers = globalHeaders;
-	emit globalHeadersChanged(globalHeaders, {});
+	d->headers = std::move(globalHeaders);
+	emit globalHeadersChanged(d->headers, {});
 }
 
 void RestClient::setGlobalParameters(QUrlQuery globalParameters)
@@ -136,8 +136,8 @@ void RestClient::setGlobalParameters(QUrlQuery globalParameters)
 	if (d->query == globalParameters)
 		return;
 
-	d->query = globalParameters;
-	emit globalParametersChanged(globalParameters, {});
+	d->query = std::move(globalParameters);
+	emit globalParametersChanged(d->query, {});
 }
 
 void RestClient::setRequestAttributes(QHash<QNetworkRequest::Attribute, QVariant> requestAttributes)
@@ -145,8 +145,8 @@ void RestClient::setRequestAttributes(QHash<QNetworkRequest::Attribute, QVariant
 	if (d->attribs == requestAttributes)
 		return;
 
-	d->attribs = requestAttributes;
-	emit requestAttributesChanged(requestAttributes, {});
+	d->attribs = std::move(requestAttributes);
+	emit requestAttributesChanged(d->attribs, {});
 }
 
 void RestClient::setModernAttributes()
@@ -165,35 +165,35 @@ void RestClient::setSslConfiguration(QSslConfiguration sslConfiguration)
 	if (d->sslConfig == sslConfiguration)
 		return;
 
-	d->sslConfig = sslConfiguration;
-	emit sslConfigurationChanged(sslConfiguration, {});
+	d->sslConfig = std::move(sslConfiguration);
+	emit sslConfigurationChanged(d->sslConfig, {});
 }
 
-void RestClient::addGlobalHeader(QByteArray name, QByteArray value)
+void RestClient::addGlobalHeader(const QByteArray &name, const QByteArray &value)
 {
 	d->headers.insert(name, value);
 	emit globalHeadersChanged(d->headers, {});
 }
 
-void RestClient::removeGlobalHeader(QByteArray name)
+void RestClient::removeGlobalHeader(const QByteArray &name)
 {
 	if(d->headers.remove(name) > 0)
 		emit globalHeadersChanged(d->headers, {});
 }
 
-void RestClient::addGlobalParameter(QString name, QString value)
+void RestClient::addGlobalParameter(const QString &name, const QString &value)
 {
 	d->query.addQueryItem(name, value);
 	emit globalParametersChanged(d->query, {});
 }
 
-void RestClient::removeGlobalParameter(QString name)
+void RestClient::removeGlobalParameter(const QString &name)
 {
 	d->query.removeQueryItem(name);
 	emit globalParametersChanged(d->query, {});
 }
 
-void RestClient::addRequestAttribute(QNetworkRequest::Attribute attribute, QVariant value)
+void RestClient::addRequestAttribute(QNetworkRequest::Attribute attribute, const QVariant &value)
 {
 	d->attribs.insert(attribute, value);
 	emit requestAttributesChanged(d->attribs, {});

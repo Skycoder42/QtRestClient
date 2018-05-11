@@ -93,17 +93,17 @@ public Q_SLOTS:
 	void setSslConfiguration(QSslConfiguration sslConfiguration);
 
 	//! @writeAcFn{RestClient::globalHeaders}
-	void addGlobalHeader(QByteArray name, QByteArray value);
+	void addGlobalHeader(const QByteArray &name, const QByteArray &value);
 	//! @writeAcFn{RestClient::globalHeaders}
-	void removeGlobalHeader(QByteArray name);
+	void removeGlobalHeader(const QByteArray &name);
 
 	//! @writeAcFn{RestClient::globalParameters}
-	void addGlobalParameter(QString name, QString value);
+	void addGlobalParameter(const QString &name, const QString &value);
 	//! @writeAcFn{RestClient::globalParameters}
-	void removeGlobalParameter(QString name);
+	void removeGlobalParameter(const QString &name);
 
 	//! @writeAcFn{RestClient::requestAttributes}
-	void addRequestAttribute(QNetworkRequest::Attribute attribute, QVariant value);
+	void addRequestAttribute(QNetworkRequest::Attribute attribute, const QVariant &value);
 	//! @writeAcFn{RestClient::requestAttributes}
 	void removeRequestAttribute(QNetworkRequest::Attribute attribute);
 

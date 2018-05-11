@@ -15,7 +15,7 @@ class RestClassPrivate;
 //! A class to perform requests to an API
 class Q_RESTCLIENT_EXPORT RestClass : public QObject
 {
-	// MAJOR mark all the "call" methods const...
+	// MAJOR remove deprecated methods
 
 	Q_OBJECT
 	friend class RestClient;
@@ -43,60 +43,57 @@ public:
 	//general calls (json based)
 	//! @{
 	//! @brief Performs a API call of the given verb with JSON data
-	RestReply *callJson(QByteArray verb, const QString &methodPath, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody); //MAJOR merge methods
-	RestReply *callJson(QByteArray verb, const QString &methodPath, const QVariantHash &parameters = {}, const HeaderHash &headers = {});
-	RestReply *callJson(QByteArray verb, const QString &methodPath, QJsonObject body, const QVariantHash &parameters = {}, const HeaderHash &headers = {});
-	RestReply *callJson(QByteArray verb, const QString &methodPath, QJsonArray body, const QVariantHash &parameters = {}, const HeaderHash &headers = {});
+	RestReply *callJson(const QByteArray &verb, const QString &methodPath, const QVariantHash &parameters = {}, const HeaderHash &headers = {}, bool paramsAsBody = false) const;
+	RestReply *callJson(const QByteArray &verb, const QString &methodPath, const QJsonObject &body, const QVariantHash &parameters = {}, const HeaderHash &headers = {}) const;
+	RestReply *callJson(const QByteArray &verb, const QString &methodPath, const QJsonArray &body, const QVariantHash &parameters = {}, const HeaderHash &headers = {}) const;
 
-	RestReply *callJson(QByteArray verb, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody); //MAJOR merge methods
-	RestReply *callJson(QByteArray verb, const QVariantHash &parameters = {}, const HeaderHash &headers = {});
-	RestReply *callJson(QByteArray verb, QJsonObject body, const QVariantHash &parameters = {}, const HeaderHash &headers = {});
-	RestReply *callJson(QByteArray verb, QJsonArray body, const QVariantHash &parameters = {}, const HeaderHash &headers = {});
+	RestReply *callJson(const QByteArray &verb, const QVariantHash &parameters = {}, const HeaderHash &headers = {}, bool paramsAsBody = false) const;
+	RestReply *callJson(const QByteArray &verb, const QJsonObject &body, const QVariantHash &parameters = {}, const HeaderHash &headers = {}) const;
+	RestReply *callJson(const QByteArray &verb, const QJsonArray &body, const QVariantHash &parameters = {}, const HeaderHash &headers = {}) const;
 
-	RestReply *callJson(QByteArray verb, const QUrl &relativeUrl, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody); //MAJOR merge methods
-	RestReply *callJson(QByteArray verb, const QUrl &relativeUrl, const QVariantHash &parameters = {}, const HeaderHash &headers = {});
-	RestReply *callJson(QByteArray verb, const QUrl &relativeUrl, QJsonObject body, const QVariantHash &parameters = {}, const HeaderHash &headers = {});
-	RestReply *callJson(QByteArray verb, const QUrl &relativeUrl, QJsonArray body, const QVariantHash &parameters = {}, const HeaderHash &headers = {});
+	RestReply *callJson(const QByteArray &verb, const QUrl &relativeUrl, const QVariantHash &parameters = {}, const HeaderHash &headers = {}, bool paramsAsBody = false) const;
+	RestReply *callJson(const QByteArray &verb, const QUrl &relativeUrl, const QJsonObject &body, const QVariantHash &parameters = {}, const HeaderHash &headers = {}) const;
+	RestReply *callJson(const QByteArray &verb, const QUrl &relativeUrl, const QJsonArray &body, const QVariantHash &parameters = {}, const HeaderHash &headers = {}) const;
 	//! @}
 
 	//general calls
 	//! @{
 	//! @brief Performs a API call of the given verb with generic objects
 	template<typename DT = QObject*, typename ET = QObject*>
-	GenericRestReply<DT, ET> *call(const QByteArray &verb, const QString &methodPath, const QVariantHash &parameters = {}, const HeaderHash &headers = {}, bool paramsAsBody = false);
+	GenericRestReply<DT, ET> *call(const QByteArray &verb, const QString &methodPath, const QVariantHash &parameters = {}, const HeaderHash &headers = {}, bool paramsAsBody = false) const;
 	template<typename DT = QObject*, typename ET = QObject*, typename RO = QObject*>
-	GenericRestReply<DT, ET> *call(const QByteArray &verb, const QString &methodPath, const RO &body, const QVariantHash &parameters = {}, const HeaderHash &headers = {});
+	GenericRestReply<DT, ET> *call(const QByteArray &verb, const QString &methodPath, const RO &body, const QVariantHash &parameters = {}, const HeaderHash &headers = {}) const;
 	template<typename DT = QObject*, typename ET = QObject*, typename RO = QObject*>
-	GenericRestReply<DT, ET> *call(const QByteArray &verb, const QString &methodPath, const QList<RO> &body, const QVariantHash &parameters = {}, const HeaderHash &headers = {});
+	GenericRestReply<DT, ET> *call(const QByteArray &verb, const QString &methodPath, const QList<RO> &body, const QVariantHash &parameters = {}, const HeaderHash &headers = {}) const;
 
 	template<typename DT = QObject*, typename ET = QObject*>
-	GenericRestReply<DT, ET> *call(const QByteArray &verb, const QVariantHash &parameters = {}, const HeaderHash &headers = {}, bool paramsAsBody = false);
+	GenericRestReply<DT, ET> *call(const QByteArray &verb, const QVariantHash &parameters = {}, const HeaderHash &headers = {}, bool paramsAsBody = false) const;
 	template<typename DT = QObject*, typename ET = QObject*, typename RO = QObject*>
-	GenericRestReply<DT, ET> *call(const QByteArray &verb, const RO &body, const QVariantHash &parameters = {}, const HeaderHash &headers = {});
+	GenericRestReply<DT, ET> *call(const QByteArray &verb, const RO &body, const QVariantHash &parameters = {}, const HeaderHash &headers = {}) const;
 	template<typename DT = QObject*, typename ET = QObject*, typename RO = QObject*>
-	GenericRestReply<DT, ET> *call(const QByteArray &verb, const QList<RO> &body, const QVariantHash &parameters = {}, const HeaderHash &headers = {});
+	GenericRestReply<DT, ET> *call(const QByteArray &verb, const QList<RO> &body, const QVariantHash &parameters = {}, const HeaderHash &headers = {}) const;
 
 	template<typename DT = QObject*, typename ET = QObject*>
-	GenericRestReply<DT, ET> *call(const QByteArray &verb, const QUrl &relativeUrl, const QVariantHash &parameters = {}, const HeaderHash &headers = {}, bool paramsAsBody = false);
+	GenericRestReply<DT, ET> *call(const QByteArray &verb, const QUrl &relativeUrl, const QVariantHash &parameters = {}, const HeaderHash &headers = {}, bool paramsAsBody = false) const;
 	template<typename DT = QObject*, typename ET = QObject*, typename RO = QObject*>
-	GenericRestReply<DT, ET> *call(const QByteArray &verb, const QUrl &relativeUrl, const RO &body, const QVariantHash &parameters = {}, const HeaderHash &headers = {});
+	GenericRestReply<DT, ET> *call(const QByteArray &verb, const QUrl &relativeUrl, const RO &body, const QVariantHash &parameters = {}, const HeaderHash &headers = {}) const;
 	template<typename DT = QObject*, typename ET = QObject*, typename RO = QObject*>
-	GenericRestReply<DT, ET> *call(const QByteArray &verb, const QUrl &relativeUrl, const QList<RO> &body, const QVariantHash &parameters = {}, const HeaderHash &headers = {});
+	GenericRestReply<DT, ET> *call(const QByteArray &verb, const QUrl &relativeUrl, const QList<RO> &body, const QVariantHash &parameters = {}, const HeaderHash &headers = {}) const;
 	//! @}
 
 	//the following methods are simply shortcuts, and thus inlinied
 	//! @{
 	//! @brief Performs GET-request with generic objects
 	template<typename DT = QObject*, typename ET = QObject*>
-	inline GenericRestReply<DT, ET> *get(const QString &methodPath, const QVariantHash &parameters = {}, const HeaderHash &headers = {}) {
+	inline GenericRestReply<DT, ET> *get(const QString &methodPath, const QVariantHash &parameters = {}, const HeaderHash &headers = {}) const {
 		return call<DT, ET>(GetVerb, methodPath, parameters, headers);
 	}
 	template<typename DT = QObject*, typename ET = QObject*>
-	inline GenericRestReply<DT, ET> *get(const QVariantHash &parameters = {}, const HeaderHash &headers = {}) {
+	inline GenericRestReply<DT, ET> *get(const QVariantHash &parameters = {}, const HeaderHash &headers = {}) const {
 		return call<DT, ET>(GetVerb, parameters, headers);
 	}
 	template<typename DT = QObject*, typename ET = QObject*>
-	inline GenericRestReply<DT, ET> *get(const QUrl &relativeUrl, const QVariantHash &parameters = {}, const HeaderHash &headers = {}) {
+	inline GenericRestReply<DT, ET> *get(const QUrl &relativeUrl, const QVariantHash &parameters = {}, const HeaderHash &headers = {}) const {
 		return call<DT, ET>(GetVerb, relativeUrl, parameters, headers);
 	}
 	//! @}
@@ -104,65 +101,65 @@ public:
 	//! @{
 	//! @brief Performs POST-request with generic objects
 	template<typename DT = QObject*, typename ET = QObject*>
-	inline GenericRestReply<DT, ET> *post(const QString &methodPath, const QVariantHash &parameters = {}, const HeaderHash &headers = {}) {
+	inline GenericRestReply<DT, ET> *post(const QString &methodPath, const QVariantHash &parameters = {}, const HeaderHash &headers = {}) const {
 		return call<DT, ET>(PostVerb, methodPath, parameters, headers, true);
 	}
 	template<typename DT = QObject*, typename ET = QObject*, typename RO = QObject*>
-	inline GenericRestReply<DT, ET> *post(const QString &methodPath, const RO &body, const HeaderHash &headers = {}) {
+	inline GenericRestReply<DT, ET> *post(const QString &methodPath, const RO &body, const HeaderHash &headers = {}) const {
 		return call<DT, ET>(PostVerb, methodPath, body, {}, headers);
 	}
 	template<typename DT = QObject*, typename ET = QObject*, typename RO = QObject*>
-	inline GenericRestReply<DT, ET> *post(const QString &methodPath, const QList<RO> &body, const HeaderHash &headers = {}) {
+	inline GenericRestReply<DT, ET> *post(const QString &methodPath, const QList<RO> &body, const HeaderHash &headers = {}) const {
 		return call<DT, ET>(PostVerb, methodPath, body, {}, headers);
 	}
 	template<typename DT = QObject*, typename ET = QObject*, typename RO = QObject*>
-	inline Q_DECL_DEPRECATED GenericRestReply<DT, ET> *post(const QString &methodPath, RO body, const QVariantHash &parameters, const HeaderHash &headers = {}) { //MAJOR remove
+	inline Q_DECL_DEPRECATED GenericRestReply<DT, ET> *post(const QString &methodPath, RO body, const QVariantHash &parameters, const HeaderHash &headers = {}) const {
 		return call<DT, ET>(PostVerb, methodPath, body, parameters, headers);
 	}
 	template<typename DT = QObject*, typename ET = QObject*, typename RO = QObject*>
-	inline Q_DECL_DEPRECATED GenericRestReply<DT, ET> *post(const QString &methodPath, QList<RO> body, const QVariantHash &parameters, const HeaderHash &headers = {}) { //MAJOR remove
+	inline Q_DECL_DEPRECATED GenericRestReply<DT, ET> *post(const QString &methodPath, QList<RO> body, const QVariantHash &parameters, const HeaderHash &headers = {}) const {
 		return call<DT, ET>(PostVerb, methodPath, body, parameters, headers);
 	}
 
 	template<typename DT = QObject*, typename ET = QObject*>
-	inline GenericRestReply<DT, ET> *post(const QVariantHash &parameters = {}, const HeaderHash &headers = {}) {
+	inline GenericRestReply<DT, ET> *post(const QVariantHash &parameters = {}, const HeaderHash &headers = {}) const {
 		return call<DT, ET>(PostVerb, parameters, headers, true);
 	}
 	template<typename DT = QObject*, typename ET = QObject*, typename RO = QObject*>
-	inline GenericRestReply<DT, ET> *post(const RO &body, const HeaderHash &headers = {}) {
+	inline GenericRestReply<DT, ET> *post(const RO &body, const HeaderHash &headers = {}) const {
 		return call<DT, ET>(PostVerb, body, {}, headers);
 	}
 	template<typename DT = QObject*, typename ET = QObject*, typename RO = QObject*>
-	inline GenericRestReply<DT, ET> *post(const QList<RO> &body, const HeaderHash &headers = {}) {
+	inline GenericRestReply<DT, ET> *post(const QList<RO> &body, const HeaderHash &headers = {}) const {
 		return call<DT, ET>(PostVerb, body, {}, headers);
 	}
 	template<typename DT = QObject*, typename ET = QObject*, typename RO = QObject*>
-	inline Q_DECL_DEPRECATED GenericRestReply<DT, ET> *post(RO body, const QVariantHash &parameters, const HeaderHash &headers = {}) { //MAJOR remove
+	inline Q_DECL_DEPRECATED GenericRestReply<DT, ET> *post(RO body, const QVariantHash &parameters, const HeaderHash &headers = {}) const {
 		return call<DT, ET>(PostVerb, body, parameters, headers);
 	}
 	template<typename DT = QObject*, typename ET = QObject*, typename RO = QObject*>
-	inline Q_DECL_DEPRECATED GenericRestReply<DT, ET> *post(QList<RO> body, const QVariantHash &parameters, const HeaderHash &headers = {}) { //MAJOR remove
+	inline Q_DECL_DEPRECATED GenericRestReply<DT, ET> *post(QList<RO> body, const QVariantHash &parameters, const HeaderHash &headers = {}) const {
 		return call<DT, ET>(PostVerb, body, parameters, headers);
 	}
 
 	template<typename DT = QObject*, typename ET = QObject*>
-	inline GenericRestReply<DT, ET> *post(const QUrl &relativeUrl, const QVariantHash &parameters = {}, const HeaderHash &headers = {}) {
+	inline GenericRestReply<DT, ET> *post(const QUrl &relativeUrl, const QVariantHash &parameters = {}, const HeaderHash &headers = {}) const {
 		return call<DT, ET>(PostVerb, relativeUrl, parameters, headers, true);
 	}
 	template<typename DT = QObject*, typename ET = QObject*, typename RO = QObject*>
-	inline GenericRestReply<DT, ET> *post(const QUrl &relativeUrl, const RO &body, const HeaderHash &headers = {}) {
+	inline GenericRestReply<DT, ET> *post(const QUrl &relativeUrl, const RO &body, const HeaderHash &headers = {}) const {
 		return call<DT, ET>(PostVerb, relativeUrl, body, {}, headers);
 	}
 	template<typename DT = QObject*, typename ET = QObject*, typename RO = QObject*>
-	inline GenericRestReply<DT, ET> *post(const QUrl &relativeUrl, const QList<RO> &body, const HeaderHash &headers = {}) {
+	inline GenericRestReply<DT, ET> *post(const QUrl &relativeUrl, const QList<RO> &body, const HeaderHash &headers = {}) const {
 		return call<DT, ET>(PostVerb, relativeUrl, body, {}, headers);
 	}
 	template<typename DT = QObject*, typename ET = QObject*, typename RO = QObject*>
-	inline Q_DECL_DEPRECATED GenericRestReply<DT, ET> *post(const QUrl &relativeUrl, RO body, const QVariantHash &parameters, const HeaderHash &headers = {}) { //MAJOR remove
+	inline Q_DECL_DEPRECATED GenericRestReply<DT, ET> *post(const QUrl &relativeUrl, RO body, const QVariantHash &parameters, const HeaderHash &headers = {}) const {
 		return call<DT, ET>(PostVerb, relativeUrl, body, parameters, headers);
 	}
 	template<typename DT = QObject*, typename ET = QObject*, typename RO = QObject*>
-	inline Q_DECL_DEPRECATED GenericRestReply<DT, ET> *post(const QUrl &relativeUrl, QList<RO> body, const QVariantHash &parameters, const HeaderHash &headers = {}) { //MAJOR remove
+	inline Q_DECL_DEPRECATED GenericRestReply<DT, ET> *post(const QUrl &relativeUrl, QList<RO> body, const QVariantHash &parameters, const HeaderHash &headers = {}) const {
 		return call<DT, ET>(PostVerb, relativeUrl, body, parameters, headers);
 	}
 	//! @}
@@ -170,65 +167,65 @@ public:
 	//! @{
 	//! @brief Performs PUT-request with generic objects
 	template<typename DT = QObject*, typename ET = QObject*>
-	inline Q_DECL_DEPRECATED GenericRestReply<DT, ET> *put(const QString &methodPath, const QVariantHash &parameters = {}, const HeaderHash &headers = {}) { //MAJOR remove
+	inline Q_DECL_DEPRECATED GenericRestReply<DT, ET> *put(const QString &methodPath, const QVariantHash &parameters = {}, const HeaderHash &headers = {}) const {
 		return call<DT, ET>(PutVerb, methodPath, parameters, headers);
 	}
 	template<typename DT = QObject*, typename ET = QObject*, typename RO = QObject*>
-	inline GenericRestReply<DT, ET> *put(const QString &methodPath, const RO &body, const HeaderHash &headers = {}) {
+	inline GenericRestReply<DT, ET> *put(const QString &methodPath, const RO &body, const HeaderHash &headers = {}) const {
 		return call<DT, ET>(PutVerb, methodPath, body, {}, headers);
 	}
 	template<typename DT = QObject*, typename ET = QObject*, typename RO = QObject*>
-	inline GenericRestReply<DT, ET> *put(const QString &methodPath, const QList<RO> &body, const HeaderHash &headers = {}) {
+	inline GenericRestReply<DT, ET> *put(const QString &methodPath, const QList<RO> &body, const HeaderHash &headers = {}) const {
 		return call<DT, ET>(PutVerb, methodPath, body, {}, headers);
 	}
 	template<typename DT = QObject*, typename ET = QObject*, typename RO = QObject*>
-	inline Q_DECL_DEPRECATED GenericRestReply<DT, ET> *put(const QString &methodPath, RO body, const QVariantHash &parameters, const HeaderHash &headers = {}) { //MAJOR remove
+	inline Q_DECL_DEPRECATED GenericRestReply<DT, ET> *put(const QString &methodPath, RO body, const QVariantHash &parameters, const HeaderHash &headers = {}) const {
 		return call<DT, ET>(PutVerb, methodPath, body, parameters, headers);
 	}
 	template<typename DT = QObject*, typename ET = QObject*, typename RO = QObject*>
-	inline Q_DECL_DEPRECATED GenericRestReply<DT, ET> *put(const QString &methodPath, QList<RO> body, const QVariantHash &parameters, const HeaderHash &headers = {}) { //MAJOR remove
+	inline Q_DECL_DEPRECATED GenericRestReply<DT, ET> *put(const QString &methodPath, QList<RO> body, const QVariantHash &parameters, const HeaderHash &headers = {}) const {
 		return call<DT, ET>(PutVerb, methodPath, body, parameters, headers);
 	}
 
 	template<typename DT = QObject*, typename ET = QObject*>
-	inline Q_DECL_DEPRECATED GenericRestReply<DT, ET> *put(const QVariantHash &parameters = {}, const HeaderHash &headers = {}) { //MAJOR remove
+	inline Q_DECL_DEPRECATED GenericRestReply<DT, ET> *put(const QVariantHash &parameters = {}, const HeaderHash &headers = {}) const {
 		return call<DT, ET>(PutVerb, parameters, headers);
 	}
 	template<typename DT = QObject*, typename ET = QObject*, typename RO = QObject*>
-	inline GenericRestReply<DT, ET> *put(const RO &body, const HeaderHash &headers = {}) {
+	inline GenericRestReply<DT, ET> *put(const RO &body, const HeaderHash &headers = {}) const {
 		return call<DT, ET>(PutVerb, body, {}, headers);
 	}
 	template<typename DT = QObject*, typename ET = QObject*, typename RO = QObject*>
-	inline GenericRestReply<DT, ET> *put(const QList<RO> &body, const HeaderHash &headers = {}) {
+	inline GenericRestReply<DT, ET> *put(const QList<RO> &body, const HeaderHash &headers = {}) const {
 		return call<DT, ET>(PutVerb, body, {}, headers);
 	}
 	template<typename DT = QObject*, typename ET = QObject*, typename RO = QObject*>
-	inline Q_DECL_DEPRECATED GenericRestReply<DT, ET> *put(RO body, const QVariantHash &parameters, const HeaderHash &headers = {}) { //MAJOR remove
+	inline Q_DECL_DEPRECATED GenericRestReply<DT, ET> *put(RO body, const QVariantHash &parameters, const HeaderHash &headers = {}) const {
 		return call<DT, ET>(PutVerb, body, parameters, headers);
 	}
 	template<typename DT = QObject*, typename ET = QObject*, typename RO = QObject*>
-	inline Q_DECL_DEPRECATED GenericRestReply<DT, ET> *put(QList<RO> body, const QVariantHash &parameters, const HeaderHash &headers = {}) { //MAJOR remove
+	inline Q_DECL_DEPRECATED GenericRestReply<DT, ET> *put(QList<RO> body, const QVariantHash &parameters, const HeaderHash &headers = {}) const {
 		return call<DT, ET>(PutVerb, body, parameters, headers);
 	}
 
 	template<typename DT = QObject*, typename ET = QObject*>
-	inline Q_DECL_DEPRECATED GenericRestReply<DT, ET> *put(const QUrl &relativeUrl, const QVariantHash &parameters = {}, const HeaderHash &headers = {}) { //MAJOR remove
+	inline Q_DECL_DEPRECATED GenericRestReply<DT, ET> *put(const QUrl &relativeUrl, const QVariantHash &parameters = {}, const HeaderHash &headers = {}) const {
 		return call<DT, ET>(PutVerb, relativeUrl, parameters, headers);
 	}
 	template<typename DT = QObject*, typename ET = QObject*, typename RO = QObject*>
-	inline GenericRestReply<DT, ET> *put(const QUrl &relativeUrl, const RO &body, const HeaderHash &headers = {}) {
+	inline GenericRestReply<DT, ET> *put(const QUrl &relativeUrl, const RO &body, const HeaderHash &headers = {}) const {
 		return call<DT, ET>(PutVerb, relativeUrl, body, {}, headers);
 	}
 	template<typename DT = QObject*, typename ET = QObject*, typename RO = QObject*>
-	inline GenericRestReply<DT, ET> *put(const QUrl &relativeUrl, const QList<RO>& body, const HeaderHash &headers = {}) {
+	inline GenericRestReply<DT, ET> *put(const QUrl &relativeUrl, const QList<RO>& body, const HeaderHash &headers = {}) const {
 		return call<DT, ET>(PutVerb, relativeUrl, body, {}, headers);
 	}
 	template<typename DT = QObject*, typename ET = QObject*, typename RO = QObject*>
-	inline Q_DECL_DEPRECATED GenericRestReply<DT, ET> *put(const QUrl &relativeUrl, RO body, const QVariantHash &parameters, const HeaderHash &headers = {}) { //MAJOR remove
+	inline Q_DECL_DEPRECATED GenericRestReply<DT, ET> *put(const QUrl &relativeUrl, RO body, const QVariantHash &parameters, const HeaderHash &headers = {}) const {
 		return call<DT, ET>(PutVerb, relativeUrl, body, parameters, headers);
 	}
 	template<typename DT = QObject*, typename ET = QObject*, typename RO = QObject*>
-	inline Q_DECL_DEPRECATED GenericRestReply<DT, ET> *put(const QUrl &relativeUrl, QList<RO> body, const QVariantHash &parameters, const HeaderHash &headers = {}) { //MAJOR remove
+	inline Q_DECL_DEPRECATED GenericRestReply<DT, ET> *put(const QUrl &relativeUrl, QList<RO> body, const QVariantHash &parameters, const HeaderHash &headers = {}) const {
 		return call<DT, ET>(PutVerb, relativeUrl, body, parameters, headers);
 	}
 	//! @}
@@ -236,15 +233,15 @@ public:
 	//! @{
 	//! @brief Performs DELETE-request with generic objects
 	template<typename DT = QObject*, typename ET = QObject*>
-	inline GenericRestReply<DT, ET> *deleteResource(const QString &methodPath, const QVariantHash &parameters = {}, const HeaderHash &headers = {}) {
+	inline GenericRestReply<DT, ET> *deleteResource(const QString &methodPath, const QVariantHash &parameters = {}, const HeaderHash &headers = {}) const {
 		return call<DT, ET>(DeleteVerb, methodPath, parameters, headers);
 	}
 	template<typename DT = QObject*, typename ET = QObject*>
-	inline GenericRestReply<DT, ET> *deleteResource(const QVariantHash &parameters = {}, const HeaderHash &headers = {}) {
+	inline GenericRestReply<DT, ET> *deleteResource(const QVariantHash &parameters = {}, const HeaderHash &headers = {}) const {
 		return call<DT, ET>(DeleteVerb, parameters, headers);
 	}
 	template<typename DT = QObject*, typename ET = QObject*>
-	inline GenericRestReply<DT, ET> *deleteResource(const QUrl &relativeUrl, const QVariantHash &parameters = {}, const HeaderHash &headers = {}) {
+	inline GenericRestReply<DT, ET> *deleteResource(const QUrl &relativeUrl, const QVariantHash &parameters = {}, const HeaderHash &headers = {}) const {
 		return call<DT, ET>(DeleteVerb, relativeUrl, parameters, headers);
 	}
 	//! @}
@@ -252,65 +249,65 @@ public:
 	//! @{
 	//! @brief Performs PATCH-request with generic objects
 	template<typename DT = QObject*, typename ET = QObject*>
-	inline Q_DECL_DEPRECATED GenericRestReply<DT, ET> *patch(const QString &methodPath, const QVariantHash &parameters = {}, const HeaderHash &headers = {}) { //MAJOR remove
+	inline Q_DECL_DEPRECATED GenericRestReply<DT, ET> *patch(const QString &methodPath, const QVariantHash &parameters = {}, const HeaderHash &headers = {}) const {
 		return call<DT, ET>(PatchVerb, methodPath, parameters, headers);
 	}
 	template<typename DT = QObject*, typename ET = QObject*, typename RO = QObject*>
-	inline GenericRestReply<DT, ET> *patch(const QString &methodPath, const RO &body, const HeaderHash &headers = {}) {
+	inline GenericRestReply<DT, ET> *patch(const QString &methodPath, const RO &body, const HeaderHash &headers = {}) const {
 		return call<DT, ET>(PatchVerb, methodPath, body, {}, headers);
 	}
 	template<typename DT = QObject*, typename ET = QObject*, typename RO = QObject*>
-	inline GenericRestReply<DT, ET> *patch(const QString &methodPath, const QList<RO> &body, const HeaderHash &headers = {}) {
+	inline GenericRestReply<DT, ET> *patch(const QString &methodPath, const QList<RO> &body, const HeaderHash &headers = {}) const {
 		return call<DT, ET>(PatchVerb, methodPath, body, {}, headers);
 	}
 	template<typename DT = QObject*, typename ET = QObject*, typename RO = QObject*>
-	inline Q_DECL_DEPRECATED GenericRestReply<DT, ET> *patch(const QString &methodPath, RO body, const QVariantHash &parameters, const HeaderHash &headers = {}) { //MAJOR remove
+	inline Q_DECL_DEPRECATED GenericRestReply<DT, ET> *patch(const QString &methodPath, RO body, const QVariantHash &parameters, const HeaderHash &headers = {}) const {
 		return call<DT, ET>(PatchVerb, methodPath, body, parameters, headers);
 	}
 	template<typename DT = QObject*, typename ET = QObject*, typename RO = QObject*>
-	inline Q_DECL_DEPRECATED GenericRestReply<DT, ET> *patch(const QString &methodPath, QList<RO> body, const QVariantHash &parameters, const HeaderHash &headers = {}) { //MAJOR remove
+	inline Q_DECL_DEPRECATED GenericRestReply<DT, ET> *patch(const QString &methodPath, QList<RO> body, const QVariantHash &parameters, const HeaderHash &headers = {}) const {
 		return call<DT, ET>(PatchVerb, methodPath, body, parameters, headers);
 	}
 
 	template<typename DT = QObject*, typename ET = QObject*>
-	inline Q_DECL_DEPRECATED GenericRestReply<DT, ET> *patch(const QVariantHash &parameters = {}, const HeaderHash &headers = {}) { //MAJOR remove
+	inline Q_DECL_DEPRECATED GenericRestReply<DT, ET> *patch(const QVariantHash &parameters = {}, const HeaderHash &headers = {}) const {
 		return call<DT, ET>(PatchVerb, parameters, headers);
 	}
 	template<typename DT = QObject*, typename ET = QObject*, typename RO = QObject*>
-	inline GenericRestReply<DT, ET> *patch(const RO &body, const HeaderHash &headers = {}) {
+	inline GenericRestReply<DT, ET> *patch(const RO &body, const HeaderHash &headers = {}) const {
 		return call<DT, ET>(PatchVerb, body, {}, headers);
 	}
 	template<typename DT = QObject*, typename ET = QObject*, typename RO = QObject*>
-	inline GenericRestReply<DT, ET> *patch(const QList<RO> &body, const HeaderHash &headers = {}) {
+	inline GenericRestReply<DT, ET> *patch(const QList<RO> &body, const HeaderHash &headers = {}) const {
 		return call<DT, ET>(PatchVerb, body, {}, headers);
 	}
 	template<typename DT = QObject*, typename ET = QObject*, typename RO = QObject*>
-	inline Q_DECL_DEPRECATED GenericRestReply<DT, ET> *patch(RO body, const QVariantHash &parameters, const HeaderHash &headers = {}) { //MAJOR remove
+	inline Q_DECL_DEPRECATED GenericRestReply<DT, ET> *patch(RO body, const QVariantHash &parameters, const HeaderHash &headers = {}) const {
 		return call<DT, ET>(PatchVerb, body, parameters, headers);
 	}
 	template<typename DT = QObject*, typename ET = QObject*, typename RO = QObject*>
-	inline Q_DECL_DEPRECATED GenericRestReply<DT, ET> *patch(QList<RO> body, const QVariantHash &parameters, const HeaderHash &headers = {}) { //MAJOR remove
+	inline Q_DECL_DEPRECATED GenericRestReply<DT, ET> *patch(QList<RO> body, const QVariantHash &parameters, const HeaderHash &headers = {}) const {
 		return call<DT, ET>(PatchVerb, body, parameters, headers);
 	}
 
 	template<typename DT = QObject*, typename ET = QObject*>
-	inline Q_DECL_DEPRECATED GenericRestReply<DT, ET> *patch(const QUrl &relativeUrl, const QVariantHash &parameters = {}, const HeaderHash &headers = {}) { //MAJOR remove
+	inline Q_DECL_DEPRECATED GenericRestReply<DT, ET> *patch(const QUrl &relativeUrl, const QVariantHash &parameters = {}, const HeaderHash &headers = {}) const {
 		return call<DT, ET>(PatchVerb, relativeUrl, parameters, headers);
 	}
 	template<typename DT = QObject*, typename ET = QObject*, typename RO = QObject*>
-	inline GenericRestReply<DT, ET> *patch(const QUrl &relativeUrl, const RO &body, const HeaderHash &headers = {}) {
+	inline GenericRestReply<DT, ET> *patch(const QUrl &relativeUrl, const RO &body, const HeaderHash &headers = {}) const {
 		return call<DT, ET>(PatchVerb, relativeUrl, body, {}, headers);
 	}
 	template<typename DT = QObject*, typename ET = QObject*, typename RO = QObject*>
-	inline GenericRestReply<DT, ET> *patch(const QUrl &relativeUrl, const QList<RO> &body, const HeaderHash &headers = {}) {
+	inline GenericRestReply<DT, ET> *patch(const QUrl &relativeUrl, const QList<RO> &body, const HeaderHash &headers = {}) const {
 		return call<DT, ET>(PatchVerb, relativeUrl, body, {}, headers);
 	}
 	template<typename DT = QObject*, typename ET = QObject*, typename RO = QObject*>
-	inline Q_DECL_DEPRECATED GenericRestReply<DT, ET> *patch(const QUrl &relativeUrl, RO body, const QVariantHash &parameters, const HeaderHash &headers = {}) { //MAJOR remove
+	inline Q_DECL_DEPRECATED GenericRestReply<DT, ET> *patch(const QUrl &relativeUrl, RO body, const QVariantHash &parameters, const HeaderHash &headers = {}) const {
 		return call<DT, ET>(PatchVerb, relativeUrl, body, parameters, headers);
 	}
 	template<typename DT = QObject*, typename ET = QObject*, typename RO = QObject*>
-	inline Q_DECL_DEPRECATED GenericRestReply<DT, ET> *patch(const QUrl &relativeUrl, QList<RO> body, const QVariantHash &parameters, const HeaderHash &headers = {}) { //MAJOR remove
+	inline Q_DECL_DEPRECATED GenericRestReply<DT, ET> *patch(const QUrl &relativeUrl, QList<RO> body, const QVariantHash &parameters, const HeaderHash &headers = {}) const {
 		return call<DT, ET>(PatchVerb, relativeUrl, body, parameters, headers);
 	}
 	//! @}
@@ -331,18 +328,15 @@ protected:
 private:
 	QScopedPointer<RestClassPrivate> d;
 
-	QNetworkReply *create(QByteArray verb, const QString &methodPath, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody); //MAJOR merge methods
-	Q_DECL_DEPRECATED QNetworkReply *create(QByteArray verb, const QString &methodPath, const QVariantHash &parameters, const HeaderHash &headers);
-	QNetworkReply *create(QByteArray verb, const QString &methodPath, QJsonObject body, const QVariantHash &parameters, const HeaderHash &headers);
-	QNetworkReply *create(QByteArray verb, const QString &methodPath, QJsonArray body, const QVariantHash &parameters, const HeaderHash &headers);
-	QNetworkReply *create(QByteArray verb, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody); //MAJOR merge methods
-	Q_DECL_DEPRECATED QNetworkReply *create(QByteArray verb, const QVariantHash &parameters, const HeaderHash &headers);
-	QNetworkReply *create(QByteArray verb, QJsonObject body, const QVariantHash &parameters, const HeaderHash &headers);
-	QNetworkReply *create(QByteArray verb, QJsonArray body, const QVariantHash &parameters, const HeaderHash &headers);
-	QNetworkReply *create(QByteArray verb, const QUrl &relativeUrl, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody); //MAJOR merge methods
-	Q_DECL_DEPRECATED QNetworkReply *create(QByteArray verb, const QUrl &relativeUrl, const QVariantHash &parameters, const HeaderHash &headers);
-	QNetworkReply *create(QByteArray verb, const QUrl &relativeUrl, QJsonObject body, const QVariantHash &parameters, const HeaderHash &headers);
-	QNetworkReply *create(QByteArray verb, const QUrl &relativeUrl, QJsonArray body, const QVariantHash &parameters, const HeaderHash &headers);
+	QNetworkReply *create(const QByteArray &verb, const QString &methodPath, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody) const;
+	QNetworkReply *create(const QByteArray &verb, const QString &methodPath, const QJsonObject &body, const QVariantHash &parameters, const HeaderHash &headers) const;
+	QNetworkReply *create(const QByteArray &verb, const QString &methodPath, const QJsonArray &body, const QVariantHash &parameters, const HeaderHash &headers) const;
+	QNetworkReply *create(const QByteArray &verb, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody) const;
+	QNetworkReply *create(const QByteArray &verb, const QJsonObject &body, const QVariantHash &parameters, const HeaderHash &headers) const;
+	QNetworkReply *create(const QByteArray &verb, const QJsonArray &body, const QVariantHash &parameters, const HeaderHash &headers) const;
+	QNetworkReply *create(const QByteArray &verb, const QUrl &relativeUrl, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody) const;
+	QNetworkReply *create(const QByteArray &verb, const QUrl &relativeUrl, const QJsonObject &body, const QVariantHash &parameters, const HeaderHash &headers) const;
+	QNetworkReply *create(const QByteArray &verb, const QUrl &relativeUrl, const QJsonArray &body, const QVariantHash &parameters, const HeaderHash &headers) const;
 };
 
 //! Short macro for RestClass::concatParams(), to make the call shorter
@@ -351,7 +345,7 @@ private:
 // ------------- Generic Implementation -------------
 
 template<typename DT, typename ET>
-GenericRestReply<DT, ET> *RestClass::call(const QByteArray &verb, const QString &methodPath, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody)
+GenericRestReply<DT, ET> *RestClass::call(const QByteArray &verb, const QString &methodPath, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody) const
 {
 	return new GenericRestReply<DT, ET>(create(verb,
 											   methodPath,
@@ -359,11 +353,11 @@ GenericRestReply<DT, ET> *RestClass::call(const QByteArray &verb, const QString 
 											   headers,
 											   paramsAsBody),
 										client(),
-										this);
+										nullptr);
 }
 
 template<typename DT, typename ET, typename RO>
-GenericRestReply<DT, ET> *RestClass::call(const QByteArray &verb, const QString &methodPath, const RO &body, const QVariantHash &parameters, const HeaderHash &headers)
+GenericRestReply<DT, ET> *RestClass::call(const QByteArray &verb, const QString &methodPath, const RO &body, const QVariantHash &parameters, const HeaderHash &headers) const
 {
 	static_assert(MetaComponent<RO>::value, "RO must inherit QObject or have Q_GADGET!");
 	return new GenericRestReply<DT, ET>(create(verb,
@@ -372,11 +366,11 @@ GenericRestReply<DT, ET> *RestClass::call(const QByteArray &verb, const QString 
 											   parameters,
 											   headers),
 										client(),
-										this);
+										nullptr);
 }
 
 template<typename DT, typename ET, typename RO>
-GenericRestReply<DT, ET> *RestClass::call(const QByteArray &verb, const QString &methodPath, const QList<RO> &body, const QVariantHash &parameters, const HeaderHash &headers)
+GenericRestReply<DT, ET> *RestClass::call(const QByteArray &verb, const QString &methodPath, const QList<RO> &body, const QVariantHash &parameters, const HeaderHash &headers) const
 {
 	static_assert(MetaComponent<RO>::value, "RO must inherit QObject or have Q_GADGET!");
 	return new GenericRestReply<DT, ET>(create(verb,
@@ -385,22 +379,22 @@ GenericRestReply<DT, ET> *RestClass::call(const QByteArray &verb, const QString 
 											   parameters,
 											   headers),
 										client(),
-										this);
+										nullptr);
 }
 
 template<typename DT, typename ET>
-GenericRestReply<DT, ET> *RestClass::call(const QByteArray &verb, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody)
+GenericRestReply<DT, ET> *RestClass::call(const QByteArray &verb, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody) const
 {
 	return new GenericRestReply<DT, ET>(create(verb,
 											   parameters,
 											   headers,
 											   paramsAsBody),
 										client(),
-										this);
+										nullptr);
 }
 
 template<typename DT, typename ET, typename RO>
-GenericRestReply<DT, ET> *RestClass::call(const QByteArray &verb, const RO &body, const QVariantHash &parameters, const HeaderHash &headers)
+GenericRestReply<DT, ET> *RestClass::call(const QByteArray &verb, const RO &body, const QVariantHash &parameters, const HeaderHash &headers) const
 {
 	static_assert(MetaComponent<RO>::value, "RO must inherit QObject or have Q_GADGET!");
 	return new GenericRestReply<DT, ET>(create(verb,
@@ -408,11 +402,11 @@ GenericRestReply<DT, ET> *RestClass::call(const QByteArray &verb, const RO &body
 											   parameters,
 											   headers),
 										client(),
-										this);
+										nullptr);
 }
 
 template<typename DT, typename ET, typename RO>
-GenericRestReply<DT, ET> *RestClass::call(const QByteArray &verb, const QList<RO> &body, const QVariantHash &parameters, const HeaderHash &headers)
+GenericRestReply<DT, ET> *RestClass::call(const QByteArray &verb, const QList<RO> &body, const QVariantHash &parameters, const HeaderHash &headers) const
 {
 	static_assert(MetaComponent<RO>::value, "RO must inherit QObject or have Q_GADGET!");
 	return new GenericRestReply<DT, ET>(create(verb,
@@ -420,11 +414,11 @@ GenericRestReply<DT, ET> *RestClass::call(const QByteArray &verb, const QList<RO
 											   parameters,
 											   headers),
 										client(),
-										this);
+										nullptr);
 }
 
 template<typename DT, typename ET>
-GenericRestReply<DT, ET> *RestClass::call(const QByteArray &verb, const QUrl &relativeUrl, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody)
+GenericRestReply<DT, ET> *RestClass::call(const QByteArray &verb, const QUrl &relativeUrl, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody) const
 {
 	return new GenericRestReply<DT, ET>(create(verb,
 											   relativeUrl,
@@ -432,11 +426,11 @@ GenericRestReply<DT, ET> *RestClass::call(const QByteArray &verb, const QUrl &re
 											   headers,
 											   paramsAsBody),
 										client(),
-										this);
+										nullptr);
 }
 
 template<typename DT, typename ET, typename RO>
-GenericRestReply<DT, ET> *RestClass::call(const QByteArray &verb, const QUrl &relativeUrl, const RO &body, const QVariantHash &parameters, const HeaderHash &headers)
+GenericRestReply<DT, ET> *RestClass::call(const QByteArray &verb, const QUrl &relativeUrl, const RO &body, const QVariantHash &parameters, const HeaderHash &headers) const
 {
 	static_assert(MetaComponent<RO>::value, "RO must inherit QObject or have Q_GADGET!");
 	return new GenericRestReply<DT, ET>(create(verb,
@@ -445,11 +439,11 @@ GenericRestReply<DT, ET> *RestClass::call(const QByteArray &verb, const QUrl &re
 											   parameters,
 											   headers),
 										client(),
-										this);
+										nullptr);
 }
 
 template<typename DT, typename ET, typename RO>
-GenericRestReply<DT, ET> *RestClass::call(const QByteArray &verb, const QUrl &relativeUrl, const QList<RO> &body, const QVariantHash &parameters, const HeaderHash &headers)
+GenericRestReply<DT, ET> *RestClass::call(const QByteArray &verb, const QUrl &relativeUrl, const QList<RO> &body, const QVariantHash &parameters, const HeaderHash &headers) const
 {
 	static_assert(MetaComponent<RO>::value, "RO must inherit QObject or have Q_GADGET!");
 	return new GenericRestReply<DT, ET>(create(verb,
@@ -458,7 +452,7 @@ GenericRestReply<DT, ET> *RestClass::call(const QByteArray &verb, const QUrl &re
 											   parameters,
 											   headers),
 										client(),
-										this);
+										nullptr);
 }
 
 template<typename... Args>

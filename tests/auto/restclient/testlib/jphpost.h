@@ -31,6 +31,24 @@ public:
 	QString body;
 };
 
+class JphPostSimple : public QtRestClient::Simple<JphPost*>
+{
+	Q_OBJECT
+
+	Q_PROPERTY(int id MEMBER id)
+	Q_PROPERTY(QString title MEMBER title)
+	Q_PROPERTY(QUrl href MEMBER href)
+
+	QTRESTCLIENT_EXT_HREF_PROP(href)
+
+public:
+	Q_INVOKABLE JphPostSimple(QObject *parent = nullptr);
+
+	int id;
+	QString title;
+	QUrl href;
+};
+
 template<typename T>
 bool JphPost::listEquals(const QList<T*> &left, const QList<T*> &right)
 {

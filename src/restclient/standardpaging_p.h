@@ -41,12 +41,12 @@ public:
 private:
 	QSharedPointer<StandardPagingPrivate> d;
 
-	void setItems(const QJsonArray &items);
+	void setItems(QJsonArray items);
 	void setTotal(int total);
 	void setOffset(int offset);
-	void setNext(const QUrl &next);
-	void setPrevious(const QUrl &previous);
-	void setJson(const QJsonObject &object);
+	void setNext(QUrl next);
+	void setPrevious(QUrl previous);
+	void setJson(QJsonObject object);
 };
 
 class Q_RESTCLIENT_EXPORT StandardPagingFactory : public PagingFactory

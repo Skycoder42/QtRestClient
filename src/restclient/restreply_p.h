@@ -15,8 +15,7 @@ public:
 	static const QByteArray PropertyVerb;
 	static const QByteArray PropertyBuffer;
 
-	static QIODevice *cloneDevice(QIODevice *device);
-	static QNetworkReply *compatSend(QNetworkAccessManager *nam, QNetworkRequest request, QByteArray verb, QIODevice *buffer);
+	static QNetworkReply *compatSend(QNetworkAccessManager *nam, const QNetworkRequest &request, const QByteArray &verb, QIODevice *buffer);
 
 	QPointer<QNetworkReply> networkReply;
 	bool autoDelete = true;

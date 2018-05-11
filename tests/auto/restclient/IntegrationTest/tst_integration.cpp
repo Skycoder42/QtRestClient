@@ -229,8 +229,20 @@ static void DO_NOT_CALL_compilation_test()
 	DO_NOT_CALL_compilation_test_template<JphPost*>();//object
 	DO_NOT_CALL_compilation_test_template<JphUser>();//gadget
 	DO_NOT_CALL_compilation_test_template<JphUserSimple>();//gadget
+
 	JphUserSimple s;
+	s.hasExtension();
+	s.isExtended();
+	s.currentExtended();
 	s.extend(nullptr);
+	s.extend(nullptr, {});
+
+	JphPostSimple *p;
+	p->hasExtension();
+	p->isExtended();
+	p->currentExtended();
+	p->extend(nullptr);
+	p->extend(nullptr, {});
 }
 
 QTEST_MAIN(IntegrationTest)

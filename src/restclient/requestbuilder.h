@@ -32,9 +32,9 @@ public:
 	~RequestBuilder();
 
 	//! Sets the credentails of the URL
-	RequestBuilder &setCredentials(const QString &user, const QString &password);
+	RequestBuilder &setCredentials(QString user, QString password = {});
 	//! Sets the version of the API
-	RequestBuilder &setVersion(const QVersionNumber &version);
+	RequestBuilder &setVersion(QVersionNumber version);
 	//! appends a path segment to the builders path
 	RequestBuilder &addPath(const QString &pathSegment);
 	//! @copydoc RequestBuilder::addPath(const QString &)
@@ -46,7 +46,7 @@ public:
 	//! Adds parameters to the URL
 	RequestBuilder &addParameters(const QUrlQuery &parameters);
 	//! Sets the fragment part of the URL
-	RequestBuilder &setFragment(const QString &fragment);
+	RequestBuilder &setFragment(QString fragment);
 	//! Adds a HTTP header to be added to the network request
 	RequestBuilder &addHeader(const QByteArray &name, const QByteArray &value);
 	//! Adds HTTP headers to be added to the network request
@@ -60,16 +60,16 @@ public:
 	//! Sets the given attributes on the generated network request
 	RequestBuilder &setAttributes(const QHash<QNetworkRequest::Attribute, QVariant> &attributes);
 	//! Sets the ssl configuration to be used by the network request
-	RequestBuilder &setSslConfig(const QSslConfiguration &sslConfig);
+	RequestBuilder &setSslConfig(QSslConfiguration sslConfig);
 
 	//! Sets the content of the generated network request
-	RequestBuilder &setBody(const QByteArray &body, const QByteArray &contentType);
+	RequestBuilder &setBody(QByteArray body, const QByteArray &contentType);
 	//! @copybrief RequestBuilder::setBody(const QByteArray &, const QByteArray &)
 	RequestBuilder &setBody(const QJsonObject &body);
 	//! @copydoc RequestBuilder::setBody(const QJsonObject &)
 	RequestBuilder &setBody(const QJsonArray &body);
 	//! Sets the HTTP-Verb to be used by the generated network request
-	RequestBuilder &setVerb(const QByteArray &verb);
+	RequestBuilder &setVerb(QByteArray verb);
 
 	//! Adds a post parameter to the body
 	RequestBuilder &addPostParameter(const QString &name, const QString &value);

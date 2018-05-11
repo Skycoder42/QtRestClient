@@ -74,9 +74,9 @@ QJsonObject StandardPaging::originalJson() const
 	return d->json;
 }
 
-void StandardPaging::setItems(const QJsonArray &items)
+void StandardPaging::setItems(QJsonArray items)
 {
-	d->items = items;
+	d->items = std::move(items);
 }
 
 void StandardPaging::setTotal(int total)
@@ -89,19 +89,19 @@ void StandardPaging::setOffset(int offset)
 	d->offset = offset;
 }
 
-void StandardPaging::setNext(const QUrl &next)
+void StandardPaging::setNext(QUrl next)
 {
-	d->next = next;
+	d->next = std::move(next);
 }
 
-void StandardPaging::setPrevious(const QUrl &previous)
+void StandardPaging::setPrevious(QUrl previous)
 {
-	d->prev = previous;
+	d->prev = std::move(previous);
 }
 
-void StandardPaging::setJson(const QJsonObject &object)
+void StandardPaging::setJson(QJsonObject object)
 {
-	d->json = object;
+	d->json = std::move(object);
 }
 
 // ------------- Factory Implementation -------------

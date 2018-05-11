@@ -82,7 +82,7 @@ void XmlConverter::writeObjectXml(const QJsonObject &data, QXmlStreamWriter &wri
 			writeAttrIfAny(eObj, writer, QStringLiteral("base"));
 			values = eObj[QStringLiteral("values")].toArray();
 		}
-		for(const auto value : values) {
+		for(const auto &value : qAsConst(values)) {
 			auto vStr = value.toString().split(QLatin1Char(':'));
 			writer.writeStartElement(QStringLiteral("Key"));
 			writer.writeAttribute(QStringLiteral("name"), vStr.takeFirst());
