@@ -5,16 +5,18 @@
 */
 
 /*!
-@class QtRestClient::MetaComponent
+@namespace de::skycoder42::QtRestClient
 
-@tparam T The type to be checked for QObject/Q_GADGET
+@brief The QML import for the QtRestClient QML module
 
-The specializations all define the following methods:
-- deleteLater
-- deleteAllLater
+<b>Current Version</b><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.0
 
-The component can be used to check if a type fullfills the requirements to be used with the
-rest client, and perform deletion operations, if possible.
-
-@sa Specializations
+<b>Available Types</b>
+- QtRestClient (singleton)
+- @ref QtRestClient::RestReply "RestReply" (uncreatable)
+- GenericRestReply (uncreatable)
+- Paging (uncreatable)
+- RestClient
+- RestClass
 */
