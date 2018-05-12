@@ -1,6 +1,5 @@
 TEMPLATE = subdirs
 
-CONFIG += ordered
 SUBDIRS += \
 	testlib \
 	RequestBuilderTest \
@@ -8,3 +7,9 @@ SUBDIRS += \
 	RestReplyTest \
 	IntegrationTest \
 	RestBuilderTest
+
+RequestBuilderTest.depends += testlib
+RestClientTest.depends += testlib
+RestReplyTest.depends += testlib
+IntegrationTest.depends += testlib
+RestBuilderTest.depends += testlib
