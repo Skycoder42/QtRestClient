@@ -8,6 +8,7 @@ const QByteArray RestClass::PostVerb("POST");
 const QByteArray RestClass::PutVerb("PUT");
 const QByteArray RestClass::DeleteVerb("DELETE");
 const QByteArray RestClass::PatchVerb("PATCH");
+const QByteArray RestClass::HeadVerb("HEAD");
 
 RestClass::RestClass(RestClient *client, QStringList subPath, QObject *parent) :
 	QObject(parent),

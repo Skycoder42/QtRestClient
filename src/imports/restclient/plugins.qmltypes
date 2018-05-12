@@ -269,6 +269,25 @@ Module {
             type: "QtRestClient::RestReply*"
             Parameter { name: "body"; type: "QJSValue" }
         }
+        Method {
+            name: "head"
+            type: "QtRestClient::RestReply*"
+            Parameter { name: "optPath"; type: "QJSValue" }
+            Parameter { name: "optParams"; type: "QJSValue" }
+            Parameter { name: "optHeaders"; type: "QJSValue" }
+        }
+        Method {
+            name: "head"
+            type: "QtRestClient::RestReply*"
+            Parameter { name: "optPath"; type: "QJSValue" }
+            Parameter { name: "optParams"; type: "QJSValue" }
+        }
+        Method {
+            name: "head"
+            type: "QtRestClient::RestReply*"
+            Parameter { name: "optPath"; type: "QJSValue" }
+        }
+        Method { name: "head"; type: "QtRestClient::RestReply*" }
     }
     Component {
         name: "QtRestClient::QmlRestClient"

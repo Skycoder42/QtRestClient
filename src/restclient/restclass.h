@@ -32,6 +32,8 @@ public:
 	static const QByteArray DeleteVerb;
 	//! A constant for the HTTP-PATCH verb
 	static const QByteArray PatchVerb;
+	//! A constant for the HTTP-HEAD verb
+	static const QByteArray HeadVerb;
 
 	~RestClass() override;
 
@@ -309,6 +311,21 @@ public:
 	template<typename DT = QObject*, typename ET = QObject*, typename RO = QObject*>
 	inline Q_DECL_DEPRECATED GenericRestReply<DT, ET> *patch(const QUrl &relativeUrl, QList<RO> body, const QVariantHash &parameters, const HeaderHash &headers = {}) const {
 		return call<DT, ET>(PatchVerb, relativeUrl, body, parameters, headers);
+	}
+	//! @}
+
+	//! @{
+	template<typename DT = QObject*, typename ET = QObject*>
+	inline GenericRestReply<DT, ET> *head(const QString &methodPath, const QVariantHash &parameters = {}, const HeaderHash &headers = {}) const {
+		return call<DT, ET>(HeadVerb, methodPath, parameters, headers);
+	}
+	template<typename DT = QObject*, typename ET = QObject*>
+	inline GenericRestReply<DT, ET> *head(const QVariantHash &parameters = {}, const HeaderHash &headers = {}) const {
+		return call<DT, ET>(HeadVerb, parameters, headers);
+	}
+	template<typename DT = QObject*, typename ET = QObject*>
+	inline GenericRestReply<DT, ET> *head(const QUrl &relativeUrl, const QVariantHash &parameters = {}, const HeaderHash &headers = {}) const {
+		return call<DT, ET>(HeadVerb, relativeUrl, parameters, headers);
 	}
 	//! @}
 

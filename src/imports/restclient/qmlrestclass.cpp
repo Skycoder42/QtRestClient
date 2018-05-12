@@ -59,6 +59,11 @@ RestReply *QmlRestClass::patch(const QJSValue &body, const QJSValue &arg0, const
 	return callImpl(RestClass::PatchVerb, body, arg0, arg1, arg2);
 }
 
+RestReply *QmlRestClass::head(const QJSValue &arg0, const QJSValue &arg1, const QJSValue &arg2)
+{
+	return callImpl(RestClass::HeadVerb, arg0, arg1, arg2);
+}
+
 void QmlRestClass::setPath(QString path)
 {
 	if (_path == path)

@@ -42,18 +42,16 @@ public:
 
 	// [path,] [params, [headers]]
 	Q_INVOKABLE QtRestClient::RestReply *get(const QJSValue &optPath = {}, const QJSValue &optParams = {}, const QJSValue &optHeaders = {});
-
 	// [body,] [path,] [params, [headers]]
 	Q_INVOKABLE QtRestClient::RestReply *post(const QJSValue &optBody = {}, const QJSValue &optPath = {}, const QJSValue &optParams = {}, const QJSValue &optHeaders = {});
-
 	// body, [path,] [params, [headers]]
 	Q_INVOKABLE QtRestClient::RestReply *put(const QJSValue &body, const QJSValue &optPath = {}, const QJSValue &optParams = {}, const QJSValue &optHeaders = {});
-
 	// [path,] [params, [headers]]
 	Q_INVOKABLE QtRestClient::RestReply *deleteResource(const QJSValue &optPath = {}, const QJSValue &optParams = {}, const QJSValue &optHeaders = {});
-
 	// body, [path,] [params, [headers]]
 	Q_INVOKABLE QtRestClient::RestReply *patch(const QJSValue &body, const QJSValue &optPath = {}, const QJSValue &optParams = {}, const QJSValue &optHeaders = {});
+	// [path,] [params, [headers]]
+	Q_INVOKABLE QtRestClient::RestReply *head(const QJSValue &optPath = {}, const QJSValue &optParams = {}, const QJSValue &optHeaders = {});
 
 public Q_SLOTS:
 	void setPath(QString path);
