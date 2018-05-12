@@ -21,7 +21,7 @@ public:
 	Q_INVOKABLE QtRestClient::QmlRestClass *apiRootClass(const QString &name, QObject *parent = nullptr);
 	Q_INVOKABLE QtRestClient::QmlRestClass *createApiClass(const QString &name, const QString &path, QObject *parent = nullptr);
 
-	Q_INVOKABLE QmlPaging createPaging(QtRestClient::RestClient *client, const QVariantMap &data);
+	Q_INVOKABLE QtRestClient::QmlPaging createPaging(QtRestClient::RestClient *client, const QVariantMap &data);
 
 private:
 	QJSEngine *_engine;

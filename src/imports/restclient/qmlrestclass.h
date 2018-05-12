@@ -5,6 +5,7 @@
 #include <QtCore/QObject>
 #include <QtQml/QQmlParserStatus>
 #include <QtQml/QQmlListProperty>
+#include <QtQml/QJSValue>
 
 #include <QtRestClient/RestClass>
 
@@ -31,23 +32,28 @@ public:
 	void classBegin() override;
 	void componentComplete() override;
 
-	Q_INVOKABLE QtRestClient::RestReply *call(const QString &verb, const QVariant &postArg0 = {}, const QVariant &postArg1 = {}, const QVariant &postArg2 = {}, const QVariant &postArg3 = {});
-	Q_INVOKABLE QtRestClient::RestReply *call(const QVariantMap &body, const QString &verb, const QVariant &postArg0 = {}, const QVariant &postArg1 = {}, const QVariant &postArg2 = {});
-	Q_INVOKABLE QtRestClient::RestReply *call(const QVariantList &body, const QString &verb, const QVariant &postArg0 = {}, const QVariant &postArg1 = {}, const QVariant &postArg2 = {});
+	// [body,] [path,] [params, [asPost], [headers]]
+	Q_INVOKABLE QtRestClient::RestReply *call(const QString &verb,
+											  const QJSValue &optBody = {},
+											  const QJSValue &optPath = {},
+											  const QJSValue &optParams = {},
+											  const QJSValue &optAsPost = {},
+											  const QJSValue &optHeaders = {});
 
-	Q_INVOKABLE QtRestClient::RestReply *get(const QVariant &postArg0 = {}, const QVariant &postArg1 = {}, const QVariant &postArg2 = {});
+	// [path,] [params, [headers]]
+	Q_INVOKABLE QtRestClient::RestReply *get(const QJSValue &optPath = {}, const QJSValue &optParams = {}, const QJSValue &optHeaders = {});
 
-	Q_INVOKABLE QtRestClient::RestReply *post(const QVariant &postArg0 = {}, const QVariant &postArg1 = {}, const QVariant &postArg2 = {});
-	Q_INVOKABLE QtRestClient::RestReply *post(const QVariantMap &body, const QVariant &postArg0 = {}, const QVariant &postArg1 = {}, const QVariant &postArg2 = {});
-	Q_INVOKABLE QtRestClient::RestReply *post(const QVariantList &body, const QVariant &postArg0 = {}, const QVariant &postArg1 = {}, const QVariant &postArg2 = {});
+	// [body,] [path,] [params, [headers]]
+	Q_INVOKABLE QtRestClient::RestReply *post(const QJSValue &optBody = {}, const QJSValue &optPath = {}, const QJSValue &optParams = {}, const QJSValue &optHeaders = {});
 
-	Q_INVOKABLE QtRestClient::RestReply *put(const QVariantMap &body, const QVariant &postArg0 = {}, const QVariant &postArg1 = {}, const QVariant &postArg2 = {});
-	Q_INVOKABLE QtRestClient::RestReply *put(const QVariantList &body, const QVariant &postArg0 = {}, const QVariant &postArg1 = {}, const QVariant &postArg2 = {});
+	// body, [path,] [params, [headers]]
+	Q_INVOKABLE QtRestClient::RestReply *put(const QJSValue &body, const QJSValue &optPath = {}, const QJSValue &optParams = {}, const QJSValue &optHeaders = {});
 
-	Q_INVOKABLE QtRestClient::RestReply *deleteResource(const QVariant &postArg0 = {}, const QVariant &postArg1 = {}, const QVariant &postArg2 = {});
+	// [path,] [params, [headers]]
+	Q_INVOKABLE QtRestClient::RestReply *deleteResource(const QJSValue &optPath = {}, const QJSValue &optParams = {}, const QJSValue &optHeaders = {});
 
-	Q_INVOKABLE QtRestClient::RestReply *patch(const QVariantMap &body, const QVariant &postArg0 = {}, const QVariant &postArg1 = {}, const QVariant &postArg2 = {});
-	Q_INVOKABLE QtRestClient::RestReply *patch(const QVariantList &body, const QVariant &postArg0 = {}, const QVariant &postArg1 = {}, const QVariant &postArg2 = {});
+	// body, [path,] [params, [headers]]
+	Q_INVOKABLE QtRestClient::RestReply *patch(const QJSValue &body, const QJSValue &optPath = {}, const QJSValue &optParams = {}, const QJSValue &optHeaders = {});
 
 public Q_SLOTS:
 	void setPath(QString path);
@@ -65,10 +71,9 @@ private:
 	QList<QmlRestClass*> _childClasses;
 	bool _init = false;
 
-	// [path], [params, [asPost], [headers]]
-	std::tuple<QString, QVariantHash, HeaderHash, bool> extractParams(const QVariant &arg0, const QVariant &arg1, const QVariant &arg2, const QVariant &arg3 = {});
-	template <typename... Args>
-	RestReply *callImpl(const QByteArray &verb, const QString &path, Args... args);
+	// [body,] [path,] [params, [asPost], [headers]]
+	RestReply *callImpl(const QByteArray &verb, const QJSValue &arg0 = {}, const QJSValue &arg1 = {}, const QJSValue &arg2 = {}, const QJSValue &arg3 = {}, const QJSValue &arg4 = {});
+	RestReply *callImpl2(const QByteArray &verb, bool forcePost, const QJSValue &arg0 = {}, const QJSValue &arg1 = {}, const QJSValue &arg2 = {}, const QJSValue &arg3 = {}, const QJSValue &arg4 = {});
 };
 
 }

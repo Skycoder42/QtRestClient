@@ -96,12 +96,12 @@ void QmlPaging::iterate(const QJSValue &iterator, const QJSValue &failureHandler
 		qWarning() << "errorHandler parameter must be a function or undefined";
 		return;
 	}
-	if(from >= _paging->offset()) {
-		qWarning() << "from must be smaller then offset";
+	if(from < _paging->offset()) {
+		qWarning() << "from must be smaller then offset" << from << _paging->offset();
 		return;
 	}
 
-	auto index = internalIterate(iterator, to ,from);
+	auto index = internalIterate(iterator, from, to);
 	if(index < 0)
 		return;
 

@@ -4,12 +4,13 @@
 		 export="TEST_EXPORT"
 		 autoCreate="true"
 		 except="User*"
-		 globalName="localhost">
+		 globalName="localhost"
+		 qmlUri="de.skycoder42.qtrestclient.test 2.0">
 	<Include local="true">user.h</Include>
 	<Include local="true">api_posts.h</Include>
 	<Include local="true">testmacro.h</Include>
 
-	<BaseUrl apiVersion="1.0">http://localhost:45715</BaseUrl>
+	<BaseUrl apiVersion="1.0">http://localhost:38723</BaseUrl>
 	<Parameter key="limit" expr="true">QString::number(LIMIT)</Parameter>
 	<Header key="Secret" expr="true">APP_SECRET</Header>
 

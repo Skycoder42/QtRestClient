@@ -6,8 +6,7 @@
 
 CONFIG += qrestbuilder
 
-QT       += testlib qml
-
+QT       += testlib
 QT       -= gui
 
 TARGET = tst_restbuilder

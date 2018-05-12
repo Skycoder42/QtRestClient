@@ -291,6 +291,7 @@ void HttpConnection::reply()
 				doc = QJsonDocument(subValue.toArray()).toJson(QJsonDocument::Compact);
 		}
 
+		qDebug().noquote() << "OK[" << _verb <<  _path << "]:" << _content;
 		_socket->write("HTTP/1.1 200 OK\r\n");
 	} catch(QString &e) {
 		qWarning().noquote() << "SERVER-Error[" << _verb <<  _path << "]:" << e;

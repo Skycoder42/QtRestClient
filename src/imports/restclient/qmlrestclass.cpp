@@ -29,124 +29,34 @@ void QmlRestClass::componentComplete()
 	revaluateClass();
 }
 
-RestReply *QmlRestClass::call(const QString &verb, const QVariant &postArg0, const QVariant &postArg1, const QVariant &postArg2, const QVariant &postArg3)
+RestReply *QmlRestClass::call(const QString &verb, const QJSValue &arg0, const QJSValue &arg1, const QJSValue &arg2, const QJSValue &arg3, const QJSValue &arg4)
 {
-	QString path;
-	QVariantHash params;
-	HeaderHash headers;
-	bool asPostParams;
-	std::tie(path, params, headers, asPostParams) = extractParams(postArg0, postArg1, postArg2, postArg3);
-	return callImpl(verb.toUtf8(), path, params, headers, asPostParams);
+	return callImpl(verb.toUtf8(), arg0, arg1, arg2, arg3, arg4);
 }
 
-RestReply *QmlRestClass::call(const QVariantMap &body, const QString &verb, const QVariant &postArg0, const QVariant &postArg1, const QVariant &postArg2)
+RestReply *QmlRestClass::get(const QJSValue &arg0, const QJSValue &arg1, const QJSValue &arg2)
 {
-	QString path;
-	QVariantHash params;
-	HeaderHash headers;
-	bool asPostParams;
-	std::tie(path, params, headers, asPostParams) = extractParams(postArg0, postArg1, postArg2);
-	return callImpl(verb.toUtf8(), path, QJsonObject::fromVariantMap(body), params, headers);
+	return callImpl(RestClass::GetVerb, arg0, arg1, arg2);
 }
 
-RestReply *QmlRestClass::call(const QVariantList &body, const QString &verb, const QVariant &postArg0, const QVariant &postArg1, const QVariant &postArg2)
+RestReply *QmlRestClass::post(const QJSValue &arg0, const QJSValue &arg1, const QJSValue &arg2, const QJSValue &arg3)
 {
-	QString path;
-	QVariantHash params;
-	HeaderHash headers;
-	bool asPostParams;
-	std::tie(path, params, headers, asPostParams) = extractParams(postArg0, postArg1, postArg2);
-	return callImpl(verb.toUtf8(), path, QJsonArray::fromVariantList(body), params, headers);
+	return callImpl2(RestClass::PostVerb, true, arg0, arg1, arg2, arg3);
 }
 
-RestReply *QmlRestClass::get(const QVariant &postArg0, const QVariant &postArg1, const QVariant &postArg2)
+RestReply *QmlRestClass::put(const QJSValue &body, const QJSValue &arg0, const QJSValue &arg1, const QJSValue &arg2)
 {
-	QString path;
-	QVariantHash params;
-	HeaderHash headers;
-	bool asPostParams;
-	std::tie(path, params, headers, asPostParams) = extractParams(postArg0, postArg1, postArg2);
-	return callImpl(RestClass::GetVerb, path, params, headers);
+	return callImpl(RestClass::PutVerb, body, arg0, arg1, arg2);
 }
 
-RestReply *QmlRestClass::post(const QVariant &postArg0, const QVariant &postArg1, const QVariant &postArg2)
+RestReply *QmlRestClass::deleteResource(const QJSValue &arg0, const QJSValue &arg1, const QJSValue &arg2)
 {
-	QString path;
-	QVariantHash params;
-	HeaderHash headers;
-	bool asPostParams;
-	std::tie(path, params, headers, asPostParams) = extractParams(postArg0, postArg1, postArg2);
-	return callImpl(RestClass::PostVerb, path, params, headers, true);
+	return callImpl(RestClass::DeleteVerb, arg0, arg1, arg2);
 }
 
-RestReply *QmlRestClass::post(const QVariantMap &body, const QVariant &postArg0, const QVariant &postArg1, const QVariant &postArg2)
+RestReply *QmlRestClass::patch(const QJSValue &body, const QJSValue &arg0, const QJSValue &arg1, const QJSValue &arg2)
 {
-	QString path;
-	QVariantHash params;
-	HeaderHash headers;
-	bool asPostParams;
-	std::tie(path, params, headers, asPostParams) = extractParams(postArg0, postArg1, postArg2);
-	return callImpl(RestClass::PostVerb, path, QJsonObject::fromVariantMap(body), params, headers);
-}
-
-RestReply *QmlRestClass::post(const QVariantList &body, const QVariant &postArg0, const QVariant &postArg1, const QVariant &postArg2)
-{
-	QString path;
-	QVariantHash params;
-	HeaderHash headers;
-	bool asPostParams;
-	std::tie(path, params, headers, asPostParams) = extractParams(postArg0, postArg1, postArg2);
-	return callImpl(RestClass::PostVerb, path, QJsonArray::fromVariantList(body), params, headers);
-}
-
-RestReply *QmlRestClass::put(const QVariantMap &body, const QVariant &postArg0, const QVariant &postArg1, const QVariant &postArg2)
-{
-	QString path;
-	QVariantHash params;
-	HeaderHash headers;
-	bool asPostParams;
-	std::tie(path, params, headers, asPostParams) = extractParams(postArg0, postArg1, postArg2);
-	return callImpl(RestClass::PutVerb, path, QJsonObject::fromVariantMap(body), params, headers);
-}
-
-RestReply *QmlRestClass::put(const QVariantList &body, const QVariant &postArg0, const QVariant &postArg1, const QVariant &postArg2)
-{
-	QString path;
-	QVariantHash params;
-	HeaderHash headers;
-	bool asPostParams;
-	std::tie(path, params, headers, asPostParams) = extractParams(postArg0, postArg1, postArg2);
-	return callImpl(RestClass::PutVerb, path, QJsonArray::fromVariantList(body), params, headers);
-}
-
-RestReply *QmlRestClass::deleteResource(const QVariant &postArg0, const QVariant &postArg1, const QVariant &postArg2)
-{
-	QString path;
-	QVariantHash params;
-	HeaderHash headers;
-	bool asPostParams;
-	std::tie(path, params, headers, asPostParams) = extractParams(postArg0, postArg1, postArg2);
-	return callImpl(RestClass::DeleteVerb, path, params, headers);
-}
-
-RestReply *QmlRestClass::patch(const QVariantMap &body, const QVariant &postArg0, const QVariant &postArg1, const QVariant &postArg2)
-{
-	QString path;
-	QVariantHash params;
-	HeaderHash headers;
-	bool asPostParams;
-	std::tie(path, params, headers, asPostParams) = extractParams(postArg0, postArg1, postArg2);
-	return callImpl(RestClass::PatchVerb, path, QJsonObject::fromVariantMap(body), params, headers);
-}
-
-RestReply *QmlRestClass::patch(const QVariantList &body, const QVariant &postArg0, const QVariant &postArg1, const QVariant &postArg2)
-{
-	QString path;
-	QVariantHash params;
-	HeaderHash headers;
-	bool asPostParams;
-	std::tie(path, params, headers, asPostParams) = extractParams(postArg0, postArg1, postArg2);
-	return callImpl(RestClass::PatchVerb, path, QJsonArray::fromVariantList(body), params, headers);
+	return callImpl(RestClass::PatchVerb, body, arg0, arg1, arg2);
 }
 
 void QmlRestClass::setPath(QString path)
@@ -196,55 +106,74 @@ void QmlRestClass::revaluateClass()
 		emit restClassChanged(_class);
 }
 
-std::tuple<QString, QVariantHash, HeaderHash, bool> QmlRestClass::extractParams(const QVariant &arg0, const QVariant &arg1, const QVariant &arg2, const QVariant &arg3)
+RestReply *QmlRestClass::callImpl(const QByteArray &verb, const QJSValue &arg0, const QJSValue &arg1, const QJSValue &arg2, const QJSValue &arg3, const QJSValue &arg4)
 {
-	QString path;
-	QVariantHash params;
-	bool asPostParams = false;
-	HeaderHash headers;
-	auto offset = false;
-
-	if(arg0.type() == QVariant::String) {
-		path = arg0.toString();
-		offset = true;
-	}
-
-	const auto &p0 = offset ? arg1 : arg0;
-	const auto &p1 = offset ? arg2 : arg1;
-	const auto &p2 = offset ? arg3 : arg2;
-	offset = false;
-	if(p0.type() == QVariant::Map) {
-		params = p0.toHash();
-		if(p1.type() == QVariant::Bool) {
-			asPostParams = p1.toBool();
-			offset = true;
-		}
-
-		const auto &m1 = offset ? p2 : p1;
-		offset = false;
-		if(m1.type() == QVariant::Map) {
-			auto map = m1.toMap();
-			for(auto it = map.constBegin(); it != map.constEnd(); it++)
-				headers.insert(it.key().toUtf8(), it.value().toString().toUtf8());
-		}
-	}
-
-	return std::make_tuple(path, params, headers, asPostParams);
+	return callImpl2(verb, false, arg0, arg1, arg2, arg3, arg4);
 }
 
-template<typename... Args>
-RestReply *QmlRestClass::callImpl(const QByteArray &verb, const QString &path, Args... args)
+RestReply *QmlRestClass::callImpl2(const QByteArray &verb, bool forcePost, const QJSValue &arg0, const QJSValue &arg1, const QJSValue &arg2, const QJSValue &arg3, const QJSValue &arg4)
 {
 	if(!_class) {
 		qmlWarning(this) << "ERROR: Cannot run call without a proper initialization";
 		return nullptr;
 	}
 
-	QUrl pUrl(path);
-	if(pUrl.isValid())
-		return _class->callJson(verb, pUrl, args...);
-	else if(!path.isEmpty())
-		return _class->callJson(verb, path, args...);
+	QJsonValue body;
+	QString path;
+	QVariantHash params;
+	auto asPostParams = forcePost;
+	HeaderHash headers;
+	auto offset = false;
+
+	if(arg0.isArray() ||
+	   arg0.isObject()) {
+		body = QJsonValue::fromVariant(arg0.toVariant());
+		offset = true;
+	} else if(arg0.isUndefined())
+		offset = true;
+
+	const auto &b0 = offset ? arg1 : arg0;
+	const auto &b1 = offset ? arg2 : arg1;
+	const auto &b2 = offset ? arg3 : arg2;
+	const auto &b3 = offset ? arg4 : arg3;
+	offset = false;
+	if(b0.isString()) {
+		path = b0.toString();
+		offset = true;
+	}
+
+	const auto &p0 = offset ? b1 : b0;
+	const auto &p1 = offset ? b2 : b1;
+	const auto &p2 = offset ? b3 : b2;
+	offset = false;
+	if(p0.isObject()) {
+		params = p0.toVariant().toHash();
+		if(p1.isBool()) {
+			asPostParams = p1.toBool();
+			offset = true;
+		}
+
+		const auto &m1 = offset ? p2 : p1;
+		offset = false;
+		if(m1.isObject()) {
+			auto map = m1.toVariant().toMap();
+			for(auto it = map.constBegin(); it != map.constEnd(); it++)
+				headers.insert(it.key().toUtf8(), it.value().toString().toUtf8());
+		}
+	}
+
+	if(body.isObject()) {
+		if(!path.isEmpty())
+			return _class->callJson(verb, path, body.toObject(), params, headers);
+		else
+			return _class->callJson(verb, body.toObject(), params, headers);
+	} else if(body.isArray()) {
+		if(!path.isEmpty())
+			return _class->callJson(verb, path, body.toArray(), params, headers);
+		else
+			return _class->callJson(verb, body.toArray(), params, headers);
+	} else if(!path.isEmpty())
+		return _class->callJson(verb, path, params, headers, asPostParams);
 	else
-		return _class->callJson(verb, args...);
+		return _class->callJson(verb, params, headers, asPostParams);
 }

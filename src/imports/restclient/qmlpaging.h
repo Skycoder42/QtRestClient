@@ -24,6 +24,7 @@ class QmlPaging
 	Q_PROPERTY(QVariantMap properties READ properties CONSTANT)
 
 public:
+	QmlPaging() = default;
 	QmlPaging(IPaging *iPaging, RestClient *client, QJSEngine *engine);
 
 	static QmlPaging create(RestClient *client, QJSEngine *engine, const QJsonObject &obj);
@@ -49,13 +50,15 @@ public Q_SLOTS:
 				 int to = -1, int from = 0);
 
 private:
-	QJSEngine *_engine;
-	RestClient *_client;
+	QJSEngine *_engine = nullptr;
+	RestClient *_client = nullptr;
 	QSharedPointer<IPaging> _paging;
 
 	int internalIterate(QJSValue iterator, int from, int to) const;
 };
 
 }
+
+Q_DECLARE_METATYPE(QtRestClient::QmlPaging)
 
 #endif // QTRESTCLIENT_QMLPAGING_H

@@ -94,6 +94,8 @@ void ClassBuilder::readData()
 		{false, QStringLiteral("QtRestClient/RestClient")},
 		{false, QStringLiteral("QtRestClient/RestClass")}
 	};
+	if(hasQml() && isApi)
+		data.includes.append({false, QStringLiteral("QtQml/QQmlParserStatus")});
 
 	// read content
 	while(reader.readNextStartElement()) {
@@ -212,6 +214,8 @@ void ClassBuilder::generateClass()
 		writeQmlDeclaration();
 	if(hasNs())
 		header << "}\n\n";
+	if(hasQml())
+		header << "Q_DECLARE_METATYPE(" << nsName(QStringLiteral("Qml") + data.name, data.nspace) << ")\n\n";
 
 	//write source
 	writeClassBeginDefinition();
@@ -302,8 +306,10 @@ void ClassBuilder::writeClassBeginDefinition()
 		source << "#include <QtCore/QCoreApplication>\n"
 			   << "#include <QtCore/QTimer>\n";
 	}
-	if(hasQml())
-		source << "#include <QtQml/QQmlEngine>\n";
+	if(hasQml()) {
+		source << "#include <QtQml/QQmlEngine>\n"
+			   << "#include <QtQml/QQmlContext>\n";
+	}
 	source << "#include <QtCore/QPointer>\n"
 		   << "using namespace QtRestClient;\n";
 	if(hasNs())
@@ -537,7 +543,8 @@ void ClassBuilder::writeStartupCode()
 				   << uriPath << "\", " << uriVersion.majorVersion() << ", " << uriVersion.minorVersion()
 				   << ", \"" << data.name << "\");\n";
 		} else {
-			source << "\tqmlRegisterUncreatableType<Qml" << data.name << ">(\""
+			source << "\tqRegisterMetaType<Qml" << data.name << ">();\n"
+				   << "\tqmlRegisterUncreatableType<Qml" << data.name << ">(\""
 				   << uriPath << "\", " << uriVersion.majorVersion() << ", " << uriVersion.minorVersion()
 				   << ", \"" << data.name << "\", QStringLiteral(\"Q_GADGETs cannot be created from QML\"));\n";
 		}
@@ -594,9 +601,10 @@ void ClassBuilder::writeApiCreation()
 void ClassBuilder::writeQmlDeclaration()
 {
 	if(isApi) {
-		header << "class Qml" << data.name << " : public QObject\n"
+		header << "class Qml" << data.name << " : public QObject, public QQmlParserStatus\n"
 			   << "{\n"
-			   << "\tQ_OBJECT\n\n";
+			   << "\tQ_OBJECT\n"
+			   << "\tQ_INTERFACES(QQmlParserStatus)\n\n";
 	} else {
 		header << "class Qml" << data.name << "\n"
 			   << "{\n"
@@ -609,7 +617,9 @@ void ClassBuilder::writeQmlDeclaration()
 
 	if(isApi) {
 		header << "public:\n"
-			   << "\tQml" << data.name << "(QObject *parent = nullptr);\n\n";
+			   << "\tQml" << data.name << "(QObject *parent = nullptr);\n\n"
+			   << "\tvoid classBegin() override;\n"
+			   << "\tvoid componentComplete() override;\n\n";
 	} else {
 		header << "public:\n"
 			   << "\tQml" << data.name << "(" << data.name << "* instance = nullptr, void *engine = nullptr);\n\n";
@@ -639,8 +649,13 @@ void ClassBuilder::writeQmlDefinitions()
 		source << "\nQml" << data.name << "::Qml" << data.name << "(QObject *parent) :\n"
 			   << "\tQObject{parent},\n"
 			   << "\t_d{new " << data.name << "{this}},\n"
-			   << "\t_engine{qjsEngine(this)}\n"
+			   << "\t_engine{nullptr}\n"
 			   << "{\n"
+			   << "}\n"
+			   << "\nvoid Qml" << data.name << "::classBegin() {}\n"
+			   << "\nvoid Qml" << data.name << "::componentComplete()\n"
+			   << "{\n"
+			   << "\t_engine = QQmlEngine::contextForObject(this)->engine();\n"
 			   << "\tQ_ASSERT_X(_engine, Q_FUNC_INFO, \"Generated QML-APIs can only be created for a QML context with a JSEngine\");\n"
 			   << "}\n";
 	} else {

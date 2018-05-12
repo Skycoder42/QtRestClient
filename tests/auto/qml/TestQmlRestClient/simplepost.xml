@@ -3,7 +3,8 @@
 			export="TEST_EXPORT"
 			base="QtRestClient::Simple&lt;Post&gt;"
 			simpleHref="href"
-			namespace="TestSpace">
+			namespace="TestSpace"
+			qmlUri="de.skycoder42.qtrestclient.test 2.0">
 	<Include>QtRestClient/Simple</Include>
 	<Include local="true">post.h</Include>
 

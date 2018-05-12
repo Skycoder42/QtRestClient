@@ -28,6 +28,7 @@ void QtRestClientDeclarativeModule::registerTypes(const char *uri)
 	Q_ASSERT(qstrcmp(uri, "de.skycoder42.RestClient") == 0);
 
 	qRegisterMetaType<QtRestClient::QmlGenericRestReply*>();
+	qRegisterMetaType<QtRestClient::QmlPaging>();
 
 	//Version 1.3
 	qmlRegisterUncreatableType<QtRestClient::RestReply>(uri, 2, 0, "RestReply", QStringLiteral("RestReplies can only be returned from restclass methods"));

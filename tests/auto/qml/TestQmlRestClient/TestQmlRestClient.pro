@@ -1,9 +1,21 @@
 TEMPLATE = app
-TARGET = tst_qmlrestclient
+
 CONFIG += qmltestcase console
+QT += restclient
+
+TARGET = tst_qmlrestclient
+
+HEADERS += \
+	testmacro.h
+
 SOURCES += tst_qmlrestclient.cpp
 
-QT += restclient
+REST_API_FILES += \
+	user.xml \
+	post.xml \
+	api_posts.xml \
+	test_api.xml \
+	simplepost.xml
 
 importFiles.path = .
 DEPLOYMENT += importFiles
@@ -12,9 +24,9 @@ DISTFILES += \
 	tst_qmlrestclient.qml
 
 QML_IMPORT_PATH = $$OUT_PWD/../../../../qml/
-
 DEFINES += SRCDIR=\\\"$$_PRO_FILE_PWD_/\\\"
-
 DEFINES += QML_PATH=\\\"$$QML_IMPORT_PATH\\\"
 
-mac: QMAKE_LFLAGS += '-Wl,-rpath,\'$$OUT_PWD/../../../../lib\''
+
+LIB_PWD = $$OUT_PWD/../../restclient/testlib
+include(../../restclient/tests.pri)
