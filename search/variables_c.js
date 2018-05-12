@@ -1,11 +1,11 @@
 var searchData=
 [
-  ['maneuverdetails',['ManeuverDetails',['https://doc.qt.io/qt-5/qgeorouterequest.html#ManeuverDetail-enum',0,'QGeoRouteRequest']]],
-  ['mapped_5ftype',['mapped_type',['https://doc.qt.io/qt-5/qjsonobject.html#mapped_type-typedef',0,'QJsonObject::mapped_type()'],['https://doc.qt.io/qt-5/qhash.html#mapped_type-typedef',0,'QHash::mapped_type()'],['https://doc.qt.io/qt-5/qmap.html#mapped_type-typedef',0,'QMap::mapped_type()']]],
-  ['mappingfeatures',['MappingFeatures',['https://doc.qt.io/qt-5/qgeoserviceprovider.html#MappingFeature-enum',0,'QGeoServiceProvider']]],
-  ['matchflags',['MatchFlags',['https://doc.qt.io/qt-5/qt.html#MatchFlag-enum',0,'Qt']]],
-  ['matchoptions',['MatchOptions',['https://doc.qt.io/qt-5/qregularexpression.html#MatchOption-enum',0,'QRegularExpression']]],
-  ['modifyparametersfunction',['ModifyParametersFunction',['https://doc.qt.io/qt-5/qabstractoauth.html#ModifyParametersFunction-typedef',0,'QAbstractOAuth']]],
-  ['mousebuttons',['MouseButtons',['https://doc.qt.io/qt-5/qt.html#MouseButton-enum',0,'Qt']]],
-  ['mouseeventflags',['MouseEventFlags',['https://doc.qt.io/qt-5/qt.html#MouseEventFlag-enum',0,'Qt']]]
+  ['name',['name',['https://doc.qt.io/qt-5/struct_qt_auto_updater_1_1_updater_1_1_update_info.html#a28760ca994913fe3c19f34e0f4f25c21',0,'QtAutoUpdater::Updater::UpdateInfo']]],
+  ['namerole',['NameRole',['https://doc.qt.io/qt-5/class_qt_mvvm_1_1_account_model.html#a2a950cb7c009716d7d921a9e13c24913a5c7cc067b1f049895feb505226bd9116',0,'QtMvvm::AccountModel::NameRole()'],['https://doc.qt.io/qt-5/class_qt_mvvm_1_1_exchange_devices_model.html#a3d85b4374b3c15b81fa58909c5c55ca1a23e5e5ac750ef45ee9d36fdd7d476655',0,'QtMvvm::ExchangeDevicesModel::NameRole()']]],
+  ['no',['No',['https://doc.qt.io/qt-5/class_qt_mvvm_1_1_message_config.html#ad6b7b271e558619f15c5eb9a3cf78fb8a2569c0a5af31616640a0ef12eb2dc8ba',0,'QtMvvm::MessageConfig']]],
+  ['nobutton',['NoButton',['https://doc.qt.io/qt-5/class_qt_mvvm_1_1_message_config.html#ad6b7b271e558619f15c5eb9a3cf78fb8a83a48e3acfda22ae83280136ed2f6751',0,'QtMvvm::MessageConfig']]],
+  ['noextraproperties',['NoExtraProperties',['https://skycoder42.github.io/QJsonSerializer/class_q_json_serializer.html#a0fb6dc294c5f0c2279e1e60c8bf19b37ac8cb0e946f61b483209cb2484259bcf0',0,'QJsonSerializer']]],
+  ['notoall',['NoToAll',['https://doc.qt.io/qt-5/class_qt_mvvm_1_1_message_config.html#ad6b7b271e558619f15c5eb9a3cf78fb8a60df15a4d2e2767a238681299c7f41e0',0,'QtMvvm::MessageConfig']]],
+  ['numberflags',['NumberFlags',['https://doc.qt.io/qt-5/qtextstream.html#NumberFlag-enum',0,'QTextStream']]],
+  ['numberoptions',['NumberOptions',['https://doc.qt.io/qt-5/qlocale.html#NumberOption-enum',0,'QLocale']]]
 ];

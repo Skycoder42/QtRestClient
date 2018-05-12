@@ -1,4 +1,6 @@
 var searchData=
 [
-  ['simple_2eh',['simple.h',['../simple_8h.html',1,'']]]
+  ['injection_2eh',['injection.h',['https://doc.qt.io/qt-5/injection_8h.html',0,'']]],
+  ['ipresenter_2eh',['ipresenter.h',['https://doc.qt.io/qt-5/ipresenter_8h.html',0,'']]],
+  ['ipresentingview_2eh',['ipresentingview.h',['https://doc.qt.io/qt-5/ipresentingview_8h.html',0,'']]]
 ];

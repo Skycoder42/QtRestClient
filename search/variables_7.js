@@ -1,8 +1,7 @@
 var searchData=
 [
-  ['geocodingfeatures',['GeocodingFeatures',['https://doc.qt.io/qt-5/qgeoserviceprovider.html#GeocodingFeature-enum',0,'QGeoServiceProvider']]],
-  ['gestureflags',['GestureFlags',['https://doc.qt.io/qt-5/qt.html#GestureFlag-enum',0,'Qt']]],
-  ['getverb',['GetVerb',['../class_qt_rest_client_1_1_rest_class.html#af1dd025be5f29709cdb02ab4a4da095a',1,'QtRestClient::RestClass']]],
-  ['glyphrunflags',['GlyphRunFlags',['https://doc.qt.io/qt-5/qglyphrun.html#GlyphRunFlag-enum',0,'QGlyphRun']]],
-  ['graphicsitemflags',['GraphicsItemFlags',['https://doc.qt.io/qt-5/qgraphicsitem.html#GraphicsItemFlag-enum',0,'QGraphicsItem']]]
+  ['handle',['HANDLE',['https://doc.qt.io/qt-5/qt.html#HANDLE-typedef',0,'Qt']]],
+  ['headverb',['HeadVerb',['../class_qt_rest_client_1_1_rest_class.html#a79b63f85adb9996cc6d7224cd41874d0',1,'QtRestClient::RestClass']]],
+  ['help',['Help',['https://doc.qt.io/qt-5/class_qt_mvvm_1_1_message_config.html#ad6b7b271e558619f15c5eb9a3cf78fb8aa1362e119234f738732ba9abd3899f65',0,'QtMvvm::MessageConfig']]],
+  ['hostrole',['HostRole',['https://doc.qt.io/qt-5/class_qt_mvvm_1_1_exchange_devices_model.html#a3d85b4374b3c15b81fa58909c5c55ca1a95ac77a37fa847d96dbbdbbf7fa30995',0,'QtMvvm::ExchangeDevicesModel']]]
 ];

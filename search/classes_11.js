@@ -6,8 +6,6 @@ var searchData=
   ['texturedpoint2d',['TexturedPoint2D',['https://doc.qt.io/qt-5/qsggeometry-texturedpoint2d.html',0,'QSGGeometry']]],
   ['timerinfo',['TimerInfo',['https://doc.qt.io/qt-5/qabstracteventdispatcher-timerinfo.html',0,'QAbstractEventDispatcher']]],
   ['timestamp',['TimeStamp',['https://doc.qt.io/qt-5/qcanbusframe-timestamp.html',0,'QCanBusFrame']]],
-  ['touchpoint',['TouchPoint',['https://doc.qt.io/qt-5/qtouchevent-touchpoint.html',0,'QTouchEvent']]],
-  ['type_5fhelper',['type_helper',['https://skycoder42.github.io/QJsonSerializer/struct__qjsonserializer__helpertypes_1_1type__helper.html',0,'_qjsonserializer_helpertypes']]],
-  ['type_5fhelper_3c_20qlist_3c_20t_20_3e_20_3e',['type_helper&lt; QList&lt; T &gt; &gt;',['https://skycoder42.github.io/QJsonSerializer/struct__qjsonserializer__helpertypes_1_1type__helper_3_01_q_list_3_01_t_01_4_01_4.html',0,'_qjsonserializer_helpertypes']]],
-  ['type_5fhelper_3c_20qvariant_20_3e',['type_helper&lt; QVariant &gt;',['https://skycoder42.github.io/QJsonSerializer/struct__qjsonserializer__helpertypes_1_1type__helper_3_01_q_variant_01_4.html',0,'_qjsonserializer_helpertypes']]]
+  ['toolbarlabel',['ToolBarLabel',['https://doc.qt.io/qt-5/class_tool_bar_label.html',0,'']]],
+  ['touchpoint',['TouchPoint',['https://doc.qt.io/qt-5/qtouchevent-touchpoint.html',0,'QTouchEvent']]]
 ];

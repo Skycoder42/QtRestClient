@@ -31,6 +31,60 @@
     </member>
   </compound>
   <compound kind="class">
+    <name>de::skycoder42::QtRestClient::GenericRestReply</name>
+    <filename>classde_1_1skycoder42_1_1_qt_rest_client_1_1_generic_rest_reply.html</filename>
+    <base>QtQml.QtObject</base>
+    <member kind="slot">
+      <type>void</type>
+      <name>addCompletedHandler</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_generic_rest_reply.html</anchorfile>
+      <anchor>a53e0014bf33f77623c37948ebc1431ec</anchor>
+      <arglist>(const QJSValue &amp;completedHandler)</arglist>
+    </member>
+    <member kind="slot">
+      <type>void</type>
+      <name>addSucceededHandler</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_generic_rest_reply.html</anchorfile>
+      <anchor>ad3a30d28c3c4623c12dfdcafd93bc708</anchor>
+      <arglist>(const QJSValue &amp;succeededHandler)</arglist>
+    </member>
+    <member kind="slot">
+      <type>void</type>
+      <name>addFailedHandler</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_generic_rest_reply.html</anchorfile>
+      <anchor>aaf0f58efac9abd422f148e1156a13886</anchor>
+      <arglist>(const QJSValue &amp;failedHandler)</arglist>
+    </member>
+    <member kind="slot">
+      <type>void</type>
+      <name>addErrorHandler</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_generic_rest_reply.html</anchorfile>
+      <anchor>a3f582bc9348a6407926dc6a639481248</anchor>
+      <arglist>(const QJSValue &amp;errorHandler)</arglist>
+    </member>
+    <member kind="property">
+      <type>QtRestClient::RestReply</type>
+      <name>reply</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_generic_rest_reply.html</anchorfile>
+      <anchor>a1b7854b298bb8292eeb0f5def379c599</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="property">
+      <type>QString</type>
+      <name>returnType</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_generic_rest_reply.html</anchorfile>
+      <anchor>a3545e0a655f9c899f5986043d6a9eb4f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="property">
+      <type>QString</type>
+      <name>errorType</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_generic_rest_reply.html</anchorfile>
+      <anchor>a88c5fecf837284349143914af70e4aa0</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="class">
     <name>QtRestClient::GenericRestReply</name>
     <filename>class_qt_rest_client_1_1_generic_rest_reply.html</filename>
     <templarg>DataClassType</templarg>
@@ -47,43 +101,78 @@
       <type>GenericRestReply&lt; DataClassType, ErrorClassType &gt; *</type>
       <name>onSucceeded</name>
       <anchorfile>class_qt_rest_client_1_1_generic_rest_reply.html</anchorfile>
-      <anchor>ac0177fff053c501b412279a841e11090</anchor>
-      <arglist>(std::function&lt; void(int, DataClassType)&gt; handler)</arglist>
+      <anchor>a82f49c9ae519cfeef3d9d057cbbb9aba</anchor>
+      <arglist>(const std::function&lt; void(int, DataClassType)&gt; &amp;handler)</arglist>
+    </member>
+    <member kind="function">
+      <type>GenericRestReply&lt; DataClassType, ErrorClassType &gt; *</type>
+      <name>onSucceeded</name>
+      <anchorfile>class_qt_rest_client_1_1_generic_rest_reply.html</anchorfile>
+      <anchor>ac20f8ce03bfdd803cd356812fd65f1b8</anchor>
+      <arglist>(QObject *scope, const std::function&lt; void(int, DataClassType)&gt; &amp;handler)</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DataClassType, ErrorClassType &gt; *</type>
       <name>onFailed</name>
       <anchorfile>class_qt_rest_client_1_1_generic_rest_reply.html</anchorfile>
-      <anchor>a938d36139c356c339b59ab4fd9864c47</anchor>
-      <arglist>(std::function&lt; void(int, ErrorClassType)&gt; handler)</arglist>
+      <anchor>ae6978396e4ec945722ed1881d5c35fd7</anchor>
+      <arglist>(const std::function&lt; void(int, ErrorClassType)&gt; &amp;handler)</arglist>
+    </member>
+    <member kind="function">
+      <type>GenericRestReply&lt; DataClassType, ErrorClassType &gt; *</type>
+      <name>onFailed</name>
+      <anchorfile>class_qt_rest_client_1_1_generic_rest_reply.html</anchorfile>
+      <anchor>a9e7cecc9fcceeaf1bf512193ccbf81e8</anchor>
+      <arglist>(QObject *scope, const std::function&lt; void(int, ErrorClassType)&gt; &amp;handler)</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DataClassType, ErrorClassType &gt; *</type>
       <name>onSerializeException</name>
       <anchorfile>class_qt_rest_client_1_1_generic_rest_reply.html</anchorfile>
-      <anchor>afd7ec2132fd723937af2de3960b37f37</anchor>
-      <arglist>(std::function&lt; void(QJsonSerializerException &amp;)&gt; handler)</arglist>
+      <anchor>a28e900c36454d3678333e89f9bf9b099</anchor>
+      <arglist>(std::function&lt; void(QJsonSerializerException &amp;)&gt;handler)</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DataClassType, ErrorClassType &gt; *</type>
       <name>onAllErrors</name>
       <anchorfile>class_qt_rest_client_1_1_generic_rest_reply.html</anchorfile>
-      <anchor>a09d36a6445201809a46f027a2c1e5f61</anchor>
-      <arglist>(std::function&lt; void(QString, int, ErrorType)&gt; handler, std::function&lt; QString(ErrorClassType, int)&gt; failureTransformer={})</arglist>
+      <anchor>ad897de97c81fe2214b6e37b37ee1be5a</anchor>
+      <arglist>(const std::function&lt; void(QString, int, ErrorType)&gt; &amp;handler, const std::function&lt; QString(ErrorClassType, int)&gt; &amp;failureTransformer={})</arglist>
+    </member>
+    <member kind="function">
+      <type>GenericRestReply&lt; DataClassType, ErrorClassType &gt; *</type>
+      <name>onAllErrors</name>
+      <anchorfile>class_qt_rest_client_1_1_generic_rest_reply.html</anchorfile>
+      <anchor>a84ea5a3066dc6653a92ab6e04a7a49e0</anchor>
+      <arglist>(QObject *scope, const std::function&lt; void(QString, int, ErrorType)&gt; &amp;handler, const std::function&lt; QString(ErrorClassType, int)&gt; &amp;failureTransformer={})</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DataClassType, ErrorClassType &gt; *</type>
       <name>onCompleted</name>
       <anchorfile>class_qt_rest_client_1_1_generic_rest_reply.html</anchorfile>
-      <anchor>a3f96431576638adcc846903be42c2afc</anchor>
-      <arglist>(std::function&lt; void(int)&gt; handler)</arglist>
+      <anchor>a6af344517dec6a4c4da0f5d47fb6183e</anchor>
+      <arglist>(const std::function&lt; void(int)&gt; &amp;handler)</arglist>
+    </member>
+    <member kind="function">
+      <type>GenericRestReply&lt; DataClassType, ErrorClassType &gt; *</type>
+      <name>onCompleted</name>
+      <anchorfile>class_qt_rest_client_1_1_generic_rest_reply.html</anchorfile>
+      <anchor>ae37c96563061e9d048f5415bbe334cd9</anchor>
+      <arglist>(QObject *scope, const std::function&lt; void(int)&gt; &amp;handler)</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DataClassType, ErrorClassType &gt; *</type>
       <name>onError</name>
       <anchorfile>class_qt_rest_client_1_1_generic_rest_reply.html</anchorfile>
-      <anchor>a4c76382ff36551b4de9fa085b90f36eb</anchor>
-      <arglist>(std::function&lt; void(QString, int, ErrorType)&gt; handler)</arglist>
+      <anchor>adb8b7fff3106773b9ce120b8ad24e442</anchor>
+      <arglist>(const std::function&lt; void(QString, int, ErrorType)&gt; &amp;handler)</arglist>
+    </member>
+    <member kind="function">
+      <type>GenericRestReply&lt; DataClassType, ErrorClassType &gt; *</type>
+      <name>onError</name>
+      <anchorfile>class_qt_rest_client_1_1_generic_rest_reply.html</anchorfile>
+      <anchor>a4163818cbae3b300c0873a8671ee84b1</anchor>
+      <arglist>(QObject *scope, const std::function&lt; void(QString, int, ErrorType)&gt; &amp;handler)</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DataClassType, ErrorClassType &gt; *</type>
@@ -110,50 +199,92 @@
       <type>GenericRestReply&lt; Paging&lt; DataClassType &gt;, ErrorClassType &gt; *</type>
       <name>onSucceeded</name>
       <anchorfile>class_qt_rest_client_1_1_generic_rest_reply_3_01_paging_3_01_data_class_type_01_4_00_01_error_class_type_01_4.html</anchorfile>
-      <anchor>a232dd25afa8359ffe1a9e160c24b8021</anchor>
-      <arglist>(std::function&lt; void(int, Paging&lt; DataClassType &gt;)&gt; handler)</arglist>
+      <anchor>a6208afb5f36cc0954b8e12a334cef5cd</anchor>
+      <arglist>(const std::function&lt; void(int, Paging&lt; DataClassType &gt;)&gt; &amp;handler)</arglist>
+    </member>
+    <member kind="function">
+      <type>GenericRestReply&lt; Paging&lt; DataClassType &gt;, ErrorClassType &gt; *</type>
+      <name>onSucceeded</name>
+      <anchorfile>class_qt_rest_client_1_1_generic_rest_reply_3_01_paging_3_01_data_class_type_01_4_00_01_error_class_type_01_4.html</anchorfile>
+      <anchor>a36e56d69798ef238433ba8fb56424ec2</anchor>
+      <arglist>(QObject *scope, const std::function&lt; void(int, Paging&lt; DataClassType &gt;)&gt; &amp;handler)</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; Paging&lt; DataClassType &gt;, ErrorClassType &gt; *</type>
       <name>onFailed</name>
       <anchorfile>class_qt_rest_client_1_1_generic_rest_reply_3_01_paging_3_01_data_class_type_01_4_00_01_error_class_type_01_4.html</anchorfile>
-      <anchor>ac75df365667a2329f5289a99c9b1bc75</anchor>
-      <arglist>(std::function&lt; void(int, ErrorClassType)&gt; handler)</arglist>
+      <anchor>a85031fd5e768209ead5872e15a391d84</anchor>
+      <arglist>(const std::function&lt; void(int, ErrorClassType)&gt; &amp;handler)</arglist>
+    </member>
+    <member kind="function">
+      <type>GenericRestReply&lt; Paging&lt; DataClassType &gt;, ErrorClassType &gt; *</type>
+      <name>onFailed</name>
+      <anchorfile>class_qt_rest_client_1_1_generic_rest_reply_3_01_paging_3_01_data_class_type_01_4_00_01_error_class_type_01_4.html</anchorfile>
+      <anchor>a4d7fae6a5fce7efb1804d16dfd98da29</anchor>
+      <arglist>(QObject *scope, const std::function&lt; void(int, ErrorClassType)&gt; &amp;handler)</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; Paging&lt; DataClassType &gt;, ErrorClassType &gt; *</type>
       <name>onSerializeException</name>
       <anchorfile>class_qt_rest_client_1_1_generic_rest_reply_3_01_paging_3_01_data_class_type_01_4_00_01_error_class_type_01_4.html</anchorfile>
-      <anchor>adce4896fa28636807f294018cb427dbf</anchor>
-      <arglist>(std::function&lt; void(QJsonSerializerException &amp;)&gt; handler)</arglist>
+      <anchor>aff3b5785befeea47f68637fbd17dcf3f</anchor>
+      <arglist>(std::function&lt; void(QJsonSerializerException &amp;)&gt;handler)</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; Paging&lt; DataClassType &gt;, ErrorClassType &gt; *</type>
       <name>onAllErrors</name>
       <anchorfile>class_qt_rest_client_1_1_generic_rest_reply_3_01_paging_3_01_data_class_type_01_4_00_01_error_class_type_01_4.html</anchorfile>
-      <anchor>a1980105fa296594b3718eda3c37ab927</anchor>
-      <arglist>(std::function&lt; void(QString, int, ErrorType)&gt; handler, std::function&lt; QString(ErrorClassType, int)&gt; failureTransformer={})</arglist>
+      <anchor>a54e28b944e57a7c2d3d2c01bcbfbe03f</anchor>
+      <arglist>(const std::function&lt; void(QString, int, ErrorType)&gt; &amp;handler, const std::function&lt; QString(ErrorClassType, int)&gt; &amp;failureTransformer={})</arglist>
+    </member>
+    <member kind="function">
+      <type>GenericRestReply&lt; Paging&lt; DataClassType &gt;, ErrorClassType &gt; *</type>
+      <name>onAllErrors</name>
+      <anchorfile>class_qt_rest_client_1_1_generic_rest_reply_3_01_paging_3_01_data_class_type_01_4_00_01_error_class_type_01_4.html</anchorfile>
+      <anchor>a9c836e4e9a450974a422c9d2f3f40507</anchor>
+      <arglist>(QObject *scope, const std::function&lt; void(QString, int, ErrorType)&gt; &amp;handler, const std::function&lt; QString(ErrorClassType, int)&gt; &amp;failureTransformer={})</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; Paging&lt; DataClassType &gt;, ErrorClassType &gt; *</type>
       <name>iterate</name>
       <anchorfile>class_qt_rest_client_1_1_generic_rest_reply_3_01_paging_3_01_data_class_type_01_4_00_01_error_class_type_01_4.html</anchorfile>
-      <anchor>ad7634a614de3c8d776bfe68a9200eaf1</anchor>
-      <arglist>(std::function&lt; bool(DataClassType, int)&gt; iterator, int to=-1, int from=0)</arglist>
+      <anchor>a9e30288f43ce462cf99528122fd367aa</anchor>
+      <arglist>(const std::function&lt; bool(DataClassType, int)&gt; &amp;iterator, int to=-1, int from=0)</arglist>
+    </member>
+    <member kind="function">
+      <type>GenericRestReply&lt; Paging&lt; DataClassType &gt;, ErrorClassType &gt; *</type>
+      <name>iterate</name>
+      <anchorfile>class_qt_rest_client_1_1_generic_rest_reply_3_01_paging_3_01_data_class_type_01_4_00_01_error_class_type_01_4.html</anchorfile>
+      <anchor>ab54750b167f7b67847937638264e96ac</anchor>
+      <arglist>(QObject *scope, const std::function&lt; bool(DataClassType, int)&gt; &amp;iterator, int to=-1, int from=0)</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; Paging&lt; DataClassType &gt;, ErrorClassType &gt; *</type>
       <name>onCompleted</name>
       <anchorfile>class_qt_rest_client_1_1_generic_rest_reply_3_01_paging_3_01_data_class_type_01_4_00_01_error_class_type_01_4.html</anchorfile>
-      <anchor>a6f146a7e41b9d08c84f1ed0825d04c93</anchor>
-      <arglist>(std::function&lt; void(int)&gt; handler)</arglist>
+      <anchor>af5f55a2f2cab109fe56a55518d8cb0c0</anchor>
+      <arglist>(const std::function&lt; void(int)&gt; &amp;handler)</arglist>
+    </member>
+    <member kind="function">
+      <type>GenericRestReply&lt; Paging&lt; DataClassType &gt;, ErrorClassType &gt; *</type>
+      <name>onCompleted</name>
+      <anchorfile>class_qt_rest_client_1_1_generic_rest_reply_3_01_paging_3_01_data_class_type_01_4_00_01_error_class_type_01_4.html</anchorfile>
+      <anchor>a1ebbd5d2d6b9298e9a276e003cef0201</anchor>
+      <arglist>(QObject *scope, const std::function&lt; void(int)&gt; &amp;handler)</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; Paging&lt; DataClassType &gt;, ErrorClassType &gt; *</type>
       <name>onError</name>
       <anchorfile>class_qt_rest_client_1_1_generic_rest_reply_3_01_paging_3_01_data_class_type_01_4_00_01_error_class_type_01_4.html</anchorfile>
-      <anchor>afd36b989029c687c0ef9af89b69be793</anchor>
-      <arglist>(std::function&lt; void(QString, int, ErrorType)&gt; handler)</arglist>
+      <anchor>af37b528316852daad33f3657dbf77a46</anchor>
+      <arglist>(const std::function&lt; void(QString, int, ErrorType)&gt; &amp;handler)</arglist>
+    </member>
+    <member kind="function">
+      <type>GenericRestReply&lt; Paging&lt; DataClassType &gt;, ErrorClassType &gt; *</type>
+      <name>onError</name>
+      <anchorfile>class_qt_rest_client_1_1_generic_rest_reply_3_01_paging_3_01_data_class_type_01_4_00_01_error_class_type_01_4.html</anchorfile>
+      <anchor>a99fa152bb0f2d3af4fc42614378c609b</anchor>
+      <arglist>(QObject *scope, const std::function&lt; void(QString, int, ErrorType)&gt; &amp;handler)</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; Paging&lt; DataClassType &gt;, ErrorClassType &gt; *</type>
@@ -180,43 +311,78 @@
       <type>GenericRestReply&lt; QList&lt; DataClassType &gt;, ErrorClassType &gt; *</type>
       <name>onSucceeded</name>
       <anchorfile>class_qt_rest_client_1_1_generic_rest_reply_3_01_q_list_3_01_data_class_type_01_4_00_01_error_class_type_01_4.html</anchorfile>
-      <anchor>a7baf30a67d5fcf26b2f22ddf619b88cb</anchor>
-      <arglist>(std::function&lt; void(int, QList&lt; DataClassType &gt;)&gt; handler)</arglist>
+      <anchor>a03dff892560bfc6241315b74539b868b</anchor>
+      <arglist>(const std::function&lt; void(int, QList&lt; DataClassType &gt;)&gt; &amp;handler)</arglist>
+    </member>
+    <member kind="function">
+      <type>GenericRestReply&lt; QList&lt; DataClassType &gt;, ErrorClassType &gt; *</type>
+      <name>onSucceeded</name>
+      <anchorfile>class_qt_rest_client_1_1_generic_rest_reply_3_01_q_list_3_01_data_class_type_01_4_00_01_error_class_type_01_4.html</anchorfile>
+      <anchor>a44e877824415a42c1a626015a9f7a4c5</anchor>
+      <arglist>(QObject *scope, const std::function&lt; void(int, QList&lt; DataClassType &gt;)&gt; &amp;handler)</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; QList&lt; DataClassType &gt;, ErrorClassType &gt; *</type>
       <name>onFailed</name>
       <anchorfile>class_qt_rest_client_1_1_generic_rest_reply_3_01_q_list_3_01_data_class_type_01_4_00_01_error_class_type_01_4.html</anchorfile>
-      <anchor>aef12453b941fb13403e6091932f7a720</anchor>
-      <arglist>(std::function&lt; void(int, ErrorClassType)&gt; handler)</arglist>
+      <anchor>a2afe73245512ce4f9ae4db9bdcc5f4ca</anchor>
+      <arglist>(const std::function&lt; void(int, ErrorClassType)&gt; &amp;handler)</arglist>
+    </member>
+    <member kind="function">
+      <type>GenericRestReply&lt; QList&lt; DataClassType &gt;, ErrorClassType &gt; *</type>
+      <name>onFailed</name>
+      <anchorfile>class_qt_rest_client_1_1_generic_rest_reply_3_01_q_list_3_01_data_class_type_01_4_00_01_error_class_type_01_4.html</anchorfile>
+      <anchor>af1a4b9ca37142a2efe122afbe0627712</anchor>
+      <arglist>(QObject *scope, const std::function&lt; void(int, ErrorClassType)&gt; &amp;handler)</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; QList&lt; DataClassType &gt;, ErrorClassType &gt; *</type>
       <name>onSerializeException</name>
       <anchorfile>class_qt_rest_client_1_1_generic_rest_reply_3_01_q_list_3_01_data_class_type_01_4_00_01_error_class_type_01_4.html</anchorfile>
-      <anchor>acae6ea6dfaec2cef330b403d58aa7555</anchor>
-      <arglist>(std::function&lt; void(QJsonSerializerException &amp;)&gt; handler)</arglist>
+      <anchor>ad945c9b3b6a15c5ac85d5b9eab014435</anchor>
+      <arglist>(std::function&lt; void(QJsonSerializerException &amp;)&gt;handler)</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; QList&lt; DataClassType &gt;, ErrorClassType &gt; *</type>
       <name>onAllErrors</name>
       <anchorfile>class_qt_rest_client_1_1_generic_rest_reply_3_01_q_list_3_01_data_class_type_01_4_00_01_error_class_type_01_4.html</anchorfile>
-      <anchor>a28f2d636814119dd46b74639ff5be741</anchor>
-      <arglist>(std::function&lt; void(QString, int, ErrorType)&gt; handler, std::function&lt; QString(ErrorClassType, int)&gt; failureTransformer={})</arglist>
+      <anchor>a703a15e7c5ae80c80d67e6264302bf15</anchor>
+      <arglist>(const std::function&lt; void(QString, int, ErrorType)&gt; &amp;handler, const std::function&lt; QString(ErrorClassType, int)&gt; &amp;failureTransformer={})</arglist>
+    </member>
+    <member kind="function">
+      <type>GenericRestReply&lt; QList&lt; DataClassType &gt;, ErrorClassType &gt; *</type>
+      <name>onAllErrors</name>
+      <anchorfile>class_qt_rest_client_1_1_generic_rest_reply_3_01_q_list_3_01_data_class_type_01_4_00_01_error_class_type_01_4.html</anchorfile>
+      <anchor>a55f6d3f389d1810644c61c7bffb556b4</anchor>
+      <arglist>(QObject *scope, const std::function&lt; void(QString, int, ErrorType)&gt; &amp;handler, const std::function&lt; QString(ErrorClassType, int)&gt; &amp;failureTransformer={})</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; QList&lt; DataClassType &gt;, ErrorClassType &gt; *</type>
       <name>onCompleted</name>
       <anchorfile>class_qt_rest_client_1_1_generic_rest_reply_3_01_q_list_3_01_data_class_type_01_4_00_01_error_class_type_01_4.html</anchorfile>
-      <anchor>a4b71382c7a67a6f99ccee1354af52124</anchor>
-      <arglist>(std::function&lt; void(int)&gt; handler)</arglist>
+      <anchor>ada3cee32cbd92e8b7958645c16cb024f</anchor>
+      <arglist>(const std::function&lt; void(int)&gt; &amp;handler)</arglist>
+    </member>
+    <member kind="function">
+      <type>GenericRestReply&lt; QList&lt; DataClassType &gt;, ErrorClassType &gt; *</type>
+      <name>onCompleted</name>
+      <anchorfile>class_qt_rest_client_1_1_generic_rest_reply_3_01_q_list_3_01_data_class_type_01_4_00_01_error_class_type_01_4.html</anchorfile>
+      <anchor>a00c154cea5c7f6fccfbfa0e8701daebe</anchor>
+      <arglist>(QObject *scope, const std::function&lt; void(int)&gt; &amp;handler)</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; QList&lt; DataClassType &gt;, ErrorClassType &gt; *</type>
       <name>onError</name>
       <anchorfile>class_qt_rest_client_1_1_generic_rest_reply_3_01_q_list_3_01_data_class_type_01_4_00_01_error_class_type_01_4.html</anchorfile>
-      <anchor>a708be183e3dc31fe1a264c24c39e29e0</anchor>
-      <arglist>(std::function&lt; void(QString, int, ErrorType)&gt; handler)</arglist>
+      <anchor>a7d2e53ea2a959ca441a2af1333a97b9a</anchor>
+      <arglist>(const std::function&lt; void(QString, int, ErrorType)&gt; &amp;handler)</arglist>
+    </member>
+    <member kind="function">
+      <type>GenericRestReply&lt; QList&lt; DataClassType &gt;, ErrorClassType &gt; *</type>
+      <name>onError</name>
+      <anchorfile>class_qt_rest_client_1_1_generic_rest_reply_3_01_q_list_3_01_data_class_type_01_4_00_01_error_class_type_01_4.html</anchorfile>
+      <anchor>ac505cc6adc258e492a3970d308e8b15f</anchor>
+      <arglist>(QObject *scope, const std::function&lt; void(QString, int, ErrorType)&gt; &amp;handler)</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; QList&lt; DataClassType &gt;, ErrorClassType &gt; *</type>
@@ -242,43 +408,78 @@
       <type>GenericRestReply&lt; void, ErrorClassType &gt; *</type>
       <name>onSucceeded</name>
       <anchorfile>class_qt_rest_client_1_1_generic_rest_reply_3_01void_00_01_error_class_type_01_4.html</anchorfile>
-      <anchor>af6147815f08ebbb434d1bd367dc02dd1</anchor>
-      <arglist>(std::function&lt; void(int)&gt; handler)</arglist>
+      <anchor>a2ccb3407d2b25d6567a5fb7d3a6bac1f</anchor>
+      <arglist>(const std::function&lt; void(int)&gt; &amp;handler)</arglist>
+    </member>
+    <member kind="function">
+      <type>GenericRestReply&lt; void, ErrorClassType &gt; *</type>
+      <name>onSucceeded</name>
+      <anchorfile>class_qt_rest_client_1_1_generic_rest_reply_3_01void_00_01_error_class_type_01_4.html</anchorfile>
+      <anchor>a21306baec3d8e9781466e005432eee61</anchor>
+      <arglist>(QObject *scope, const std::function&lt; void(int)&gt; &amp;handler)</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; void, ErrorClassType &gt; *</type>
       <name>onFailed</name>
       <anchorfile>class_qt_rest_client_1_1_generic_rest_reply_3_01void_00_01_error_class_type_01_4.html</anchorfile>
-      <anchor>a13673bc8b23cfa7acd8b6abd01e0d5e1</anchor>
-      <arglist>(std::function&lt; void(int, ErrorClassType)&gt; handler)</arglist>
+      <anchor>aafed2c627a73a27e375527d75c74b3ad</anchor>
+      <arglist>(const std::function&lt; void(int, ErrorClassType)&gt; &amp;handler)</arglist>
+    </member>
+    <member kind="function">
+      <type>GenericRestReply&lt; void, ErrorClassType &gt; *</type>
+      <name>onFailed</name>
+      <anchorfile>class_qt_rest_client_1_1_generic_rest_reply_3_01void_00_01_error_class_type_01_4.html</anchorfile>
+      <anchor>a70acea2ae4ca281e31c81f17c067859f</anchor>
+      <arglist>(QObject *scope, const std::function&lt; void(int, ErrorClassType)&gt; &amp;handler)</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; void, ErrorClassType &gt; *</type>
       <name>onSerializeException</name>
       <anchorfile>class_qt_rest_client_1_1_generic_rest_reply_3_01void_00_01_error_class_type_01_4.html</anchorfile>
-      <anchor>ab0259694abeae0105b7edbd923694aee</anchor>
-      <arglist>(std::function&lt; void(QJsonSerializerException &amp;)&gt; handler)</arglist>
+      <anchor>ad00622950977493e54cc0e048caf4445</anchor>
+      <arglist>(std::function&lt; void(QJsonSerializerException &amp;)&gt;handler)</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; void, ErrorClassType &gt; *</type>
       <name>onAllErrors</name>
       <anchorfile>class_qt_rest_client_1_1_generic_rest_reply_3_01void_00_01_error_class_type_01_4.html</anchorfile>
-      <anchor>a6f20d43d645bf0a7f6c3c7cb0edc27c7</anchor>
-      <arglist>(std::function&lt; void(QString, int, ErrorType)&gt; handler, std::function&lt; QString(ErrorClassType, int)&gt; failureTransformer={})</arglist>
+      <anchor>af7e07bdcb1c7483d8065e4d8bed29b83</anchor>
+      <arglist>(const std::function&lt; void(QString, int, ErrorType)&gt; &amp;handler, const std::function&lt; QString(ErrorClassType, int)&gt; &amp;failureTransformer={})</arglist>
+    </member>
+    <member kind="function">
+      <type>GenericRestReply&lt; void, ErrorClassType &gt; *</type>
+      <name>onAllErrors</name>
+      <anchorfile>class_qt_rest_client_1_1_generic_rest_reply_3_01void_00_01_error_class_type_01_4.html</anchorfile>
+      <anchor>a9cbed882f17410096ddeae5568508282</anchor>
+      <arglist>(QObject *scope, const std::function&lt; void(QString, int, ErrorType)&gt; &amp;handler, const std::function&lt; QString(ErrorClassType, int)&gt; &amp;failureTransformer={})</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; void, ErrorClassType &gt; *</type>
       <name>onCompleted</name>
       <anchorfile>class_qt_rest_client_1_1_generic_rest_reply_3_01void_00_01_error_class_type_01_4.html</anchorfile>
-      <anchor>ad290a9987c701ceeba131db699c76fb8</anchor>
-      <arglist>(std::function&lt; void(int)&gt; handler)</arglist>
+      <anchor>a6e0e952116fa325538c834120cb6c1e5</anchor>
+      <arglist>(const std::function&lt; void(int)&gt; &amp;handler)</arglist>
+    </member>
+    <member kind="function">
+      <type>GenericRestReply&lt; void, ErrorClassType &gt; *</type>
+      <name>onCompleted</name>
+      <anchorfile>class_qt_rest_client_1_1_generic_rest_reply_3_01void_00_01_error_class_type_01_4.html</anchorfile>
+      <anchor>aba447385e2bbb24409618f9c60fa8fcd</anchor>
+      <arglist>(QObject *scope, const std::function&lt; void(int)&gt; &amp;handler)</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; void, ErrorClassType &gt; *</type>
       <name>onError</name>
       <anchorfile>class_qt_rest_client_1_1_generic_rest_reply_3_01void_00_01_error_class_type_01_4.html</anchorfile>
-      <anchor>a94d867e60b96207c1dc535b8bc9672f0</anchor>
-      <arglist>(std::function&lt; void(QString, int, ErrorType)&gt; handler)</arglist>
+      <anchor>a2b2d0755321bb15c53c279853f8c485a</anchor>
+      <arglist>(const std::function&lt; void(QString, int, ErrorType)&gt; &amp;handler)</arglist>
+    </member>
+    <member kind="function">
+      <type>GenericRestReply&lt; void, ErrorClassType &gt; *</type>
+      <name>onError</name>
+      <anchorfile>class_qt_rest_client_1_1_generic_rest_reply_3_01void_00_01_error_class_type_01_4.html</anchorfile>
+      <anchor>ac4e3c1068a65289580808f68444a143a</anchor>
+      <arglist>(QObject *scope, const std::function&lt; void(QString, int, ErrorType)&gt; &amp;handler)</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; void, ErrorClassType &gt; *</type>
@@ -291,13 +492,6 @@
   <compound kind="class">
     <name>QtRestClient::IPaging</name>
     <filename>class_qt_rest_client_1_1_i_paging.html</filename>
-    <member kind="function" virtualness="virtual">
-      <type>virtual</type>
-      <name>~IPaging</name>
-      <anchorfile>class_qt_rest_client_1_1_i_paging.html</anchorfile>
-      <anchor>a987ec4d85ef79dd5d97c4b52b6ac6536</anchor>
-      <arglist>()</arglist>
-    </member>
     <member kind="function" virtualness="pure">
       <type>virtual QJsonArray</type>
       <name>items</name>
@@ -337,14 +531,14 @@
       <type>virtual bool</type>
       <name>hasPrevious</name>
       <anchorfile>class_qt_rest_client_1_1_i_paging.html</anchorfile>
-      <anchor>a1c272c07deaac5872f5328829e169e41</anchor>
+      <anchor>aa75ecf2366e562a69cb253c763f35461</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual QUrl</type>
       <name>previous</name>
       <anchorfile>class_qt_rest_client_1_1_i_paging.html</anchorfile>
-      <anchor>a778b02f2b9eb1075f8fe4542b2b17c0f</anchor>
+      <anchor>a839ca2c867d0947e001c2f00971dd652</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function" virtualness="pure">
@@ -363,69 +557,91 @@
     </member>
   </compound>
   <compound kind="class">
-    <name>QtRestClient::MetaComponent</name>
-    <filename>namespace_qt_rest_client.html</filename>
-    <anchor>class_qt_rest_client_1_1_meta_component</anchor>
-    <templarg></templarg>
-    <templarg></templarg>
-    <member kind="typedef">
-      <type>std::false_type</type>
-      <name>is_meta</name>
-      <anchorfile>namespace_qt_rest_client.html</anchorfile>
-      <anchor>a28b4c914e67fb3161cf21aa2a3710e28</anchor>
+    <name>de::skycoder42::QtRestClient::Paging</name>
+    <filename>classde_1_1skycoder42_1_1_qt_rest_client_1_1_paging.html</filename>
+    <member kind="slot">
+      <type>void</type>
+      <name>iterate</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_paging.html</anchorfile>
+      <anchor>af05b1b17c20724347b28d46208b4200c</anchor>
+      <arglist>(const QJSValue &amp;iterator, int to=-1, int from=0)</arglist>
+    </member>
+    <member kind="slot">
+      <type>void</type>
+      <name>iterate</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_paging.html</anchorfile>
+      <anchor>a1b81c0ed6bf03c2765208ba9377f6b27</anchor>
+      <arglist>(const QJSValue &amp;iterator, const QJSValue &amp;failureHandler, const QJSValue &amp;errorHandler, int to=-1, int from=0)</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_INVOKABLE QtRestClient::RestReply *</type>
+      <name>next</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_paging.html</anchorfile>
+      <anchor>a1ed2ea840a3fdc3071b9c9cb6ae1d57e</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_INVOKABLE QtRestClient::RestReply *</type>
+      <name>previous</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_paging.html</anchorfile>
+      <anchor>ac76131efb409a06d6dfafbfafc047398</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="property">
+      <type>QVariantList</type>
+      <name>items</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_paging.html</anchorfile>
+      <anchor>aa7acab4f51e6f90f6f8dceeacdb65db0</anchor>
       <arglist></arglist>
     </member>
-  </compound>
-  <compound kind="class">
-    <name>QtRestClient::MetaComponent&lt; T *, typename std::enable_if&lt; std::is_base_of&lt; QObject, T &gt;::value &gt;::type &gt;</name>
-    <filename>class_qt_rest_client_1_1_meta_component_3_01_t_01_5_00_01typename_01std_1_1enable__if_3_01std_1_91f896eeadb81066402044b2ec8fef4f.html</filename>
-    <templarg></templarg>
-    <member kind="typedef">
-      <type>std::true_type</type>
-      <name>is_meta</name>
-      <anchorfile>class_qt_rest_client_1_1_meta_component_3_01_t_01_5_00_01typename_01std_1_1enable__if_3_01std_1_91f896eeadb81066402044b2ec8fef4f.html</anchorfile>
-      <anchor>a790711cd005c21659fdbd1e8dd975376</anchor>
+    <member kind="property">
+      <type>int</type>
+      <name>total</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_paging.html</anchorfile>
+      <anchor>a6de4c3ae36887704d63a52f7c32f4097</anchor>
       <arglist></arglist>
     </member>
-    <member kind="function" static="yes">
-      <type>static void</type>
-      <name>deleteLater</name>
-      <anchorfile>class_qt_rest_client_1_1_meta_component_3_01_t_01_5_00_01typename_01std_1_1enable__if_3_01std_1_91f896eeadb81066402044b2ec8fef4f.html</anchorfile>
-      <anchor>a7a6a0e792211a87d969c7b07d68bb97f</anchor>
-      <arglist>(T *obj)</arglist>
-    </member>
-    <member kind="function" static="yes">
-      <type>static void</type>
-      <name>deleteAllLater</name>
-      <anchorfile>class_qt_rest_client_1_1_meta_component_3_01_t_01_5_00_01typename_01std_1_1enable__if_3_01std_1_91f896eeadb81066402044b2ec8fef4f.html</anchorfile>
-      <anchor>a673b6f8bf5515e39bfbe37c1c6c60d4a</anchor>
-      <arglist>(const QList&lt; T *&gt; &amp;list)</arglist>
-    </member>
-  </compound>
-  <compound kind="class">
-    <name>QtRestClient::MetaComponent&lt; T, typename std::enable_if&lt; std::is_void&lt; typename T::QtGadgetHelper &gt;::value &gt;::type &gt;</name>
-    <filename>class_qt_rest_client_1_1_meta_component_3_01_t_00_01typename_01std_1_1enable__if_3_01std_1_1is__b8f82327343312e32aa8aa1f04dce084.html</filename>
-    <templarg></templarg>
-    <member kind="typedef">
-      <type>std::true_type</type>
-      <name>is_meta</name>
-      <anchorfile>class_qt_rest_client_1_1_meta_component_3_01_t_00_01typename_01std_1_1enable__if_3_01std_1_1is__b8f82327343312e32aa8aa1f04dce084.html</anchorfile>
-      <anchor>af767a140af95a7faac2b1dc4052d57b9</anchor>
+    <member kind="property">
+      <type>int</type>
+      <name>offset</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_paging.html</anchorfile>
+      <anchor>a9e55c437281f924fb3db4014404a0897</anchor>
       <arglist></arglist>
     </member>
-    <member kind="function" static="yes">
-      <type>static void</type>
-      <name>deleteLater</name>
-      <anchorfile>class_qt_rest_client_1_1_meta_component_3_01_t_00_01typename_01std_1_1enable__if_3_01std_1_1is__b8f82327343312e32aa8aa1f04dce084.html</anchorfile>
-      <anchor>a88713873dc601f2c64189b0f8856d57d</anchor>
-      <arglist>(T)</arglist>
+    <member kind="property">
+      <type>bool</type>
+      <name>hasNext</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_paging.html</anchorfile>
+      <anchor>a26ddd1158a7617db4317ab3260d167f4</anchor>
+      <arglist></arglist>
     </member>
-    <member kind="function" static="yes">
-      <type>static void</type>
-      <name>deleteAllLater</name>
-      <anchorfile>class_qt_rest_client_1_1_meta_component_3_01_t_00_01typename_01std_1_1enable__if_3_01std_1_1is__b8f82327343312e32aa8aa1f04dce084.html</anchorfile>
-      <anchor>a01fd311a4e14b6c5fea88c45a0d6c88c</anchor>
-      <arglist>(const QList&lt; T &gt; &amp;)</arglist>
+    <member kind="property">
+      <type>QUrl</type>
+      <name>nextUrl</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_paging.html</anchorfile>
+      <anchor>a6a17440f77ce0bbf748416610cfaa070</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="property">
+      <type>bool</type>
+      <name>hasPrevious</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_paging.html</anchorfile>
+      <anchor>a1bf1b08e14a3856c49b528b7c0dd8d2d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="property">
+      <type>QUrl</type>
+      <name>previousUrl</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_paging.html</anchorfile>
+      <anchor>a48d10dd598a1771007ae4a8d94d9a21a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="property">
+      <type>QVariantMap</type>
+      <name>properties</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_paging.html</anchorfile>
+      <anchor>a5ca6191ed72d18bf9e7d821132e35b52</anchor>
+      <arglist></arglist>
     </member>
   </compound>
   <compound kind="class">
@@ -445,6 +661,27 @@
       <anchorfile>class_qt_rest_client_1_1_paging.html</anchorfile>
       <anchor>a921eccd6e05083071461d83c8b486b9c</anchor>
       <arglist>(const Paging&lt; T &gt; &amp;other)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>Paging</name>
+      <anchorfile>class_qt_rest_client_1_1_paging.html</anchorfile>
+      <anchor>a7c400d2a3d48ea7eb0dcd3e9068490fa</anchor>
+      <arglist>(Paging&lt; T &gt; &amp;&amp;other)</arglist>
+    </member>
+    <member kind="function">
+      <type>Paging&lt; T &gt; &amp;</type>
+      <name>operator=</name>
+      <anchorfile>class_qt_rest_client_1_1_paging.html</anchorfile>
+      <anchor>af654f5c5a4699a0c0b68380ff0876c42</anchor>
+      <arglist>(const Paging&lt; T &gt; &amp;other)</arglist>
+    </member>
+    <member kind="function">
+      <type>Paging&lt; T &gt; &amp;</type>
+      <name>operator=</name>
+      <anchorfile>class_qt_rest_client_1_1_paging.html</anchorfile>
+      <anchor>a8455a5266ac6fda1312fff2412914a2b</anchor>
+      <arglist>(Paging&lt; T &gt; &amp;&amp;other)</arglist>
     </member>
     <member kind="function">
       <type></type>
@@ -492,7 +729,7 @@
       <type>GenericRestReply&lt; Paging&lt; T &gt;, EO &gt; *</type>
       <name>next</name>
       <anchorfile>class_qt_rest_client_1_1_paging.html</anchorfile>
-      <anchor>a656afeb6e3bf62f1ef948e447095e05b</anchor>
+      <anchor>af81f0c38e19728e518ddcb99da7756aa</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
@@ -513,7 +750,7 @@
       <type>GenericRestReply&lt; Paging&lt; T &gt;, EO &gt; *</type>
       <name>previous</name>
       <anchorfile>class_qt_rest_client_1_1_paging.html</anchorfile>
-      <anchor>a86fece602c8ff38d868ba5c31b3a03c8</anchor>
+      <anchor>a608ab30fc23465a6e9ed4b431a38211f</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
@@ -527,22 +764,43 @@
       <type>void</type>
       <name>iterate</name>
       <anchorfile>class_qt_rest_client_1_1_paging.html</anchorfile>
-      <anchor>a1df3459a84a093b138775c378d754628</anchor>
-      <arglist>(std::function&lt; bool(T, int)&gt; iterator, int to=-1, int from=0) const</arglist>
+      <anchor>a8742ce0c1ce89dcdaef23375b19f6dc5</anchor>
+      <arglist>(const std::function&lt; bool(T, int)&gt; &amp;iterator, int to=-1, int from=0) const</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>iterate</name>
       <anchorfile>class_qt_rest_client_1_1_paging.html</anchorfile>
-      <anchor>a44a6d6f368ffcf169e02b074817cbf19</anchor>
-      <arglist>(std::function&lt; bool(T, int)&gt; iterator, std::function&lt; void(QString, int, RestReply::ErrorType)&gt; errorHandler, std::function&lt; QString(EO, int)&gt; failureTransformer={}, int to=-1, int from=0) const</arglist>
+      <anchor>a4dc7ee0fc858a04a70533ca17c52cfd2</anchor>
+      <arglist>(QObject *scope, const std::function&lt; bool(T, int)&gt; &amp;iterator, int to=-1, int from=0) const</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>iterate</name>
       <anchorfile>class_qt_rest_client_1_1_paging.html</anchorfile>
-      <anchor>a8788252834e21814163af6364b1369b7</anchor>
-      <arglist>(std::function&lt; bool(T, int)&gt; iterator, std::function&lt; void(int, EO)&gt; failureHandler, std::function&lt; void(QString, int, RestReply::ErrorType)&gt; errorHandler={}, std::function&lt; void(QJsonSerializerException &amp;)&gt; exceptionHandler={}, int to=-1, int from=0) const</arglist>
+      <anchor>a2d0fd3a96ebc98069e2713c11cc4f957</anchor>
+      <arglist>(const std::function&lt; bool(T, int)&gt; &amp;iterator, const std::function&lt; void(QString, int, RestReply::ErrorType)&gt; &amp;errorHandler, const std::function&lt; QString(EO, int)&gt; &amp;failureTransformer={}, int to=-1, int from=0) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>iterate</name>
+      <anchorfile>class_qt_rest_client_1_1_paging.html</anchorfile>
+      <anchor>a772163fab9b2ec7689fabc65c9de0e26</anchor>
+      <arglist>(QObject *scope, const std::function&lt; bool(T, int)&gt; &amp;iterator, const std::function&lt; void(QString, int, RestReply::ErrorType)&gt; &amp;errorHandler, const std::function&lt; QString(EO, int)&gt; &amp;failureTransformer={}, int to=-1, int from=0) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>iterate</name>
+      <anchorfile>class_qt_rest_client_1_1_paging.html</anchorfile>
+      <anchor>ac21b21539e7014d4531d47e2fcdd7789</anchor>
+      <arglist>(const std::function&lt; bool(T, int)&gt; &amp;iterator, const std::function&lt; void(int, EO)&gt; &amp;failureHandler, const std::function&lt; void(QString, int, RestReply::ErrorType)&gt; &amp;errorHandler={}, const std::function&lt; void(QJsonSerializerException &amp;)&gt; &amp;exceptionHandler={}, int to=-1, int from=0) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>iterate</name>
+      <anchorfile>class_qt_rest_client_1_1_paging.html</anchorfile>
+      <anchor>a6f9c6e0546c499b095c474eb52d79ae1</anchor>
+      <arglist>(QObject *scope, const std::function&lt; bool(T, int)&gt; &amp;iterator, const std::function&lt; void(int, EO)&gt; &amp;failureHandler, const std::function&lt; void(QString, int, RestReply::ErrorType)&gt; &amp;errorHandler={}, const std::function&lt; void(QJsonSerializerException &amp;)&gt; &amp;exceptionHandler={}, int to=-1, int from=0) const</arglist>
     </member>
     <member kind="function">
       <type>QVariantMap</type>
@@ -560,62 +818,61 @@
     </member>
   </compound>
   <compound kind="class">
-    <name>QtRestClient::PagingData</name>
-    <filename>class_qt_rest_client_1_1_paging_data.html</filename>
-    <templarg></templarg>
-    <base>QSharedData</base>
-    <member kind="function">
-      <type></type>
-      <name>PagingData</name>
-      <anchorfile>class_qt_rest_client_1_1_paging_data.html</anchorfile>
-      <anchor>af3a80e43ea35943ca59a376e0946e6ac</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type></type>
-      <name>PagingData</name>
-      <anchorfile>class_qt_rest_client_1_1_paging_data.html</anchorfile>
-      <anchor>a319b0ca375daebd8b41ce0c5be9e2ebe</anchor>
-      <arglist>(const PagingData &amp;other)</arglist>
-    </member>
-    <member kind="variable">
-      <type>QSharedPointer&lt; IPaging &gt;</type>
-      <name>iPaging</name>
-      <anchorfile>class_qt_rest_client_1_1_paging_data.html</anchorfile>
-      <anchor>a42f87f91fe2c360d97f51bed226ad76a</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>QList&lt; T &gt;</type>
-      <name>data</name>
-      <anchorfile>class_qt_rest_client_1_1_paging_data.html</anchorfile>
-      <anchor>a127ade5edcb8c395cca444b3a64474fb</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>RestClient *</type>
-      <name>client</name>
-      <anchorfile>class_qt_rest_client_1_1_paging_data.html</anchorfile>
-      <anchor>a6fa7c58bdd802d2521ff2ecd7aae5a7f</anchor>
-      <arglist></arglist>
-    </member>
-  </compound>
-  <compound kind="class">
     <name>QtRestClient::PagingFactory</name>
     <filename>class_qt_rest_client_1_1_paging_factory.html</filename>
-    <member kind="function" virtualness="virtual">
-      <type>virtual</type>
-      <name>~PagingFactory</name>
-      <anchorfile>class_qt_rest_client_1_1_paging_factory.html</anchorfile>
-      <anchor>a98d3c968fb90edad25fda606e75f919b</anchor>
-      <arglist>()</arglist>
-    </member>
     <member kind="function" virtualness="pure">
       <type>virtual IPaging *</type>
       <name>createPaging</name>
       <anchorfile>class_qt_rest_client_1_1_paging_factory.html</anchorfile>
       <anchor>ab5729c63b8e4eb6d886046ccde1ed56d</anchor>
       <arglist>(QJsonSerializer *serializer, const QJsonObject &amp;data) const =0</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>de::skycoder42::QtRestClient::QtRestClient</name>
+    <filename>classde_1_1skycoder42_1_1_qt_rest_client_1_1_qt_rest_client.html</filename>
+    <base>QtQml.QtObject</base>
+    <member kind="function">
+      <type>Q_INVOKABLE bool</type>
+      <name>addGlobalApi</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_qt_rest_client.html</anchorfile>
+      <anchor>aa2df19f7129ccdb6ab0364633a656535</anchor>
+      <arglist>(const QString &amp;name, QtRestClient::RestClient *client)</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_INVOKABLE void</type>
+      <name>removeGlobalApi</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_qt_rest_client.html</anchorfile>
+      <anchor>a5561c9a6dfdf2d11c34d15366cfb6723</anchor>
+      <arglist>(const QString &amp;name, bool deleteClient=true)</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_INVOKABLE QtRestClient::RestClient *</type>
+      <name>apiClient</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_qt_rest_client.html</anchorfile>
+      <anchor>a5ef1cf96149146d4c59f7ea8af87d8d4</anchor>
+      <arglist>(const QString &amp;name)</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_INVOKABLE RestClass *</type>
+      <name>apiRootClass</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_qt_rest_client.html</anchorfile>
+      <anchor>a740e598b5fe8e36f294cea121556179f</anchor>
+      <arglist>(const QString &amp;name, QObject *parent=nullptr)</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_INVOKABLE RestClass *</type>
+      <name>createApiClass</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_qt_rest_client.html</anchorfile>
+      <anchor>aa61efb006110d6cb38cac2ae7fcb1748</anchor>
+      <arglist>(const QString &amp;name, const QString &amp;path, QObject *parent=nullptr)</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_INVOKABLE Paging</type>
+      <name>createPaging</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_qt_rest_client.html</anchorfile>
+      <anchor>ae6dda6fa7beeac8ebf383bae46460b41</anchor>
+      <arglist>(QtRestClient::RestClient *client, const QVariantMap &amp;data)</arglist>
     </member>
   </compound>
   <compound kind="class">
@@ -632,29 +889,43 @@
       <type></type>
       <name>RequestBuilder</name>
       <anchorfile>class_qt_rest_client_1_1_request_builder.html</anchorfile>
-      <anchor>aed1372201293f51446850e22f75999fb</anchor>
+      <anchor>ac6f4b1a1a249299f91a19ef616e53f34</anchor>
       <arglist>(const RequestBuilder &amp;other)</arglist>
     </member>
     <member kind="function">
       <type></type>
-      <name>~RequestBuilder</name>
+      <name>RequestBuilder</name>
       <anchorfile>class_qt_rest_client_1_1_request_builder.html</anchorfile>
-      <anchor>aace178c856a14b9e62a956175fc8e032</anchor>
-      <arglist>()</arglist>
+      <anchor>a5b1b5c46e4cb1c3f64e4ef73545f233e</anchor>
+      <arglist>(RequestBuilder &amp;&amp;other)</arglist>
+    </member>
+    <member kind="function">
+      <type>RequestBuilder &amp;</type>
+      <name>operator=</name>
+      <anchorfile>class_qt_rest_client_1_1_request_builder.html</anchorfile>
+      <anchor>a4fc2e7fee149b2d1fa5565a8b96db1f1</anchor>
+      <arglist>(const RequestBuilder &amp;other)</arglist>
+    </member>
+    <member kind="function">
+      <type>RequestBuilder &amp;</type>
+      <name>operator=</name>
+      <anchorfile>class_qt_rest_client_1_1_request_builder.html</anchorfile>
+      <anchor>a3ca26fca8268a318d21e0e74fdc031c2</anchor>
+      <arglist>(RequestBuilder &amp;&amp;other)</arglist>
     </member>
     <member kind="function">
       <type>RequestBuilder &amp;</type>
       <name>setCredentials</name>
       <anchorfile>class_qt_rest_client_1_1_request_builder.html</anchorfile>
-      <anchor>aba466b665ce4b30fc85fa163fda171c7</anchor>
-      <arglist>(const QString &amp;user, const QString &amp;password)</arglist>
+      <anchor>a353451dd70886bfd663796621edfb717</anchor>
+      <arglist>(QString user, QString password={})</arglist>
     </member>
     <member kind="function">
       <type>RequestBuilder &amp;</type>
       <name>setVersion</name>
       <anchorfile>class_qt_rest_client_1_1_request_builder.html</anchorfile>
-      <anchor>afbc4161589c4392704a231b304fc0a78</anchor>
-      <arglist>(const QVersionNumber &amp;version)</arglist>
+      <anchor>a8877909ef514e997ceefb4cf1d9b052a</anchor>
+      <arglist>(QVersionNumber version)</arglist>
     </member>
     <member kind="function">
       <type>RequestBuilder &amp;</type>
@@ -667,7 +938,7 @@
       <type>RequestBuilder &amp;</type>
       <name>addPath</name>
       <anchorfile>class_qt_rest_client_1_1_request_builder.html</anchorfile>
-      <anchor>af2ba38da00ea1d44aa0483f957d19f04</anchor>
+      <anchor>a54cb254dee1e20de19c83b30532a3c67</anchor>
       <arglist>(const QStringList &amp;pathSegment)</arglist>
     </member>
     <member kind="function">
@@ -695,8 +966,8 @@
       <type>RequestBuilder &amp;</type>
       <name>setFragment</name>
       <anchorfile>class_qt_rest_client_1_1_request_builder.html</anchorfile>
-      <anchor>a0d64e544727aef2d47ce5c74000ba8fb</anchor>
-      <arglist>(const QString &amp;fragment)</arglist>
+      <anchor>a7cfe96668e7a3809fd0d6c4a1a6d3614</anchor>
+      <arglist>(QString fragment)</arglist>
     </member>
     <member kind="function">
       <type>RequestBuilder &amp;</type>
@@ -737,15 +1008,15 @@
       <type>RequestBuilder &amp;</type>
       <name>setSslConfig</name>
       <anchorfile>class_qt_rest_client_1_1_request_builder.html</anchorfile>
-      <anchor>a29f19a9ab3464693308ee0d976c65da7</anchor>
-      <arglist>(const QSslConfiguration &amp;sslConfig)</arglist>
+      <anchor>a7cbd453d6332408a078c722709dfb75e</anchor>
+      <arglist>(QSslConfiguration sslConfig)</arglist>
     </member>
     <member kind="function">
       <type>RequestBuilder &amp;</type>
       <name>setBody</name>
       <anchorfile>class_qt_rest_client_1_1_request_builder.html</anchorfile>
-      <anchor>a3b10380ef82cb5b96546e707ae8ad813</anchor>
-      <arglist>(const QByteArray &amp;body, const QByteArray &amp;contentType)</arglist>
+      <anchor>a2c6c59b5072da245eb94b89b5353061a</anchor>
+      <arglist>(QByteArray body, const QByteArray &amp;contentType)</arglist>
     </member>
     <member kind="function">
       <type>RequestBuilder &amp;</type>
@@ -758,15 +1029,29 @@
       <type>RequestBuilder &amp;</type>
       <name>setBody</name>
       <anchorfile>class_qt_rest_client_1_1_request_builder.html</anchorfile>
-      <anchor>a08abc903eb06ee35f257f0049fca469a</anchor>
+      <anchor>af6a26a1c5d62fc2cf8f6767f20e66863</anchor>
       <arglist>(const QJsonArray &amp;body)</arglist>
     </member>
     <member kind="function">
       <type>RequestBuilder &amp;</type>
       <name>setVerb</name>
       <anchorfile>class_qt_rest_client_1_1_request_builder.html</anchorfile>
-      <anchor>abe8bf3a84087c8e62afce6d40409bbf7</anchor>
-      <arglist>(const QByteArray &amp;verb)</arglist>
+      <anchor>acd8d373ead8dd9cbf5a48ba578675101</anchor>
+      <arglist>(QByteArray verb)</arglist>
+    </member>
+    <member kind="function">
+      <type>RequestBuilder &amp;</type>
+      <name>addPostParameter</name>
+      <anchorfile>class_qt_rest_client_1_1_request_builder.html</anchorfile>
+      <anchor>ac97db7c0133ff7bb7c53c113621ccc08</anchor>
+      <arglist>(const QString &amp;name, const QString &amp;value)</arglist>
+    </member>
+    <member kind="function">
+      <type>RequestBuilder &amp;</type>
+      <name>addPostParameters</name>
+      <anchorfile>class_qt_rest_client_1_1_request_builder.html</anchorfile>
+      <anchor>abcb17c9424866ece6f00109b894093a4</anchor>
+      <arglist>(const QUrlQuery &amp;parameters)</arglist>
     </member>
     <member kind="function">
       <type>QUrl</type>
@@ -789,12 +1074,101 @@
       <anchor>a571aa171f59c3f59e0cb810a6ff4a1b1</anchor>
       <arglist>() const</arglist>
     </member>
+  </compound>
+  <compound kind="class">
+    <name>de::skycoder42::QtRestClient::RestClass</name>
+    <filename>classde_1_1skycoder42_1_1_qt_rest_client_1_1_rest_class.html</filename>
+    <base>QtQml.QtObject</base>
+    <member kind="signal">
+      <type>void</type>
+      <name>restClassChanged</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>ac537f298550cb45d549d4ee8ef711947</anchor>
+      <arglist>(QtRestClient::RestClass *restClass)</arglist>
+    </member>
+    <member kind="signal">
+      <type>void</type>
+      <name>pathChanged</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>a07793a88884b042d52c8c2fa7b6ff4eb</anchor>
+      <arglist>(QString path)</arglist>
+    </member>
     <member kind="function">
-      <type>RequestBuilder &amp;</type>
-      <name>operator=</name>
-      <anchorfile>class_qt_rest_client_1_1_request_builder.html</anchorfile>
-      <anchor>a2a35c69d7152260fd0fa13fb47934f7f</anchor>
-      <arglist>(const RequestBuilder &amp;other)</arglist>
+      <type></type>
+      <name>QmlRestClass</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>add0986f127511a612bdc9cfd1c4f4082</anchor>
+      <arglist>(QObject *parent=nullptr)</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_INVOKABLE QtRestClient::RestReply *</type>
+      <name>call</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>a7197443e47543253b64ef4b16701f95a</anchor>
+      <arglist>(const QString &amp;verb, const QJSValue &amp;optBody={}, const QJSValue &amp;optPath={}, const QJSValue &amp;optParams={}, const QJSValue &amp;optAsPost={}, const QJSValue &amp;optHeaders={})</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_INVOKABLE QtRestClient::RestReply *</type>
+      <name>get</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>af6627a23ac359fd095c4d9bfbedc24d8</anchor>
+      <arglist>(const QJSValue &amp;optPath={}, const QJSValue &amp;optParams={}, const QJSValue &amp;optHeaders={})</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_INVOKABLE QtRestClient::RestReply *</type>
+      <name>post</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>a1e7dca949187c1f91172a3166ef8a642</anchor>
+      <arglist>(const QJSValue &amp;optBody={}, const QJSValue &amp;optPath={}, const QJSValue &amp;optParams={}, const QJSValue &amp;optHeaders={})</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_INVOKABLE QtRestClient::RestReply *</type>
+      <name>put</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>ab3f0c533201b86c864e3ae8abf3ea54f</anchor>
+      <arglist>(const QJSValue &amp;body, const QJSValue &amp;optPath={}, const QJSValue &amp;optParams={}, const QJSValue &amp;optHeaders={})</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_INVOKABLE QtRestClient::RestReply *</type>
+      <name>deleteResource</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>a3009dbc4aa3ffa0c0b98a988f024c7fa</anchor>
+      <arglist>(const QJSValue &amp;optPath={}, const QJSValue &amp;optParams={}, const QJSValue &amp;optHeaders={})</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_INVOKABLE QtRestClient::RestReply *</type>
+      <name>patch</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>a3bded78ed789755c60ed2b852ccbcbec</anchor>
+      <arglist>(const QJSValue &amp;body, const QJSValue &amp;optPath={}, const QJSValue &amp;optParams={}, const QJSValue &amp;optHeaders={})</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_INVOKABLE QtRestClient::RestReply *</type>
+      <name>head</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>a84993d17f755f5e716b5d832454ae7d0</anchor>
+      <arglist>(const QJSValue &amp;optPath={}, const QJSValue &amp;optParams={}, const QJSValue &amp;optHeaders={})</arglist>
+    </member>
+    <member kind="property">
+      <type>QtRestClient::RestClass</type>
+      <name>restClass</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>a0395efae8494cdea963308845dd0cd7a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="property">
+      <type>QString</type>
+      <name>path</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>abb80afab01ce553ad7f488050c841e8f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="property">
+      <type>QQmlListProperty&lt; de::skycoder42::QtRestClient::RestClass &gt;</type>
+      <name>classes</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>aa62b8005aa7358f128d73ce2a1ff86bd</anchor>
+      <arglist></arglist>
     </member>
   </compound>
   <compound kind="class">
@@ -802,24 +1176,17 @@
     <filename>class_qt_rest_client_1_1_rest_class.html</filename>
     <base>QObject</base>
     <member kind="function">
-      <type></type>
-      <name>~RestClass</name>
-      <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a9136ec5bd82e69960027005b1869ec51</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
       <type>RestClient *</type>
       <name>client</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a298dffb89c1753a3ba1306979e09dbe7</anchor>
+      <anchor>a3cf1862fe0d8a0f225345fa9194b45f6</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
       <type>RestClass *</type>
       <name>subClass</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>ad296438252707c02a726bc40d5a499ea</anchor>
+      <anchor>af0389425fe198b071b8c6aa7a3e75ccb</anchor>
       <arglist>(const QString &amp;path, QObject *parent=nullptr)</arglist>
     </member>
     <member kind="function" virtualness="virtual">
@@ -833,358 +1200,505 @@
       <type>RestReply *</type>
       <name>callJson</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>ad4419379c9d68f657428e0ac1334833c</anchor>
-      <arglist>(QByteArray verb, const QString &amp;methodPath, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>af4014317a979378dae6d2ece8ec94984</anchor>
+      <arglist>(const QByteArray &amp;verb, const QString &amp;methodPath, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}, bool paramsAsBody=false) const</arglist>
     </member>
     <member kind="function">
       <type>RestReply *</type>
       <name>callJson</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a1e6e1e544e155db43579e144755b15fc</anchor>
-      <arglist>(QByteArray verb, const QString &amp;methodPath, QJsonObject body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>a2f7849f875f632cebf0cd39fa4f3f5d9</anchor>
+      <arglist>(const QByteArray &amp;verb, const QString &amp;methodPath, const QJsonObject &amp;body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>RestReply *</type>
       <name>callJson</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>acdb3a8027802df2bfce1af86e7b0628f</anchor>
-      <arglist>(QByteArray verb, const QString &amp;methodPath, QJsonArray body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>a7e5385559d65445f95df2c11f648afce</anchor>
+      <arglist>(const QByteArray &amp;verb, const QString &amp;methodPath, const QJsonArray &amp;body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>RestReply *</type>
       <name>callJson</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>ac814f3d24aa07e4e781dc5aaf23fd186</anchor>
-      <arglist>(QByteArray verb, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>a6926e2d7d55a0a3f1549018f41eac0cd</anchor>
+      <arglist>(const QByteArray &amp;verb, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}, bool paramsAsBody=false) const</arglist>
     </member>
     <member kind="function">
       <type>RestReply *</type>
       <name>callJson</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>aba3480db250daab4474bf60f401efb5b</anchor>
-      <arglist>(QByteArray verb, QJsonObject body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>a81ddb0d573973621e45fa5d92d49e919</anchor>
+      <arglist>(const QByteArray &amp;verb, const QJsonObject &amp;body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>RestReply *</type>
       <name>callJson</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>ac6e5c52e13434bd8b638993e89d50db1</anchor>
-      <arglist>(QByteArray verb, QJsonArray body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>a49f8a1a2ef48480a085db5865249cc01</anchor>
+      <arglist>(const QByteArray &amp;verb, const QJsonArray &amp;body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>RestReply *</type>
       <name>callJson</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a1f36fe3acfcfcdbd472dcae6770f2bc5</anchor>
-      <arglist>(QByteArray verb, const QUrl &amp;relativeUrl, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>a95abc4ee9905125149f10ddaf492cc57</anchor>
+      <arglist>(const QByteArray &amp;verb, const QUrl &amp;relativeUrl, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}, bool paramsAsBody=false) const</arglist>
     </member>
     <member kind="function">
       <type>RestReply *</type>
       <name>callJson</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a43e967489e972eef7eedc5669d603d59</anchor>
-      <arglist>(QByteArray verb, const QUrl &amp;relativeUrl, QJsonObject body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>aa33a9887f0dd16b4973c788a0b991822</anchor>
+      <arglist>(const QByteArray &amp;verb, const QUrl &amp;relativeUrl, const QJsonObject &amp;body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>RestReply *</type>
       <name>callJson</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a1f54b2c53a868e35d06e587acfa491ae</anchor>
-      <arglist>(QByteArray verb, const QUrl &amp;relativeUrl, QJsonArray body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>afd42479676775d53e9d1b539fafff78f</anchor>
+      <arglist>(const QByteArray &amp;verb, const QUrl &amp;relativeUrl, const QJsonArray &amp;body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>call</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a801b931365d2702310c4c92b820cdd1a</anchor>
-      <arglist>(QByteArray verb, const QString &amp;methodPath, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>a2c45e1070ad0467705adfaf7795a4975</anchor>
+      <arglist>(const QByteArray &amp;verb, const QString &amp;methodPath, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}, bool paramsAsBody=false) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>call</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a79a463b1668a5e7a7e99d8e8962638e1</anchor>
-      <arglist>(QByteArray verb, const QString &amp;methodPath, RO body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>ae9f9b650234b0deda3dba9e94ad7d755</anchor>
+      <arglist>(const QByteArray &amp;verb, const QString &amp;methodPath, const RO &amp;body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>call</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a1f01f3c742f30e54814fe426fb1f927b</anchor>
-      <arglist>(QByteArray verb, const QString &amp;methodPath, QList&lt; RO &gt; body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>a5e74766f3f9875b9ad975cea35243b51</anchor>
+      <arglist>(const QByteArray &amp;verb, const QString &amp;methodPath, const QList&lt; RO &gt; &amp;body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>call</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a74f9eb3fe915e2265640f487aedc353c</anchor>
-      <arglist>(QByteArray verb, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>aed5788a6afee95c50ab439d03e4cd083</anchor>
+      <arglist>(const QByteArray &amp;verb, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}, bool paramsAsBody=false) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>call</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a4fa871bce0d5777781ec48971d7b99e0</anchor>
-      <arglist>(QByteArray verb, RO body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>abcf5f431d458cd465c680afd18da9d2b</anchor>
+      <arglist>(const QByteArray &amp;verb, const RO &amp;body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>call</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>ae52004b6c4d520976a1397bf4d75334c</anchor>
-      <arglist>(QByteArray verb, QList&lt; RO &gt; body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>af8c3c0f7e2f31fb5f1c5a3bf182ef388</anchor>
+      <arglist>(const QByteArray &amp;verb, const QList&lt; RO &gt; &amp;body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>call</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>aea22de9d2934f90bb87a1ca53691e2d1</anchor>
-      <arglist>(QByteArray verb, const QUrl &amp;relativeUrl, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>a5760c8d382a694052b837543f721324a</anchor>
+      <arglist>(const QByteArray &amp;verb, const QUrl &amp;relativeUrl, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}, bool paramsAsBody=false) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>call</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>ad1213938778055db2ddd87a2f4f942f5</anchor>
-      <arglist>(QByteArray verb, const QUrl &amp;relativeUrl, RO body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>ada2264fda35e9193dcc744ddd485a2c3</anchor>
+      <arglist>(const QByteArray &amp;verb, const QUrl &amp;relativeUrl, const RO &amp;body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>call</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a84990a4d48e5c78ce59eece5ec4f68d6</anchor>
-      <arglist>(QByteArray verb, const QUrl &amp;relativeUrl, QList&lt; RO &gt; body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>ad60ef106a3318eae087b44fe8154cbf0</anchor>
+      <arglist>(const QByteArray &amp;verb, const QUrl &amp;relativeUrl, const QList&lt; RO &gt; &amp;body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>get</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a63c40b8c3fbc8f7cf160688538d8cd63</anchor>
-      <arglist>(const QString &amp;methodPath, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>a6958b8f787d682d754e73b61e96b08e3</anchor>
+      <arglist>(const QString &amp;methodPath, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>get</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>ab4b6938e0f76f6f08e2ab34e6e86d787</anchor>
-      <arglist>(const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>aa4d696f9b041601535098cc5d133b8f7</anchor>
+      <arglist>(const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>get</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a5d1a0b9e5b9ad8e7821ccfc74c9a5c18</anchor>
-      <arglist>(const QUrl &amp;relativeUrl, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>a2b5161bb7dfa27030bce51e5759497af</anchor>
+      <arglist>(const QUrl &amp;relativeUrl, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>post</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a575196cef5b1148871850d2eb72b689c</anchor>
-      <arglist>(const QString &amp;methodPath, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>aa95f8f0d2b7f9c779db1cee17da4fb13</anchor>
+      <arglist>(const QString &amp;methodPath, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>post</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a87a302a106f194f477bdb3fdad9d7ba1</anchor>
-      <arglist>(const QString &amp;methodPath, RO body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>acefb2aa1167938f38ad947c677a7befe</anchor>
+      <arglist>(const QString &amp;methodPath, const RO &amp;body, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>post</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>aafd72949377885916b00e4f4d89919eb</anchor>
-      <arglist>(const QString &amp;methodPath, QList&lt; RO &gt; body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>ad510efcd0a583047102b810f8dfb99a2</anchor>
+      <arglist>(const QString &amp;methodPath, const QList&lt; RO &gt; &amp;body, const HeaderHash &amp;headers={}) const</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_DECL_DEPRECATED GenericRestReply&lt; DT, ET &gt; *</type>
+      <name>post</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>a66046eb47349e59246d4fe970b367150</anchor>
+      <arglist>(const QString &amp;methodPath, RO body, const QVariantHash &amp;parameters, const HeaderHash &amp;headers={}) const</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_DECL_DEPRECATED GenericRestReply&lt; DT, ET &gt; *</type>
+      <name>post</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>a1eb4c35dbc4cff53d2d82f0fda4f978a</anchor>
+      <arglist>(const QString &amp;methodPath, QList&lt; RO &gt; body, const QVariantHash &amp;parameters, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>post</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a1dc2c631015ab87ddf2770bc08e75354</anchor>
-      <arglist>(const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>a544958b1de23e69d7b179c2caf9ed81e</anchor>
+      <arglist>(const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>post</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a82e792ef186c5c97842ff9e40778ef54</anchor>
-      <arglist>(RO body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>a58e334af46651c14e8e5348576978039</anchor>
+      <arglist>(const RO &amp;body, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>post</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>ac58239a7f973900d98e6ec22326181d0</anchor>
-      <arglist>(QList&lt; RO &gt; body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>a7cbf169334540158ac95802f4b032a5c</anchor>
+      <arglist>(const QList&lt; RO &gt; &amp;body, const HeaderHash &amp;headers={}) const</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_DECL_DEPRECATED GenericRestReply&lt; DT, ET &gt; *</type>
+      <name>post</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>a6e10e01a4d014da2db10ed756dd527fd</anchor>
+      <arglist>(RO body, const QVariantHash &amp;parameters, const HeaderHash &amp;headers={}) const</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_DECL_DEPRECATED GenericRestReply&lt; DT, ET &gt; *</type>
+      <name>post</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>ac2bc85050ff23c63064f3f8a9be81b3f</anchor>
+      <arglist>(QList&lt; RO &gt; body, const QVariantHash &amp;parameters, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>post</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>ad64e7ec7df707cdcd27ca24fb1cb92b8</anchor>
-      <arglist>(const QUrl &amp;relativeUrl, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>a375d002fab73ef767aae1603c40b3568</anchor>
+      <arglist>(const QUrl &amp;relativeUrl, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>post</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a9e7033e488f8ce7d4d42aa373c18de25</anchor>
-      <arglist>(const QUrl &amp;relativeUrl, RO body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>aefb285e72a8dc619c5a5c733e2ae4c4e</anchor>
+      <arglist>(const QUrl &amp;relativeUrl, const RO &amp;body, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>post</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a213369e4e6421cb3c9995e808571d922</anchor>
-      <arglist>(const QUrl &amp;relativeUrl, QList&lt; RO &gt; body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>a6c15ed3bc160e93dd3d6732cc386d71f</anchor>
+      <arglist>(const QUrl &amp;relativeUrl, const QList&lt; RO &gt; &amp;body, const HeaderHash &amp;headers={}) const</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_DECL_DEPRECATED GenericRestReply&lt; DT, ET &gt; *</type>
+      <name>post</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>aa38c00bb623516f325f0955333796ecf</anchor>
+      <arglist>(const QUrl &amp;relativeUrl, RO body, const QVariantHash &amp;parameters, const HeaderHash &amp;headers={}) const</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_DECL_DEPRECATED GenericRestReply&lt; DT, ET &gt; *</type>
+      <name>post</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>a57b0f469112bd12788838a939c5a53da</anchor>
+      <arglist>(const QUrl &amp;relativeUrl, QList&lt; RO &gt; body, const QVariantHash &amp;parameters, const HeaderHash &amp;headers={}) const</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_DECL_DEPRECATED GenericRestReply&lt; DT, ET &gt; *</type>
+      <name>put</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>ac8140f3b91769d3746cedfaf54e6f3a0</anchor>
+      <arglist>(const QString &amp;methodPath, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>put</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a7159c8e3919468fce7cecbba81f49d67</anchor>
-      <arglist>(const QString &amp;methodPath, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>a4206efdb06d75dbcffc85ebd9d1574d7</anchor>
+      <arglist>(const QString &amp;methodPath, const RO &amp;body, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>put</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>ae27affb673154315c2341ff0772065e2</anchor>
-      <arglist>(const QString &amp;methodPath, RO body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>a8cfa25455880c7acc2d89e64d23f9f8c</anchor>
+      <arglist>(const QString &amp;methodPath, const QList&lt; RO &gt; &amp;body, const HeaderHash &amp;headers={}) const</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_DECL_DEPRECATED GenericRestReply&lt; DT, ET &gt; *</type>
+      <name>put</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>a484db48a418c003d2365064f41c06265</anchor>
+      <arglist>(const QString &amp;methodPath, RO body, const QVariantHash &amp;parameters, const HeaderHash &amp;headers={}) const</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_DECL_DEPRECATED GenericRestReply&lt; DT, ET &gt; *</type>
+      <name>put</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>a3af89cc01d3cc42981fb5e6b3dbee4c1</anchor>
+      <arglist>(const QString &amp;methodPath, QList&lt; RO &gt; body, const QVariantHash &amp;parameters, const HeaderHash &amp;headers={}) const</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_DECL_DEPRECATED GenericRestReply&lt; DT, ET &gt; *</type>
+      <name>put</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>a01a9fad3bc21107c1f0ddeafda2c1f6b</anchor>
+      <arglist>(const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>put</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a55115f440bec2fff809e985e836b93e7</anchor>
-      <arglist>(const QString &amp;methodPath, QList&lt; RO &gt; body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>a18dac03e77eb774e6b0da98de6487f13</anchor>
+      <arglist>(const RO &amp;body, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>put</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a9a3cfac459c5418b204a03c94c985327</anchor>
-      <arglist>(const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>ae397ab328f9e0736050e652e81f33e17</anchor>
+      <arglist>(const QList&lt; RO &gt; &amp;body, const HeaderHash &amp;headers={}) const</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_DECL_DEPRECATED GenericRestReply&lt; DT, ET &gt; *</type>
+      <name>put</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>a95e84e5d9926f64d1143d836d4e4c88e</anchor>
+      <arglist>(RO body, const QVariantHash &amp;parameters, const HeaderHash &amp;headers={}) const</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_DECL_DEPRECATED GenericRestReply&lt; DT, ET &gt; *</type>
+      <name>put</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>a06e57a59a2aa87cdcfca7fc484b658d5</anchor>
+      <arglist>(QList&lt; RO &gt; body, const QVariantHash &amp;parameters, const HeaderHash &amp;headers={}) const</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_DECL_DEPRECATED GenericRestReply&lt; DT, ET &gt; *</type>
+      <name>put</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>a57d6eea417581252af0a4b170be44227</anchor>
+      <arglist>(const QUrl &amp;relativeUrl, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>put</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a9dcea015c8729145ec7a879aacf63875</anchor>
-      <arglist>(RO body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>ad3cf94b46ba88d7dec4481697eefdccc</anchor>
+      <arglist>(const QUrl &amp;relativeUrl, const RO &amp;body, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>put</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>ab0bbe1e385fb90336d52f19aa46c2263</anchor>
-      <arglist>(QList&lt; RO &gt; body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>afd7c05f507d516ee0aa2db174c78a88a</anchor>
+      <arglist>(const QUrl &amp;relativeUrl, const QList&lt; RO &gt; &amp;body, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
-      <type>GenericRestReply&lt; DT, ET &gt; *</type>
+      <type>Q_DECL_DEPRECATED GenericRestReply&lt; DT, ET &gt; *</type>
       <name>put</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a6037498e21e56c986c0f35489f4b61c0</anchor>
-      <arglist>(const QUrl &amp;relativeUrl, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>a3028d4efffd50b5e1498652e2393352f</anchor>
+      <arglist>(const QUrl &amp;relativeUrl, RO body, const QVariantHash &amp;parameters, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
-      <type>GenericRestReply&lt; DT, ET &gt; *</type>
+      <type>Q_DECL_DEPRECATED GenericRestReply&lt; DT, ET &gt; *</type>
       <name>put</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>af16750180ecf21fb54f8af45536410bb</anchor>
-      <arglist>(const QUrl &amp;relativeUrl, RO body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
-    </member>
-    <member kind="function">
-      <type>GenericRestReply&lt; DT, ET &gt; *</type>
-      <name>put</name>
-      <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a084ed559273bb6fbb06c2639b0265586</anchor>
-      <arglist>(const QUrl &amp;relativeUrl, QList&lt; RO &gt; body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>ab2f326f10bfc48a4199689b984cf6efc</anchor>
+      <arglist>(const QUrl &amp;relativeUrl, QList&lt; RO &gt; body, const QVariantHash &amp;parameters, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>deleteResource</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a261bd034e168e8e05ec9e67b529a573a</anchor>
-      <arglist>(const QString &amp;methodPath, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>acf9810e93a9b6e2fbca12113fbb73771</anchor>
+      <arglist>(const QString &amp;methodPath, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>deleteResource</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a910302670390b095de97f0900810cfed</anchor>
-      <arglist>(const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>a45ee9eb41fca2808f00f561ec7019b67</anchor>
+      <arglist>(const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>deleteResource</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>affbe1ac563594908c88af73f39a9cb2c</anchor>
-      <arglist>(const QUrl &amp;relativeUrl, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>abe6291a1d857a21696418ff7c9306927</anchor>
+      <arglist>(const QUrl &amp;relativeUrl, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_DECL_DEPRECATED GenericRestReply&lt; DT, ET &gt; *</type>
+      <name>patch</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>a01784cdac6bdd04f82e8f80f5912dc84</anchor>
+      <arglist>(const QString &amp;methodPath, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>patch</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a508a2c695f7ee724faf9d4e645903cb3</anchor>
-      <arglist>(const QString &amp;methodPath, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>aa8b937bc66821bed4a5558007adcd2c4</anchor>
+      <arglist>(const QString &amp;methodPath, const RO &amp;body, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>patch</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a28a55ff43c5c99df7bad390b0aebc214</anchor>
-      <arglist>(const QString &amp;methodPath, RO body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>a36c9decae12fb7c74a01427d5425f20c</anchor>
+      <arglist>(const QString &amp;methodPath, const QList&lt; RO &gt; &amp;body, const HeaderHash &amp;headers={}) const</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_DECL_DEPRECATED GenericRestReply&lt; DT, ET &gt; *</type>
+      <name>patch</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>a9ab9ee0861a17ad4440ab5cbe28b8c2f</anchor>
+      <arglist>(const QString &amp;methodPath, RO body, const QVariantHash &amp;parameters, const HeaderHash &amp;headers={}) const</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_DECL_DEPRECATED GenericRestReply&lt; DT, ET &gt; *</type>
+      <name>patch</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>ab12b2f779a8002138b1d8cfa598875d6</anchor>
+      <arglist>(const QString &amp;methodPath, QList&lt; RO &gt; body, const QVariantHash &amp;parameters, const HeaderHash &amp;headers={}) const</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_DECL_DEPRECATED GenericRestReply&lt; DT, ET &gt; *</type>
+      <name>patch</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>abbbd94d145ab9c4dee760cd9776919ea</anchor>
+      <arglist>(const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>patch</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a41af4977f1955636a8494f48d5995ef7</anchor>
-      <arglist>(const QString &amp;methodPath, QList&lt; RO &gt; body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>a280e01e4a9beb9d6edf739d0f7608bb7</anchor>
+      <arglist>(const RO &amp;body, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>patch</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a8efab9ebe7fe1d83d785bed439532c9a</anchor>
-      <arglist>(const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>aaaebb168dd9f118cb25f89a5dda53aa9</anchor>
+      <arglist>(const QList&lt; RO &gt; &amp;body, const HeaderHash &amp;headers={}) const</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_DECL_DEPRECATED GenericRestReply&lt; DT, ET &gt; *</type>
+      <name>patch</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>a4c121c0c8a95a3f6aea7b1f5bf3f01f0</anchor>
+      <arglist>(RO body, const QVariantHash &amp;parameters, const HeaderHash &amp;headers={}) const</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_DECL_DEPRECATED GenericRestReply&lt; DT, ET &gt; *</type>
+      <name>patch</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>afb713c7a0180c2fd3edb04b9012a7a5a</anchor>
+      <arglist>(QList&lt; RO &gt; body, const QVariantHash &amp;parameters, const HeaderHash &amp;headers={}) const</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_DECL_DEPRECATED GenericRestReply&lt; DT, ET &gt; *</type>
+      <name>patch</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>a4474eb1a5fe7dcd0edacd2e10bd66afd</anchor>
+      <arglist>(const QUrl &amp;relativeUrl, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>patch</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>af444c8a7ecbbdee70b08e1f9ece933a3</anchor>
-      <arglist>(RO body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>aee7572ace9405bafa1585baa56198358</anchor>
+      <arglist>(const QUrl &amp;relativeUrl, const RO &amp;body, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>patch</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>ad7db878ef13604ce12efa71402efb352</anchor>
-      <arglist>(QList&lt; RO &gt; body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>a6e1932bf6d6632f365537e05446303c8</anchor>
+      <arglist>(const QUrl &amp;relativeUrl, const QList&lt; RO &gt; &amp;body, const HeaderHash &amp;headers={}) const</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_DECL_DEPRECATED GenericRestReply&lt; DT, ET &gt; *</type>
+      <name>patch</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>a731b9e1413a90bb6d4fb17065ea15bc2</anchor>
+      <arglist>(const QUrl &amp;relativeUrl, RO body, const QVariantHash &amp;parameters, const HeaderHash &amp;headers={}) const</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_DECL_DEPRECATED GenericRestReply&lt; DT, ET &gt; *</type>
+      <name>patch</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>a6acc0545407d2a560e02385104246670</anchor>
+      <arglist>(const QUrl &amp;relativeUrl, QList&lt; RO &gt; body, const QVariantHash &amp;parameters, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
-      <name>patch</name>
+      <name>head</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a010f8aa4ca22f9f1d3fc54b6a709d03b</anchor>
-      <arglist>(const QUrl &amp;relativeUrl, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>ab05b6a6a3be4aa3098fdb636b3ae584a</anchor>
+      <arglist>(const QString &amp;methodPath, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
-      <name>patch</name>
+      <name>head</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a059a7a77befd3f236624d4214a9bdd17</anchor>
-      <arglist>(const QUrl &amp;relativeUrl, RO body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>add4a000beaaea9e5ae8d05ad663e79ff</anchor>
+      <arglist>(const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
-      <name>patch</name>
+      <name>head</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a7abb330d93f01896fd25df5796046d34</anchor>
-      <arglist>(const QUrl &amp;relativeUrl, QList&lt; RO &gt; body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>a9cf4614096b476fbfd29fdd2f458db22</anchor>
+      <arglist>(const QUrl &amp;relativeUrl, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function" static="yes">
       <type>static QVariantHash</type>
@@ -1197,400 +1711,554 @@
       <type>static QVariantHash</type>
       <name>concatParams</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>abf373e56b0b8b1a4740dbc070ff9e0cf</anchor>
-      <arglist>(QString key, QVariant value, Args... parameters)</arglist>
+      <anchor>a1e2eb444efd8d070dec97295ed5f4fe7</anchor>
+      <arglist>(const QString &amp;key, const QVariant &amp;value, Args... parameters)</arglist>
     </member>
     <member kind="variable" static="yes">
       <type>static const QByteArray</type>
       <name>GetVerb</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>af1dd025be5f29709cdb02ab4a4da095a</anchor>
+      <anchor>a176ce8c05ef527b8a02b69b3900f0fa1</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable" static="yes">
       <type>static const QByteArray</type>
       <name>PostVerb</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>acdc60900a9cd846aa09f14ac1cead736</anchor>
+      <anchor>a32de8f61ec19a6d7b27942172353ae1d</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable" static="yes">
       <type>static const QByteArray</type>
       <name>PutVerb</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a43287b7a0c6b3aa274cc5056e4ccb7f0</anchor>
+      <anchor>a1cfb4332ac75ac9c0e400a97c4f874c1</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable" static="yes">
       <type>static const QByteArray</type>
       <name>DeleteVerb</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>aeb1f3357a0c6101eacd563d72618480a</anchor>
+      <anchor>aac3ffebd561e942f2aac0a669101fb5f</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable" static="yes">
       <type>static const QByteArray</type>
       <name>PatchVerb</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>aa56669ffdb6d6604d7d737cc84563f5d</anchor>
+      <anchor>a7d93c12ca09d9dbd9f18f0a570ee3a53</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static const QByteArray</type>
+      <name>HeadVerb</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>a79b63f85adb9996cc6d7224cd41874d0</anchor>
       <arglist></arglist>
     </member>
     <member kind="function">
       <type>RestReply *</type>
       <name>callJson</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>ad4419379c9d68f657428e0ac1334833c</anchor>
-      <arglist>(QByteArray verb, const QString &amp;methodPath, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>af4014317a979378dae6d2ece8ec94984</anchor>
+      <arglist>(const QByteArray &amp;verb, const QString &amp;methodPath, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}, bool paramsAsBody=false) const</arglist>
     </member>
     <member kind="function">
       <type>RestReply *</type>
       <name>callJson</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a1e6e1e544e155db43579e144755b15fc</anchor>
-      <arglist>(QByteArray verb, const QString &amp;methodPath, QJsonObject body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>a2f7849f875f632cebf0cd39fa4f3f5d9</anchor>
+      <arglist>(const QByteArray &amp;verb, const QString &amp;methodPath, const QJsonObject &amp;body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>RestReply *</type>
       <name>callJson</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>acdb3a8027802df2bfce1af86e7b0628f</anchor>
-      <arglist>(QByteArray verb, const QString &amp;methodPath, QJsonArray body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>a7e5385559d65445f95df2c11f648afce</anchor>
+      <arglist>(const QByteArray &amp;verb, const QString &amp;methodPath, const QJsonArray &amp;body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>RestReply *</type>
       <name>callJson</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>ac814f3d24aa07e4e781dc5aaf23fd186</anchor>
-      <arglist>(QByteArray verb, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>a6926e2d7d55a0a3f1549018f41eac0cd</anchor>
+      <arglist>(const QByteArray &amp;verb, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}, bool paramsAsBody=false) const</arglist>
     </member>
     <member kind="function">
       <type>RestReply *</type>
       <name>callJson</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>aba3480db250daab4474bf60f401efb5b</anchor>
-      <arglist>(QByteArray verb, QJsonObject body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>a81ddb0d573973621e45fa5d92d49e919</anchor>
+      <arglist>(const QByteArray &amp;verb, const QJsonObject &amp;body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>RestReply *</type>
       <name>callJson</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>ac6e5c52e13434bd8b638993e89d50db1</anchor>
-      <arglist>(QByteArray verb, QJsonArray body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>a49f8a1a2ef48480a085db5865249cc01</anchor>
+      <arglist>(const QByteArray &amp;verb, const QJsonArray &amp;body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>RestReply *</type>
       <name>callJson</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a1f36fe3acfcfcdbd472dcae6770f2bc5</anchor>
-      <arglist>(QByteArray verb, const QUrl &amp;relativeUrl, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>a95abc4ee9905125149f10ddaf492cc57</anchor>
+      <arglist>(const QByteArray &amp;verb, const QUrl &amp;relativeUrl, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}, bool paramsAsBody=false) const</arglist>
     </member>
     <member kind="function">
       <type>RestReply *</type>
       <name>callJson</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a43e967489e972eef7eedc5669d603d59</anchor>
-      <arglist>(QByteArray verb, const QUrl &amp;relativeUrl, QJsonObject body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>aa33a9887f0dd16b4973c788a0b991822</anchor>
+      <arglist>(const QByteArray &amp;verb, const QUrl &amp;relativeUrl, const QJsonObject &amp;body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>RestReply *</type>
       <name>callJson</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a1f54b2c53a868e35d06e587acfa491ae</anchor>
-      <arglist>(QByteArray verb, const QUrl &amp;relativeUrl, QJsonArray body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>afd42479676775d53e9d1b539fafff78f</anchor>
+      <arglist>(const QByteArray &amp;verb, const QUrl &amp;relativeUrl, const QJsonArray &amp;body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>call</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a801b931365d2702310c4c92b820cdd1a</anchor>
-      <arglist>(QByteArray verb, const QString &amp;methodPath, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>a2c45e1070ad0467705adfaf7795a4975</anchor>
+      <arglist>(const QByteArray &amp;verb, const QString &amp;methodPath, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}, bool paramsAsBody=false) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>call</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a79a463b1668a5e7a7e99d8e8962638e1</anchor>
-      <arglist>(QByteArray verb, const QString &amp;methodPath, RO body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>ae9f9b650234b0deda3dba9e94ad7d755</anchor>
+      <arglist>(const QByteArray &amp;verb, const QString &amp;methodPath, const RO &amp;body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>call</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a1f01f3c742f30e54814fe426fb1f927b</anchor>
-      <arglist>(QByteArray verb, const QString &amp;methodPath, QList&lt; RO &gt; body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>a5e74766f3f9875b9ad975cea35243b51</anchor>
+      <arglist>(const QByteArray &amp;verb, const QString &amp;methodPath, const QList&lt; RO &gt; &amp;body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>call</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a74f9eb3fe915e2265640f487aedc353c</anchor>
-      <arglist>(QByteArray verb, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>aed5788a6afee95c50ab439d03e4cd083</anchor>
+      <arglist>(const QByteArray &amp;verb, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}, bool paramsAsBody=false) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>call</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a4fa871bce0d5777781ec48971d7b99e0</anchor>
-      <arglist>(QByteArray verb, RO body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>abcf5f431d458cd465c680afd18da9d2b</anchor>
+      <arglist>(const QByteArray &amp;verb, const RO &amp;body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>call</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>ae52004b6c4d520976a1397bf4d75334c</anchor>
-      <arglist>(QByteArray verb, QList&lt; RO &gt; body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>af8c3c0f7e2f31fb5f1c5a3bf182ef388</anchor>
+      <arglist>(const QByteArray &amp;verb, const QList&lt; RO &gt; &amp;body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>call</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>aea22de9d2934f90bb87a1ca53691e2d1</anchor>
-      <arglist>(QByteArray verb, const QUrl &amp;relativeUrl, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>a5760c8d382a694052b837543f721324a</anchor>
+      <arglist>(const QByteArray &amp;verb, const QUrl &amp;relativeUrl, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}, bool paramsAsBody=false) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>call</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>ad1213938778055db2ddd87a2f4f942f5</anchor>
-      <arglist>(QByteArray verb, const QUrl &amp;relativeUrl, RO body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>ada2264fda35e9193dcc744ddd485a2c3</anchor>
+      <arglist>(const QByteArray &amp;verb, const QUrl &amp;relativeUrl, const RO &amp;body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>call</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a84990a4d48e5c78ce59eece5ec4f68d6</anchor>
-      <arglist>(QByteArray verb, const QUrl &amp;relativeUrl, QList&lt; RO &gt; body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>ad60ef106a3318eae087b44fe8154cbf0</anchor>
+      <arglist>(const QByteArray &amp;verb, const QUrl &amp;relativeUrl, const QList&lt; RO &gt; &amp;body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>get</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a63c40b8c3fbc8f7cf160688538d8cd63</anchor>
-      <arglist>(const QString &amp;methodPath, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>a6958b8f787d682d754e73b61e96b08e3</anchor>
+      <arglist>(const QString &amp;methodPath, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>get</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>ab4b6938e0f76f6f08e2ab34e6e86d787</anchor>
-      <arglist>(const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>aa4d696f9b041601535098cc5d133b8f7</anchor>
+      <arglist>(const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>get</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a5d1a0b9e5b9ad8e7821ccfc74c9a5c18</anchor>
-      <arglist>(const QUrl &amp;relativeUrl, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>a2b5161bb7dfa27030bce51e5759497af</anchor>
+      <arglist>(const QUrl &amp;relativeUrl, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>post</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a575196cef5b1148871850d2eb72b689c</anchor>
-      <arglist>(const QString &amp;methodPath, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>aa95f8f0d2b7f9c779db1cee17da4fb13</anchor>
+      <arglist>(const QString &amp;methodPath, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>post</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a87a302a106f194f477bdb3fdad9d7ba1</anchor>
-      <arglist>(const QString &amp;methodPath, RO body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>acefb2aa1167938f38ad947c677a7befe</anchor>
+      <arglist>(const QString &amp;methodPath, const RO &amp;body, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>post</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>aafd72949377885916b00e4f4d89919eb</anchor>
-      <arglist>(const QString &amp;methodPath, QList&lt; RO &gt; body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>ad510efcd0a583047102b810f8dfb99a2</anchor>
+      <arglist>(const QString &amp;methodPath, const QList&lt; RO &gt; &amp;body, const HeaderHash &amp;headers={}) const</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_DECL_DEPRECATED GenericRestReply&lt; DT, ET &gt; *</type>
+      <name>post</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>a66046eb47349e59246d4fe970b367150</anchor>
+      <arglist>(const QString &amp;methodPath, RO body, const QVariantHash &amp;parameters, const HeaderHash &amp;headers={}) const</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_DECL_DEPRECATED GenericRestReply&lt; DT, ET &gt; *</type>
+      <name>post</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>a1eb4c35dbc4cff53d2d82f0fda4f978a</anchor>
+      <arglist>(const QString &amp;methodPath, QList&lt; RO &gt; body, const QVariantHash &amp;parameters, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>post</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a1dc2c631015ab87ddf2770bc08e75354</anchor>
-      <arglist>(const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>a544958b1de23e69d7b179c2caf9ed81e</anchor>
+      <arglist>(const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>post</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a82e792ef186c5c97842ff9e40778ef54</anchor>
-      <arglist>(RO body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>a58e334af46651c14e8e5348576978039</anchor>
+      <arglist>(const RO &amp;body, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>post</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>ac58239a7f973900d98e6ec22326181d0</anchor>
-      <arglist>(QList&lt; RO &gt; body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>a7cbf169334540158ac95802f4b032a5c</anchor>
+      <arglist>(const QList&lt; RO &gt; &amp;body, const HeaderHash &amp;headers={}) const</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_DECL_DEPRECATED GenericRestReply&lt; DT, ET &gt; *</type>
+      <name>post</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>a6e10e01a4d014da2db10ed756dd527fd</anchor>
+      <arglist>(RO body, const QVariantHash &amp;parameters, const HeaderHash &amp;headers={}) const</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_DECL_DEPRECATED GenericRestReply&lt; DT, ET &gt; *</type>
+      <name>post</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>ac2bc85050ff23c63064f3f8a9be81b3f</anchor>
+      <arglist>(QList&lt; RO &gt; body, const QVariantHash &amp;parameters, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>post</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>ad64e7ec7df707cdcd27ca24fb1cb92b8</anchor>
-      <arglist>(const QUrl &amp;relativeUrl, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>a375d002fab73ef767aae1603c40b3568</anchor>
+      <arglist>(const QUrl &amp;relativeUrl, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>post</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a9e7033e488f8ce7d4d42aa373c18de25</anchor>
-      <arglist>(const QUrl &amp;relativeUrl, RO body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>aefb285e72a8dc619c5a5c733e2ae4c4e</anchor>
+      <arglist>(const QUrl &amp;relativeUrl, const RO &amp;body, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>post</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a213369e4e6421cb3c9995e808571d922</anchor>
-      <arglist>(const QUrl &amp;relativeUrl, QList&lt; RO &gt; body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>a6c15ed3bc160e93dd3d6732cc386d71f</anchor>
+      <arglist>(const QUrl &amp;relativeUrl, const QList&lt; RO &gt; &amp;body, const HeaderHash &amp;headers={}) const</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_DECL_DEPRECATED GenericRestReply&lt; DT, ET &gt; *</type>
+      <name>post</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>aa38c00bb623516f325f0955333796ecf</anchor>
+      <arglist>(const QUrl &amp;relativeUrl, RO body, const QVariantHash &amp;parameters, const HeaderHash &amp;headers={}) const</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_DECL_DEPRECATED GenericRestReply&lt; DT, ET &gt; *</type>
+      <name>post</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>a57b0f469112bd12788838a939c5a53da</anchor>
+      <arglist>(const QUrl &amp;relativeUrl, QList&lt; RO &gt; body, const QVariantHash &amp;parameters, const HeaderHash &amp;headers={}) const</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_DECL_DEPRECATED GenericRestReply&lt; DT, ET &gt; *</type>
+      <name>put</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>ac8140f3b91769d3746cedfaf54e6f3a0</anchor>
+      <arglist>(const QString &amp;methodPath, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>put</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a7159c8e3919468fce7cecbba81f49d67</anchor>
-      <arglist>(const QString &amp;methodPath, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>a4206efdb06d75dbcffc85ebd9d1574d7</anchor>
+      <arglist>(const QString &amp;methodPath, const RO &amp;body, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>put</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>ae27affb673154315c2341ff0772065e2</anchor>
-      <arglist>(const QString &amp;methodPath, RO body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>a8cfa25455880c7acc2d89e64d23f9f8c</anchor>
+      <arglist>(const QString &amp;methodPath, const QList&lt; RO &gt; &amp;body, const HeaderHash &amp;headers={}) const</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_DECL_DEPRECATED GenericRestReply&lt; DT, ET &gt; *</type>
+      <name>put</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>a484db48a418c003d2365064f41c06265</anchor>
+      <arglist>(const QString &amp;methodPath, RO body, const QVariantHash &amp;parameters, const HeaderHash &amp;headers={}) const</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_DECL_DEPRECATED GenericRestReply&lt; DT, ET &gt; *</type>
+      <name>put</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>a3af89cc01d3cc42981fb5e6b3dbee4c1</anchor>
+      <arglist>(const QString &amp;methodPath, QList&lt; RO &gt; body, const QVariantHash &amp;parameters, const HeaderHash &amp;headers={}) const</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_DECL_DEPRECATED GenericRestReply&lt; DT, ET &gt; *</type>
+      <name>put</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>a01a9fad3bc21107c1f0ddeafda2c1f6b</anchor>
+      <arglist>(const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>put</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a55115f440bec2fff809e985e836b93e7</anchor>
-      <arglist>(const QString &amp;methodPath, QList&lt; RO &gt; body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>a18dac03e77eb774e6b0da98de6487f13</anchor>
+      <arglist>(const RO &amp;body, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>put</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a9a3cfac459c5418b204a03c94c985327</anchor>
-      <arglist>(const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>ae397ab328f9e0736050e652e81f33e17</anchor>
+      <arglist>(const QList&lt; RO &gt; &amp;body, const HeaderHash &amp;headers={}) const</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_DECL_DEPRECATED GenericRestReply&lt; DT, ET &gt; *</type>
+      <name>put</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>a95e84e5d9926f64d1143d836d4e4c88e</anchor>
+      <arglist>(RO body, const QVariantHash &amp;parameters, const HeaderHash &amp;headers={}) const</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_DECL_DEPRECATED GenericRestReply&lt; DT, ET &gt; *</type>
+      <name>put</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>a06e57a59a2aa87cdcfca7fc484b658d5</anchor>
+      <arglist>(QList&lt; RO &gt; body, const QVariantHash &amp;parameters, const HeaderHash &amp;headers={}) const</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_DECL_DEPRECATED GenericRestReply&lt; DT, ET &gt; *</type>
+      <name>put</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>a57d6eea417581252af0a4b170be44227</anchor>
+      <arglist>(const QUrl &amp;relativeUrl, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>put</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a9dcea015c8729145ec7a879aacf63875</anchor>
-      <arglist>(RO body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>ad3cf94b46ba88d7dec4481697eefdccc</anchor>
+      <arglist>(const QUrl &amp;relativeUrl, const RO &amp;body, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>put</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>ab0bbe1e385fb90336d52f19aa46c2263</anchor>
-      <arglist>(QList&lt; RO &gt; body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>afd7c05f507d516ee0aa2db174c78a88a</anchor>
+      <arglist>(const QUrl &amp;relativeUrl, const QList&lt; RO &gt; &amp;body, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
-      <type>GenericRestReply&lt; DT, ET &gt; *</type>
+      <type>Q_DECL_DEPRECATED GenericRestReply&lt; DT, ET &gt; *</type>
       <name>put</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a6037498e21e56c986c0f35489f4b61c0</anchor>
-      <arglist>(const QUrl &amp;relativeUrl, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>a3028d4efffd50b5e1498652e2393352f</anchor>
+      <arglist>(const QUrl &amp;relativeUrl, RO body, const QVariantHash &amp;parameters, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
-      <type>GenericRestReply&lt; DT, ET &gt; *</type>
+      <type>Q_DECL_DEPRECATED GenericRestReply&lt; DT, ET &gt; *</type>
       <name>put</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>af16750180ecf21fb54f8af45536410bb</anchor>
-      <arglist>(const QUrl &amp;relativeUrl, RO body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
-    </member>
-    <member kind="function">
-      <type>GenericRestReply&lt; DT, ET &gt; *</type>
-      <name>put</name>
-      <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a084ed559273bb6fbb06c2639b0265586</anchor>
-      <arglist>(const QUrl &amp;relativeUrl, QList&lt; RO &gt; body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>ab2f326f10bfc48a4199689b984cf6efc</anchor>
+      <arglist>(const QUrl &amp;relativeUrl, QList&lt; RO &gt; body, const QVariantHash &amp;parameters, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>deleteResource</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a261bd034e168e8e05ec9e67b529a573a</anchor>
-      <arglist>(const QString &amp;methodPath, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>acf9810e93a9b6e2fbca12113fbb73771</anchor>
+      <arglist>(const QString &amp;methodPath, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>deleteResource</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a910302670390b095de97f0900810cfed</anchor>
-      <arglist>(const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>a45ee9eb41fca2808f00f561ec7019b67</anchor>
+      <arglist>(const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>deleteResource</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>affbe1ac563594908c88af73f39a9cb2c</anchor>
-      <arglist>(const QUrl &amp;relativeUrl, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>abe6291a1d857a21696418ff7c9306927</anchor>
+      <arglist>(const QUrl &amp;relativeUrl, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_DECL_DEPRECATED GenericRestReply&lt; DT, ET &gt; *</type>
+      <name>patch</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>a01784cdac6bdd04f82e8f80f5912dc84</anchor>
+      <arglist>(const QString &amp;methodPath, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>patch</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a508a2c695f7ee724faf9d4e645903cb3</anchor>
-      <arglist>(const QString &amp;methodPath, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>aa8b937bc66821bed4a5558007adcd2c4</anchor>
+      <arglist>(const QString &amp;methodPath, const RO &amp;body, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>patch</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a28a55ff43c5c99df7bad390b0aebc214</anchor>
-      <arglist>(const QString &amp;methodPath, RO body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>a36c9decae12fb7c74a01427d5425f20c</anchor>
+      <arglist>(const QString &amp;methodPath, const QList&lt; RO &gt; &amp;body, const HeaderHash &amp;headers={}) const</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_DECL_DEPRECATED GenericRestReply&lt; DT, ET &gt; *</type>
+      <name>patch</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>a9ab9ee0861a17ad4440ab5cbe28b8c2f</anchor>
+      <arglist>(const QString &amp;methodPath, RO body, const QVariantHash &amp;parameters, const HeaderHash &amp;headers={}) const</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_DECL_DEPRECATED GenericRestReply&lt; DT, ET &gt; *</type>
+      <name>patch</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>ab12b2f779a8002138b1d8cfa598875d6</anchor>
+      <arglist>(const QString &amp;methodPath, QList&lt; RO &gt; body, const QVariantHash &amp;parameters, const HeaderHash &amp;headers={}) const</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_DECL_DEPRECATED GenericRestReply&lt; DT, ET &gt; *</type>
+      <name>patch</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>abbbd94d145ab9c4dee760cd9776919ea</anchor>
+      <arglist>(const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>patch</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a41af4977f1955636a8494f48d5995ef7</anchor>
-      <arglist>(const QString &amp;methodPath, QList&lt; RO &gt; body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>a280e01e4a9beb9d6edf739d0f7608bb7</anchor>
+      <arglist>(const RO &amp;body, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>patch</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a8efab9ebe7fe1d83d785bed439532c9a</anchor>
-      <arglist>(const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>aaaebb168dd9f118cb25f89a5dda53aa9</anchor>
+      <arglist>(const QList&lt; RO &gt; &amp;body, const HeaderHash &amp;headers={}) const</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_DECL_DEPRECATED GenericRestReply&lt; DT, ET &gt; *</type>
+      <name>patch</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>a4c121c0c8a95a3f6aea7b1f5bf3f01f0</anchor>
+      <arglist>(RO body, const QVariantHash &amp;parameters, const HeaderHash &amp;headers={}) const</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_DECL_DEPRECATED GenericRestReply&lt; DT, ET &gt; *</type>
+      <name>patch</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>afb713c7a0180c2fd3edb04b9012a7a5a</anchor>
+      <arglist>(QList&lt; RO &gt; body, const QVariantHash &amp;parameters, const HeaderHash &amp;headers={}) const</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_DECL_DEPRECATED GenericRestReply&lt; DT, ET &gt; *</type>
+      <name>patch</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>a4474eb1a5fe7dcd0edacd2e10bd66afd</anchor>
+      <arglist>(const QUrl &amp;relativeUrl, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>patch</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>af444c8a7ecbbdee70b08e1f9ece933a3</anchor>
-      <arglist>(RO body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>aee7572ace9405bafa1585baa56198358</anchor>
+      <arglist>(const QUrl &amp;relativeUrl, const RO &amp;body, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
       <name>patch</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>ad7db878ef13604ce12efa71402efb352</anchor>
-      <arglist>(QList&lt; RO &gt; body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>a6e1932bf6d6632f365537e05446303c8</anchor>
+      <arglist>(const QUrl &amp;relativeUrl, const QList&lt; RO &gt; &amp;body, const HeaderHash &amp;headers={}) const</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_DECL_DEPRECATED GenericRestReply&lt; DT, ET &gt; *</type>
+      <name>patch</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>a731b9e1413a90bb6d4fb17065ea15bc2</anchor>
+      <arglist>(const QUrl &amp;relativeUrl, RO body, const QVariantHash &amp;parameters, const HeaderHash &amp;headers={}) const</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_DECL_DEPRECATED GenericRestReply&lt; DT, ET &gt; *</type>
+      <name>patch</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>a6acc0545407d2a560e02385104246670</anchor>
+      <arglist>(const QUrl &amp;relativeUrl, QList&lt; RO &gt; body, const QVariantHash &amp;parameters, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
-      <name>patch</name>
+      <name>head</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a010f8aa4ca22f9f1d3fc54b6a709d03b</anchor>
-      <arglist>(const QUrl &amp;relativeUrl, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>ab05b6a6a3be4aa3098fdb636b3ae584a</anchor>
+      <arglist>(const QString &amp;methodPath, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
-      <name>patch</name>
+      <name>head</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a059a7a77befd3f236624d4214a9bdd17</anchor>
-      <arglist>(const QUrl &amp;relativeUrl, RO body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>add4a000beaaea9e5ae8d05ad663e79ff</anchor>
+      <arglist>(const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function">
       <type>GenericRestReply&lt; DT, ET &gt; *</type>
-      <name>patch</name>
+      <name>head</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a7abb330d93f01896fd25df5796046d34</anchor>
-      <arglist>(const QUrl &amp;relativeUrl, QList&lt; RO &gt; body, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={})</arglist>
+      <anchor>a9cf4614096b476fbfd29fdd2f458db22</anchor>
+      <arglist>(const QUrl &amp;relativeUrl, const QVariantHash &amp;parameters={}, const HeaderHash &amp;headers={}) const</arglist>
     </member>
     <member kind="function" static="yes">
       <type>static QVariantHash</type>
@@ -1603,8 +2271,8 @@
       <type>static QVariantHash</type>
       <name>concatParams</name>
       <anchorfile>class_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>abf373e56b0b8b1a4740dbc070ff9e0cf</anchor>
-      <arglist>(QString key, QVariant value, Args... parameters)</arglist>
+      <anchor>a1e2eb444efd8d070dec97295ed5f4fe7</anchor>
+      <arglist>(const QString &amp;key, const QVariant &amp;value, Args... parameters)</arglist>
     </member>
   </compound>
   <compound kind="class">
@@ -1615,21 +2283,21 @@
       <type>void</type>
       <name>setManager</name>
       <anchorfile>class_qt_rest_client_1_1_rest_client.html</anchorfile>
-      <anchor>a17ee12ebd4c664b290e83c26c5c6e1a6</anchor>
+      <anchor>abf915797fbf355e53c2245a63865d534</anchor>
       <arglist>(QNetworkAccessManager *manager)</arglist>
     </member>
     <member kind="slot">
       <type>void</type>
       <name>setSerializer</name>
       <anchorfile>class_qt_rest_client_1_1_rest_client.html</anchorfile>
-      <anchor>ab52e327f77ef87cbe3fc556ac6d337d7</anchor>
+      <anchor>a7ba2310ed9773327ed6c744baf100b3d</anchor>
       <arglist>(QJsonSerializer *serializer)</arglist>
     </member>
     <member kind="slot">
       <type>void</type>
       <name>setPagingFactory</name>
       <anchorfile>class_qt_rest_client_1_1_rest_client.html</anchorfile>
-      <anchor>a3f10628c5e6bf2f2845882b6bf5a7d58</anchor>
+      <anchor>aaaba2f951c3cb7441f02b6574b95a696</anchor>
       <arglist>(PagingFactory *factory)</arglist>
     </member>
     <member kind="slot">
@@ -1671,7 +2339,7 @@
       <type>void</type>
       <name>setModernAttributes</name>
       <anchorfile>class_qt_rest_client_1_1_rest_client.html</anchorfile>
-      <anchor>a30bcbda17872f0c1404fd384d68600fc</anchor>
+      <anchor>a9a5b66cad38b56240c0cb91bb73099c8</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="slot">
@@ -1685,36 +2353,36 @@
       <type>void</type>
       <name>addGlobalHeader</name>
       <anchorfile>class_qt_rest_client_1_1_rest_client.html</anchorfile>
-      <anchor>a7be7033f286161a24b3920832babd731</anchor>
-      <arglist>(QByteArray name, QByteArray value)</arglist>
+      <anchor>a237c9d340d65ebe7849bc731a0f48042</anchor>
+      <arglist>(const QByteArray &amp;name, const QByteArray &amp;value)</arglist>
     </member>
     <member kind="slot">
       <type>void</type>
       <name>removeGlobalHeader</name>
       <anchorfile>class_qt_rest_client_1_1_rest_client.html</anchorfile>
-      <anchor>a42b79f3dc14cba523d1866a634e3947f</anchor>
-      <arglist>(QByteArray name)</arglist>
+      <anchor>a9425f00e01a99c4334f9b53b303c27d5</anchor>
+      <arglist>(const QByteArray &amp;name)</arglist>
     </member>
     <member kind="slot">
       <type>void</type>
       <name>addGlobalParameter</name>
       <anchorfile>class_qt_rest_client_1_1_rest_client.html</anchorfile>
-      <anchor>ac7057ac984db1e54076c3d3973a1857b</anchor>
-      <arglist>(QString name, QString value)</arglist>
+      <anchor>a49051c458a0d2bc836702da24808bf5b</anchor>
+      <arglist>(const QString &amp;name, const QString &amp;value)</arglist>
     </member>
     <member kind="slot">
       <type>void</type>
       <name>removeGlobalParameter</name>
       <anchorfile>class_qt_rest_client_1_1_rest_client.html</anchorfile>
-      <anchor>ab1e93fe0c3e34f3c3f901e1da416856c</anchor>
-      <arglist>(QString name)</arglist>
+      <anchor>a79be562054c44ade3636686270ecdb98</anchor>
+      <arglist>(const QString &amp;name)</arglist>
     </member>
     <member kind="slot">
       <type>void</type>
       <name>addRequestAttribute</name>
       <anchorfile>class_qt_rest_client_1_1_rest_client.html</anchorfile>
-      <anchor>aba72359266f4dd90986facdde07eeafb</anchor>
-      <arglist>(QNetworkRequest::Attribute attribute, QVariant value)</arglist>
+      <anchor>ad66f1ae80c2d4551fc3ed6e092d7c7a9</anchor>
+      <arglist>(QNetworkRequest::Attribute attribute, const QVariant &amp;value)</arglist>
     </member>
     <member kind="slot">
       <type>void</type>
@@ -1773,45 +2441,38 @@
       <arglist>(QObject *parent=nullptr)</arglist>
     </member>
     <member kind="function">
-      <type></type>
-      <name>~RestClient</name>
-      <anchorfile>class_qt_rest_client_1_1_rest_client.html</anchorfile>
-      <anchor>a9a6d211b09653ee470c320769edde80d</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
       <type>RestClass *</type>
       <name>createClass</name>
       <anchorfile>class_qt_rest_client_1_1_rest_client.html</anchorfile>
-      <anchor>ae457d392d7c8d25f8e76ade95cc80973</anchor>
+      <anchor>a848e5aa7d8d742066de7f21c6f1614a9</anchor>
       <arglist>(const QString &amp;path, QObject *parent=nullptr)</arglist>
     </member>
     <member kind="function">
       <type>RestClass *</type>
       <name>rootClass</name>
       <anchorfile>class_qt_rest_client_1_1_rest_client.html</anchorfile>
-      <anchor>a6477b2d6df004f1c9c0cf572b2e9aa07</anchor>
+      <anchor>a9d932a3bab010ae4a92f14bf4c1c4cbf</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
       <type>QNetworkAccessManager *</type>
       <name>manager</name>
       <anchorfile>class_qt_rest_client_1_1_rest_client.html</anchorfile>
-      <anchor>a4517e032b051849aa0d6fbeb62d2e5a8</anchor>
+      <anchor>a2b934f663fc6ea9e1e0a6c9f33632637</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
       <type>QJsonSerializer *</type>
       <name>serializer</name>
       <anchorfile>class_qt_rest_client_1_1_rest_client.html</anchorfile>
-      <anchor>a56a0c36f7a5580de2db935de70b112be</anchor>
+      <anchor>a340c489f1794505330a65ce741bf1def</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
       <type>PagingFactory *</type>
       <name>pagingFactory</name>
       <anchorfile>class_qt_rest_client_1_1_rest_client.html</anchorfile>
-      <anchor>a0bdf814e9173285962800cfc10c746e2</anchor>
+      <anchor>afa8ed67c8417db0ac0542ba688c28668</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
@@ -1860,49 +2521,68 @@
       <type>virtual RequestBuilder</type>
       <name>builder</name>
       <anchorfile>class_qt_rest_client_1_1_rest_client.html</anchorfile>
-      <anchor>ab5bf445cec914a93e71f864957d528be</anchor>
+      <anchor>adb823c9a8c96ce499c5dc4c81af2628c</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="property">
       <type>QUrl</type>
       <name>baseUrl</name>
       <anchorfile>class_qt_rest_client_1_1_rest_client.html</anchorfile>
-      <anchor>abd3781d4411a6fabbecdda39f6de5fe3</anchor>
+      <anchor>af6995a64798359f440eaaaa70ba2e3f3</anchor>
       <arglist></arglist>
     </member>
     <member kind="property">
       <type>QVersionNumber</type>
       <name>apiVersion</name>
       <anchorfile>class_qt_rest_client_1_1_rest_client.html</anchorfile>
-      <anchor>a781f05c050afdf70ffaffb02e74744a6</anchor>
+      <anchor>a24095856ddaf25f2d460ae66ecb22e26</anchor>
       <arglist></arglist>
     </member>
     <member kind="property">
       <type>HeaderHash</type>
       <name>globalHeaders</name>
       <anchorfile>class_qt_rest_client_1_1_rest_client.html</anchorfile>
-      <anchor>a318cf677192305b97721d1f28a05a91e</anchor>
+      <anchor>ae96cb44052a5d5684f356103b2e51805</anchor>
       <arglist></arglist>
     </member>
     <member kind="property">
       <type>QUrlQuery</type>
       <name>globalParameters</name>
       <anchorfile>class_qt_rest_client_1_1_rest_client.html</anchorfile>
-      <anchor>a7a168edc300d0f9b2e0e1a934d01ed13</anchor>
+      <anchor>a31ec102ccfe8d43eb147175b397c7119</anchor>
       <arglist></arglist>
     </member>
     <member kind="property">
       <type>QHash&lt; QNetworkRequest::Attribute, QVariant &gt;</type>
       <name>requestAttributes</name>
       <anchorfile>class_qt_rest_client_1_1_rest_client.html</anchorfile>
-      <anchor>a702de0d9054f8869b8473b85ec2a06c1</anchor>
+      <anchor>a69fdfd48e8dc5fed8345094ea4091d8e</anchor>
       <arglist></arglist>
     </member>
     <member kind="property">
       <type>QSslConfiguration</type>
       <name>sslConfiguration</name>
       <anchorfile>class_qt_rest_client_1_1_rest_client.html</anchorfile>
-      <anchor>a6ac3912a6e07fd57f4f89ebb186a2ee1</anchor>
+      <anchor>aaf54e4989f4f32c6293dd5592c5d7325</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>de::skycoder42::QtRestClient::RestClient</name>
+    <filename>classde_1_1skycoder42_1_1_qt_rest_client_1_1_rest_client.html</filename>
+    <base>QtRestClient::RestClient</base>
+    <member kind="function">
+      <type></type>
+      <name>QmlRestClient</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_rest_client.html</anchorfile>
+      <anchor>a16dbe8a94b0e945ec8e717b2b34ccff5</anchor>
+      <arglist>(QObject *parent=nullptr)</arglist>
+    </member>
+    <member kind="property">
+      <type>QQmlListProperty&lt; de::skycoder42::QtRestClient::RestClass &gt;</type>
+      <name>classes</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_rest_client.html</anchorfile>
+      <anchor>ab2deb0a389f90e237f8e908b3b5dce32</anchor>
       <arglist></arglist>
     </member>
   </compound>
@@ -1969,7 +2649,7 @@
       <type>void</type>
       <name>abort</name>
       <anchorfile>class_qt_rest_client_1_1_rest_reply.html</anchorfile>
-      <anchor>a89ff31fae5604e43e5d27b371fde0ea0</anchor>
+      <anchor>ab9f0f6ac1b76f3d5d5a39ecdcbeacd9c</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="slot">
@@ -1990,7 +2670,7 @@
       <type>void</type>
       <name>setAutoDelete</name>
       <anchorfile>class_qt_rest_client_1_1_rest_reply.html</anchorfile>
-      <anchor>abae5db5e70c4a43e81c7418bd15fa835</anchor>
+      <anchor>ad9b1c1621878540376022db4d5edf270</anchor>
       <arglist>(bool autoDelete)</arglist>
     </member>
     <member kind="signal">
@@ -2060,70 +2740,126 @@
       <type></type>
       <name>RestReply</name>
       <anchorfile>class_qt_rest_client_1_1_rest_reply.html</anchorfile>
-      <anchor>a656dab71ed26f952570202a40d4e4cc3</anchor>
+      <anchor>acce4889dd37487d361d469d9bfb811e2</anchor>
       <arglist>(QNetworkReply *networkReply, QObject *parent=nullptr)</arglist>
     </member>
     <member kind="function">
       <type>RestReply *</type>
       <name>onSucceeded</name>
       <anchorfile>class_qt_rest_client_1_1_rest_reply.html</anchorfile>
-      <anchor>aeda374e3f61cd5a5f18bf03576cd1575</anchor>
-      <arglist>(std::function&lt; void(int, QJsonObject)&gt; handler)</arglist>
+      <anchor>ace76499e9dc2fc87a290c061268f88bd</anchor>
+      <arglist>(const std::function&lt; void(int, QJsonObject)&gt; &amp;handler)</arglist>
     </member>
     <member kind="function">
       <type>RestReply *</type>
       <name>onSucceeded</name>
       <anchorfile>class_qt_rest_client_1_1_rest_reply.html</anchorfile>
-      <anchor>a30e4b1571c9c9e36daf37dd4e23edd0a</anchor>
-      <arglist>(std::function&lt; void(int, QJsonArray)&gt; handler)</arglist>
+      <anchor>acadab0dced077b6c0e2d6dc30c8a98f6</anchor>
+      <arglist>(QObject *scope, const std::function&lt; void(int, QJsonObject)&gt; &amp;handler)</arglist>
+    </member>
+    <member kind="function">
+      <type>RestReply *</type>
+      <name>onSucceeded</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_reply.html</anchorfile>
+      <anchor>a32f77f04d3dc4e596a2ffacd934343b6</anchor>
+      <arglist>(const std::function&lt; void(int, QJsonArray)&gt; &amp;handler)</arglist>
+    </member>
+    <member kind="function">
+      <type>RestReply *</type>
+      <name>onSucceeded</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_reply.html</anchorfile>
+      <anchor>ad79f51e3004191ef985e30f016bfe2e3</anchor>
+      <arglist>(QObject *scope, const std::function&lt; void(int, QJsonArray)&gt; &amp;handler)</arglist>
     </member>
     <member kind="function">
       <type>RestReply *</type>
       <name>onFailed</name>
       <anchorfile>class_qt_rest_client_1_1_rest_reply.html</anchorfile>
-      <anchor>a51f9e6b25f73ed6fa9efb98075273f68</anchor>
-      <arglist>(std::function&lt; void(int, QJsonObject)&gt; handler)</arglist>
+      <anchor>a1a7e248608899ac907b9935a01d19c91</anchor>
+      <arglist>(const std::function&lt; void(int, QJsonObject)&gt; &amp;handler)</arglist>
     </member>
     <member kind="function">
       <type>RestReply *</type>
       <name>onFailed</name>
       <anchorfile>class_qt_rest_client_1_1_rest_reply.html</anchorfile>
-      <anchor>a248174e80613c1e8dc12b99a2ae58898</anchor>
-      <arglist>(std::function&lt; void(int, QJsonArray)&gt; handler)</arglist>
+      <anchor>aa403ecd5996b1a27efe6e056cf2bd738</anchor>
+      <arglist>(QObject *scope, const std::function&lt; void(int, QJsonObject)&gt; &amp;handler)</arglist>
+    </member>
+    <member kind="function">
+      <type>RestReply *</type>
+      <name>onFailed</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_reply.html</anchorfile>
+      <anchor>a42700db08597c27c9860c4ad1de4eda6</anchor>
+      <arglist>(const std::function&lt; void(int, QJsonArray)&gt; &amp;handler)</arglist>
+    </member>
+    <member kind="function">
+      <type>RestReply *</type>
+      <name>onFailed</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_reply.html</anchorfile>
+      <anchor>a7f00daad636f4fa281da47d7788febc3</anchor>
+      <arglist>(QObject *scope, const std::function&lt; void(int, QJsonArray)&gt; &amp;handler)</arglist>
     </member>
     <member kind="function">
       <type>RestReply *</type>
       <name>onCompleted</name>
       <anchorfile>class_qt_rest_client_1_1_rest_reply.html</anchorfile>
-      <anchor>a225e6c8070db17cffcfcabe0621bb4ae</anchor>
-      <arglist>(std::function&lt; void(int)&gt; handler)</arglist>
+      <anchor>a431df2afef6be3bda202023e48eb45ab</anchor>
+      <arglist>(const std::function&lt; void(int)&gt; &amp;handler)</arglist>
+    </member>
+    <member kind="function">
+      <type>RestReply *</type>
+      <name>onCompleted</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_reply.html</anchorfile>
+      <anchor>a0cfb6f21174f2ebd11b3a52b84b30a85</anchor>
+      <arglist>(QObject *scope, const std::function&lt; void(int)&gt; &amp;handler)</arglist>
     </member>
     <member kind="function">
       <type>RestReply *</type>
       <name>onError</name>
       <anchorfile>class_qt_rest_client_1_1_rest_reply.html</anchorfile>
-      <anchor>ae4ac6960b095518f238bf0d759aa2187</anchor>
-      <arglist>(std::function&lt; void(QString, int, ErrorType)&gt; handler)</arglist>
+      <anchor>abd31f96a4dd95059651761e2b0125353</anchor>
+      <arglist>(const std::function&lt; void(QString, int, ErrorType)&gt; &amp;handler)</arglist>
+    </member>
+    <member kind="function">
+      <type>RestReply *</type>
+      <name>onError</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_reply.html</anchorfile>
+      <anchor>acce9b26ac932dcb235d96b6bbfd89fe1</anchor>
+      <arglist>(QObject *scope, const std::function&lt; void(QString, int, ErrorType)&gt; &amp;handler)</arglist>
     </member>
     <member kind="function">
       <type>RestReply *</type>
       <name>onAllErrors</name>
       <anchorfile>class_qt_rest_client_1_1_rest_reply.html</anchorfile>
-      <anchor>a3123e731a40088fe90eb26ddd7304c66</anchor>
-      <arglist>(std::function&lt; void(QString, int, ErrorType)&gt; handler, std::function&lt; QString(QJsonObject, int)&gt; failureTransformer={})</arglist>
+      <anchor>a4af4b88153db95eaf1fe29670322c679</anchor>
+      <arglist>(const std::function&lt; void(QString, int, ErrorType)&gt; &amp;handler, const std::function&lt; QString(QJsonObject, int)&gt; &amp;failureTransformer={})</arglist>
     </member>
     <member kind="function">
       <type>RestReply *</type>
       <name>onAllErrors</name>
       <anchorfile>class_qt_rest_client_1_1_rest_reply.html</anchorfile>
-      <anchor>a6ede4bbaa4e982218a9e5b531da9484b</anchor>
-      <arglist>(std::function&lt; void(QString, int, ErrorType)&gt; handler, std::function&lt; QString(QJsonArray, int)&gt; failureTransformer)</arglist>
+      <anchor>aac44097f094f251d87a6f586f8ea66c8</anchor>
+      <arglist>(QObject *scope, const std::function&lt; void(QString, int, ErrorType)&gt; &amp;handler, const std::function&lt; QString(QJsonObject, int)&gt; &amp;failureTransformer={})</arglist>
     </member>
     <member kind="function">
       <type>RestReply *</type>
+      <name>onAllErrors</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_reply.html</anchorfile>
+      <anchor>a5a1f90e9453cdccbb3c7b3de023af186</anchor>
+      <arglist>(const std::function&lt; void(QString, int, ErrorType)&gt; &amp;handler, const std::function&lt; QString(QJsonArray, int)&gt; &amp;failureTransformer)</arglist>
+    </member>
+    <member kind="function">
+      <type>RestReply *</type>
+      <name>onAllErrors</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_reply.html</anchorfile>
+      <anchor>a68ecaaf950fe27aa807aeeea9c90b7f2</anchor>
+      <arglist>(QObject *scope, const std::function&lt; void(QString, int, ErrorType)&gt; &amp;handler, const std::function&lt; QString(QJsonArray, int)&gt; &amp;failureTransformer)</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_INVOKABLE RestReply *</type>
       <name>disableAutoDelete</name>
       <anchorfile>class_qt_rest_client_1_1_rest_reply.html</anchorfile>
-      <anchor>a6bc39af88d81203f845698a15f4ceec5</anchor>
+      <anchor>a3c07dfee6aa61ee0ec46b8ae220f697c</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function">
@@ -2137,15 +2873,8 @@
       <type>QNetworkReply *</type>
       <name>networkReply</name>
       <anchorfile>class_qt_rest_client_1_1_rest_reply.html</anchorfile>
-      <anchor>ab972af1e6b2bf3a7c3f5f6cc6dadc2f1</anchor>
+      <anchor>a105d2e27ae89ca6ac2801986bc8ab37b</anchor>
       <arglist>() const</arglist>
-    </member>
-    <member kind="function" protection="protected" static="yes">
-      <type>static QByteArray</type>
-      <name>jsonTypeName</name>
-      <anchorfile>class_qt_rest_client_1_1_rest_reply.html</anchorfile>
-      <anchor>a3a7c173594d798d607faeb7657d4bda7</anchor>
-      <arglist>(QJsonValue::Type type)</arglist>
     </member>
     <member kind="property">
       <type>bool</type>
@@ -2213,8 +2942,15 @@
       <type>void</type>
       <name>extend</name>
       <anchorfile>class_qt_rest_client_1_1_simple_3_01_t_01_5_00_01typename_01std_1_1enable__if_3_01std_1_1is__basd53df30d33fde91b51f378efb6baeecc.html</anchorfile>
-      <anchor>a750340964aab599d24a2b59ede4a3ade</anchor>
-      <arglist>(RestClient *client, std::function&lt; void(T *, bool)&gt; extensionHandler, std::function&lt; void(QString, int, RestReply::ErrorType)&gt; errorHandler={}, std::function&lt; QString(ET, int)&gt; failureTransformer={})</arglist>
+      <anchor>ad1fa9b959c54c88dda4e2d8b7ed9b273</anchor>
+      <arglist>(RestClient *client, const std::function&lt; void(T *, bool)&gt; &amp;extensionHandler, const std::function&lt; void(QString, int, RestReply::ErrorType)&gt; &amp;errorHandler={}, const std::function&lt; QString(ET, int)&gt; &amp;failureTransformer={})</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>extend</name>
+      <anchorfile>class_qt_rest_client_1_1_simple_3_01_t_01_5_00_01typename_01std_1_1enable__if_3_01std_1_1is__basd53df30d33fde91b51f378efb6baeecc.html</anchorfile>
+      <anchor>a60bc6c9a79ffd80fc3d6e6a9a3b50c88</anchor>
+      <arglist>(RestClient *client, QObject *scope, const std::function&lt; void(T *, bool)&gt; &amp;extensionHandler, const std::function&lt; void(QString, int, RestReply::ErrorType)&gt; &amp;errorHandler={}, const std::function&lt; QString(ET, int)&gt; &amp;failureTransformer={})</arglist>
     </member>
   </compound>
   <compound kind="class">
@@ -2226,13 +2962,6 @@
       <name>Simple</name>
       <anchorfile>class_qt_rest_client_1_1_simple_3_01_t_00_01typename_01std_1_1enable__if_3_01std_1_1is__void_3_0e3917a0d7780becccdeb92e5e53ff1ab.html</anchorfile>
       <anchor>a4b3d03dee796d59d6e0fa8ced34f5af5</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function" virtualness="virtual">
-      <type>virtual</type>
-      <name>~Simple</name>
-      <anchorfile>class_qt_rest_client_1_1_simple_3_01_t_00_01typename_01std_1_1enable__if_3_01std_1_1is__void_3_0e3917a0d7780becccdeb92e5e53ff1ab.html</anchorfile>
-      <anchor>a7d365d02989e98e81a389ac0d3423bb2</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function" virtualness="pure">
@@ -2274,9 +3003,25 @@
       <type>void</type>
       <name>extend</name>
       <anchorfile>class_qt_rest_client_1_1_simple_3_01_t_00_01typename_01std_1_1enable__if_3_01std_1_1is__void_3_0e3917a0d7780becccdeb92e5e53ff1ab.html</anchorfile>
-      <anchor>ad41842d9b26f7aa6bb65691ff6841268</anchor>
-      <arglist>(RestClient *client, std::function&lt; void(T, bool)&gt; extensionHandler, std::function&lt; void(RestReply *, QString, int, RestReply::ErrorType)&gt; errorHandler={}, std::function&lt; QString(ET, int)&gt; failureTransformer={})</arglist>
+      <anchor>a915a02897c43ab4feee9270d82c33a62</anchor>
+      <arglist>(RestClient *client, const std::function&lt; void(T, bool)&gt; &amp;extensionHandler, const std::function&lt; void(QString, int, RestReply::ErrorType)&gt; &amp;errorHandler={}, const std::function&lt; QString(ET, int)&gt; &amp;failureTransformer={})</arglist>
     </member>
+    <member kind="function">
+      <type>void</type>
+      <name>extend</name>
+      <anchorfile>class_qt_rest_client_1_1_simple_3_01_t_00_01typename_01std_1_1enable__if_3_01std_1_1is__void_3_0e3917a0d7780becccdeb92e5e53ff1ab.html</anchorfile>
+      <anchor>a6771fd9c32cdd559fbecff2f80672fe4</anchor>
+      <arglist>(RestClient *client, QObject *scope, const std::function&lt; void(T, bool)&gt; &amp;extensionHandler, const std::function&lt; void(QString, int, RestReply::ErrorType)&gt; &amp;errorHandler={}, const std::function&lt; QString(ET, int)&gt; &amp;failureTransformer={})</arglist>
+    </member>
+  </compound>
+  <compound kind="namespace">
+    <name>de::skycoder42::QtRestClient</name>
+    <filename>namespacede_1_1skycoder42_1_1_qt_rest_client.html</filename>
+    <class kind="class">de::skycoder42::QtRestClient::GenericRestReply</class>
+    <class kind="class">de::skycoder42::QtRestClient::Paging</class>
+    <class kind="class">de::skycoder42::QtRestClient::QtRestClient</class>
+    <class kind="class">de::skycoder42::QtRestClient::RestClass</class>
+    <class kind="class">de::skycoder42::QtRestClient::RestClient</class>
   </compound>
   <compound kind="namespace">
     <name>QtRestClient</name>
@@ -2286,11 +3031,7 @@
     <class kind="class">QtRestClient::GenericRestReply&lt; QList&lt; DataClassType &gt;, ErrorClassType &gt;</class>
     <class kind="class">QtRestClient::GenericRestReply&lt; void, ErrorClassType &gt;</class>
     <class kind="class">QtRestClient::IPaging</class>
-    <class kind="class">QtRestClient::MetaComponent</class>
-    <class kind="class">QtRestClient::MetaComponent&lt; T *, typename std::enable_if&lt; std::is_base_of&lt; QObject, T &gt;::value &gt;::type &gt;</class>
-    <class kind="class">QtRestClient::MetaComponent&lt; T, typename std::enable_if&lt; std::is_void&lt; typename T::QtGadgetHelper &gt;::value &gt;::type &gt;</class>
     <class kind="class">QtRestClient::Paging</class>
-    <class kind="class">QtRestClient::PagingData</class>
     <class kind="class">QtRestClient::PagingFactory</class>
     <class kind="class">QtRestClient::RequestBuilder</class>
     <class kind="class">QtRestClient::RestClass</class>
@@ -2349,19 +3090,43 @@
     <docanchor file="generator" title="What it does">generator_features</docanchor>
     <docanchor file="generator" title="Getting Started">generator_start</docanchor>
     <docanchor file="generator" title="File Syntax documentation">generator_doc</docanchor>
-    <docanchor file="generator" title="Project file setup">generator_doc_pro</docanchor>
-    <docanchor file="generator" title="Generate objects">generator_doc_object</docanchor>
-    <docanchor file="generator" title="Type: object">generator_doc_o_object</docanchor>
-    <docanchor file="generator" title="Object Properties">generator_doc_o_props</docanchor>
-    <docanchor file="generator" title="Type: enum-object">generator_doc_o_enum</docanchor>
-    <docanchor file="generator" title="Type: enum-value-list">generator_doc_o_enum_value</docanchor>
-    <docanchor file="generator" title="Type: enum">generator_doc_o_enum_obj</docanchor>
-    <docanchor file="generator" title="Generate classes">generator_doc_class</docanchor>
-    <docanchor file="generator" title="Type: class">generator_doc_c_class</docanchor>
-    <docanchor file="generator" title="Type: classes-object">generator_doc_c_cobj</docanchor>
-    <docanchor file="generator" title="Type: Expressions">generator_doc_expr</docanchor>
-    <docanchor file="generator" title="Type: methods-object">generator_doc_c_mobj</docanchor>
-    <docanchor file="generator" title="Type: param-list">generator_doc_param</docanchor>
+    <docanchor file="generator" title="Element Type: RestObject (and RestGadget)">generator_doc_RestObject</docanchor>
+    <docanchor file="generator" title="Attributes">generator_doc_RestObject_attribs</docanchor>
+    <docanchor file="generator" title="Allowed Child Elements">generator_doc_RestObject_children</docanchor>
+    <docanchor file="generator" title="Element Type: RestClass">generator_doc_RestClass</docanchor>
+    <docanchor file="generator" title="Allowed Child Elements">generator_doc_RestClass_children</docanchor>
+    <docanchor file="generator" title="Element Type: RestApi">generator_doc_RestApi</docanchor>
+    <docanchor file="generator" title="Attributes">generator_doc_RestApi_attribs</docanchor>
+    <docanchor file="generator" title="Allowed Child Elements">generator_doc_RestApi_children</docanchor>
+    <docanchor file="generator" title="Element Type: RestAccess">generator_doc_RestAccess</docanchor>
+    <docanchor file="generator" title="Attributes">generator_doc_RestAccess_attribs</docanchor>
+    <docanchor file="generator" title="Allowed Child Elements">generator_doc_RestAccess_children</docanchor>
+    <docanchor file="generator" title="Element Type: Include">generator_doc_Include</docanchor>
+    <docanchor file="generator" title="Attributes">generator_doc_Include_attribs</docanchor>
+    <docanchor file="generator" title="Content">generator_doc_Include_content</docanchor>
+    <docanchor file="generator" title="Element Type: BaseParam">generator_doc_BaseParam</docanchor>
+    <docanchor file="generator" title="Attributes">generator_doc_BaseParam_attribs</docanchor>
+    <docanchor file="generator" title="Content">generator_doc_BaseParam_content</docanchor>
+    <docanchor file="generator" title="Element Type: Property">generator_doc_Property</docanchor>
+    <docanchor file="generator" title="Attributes">generator_doc_Property_attribs</docanchor>
+    <docanchor file="generator" title="Element Type: Enum">generator_doc_Enum</docanchor>
+    <docanchor file="generator" title="Attributes">generator_doc_Enum_attribs</docanchor>
+    <docanchor file="generator" title="Allowed Child Elements">generator_doc_Enum_children</docanchor>
+    <docanchor file="generator" title="Element Type: EnumKey">generator_doc_EnumKey</docanchor>
+    <docanchor file="generator" title="Attributes">generator_doc_EnumKey_attribs</docanchor>
+    <docanchor file="generator" title="Content">generator_doc_EnumKey_content</docanchor>
+    <docanchor file="generator" title="Element Type: Expression">generator_doc_Expression</docanchor>
+    <docanchor file="generator" title="Attributes">generator_doc_Expression_attribs</docanchor>
+    <docanchor file="generator" title="Content">generator_doc_Expression_content</docanchor>
+    <docanchor file="generator" title="Element Type: FixedParam">generator_doc_FixedParam</docanchor>
+    <docanchor file="generator" title="Attributes">generator_doc_FixedParam_attribs</docanchor>
+    <docanchor file="generator" title="Element Type: Class">generator_doc_Class</docanchor>
+    <docanchor file="generator" title="Attributes">generator_doc_Class_attribs</docanchor>
+    <docanchor file="generator" title="Element Type: Method">generator_doc_Method</docanchor>
+    <docanchor file="generator" title="Attributes">generator_doc_Method_attribs</docanchor>
+    <docanchor file="generator" title="Allowed Child Elements">generator_doc_Method_children</docanchor>
+    <docanchor file="generator" title="Element Type: BaseUrl">generator_doc_BaseUrl</docanchor>
+    <docanchor file="generator" title="Attributes">generator_doc_BaseUrl_attribs</docanchor>
   </compound>
   <compound kind="page">
     <name>index</name>

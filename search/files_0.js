@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['restclass_2eh',['restclass.h',['../restclass_8h.html',1,'']]]
+  ['coreapp_2eh',['coreapp.h',['https://doc.qt.io/qt-5/coreapp_8h.html',0,'']]]
 ];
