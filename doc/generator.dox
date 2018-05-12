@@ -61,6 +61,7 @@ how the final c++ code is beeing generated.
  generateEquals		| bool					| true for `RestGadget`, else false		| If enabled, default-generated equality operators are added
  generateReset		| bool					| true									| If enabled, reset methods are generated for all properties. Can still be set per property
  simpleHref			| c++ property name		| <i>none</i>							| Optional name of the property that holds the href to extend a simple object. Can only be used if base is or extends QtRestClient::Simple
+ qmlUri				| qml import URI		| <i>none</i>							| A QML import URI (+version), e.g. "com.example.api 1.0" - If specified, QML bindings are generated for the object/gadget
 
 @subsubsection generator_doc_RestObject_children Allowed Child Elements
  Name		| XML-Type									| Limits	| Description
@@ -117,6 +118,7 @@ This type is a virtual type that you will never use directly. Instead is serves 
  base		| name of a base class	| "QObject"			| If you need a custom base class, use this property
  namespace	| c++ namespace name	| <i>none</i>		| An optional namespace to place the generated objects into
  except		| c++ class name		| "Object*"			| The default value for "except" of all @ref generator_doc_Method "Method" Elementshappens on first use
+ qmlUri		| qml import URI		| <i>none</i>		| A QML import URI (+version), e.g. "com.example.api 1.0" - If specified, QML bindings are generated for the class/api
 
 @subsubsection generator_doc_RestAccess_children Allowed Child Elements
  Name		| XML-Type								| Limits	| Description

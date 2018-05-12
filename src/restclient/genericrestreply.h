@@ -24,27 +24,32 @@ public:
 					 RestClient *client,
 					 QObject *parent = nullptr);
 
-	//! @copybrief RestReply::onSucceeded(std::function<void(int, QJsonObject)>)
+	//! @copybrief RestReply::onSucceeded(const std::function<void(int, QJsonObject)>&)
 	GenericRestReply<DataClassType, ErrorClassType> *onSucceeded(const std::function<void(int, DataClassType)> &handler);
+	//! @copybrief GenericRestReply::onSucceeded(const std::function<void(int, DataClassType)>&)
 	GenericRestReply<DataClassType, ErrorClassType> *onSucceeded(QObject *scope, const std::function<void(int, DataClassType)> &handler);
-	//! @copybrief RestReply::onFailed(std::function<void(int, QJsonObject)>)
+	//! @copybrief RestReply::onFailed(const std::function<void(int, QJsonObject)>&)
 	GenericRestReply<DataClassType, ErrorClassType> *onFailed(const std::function<void(int, ErrorClassType)> &handler);
+	//! @copybrief GenericRestReply::onFailed(const std::function<void(int, ErrorClassType)>&)
 	GenericRestReply<DataClassType, ErrorClassType> *onFailed(QObject *scope, const std::function<void(int, ErrorClassType)> &handler);
 	//! Set a handler to be called on deserialization exceptions
 	GenericRestReply<DataClassType, ErrorClassType> *onSerializeException(std::function<void(QJsonSerializerException&)>handler);
-	//! @copybrief onAllErrors(std::function<void(QString, int, ErrorType)>, std::function<QString(QJsonObject, int)>)
+	//! @copybrief RestReply::onAllErrors(const std::function<void(QString, int, ErrorType)>&, const std::function<QString(QJsonObject, int)>&)
 	GenericRestReply<DataClassType, ErrorClassType> *onAllErrors(const std::function<void(QString, int, ErrorType)> &handler,
 																 const std::function<QString(ErrorClassType, int)> &failureTransformer = {});
+	//! @copybrief GenericRestReply::onAllErrors(const std::function<void(QString, int, ErrorType)>&, const std::function<QString(ErrorClassType, int)>&)
 	GenericRestReply<DataClassType, ErrorClassType> *onAllErrors(QObject *scope,
 																 const std::function<void(QString, int, ErrorType)> &handler,
 																 const std::function<QString(ErrorClassType, int)> &failureTransformer = {});
 
 	//overshadowing, for the right return type only...
-	//! @copydoc RestReply::onCompleted
+	//! @copydoc RestReply::onCompleted(const std::function<void(int)> &)
 	GenericRestReply<DataClassType, ErrorClassType> *onCompleted(const std::function<void(int)> &handler);
+	//! @copydoc RestReply::onCompleted(QObject *, const std::function<void(int)> &)
 	GenericRestReply<DataClassType, ErrorClassType> *onCompleted(QObject *scope, const std::function<void(int)> &handler);
-	//! @copydoc RestReply::onError
+	//! @copydoc RestReply::onError(const std::function<void(QString, int, ErrorType)> &)
 	GenericRestReply<DataClassType, ErrorClassType> *onError(const std::function<void(QString, int, ErrorType)> &handler);
+	//! @copydoc RestReply::onError(QObject *, const std::function<void(QString, int, ErrorType)> &)
 	GenericRestReply<DataClassType, ErrorClassType> *onError(QObject *scope, const std::function<void(QString, int, ErrorType)> &handler);
 	//! @copydoc RestReply::disableAutoDelete
 	GenericRestReply<DataClassType, ErrorClassType> *disableAutoDelete();
@@ -67,27 +72,32 @@ public:
 					 RestClient *client,
 					 QObject *parent = nullptr);
 
-	//! @copydoc GenericRestReply::onSucceeded
+	//! @copydoc GenericRestReply::onSucceeded(const std::function<void(int, DataClassType)>&)
 	GenericRestReply<void, ErrorClassType> *onSucceeded(const std::function<void(int)> &handler);
+	//! @copydoc GenericRestReply::onSucceeded(QObject*, const std::function<void(int, DataClassType)>&)
 	GenericRestReply<void, ErrorClassType> *onSucceeded(QObject *scope, const std::function<void(int)> &handler);
-	//! @copydoc GenericRestReply::onFailed
+	//! @copydoc GenericRestReply::onFailed(const std::function<void(int, ErrorClassType)>&)
 	GenericRestReply<void, ErrorClassType> *onFailed(const std::function<void(int, ErrorClassType)> &handler);
+	//! @copydoc GenericRestReply::onFailed(QObject*, const std::function<void(int, ErrorClassType)>&)
 	GenericRestReply<void, ErrorClassType> *onFailed(QObject *scope, const std::function<void(int, ErrorClassType)> &handler);
 	//! @copydoc GenericRestReply::onSerializeException
 	GenericRestReply<void, ErrorClassType> *onSerializeException(std::function<void(QJsonSerializerException&)>handler);
-	//! @copydoc GenericRestReply::onAllErrors
+	//! @copydoc GenericRestReply::onAllErrors(const std::function<void(QString, int, ErrorType)>&, const std::function<QString(ErrorClassType, int)>&)
 	GenericRestReply<void, ErrorClassType> *onAllErrors(const std::function<void(QString, int, ErrorType)> &handler,
 														const std::function<QString(ErrorClassType, int)> &failureTransformer = {});
+	//! @copydoc GenericRestReply::onAllErrors(QObject *, const std::function<void(QString, int, ErrorType)>&, const std::function<QString(ErrorClassType, int)>&)
 	GenericRestReply<void, ErrorClassType> *onAllErrors(QObject *scope,
 														const std::function<void(QString, int, ErrorType)> &handler,
 														const std::function<QString(ErrorClassType, int)> &failureTransformer = {});
 
 	//overshadowing, for the right return type only...
-	//! @copydoc GenericRestReply::onCompleted
+	//! @copydoc GenericRestReply::onCompleted(const std::function<void(int)> &)
 	GenericRestReply<void, ErrorClassType> *onCompleted(const std::function<void(int)> &handler);
+	//! @copydoc GenericRestReply::onCompleted(QObject *, const std::function<void(int)> &)
 	GenericRestReply<void, ErrorClassType> *onCompleted(QObject *scope, const std::function<void(int)> &handler);
-	//! @copydoc GenericRestReply::onError
+	//! @copydoc GenericRestReply::onError(const std::function<void(QString, int, ErrorType)> &)
 	GenericRestReply<void, ErrorClassType> *onError(const std::function<void(QString, int, ErrorType)> &handler);
+	//! @copydoc GenericRestReply::onError(QObject *, const std::function<void(QString, int, ErrorType)> &)
 	GenericRestReply<void, ErrorClassType> *onError(QObject *scope, const std::function<void(QString, int, ErrorType)> &handler);
 	//! @copydoc GenericRestReply::disableAutoDelete
 	GenericRestReply<void, ErrorClassType> *disableAutoDelete();
@@ -112,27 +122,32 @@ public:
 					 RestClient *client,
 					 QObject *parent = nullptr);
 
-	//! @copydoc GenericRestReply::onSucceeded
+	//! @copydoc GenericRestReply::onSucceeded(const std::function<void(int, DataClassType)>&)
 	GenericRestReply<QList<DataClassType>, ErrorClassType> *onSucceeded(const std::function<void(int, QList<DataClassType>)> &handler);
+	//! @copydoc GenericRestReply::onSucceeded(QObject*, const std::function<void(int, DataClassType)>&)
 	GenericRestReply<QList<DataClassType>, ErrorClassType> *onSucceeded(QObject *scope, const std::function<void(int, QList<DataClassType>)> &handler);
-	//! @copydoc GenericRestReply::onFailed
+	//! @copydoc GenericRestReply::onFailed(const std::function<void(int, ErrorClassType)>&)
 	GenericRestReply<QList<DataClassType>, ErrorClassType> *onFailed(const std::function<void(int, ErrorClassType)> &handler);
+	//! @copydoc GenericRestReply::onFailed(QObject*, const std::function<void(int, ErrorClassType)>&)
 	GenericRestReply<QList<DataClassType>, ErrorClassType> *onFailed(QObject *scope, const std::function<void(int, ErrorClassType)> &handler);
 	//! @copydoc GenericRestReply::onSerializeException
 	GenericRestReply<QList<DataClassType>, ErrorClassType> *onSerializeException(std::function<void(QJsonSerializerException&)>handler);
-	//! @copydoc GenericRestReply::onAllErrors
+	//! @copydoc GenericRestReply::onAllErrors(const std::function<void(QString, int, ErrorType)>&, const std::function<QString(ErrorClassType, int)>&)
 	GenericRestReply<QList<DataClassType>, ErrorClassType> *onAllErrors(const std::function<void(QString, int, ErrorType)> &handler,
 																		const std::function<QString(ErrorClassType, int)> &failureTransformer = {});
+	//! @copydoc GenericRestReply::onAllErrors(QObject *, const std::function<void(QString, int, ErrorType)>&, const std::function<QString(ErrorClassType, int)>&)
 	GenericRestReply<QList<DataClassType>, ErrorClassType> *onAllErrors(QObject *scope,
 																		const std::function<void(QString, int, ErrorType)> &handler,
 																		const std::function<QString(ErrorClassType, int)> &failureTransformer = {});
 
 	//overshadowing, for the right return type only...
-	//! @copydoc GenericRestReply::onCompleted
+	//! @copydoc GenericRestReply::onCompleted(const std::function<void(int)> &)
 	GenericRestReply<QList<DataClassType>, ErrorClassType> *onCompleted(const std::function<void(int)> &handler);
+	//! @copydoc GenericRestReply::onCompleted(QObject *, const std::function<void(int)> &)
 	GenericRestReply<QList<DataClassType>, ErrorClassType> *onCompleted(QObject *scope, const std::function<void(int)> &handler);
-	//! @copydoc GenericRestReply::onError
+	//! @copydoc GenericRestReply::onError(const std::function<void(QString, int, ErrorType)> &)
 	GenericRestReply<QList<DataClassType>, ErrorClassType> *onError(const std::function<void(QString, int, ErrorType)> &handler);
+	//! @copydoc GenericRestReply::onError(QObject *, const std::function<void(QString, int, ErrorType)> &)
 	GenericRestReply<QList<DataClassType>, ErrorClassType> *onError(QObject *scope, const std::function<void(QString, int, ErrorType)> &handler);
 	//! @copydoc GenericRestReply::disableAutoDelete
 	GenericRestReply<QList<DataClassType>, ErrorClassType> *disableAutoDelete();
@@ -158,31 +173,37 @@ public:
 					 RestClient *client,
 					 QObject *parent = nullptr);
 
-	//! @copydoc GenericRestReply::onSucceeded
+	//! @copydoc GenericRestReply::onSucceeded(const std::function<void(int, DataClassType)>&)
 	GenericRestReply<Paging<DataClassType>, ErrorClassType> *onSucceeded(const std::function<void(int, Paging<DataClassType>)> &handler);
+	//! @copydoc GenericRestReply::onSucceeded(QObject*, const std::function<void(int, DataClassType)>&)
 	GenericRestReply<Paging<DataClassType>, ErrorClassType> *onSucceeded(QObject *scope, const std::function<void(int, Paging<DataClassType>)> &handler);
-	//! @copydoc GenericRestReply::onFailed
+	//! @copydoc GenericRestReply::onFailed(const std::function<void(int, ErrorClassType)>&)
 	GenericRestReply<Paging<DataClassType>, ErrorClassType> *onFailed(const std::function<void(int, ErrorClassType)> &handler);
+	//! @copydoc GenericRestReply::onFailed(QObject*, const std::function<void(int, ErrorClassType)>&)
 	GenericRestReply<Paging<DataClassType>, ErrorClassType> *onFailed(QObject *scope, const std::function<void(int, ErrorClassType)> &handler);
 	//! @copydoc GenericRestReply::onSerializeException
 	GenericRestReply<Paging<DataClassType>, ErrorClassType> *onSerializeException(std::function<void(QJsonSerializerException&)>handler);
-	//! @copydoc GenericRestReply::onAllErrors
+	//! @copydoc GenericRestReply::onAllErrors(const std::function<void(QString, int, ErrorType)>&, const std::function<QString(ErrorClassType, int)>&)
 	GenericRestReply<Paging<DataClassType>, ErrorClassType> *onAllErrors(const std::function<void(QString, int, ErrorType)> &handler,
 																		 const std::function<QString(ErrorClassType, int)> &failureTransformer = {});
+	//! @copydoc GenericRestReply::onAllErrors(QObject *, const std::function<void(QString, int, ErrorType)>&, const std::function<QString(ErrorClassType, int)>&)
 	GenericRestReply<Paging<DataClassType>, ErrorClassType> *onAllErrors(QObject *scope,
 																		 const std::function<void(QString, int, ErrorType)> &handler,
 																		 const std::function<QString(ErrorClassType, int)> &failureTransformer = {});
 
 	//! shortcut to iterate over all elements via paging objects
 	GenericRestReply<Paging<DataClassType>, ErrorClassType> *iterate(const std::function<bool(DataClassType, int)> &iterator, int to = -1, int from = 0);
+	//! shortcut to iterate over all elements via paging objects
 	GenericRestReply<Paging<DataClassType>, ErrorClassType> *iterate(QObject *scope, const std::function<bool(DataClassType, int)> &iterator, int to = -1, int from = 0);
 
 	//overshadowing, for the right return type only..
-	//! @copydoc GenericRestReply::onCompleted
+	//! @copydoc GenericRestReply::onCompleted(const std::function<void(int)> &)
 	GenericRestReply<Paging<DataClassType>, ErrorClassType> *onCompleted(const std::function<void(int)> &handler);
+	//! @copydoc GenericRestReply::onCompleted(QObject *, const std::function<void(int)> &)
 	GenericRestReply<Paging<DataClassType>, ErrorClassType> *onCompleted(QObject *scope, const std::function<void(int)> &handler);
-	//! @copydoc GenericRestReply::onError
+	//! @copydoc GenericRestReply::onError(const std::function<void(QString, int, ErrorType)> &)
 	GenericRestReply<Paging<DataClassType>, ErrorClassType> *onError(const std::function<void(QString, int, ErrorType)> &handler);
+	//! @copydoc GenericRestReply::onError(QObject *, const std::function<void(QString, int, ErrorType)> &)
 	GenericRestReply<Paging<DataClassType>, ErrorClassType> *onError(QObject *scope, const std::function<void(QString, int, ErrorType)> &handler);
 	//! @copydoc GenericRestReply::disableAutoDelete
 	GenericRestReply<Paging<DataClassType>, ErrorClassType> *disableAutoDelete();
@@ -672,6 +693,23 @@ GenericRestReply<Paging<DataClassType>, ErrorClassType> *GenericRestReply<Paging
 	return iterate(this, iterator, to, from);
 }
 
+/*!
+@param scope (optional) A scope to limit the callback to
+@param iterator The iterator to be used by the Paging objects to iterate over the results
+@param to The upper limit of how far the iteration should go (-1 means no limit)
+@param from The lower limit from where the iteration should start
+
+This method is a shortcut that waits for the reply to succeed and then performs the iteration on the paging object.
+One advantage of this method is, that it automatically passes the error handlers of this reply onto the iteration.
+Check the Paging::iterate method for more details
+
+The iterators parameters are:
+- One element of the deserialized Content of the paging replies (DataClassType)
+- The index of the current element (int)
+- _returns:_ `true` if the iteration should continue, `false` to cancel it prematurely
+
+@sa Paging::iterate
+*/
 template<typename DataClassType, typename ErrorClassType>
 GenericRestReply<Paging<DataClassType>, ErrorClassType> *GenericRestReply<Paging<DataClassType>, ErrorClassType>::iterate(QObject *scope, const std::function<bool (DataClassType, int)> &iterator, int to, int from)
 {

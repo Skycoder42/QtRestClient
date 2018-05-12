@@ -33,7 +33,7 @@ of the handlers after returning to the event loop once.
 */
 
 /*!
-@fn QtRestClient::RestReply::onSucceeded(std::function<void(int, QJsonObject)>)
+@fn QtRestClient::RestReply::onSucceeded(const std::function<void(int, QJsonObject)>&)
 
 @param handler The function to be called on success
 @returns A reference to this reply
@@ -42,11 +42,17 @@ The handlers arguments are:
 - The HTTP-Status code (int)
 - The JSON Content of the reply (json)
 
-@sa RestReply::onFailed, GenericRestReply::onSucceeded
+@sa RestReply::onFailed, RestReply::onCompleted, GenericRestReply::onSucceeded
 */
 
 /*!
-@fn QtRestClient::RestReply::onFailed(std::function<void(int, QJsonObject)>)
+@fn QtRestClient::RestReply::onSucceeded(QObject*, const std::function<void(int, QJsonObject)>&)
+@param scope (optional) A scope to limit the callback to
+@copydetails RestReply::onSucceeded(const std::function<void(int, QJsonObject)>&)
+*/
+
+/*!
+@fn QtRestClient::RestReply::onFailed(const std::function<void(int, QJsonObject)>&)
 
 @param handler The function to be called on failure
 @returns A reference to this reply
@@ -55,11 +61,35 @@ The handlers arguments are:
 - The HTTP-Status code (int)
 - The JSON Content of the reply (json)
 
-@sa RestReply::onAllErrors, RestReply::onSucceeded, GenericRestReply::onFailed
+@sa RestReply::onAllErrors, RestReply::onSucceeded, RestReply::onCompleted, GenericRestReply::onFailed
 */
 
 /*!
-@fn QtRestClient::RestReply::onError
+@fn QtRestClient::RestReply::onFailed(QObject*, const std::function<void(int, QJsonObject)>&)
+@param scope (optional) A scope to limit the callback to
+@copydetails RestReply::onFailed(const std::function<void(int, QJsonObject)>&)
+*/
+
+/*!
+@fn QtRestClient::RestReply::onCompleted(const std::function<void(int)>&)
+
+@param handler The function to be called on success
+@returns A reference to this reply
+
+The handlers arguments are:
+- The HTTP-Status code (int)
+
+@sa RestReply::onFailed, RestReply::onSucceeded, GenericRestReply::onCompleted
+*/
+
+/*!
+@fn QtRestClient::RestReply::onCompleted(QObject*, const std::function<void(int)>&)
+@param scope (optional) A scope to limit the callback to
+@copydetails RestReply::onCompleted(const std::function<void(int)>&)
+*/
+
+/*!
+@fn QtRestClient::RestReply::onError(const std::function<void(QString, int, ErrorType)>&)
 
 @param handler The function to be called on a network/json error
 @returns A reference to this reply
@@ -78,7 +108,13 @@ either RestReply::NetworkError or RestReply::JsonParseError)
 */
 
 /*!
-@fn QtRestClient::RestReply::onAllErrors(std::function<void(QString, int, ErrorType)>, std::function<QString(QJsonObject, int)>)
+@fn QtRestClient::RestReply::onError(QObject*, const std::function<void(QString, int, ErrorType)>&)
+@param scope (optional) A scope to limit the callback to
+@copydetails RestReply::onError(const std::function<void(QString, int, ErrorType)>&)
+*/
+
+/*!
+@fn QtRestClient::RestReply::onAllErrors(const std::function<void(QString, int, ErrorType)>&, const std::function<QString(QJsonObject, int)>&)
 
 @param handler The function to be called on any error
 @param failureTransformer A function to be called to extract an error string from the failure JSON
@@ -102,6 +138,12 @@ The failureTransformer arguments are
 - _return:_ A string describing the error (QString)
 
 @sa RestReply::onError, RestReply::onFailed, GenericRestReply::onAllErrors
+*/
+
+/*!
+@fn QtRestClient::RestReply::onAllErrors(QObject*, const std::function<void(QString, int, ErrorType)>&, const std::function<QString(QJsonObject, int)>&)
+@param scope (optional) A scope to limit the callback to
+@copydetails RestReply::onAllErrors(const std::function<void(QString, int, ErrorType)>&, const std::function<QString(QJsonObject, int)>&)
 */
 
 /*!

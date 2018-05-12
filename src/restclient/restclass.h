@@ -315,6 +315,7 @@ public:
 	//! @}
 
 	//! @{
+	//! @brief Performs HEAD-request with generic objects
 	template<typename DT = QObject*, typename ET = QObject*>
 	inline GenericRestReply<DT, ET> *head(const QString &methodPath, const QVariantHash &parameters = {}, const HeaderHash &headers = {}) const {
 		return call<DT, ET>(HeadVerb, methodPath, parameters, headers);
@@ -340,6 +341,7 @@ public:
 	//! @}
 
 protected:
+	//! @private
 	explicit RestClass(RestClient *client, QStringList subPath, QObject *parent);
 
 private:

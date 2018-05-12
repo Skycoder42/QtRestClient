@@ -1,15 +1,15 @@
 /*!
-@fn QtRestClient::RestClass::callJson(QByteArray, const QString &, const QVariantHash &, const HeaderHash &, bool)
+@fn QtRestClient::RestClass::callJson(const QByteArray &, const QString &, const QVariantHash &, const HeaderHash &, bool) const
 
 @note Not all parameters may apply to all overloads - choose the matching ones
 
 @param verb The HTTP-Verb to be used for the request
-@param methodPath The path to added to the classes base URL
-@param relativeUrl A URL to be resolved relative to the classes base URL, use as URl for the request
-@param body The JSON body to be sent together with the request
+@param methodPath (optional) The path to added to the classes base URL
+@param relativeUrl (optional) A URL to be resolved relative to the classes base URL, use as URl for the request
+@param body (optional) The JSON body to be sent together with the request
 @param parameters A collection of query parameters to be added to the request URL
 @param headers Additional HTTP-headers to be added to the request
-@param paramsAsBody Pass the `parameters` as POST-parameter method body instead of as a query url parametery
+@param paramsAsBody (optional) Pass the `parameters` as POST-parameter method body instead of as a query url parametery
 @returns A reply object, to handle the reply to this request
 
 This basic version allows to perform low-level JSON calls and replies. The following table shows,
@@ -26,7 +26,7 @@ relativeUrl	| `../prod`			| `http://api.example.com/prod`
 */
 
 /*!
-@fn QtRestClient::RestClass::call(const QByteArray &, const QString &, const QVariantHash &, const HeaderHash &, bool)
+@fn QtRestClient::RestClass::call(const QByteArray &, const QString &, const QVariantHash &, const HeaderHash &, bool) const
 
 @note Not all parameters may apply to all overloads - choose the matching ones
 
@@ -35,12 +35,12 @@ relativeUrl	| `../prod`			| `http://api.example.com/prod`
 @tparam RO The type of the data specified with the `body` parameter
 
 @param verb The HTTP-Verb to be used for the request
-@param methodPath The path to added to the classes base URL
-@param relativeUrl A URL to be resolved relative to the classes base URL, use as URl for the request
-@param body The body object to be sent together with the request
+@param methodPath (optional) The path to added to the classes base URL
+@param relativeUrl (optional) A URL to be resolved relative to the classes base URL, use as URl for the request
+@param body (optional) The body object to be sent together with the request
 @param parameters A collection of query parameters to be added to the request URL
 @param headers Additional HTTP-headers to be added to the request
-@param paramsAsBody Pass the `parameters` as POST-parameter method body instead of as a query url parametery
+@param paramsAsBody (optional) Pass the `parameters` as POST-parameter method body instead of as a query url parametery
 
 @returns A generic reply object for `DT` and `ET`, to handle the reply to this request
 @throw QJsonSerializationException Will be thrown, if the `body` cannot be serializer to JSON
@@ -65,15 +65,15 @@ The same applies for `DT` and `ET`, for the reply.
 */
 
 /*!
-@fn QtRestClient::RestClass::get(const QString &, const QVariantHash &, const HeaderHash &)
+@fn QtRestClient::RestClass::get(const QString &, const QVariantHash &, const HeaderHash &) const
 
 @note Not all parameters may apply to all overloads - choose the matching ones
 
 @tparam DT The expected type of the reply to this request. Defaults to `QObject*`
 @tparam ET A type to be used for replies with an error. Defaults to `QObject*`
 
-@param methodPath The path to added to the classes base URL
-@param relativeUrl A URL to be resolved relative to the classes base URL, use as URl for the request
+@param methodPath (optional) The path to added to the classes base URL
+@param relativeUrl (optional) A URL to be resolved relative to the classes base URL, use as URl for the request
 @param parameters A collection of query parameters to be added to the request URL
 @param headers Additional HTTP-headers to be added to the request
 
@@ -86,7 +86,7 @@ the documentation fo call for more details.
 */
 
 /*!
-@fn QtRestClient::RestClass::post(const QString &, const QVariantHash &, const HeaderHash &)
+@fn QtRestClient::RestClass::post(const QString &, const QVariantHash &, const HeaderHash &) const
 
 @note Not all parameters may apply to all overloads - choose the matching ones
 
@@ -94,9 +94,9 @@ the documentation fo call for more details.
 @tparam ET A type to be used for replies with an error. Defaults to `QObject*`
 @tparam RO The type of the data specified with the `body` parameter
 
-@param methodPath The path to added to the classes base URL
-@param relativeUrl A URL to be resolved relative to the classes base URL, use as URl for the request
-@param body The body object to be sent together with the request
+@param methodPath (optional) The path to added to the classes base URL
+@param relativeUrl (optional) A URL to be resolved relative to the classes base URL, use as URl for the request
+@param body (optional) The body object to be sent together with the request
 @param parameters A collection of query parameters to be added to the request URL
 @param headers Additional HTTP-headers to be added to the request
 
@@ -110,7 +110,7 @@ the documentation fo call for more details.
 */
 
 /*!
-@fn QtRestClient::RestClass::put(const QString &, const QVariantHash &, const HeaderHash &)
+@fn QtRestClient::RestClass::put(const QString &, const QVariantHash &, const HeaderHash &) const
 
 @note Not all parameters may apply to all overloads - choose the matching ones
 
@@ -118,8 +118,8 @@ the documentation fo call for more details.
 @tparam ET A type to be used for replies with an error. Defaults to `QObject*`
 @tparam RO The type of the data specified with the `body` parameter
 
-@param methodPath The path to added to the classes base URL
-@param relativeUrl A URL to be resolved relative to the classes base URL, use as URl for the request
+@param methodPath (optional) The path to added to the classes base URL
+@param relativeUrl (optional) A URL to be resolved relative to the classes base URL, use as URl for the request
 @param body The body object to be sent together with the request
 @param parameters A collection of query parameters to be added to the request URL
 @param headers Additional HTTP-headers to be added to the request
@@ -134,15 +134,15 @@ the documentation fo call for more details.
 */
 
 /*!
-@fn QtRestClient::RestClass::deleteResource(const QString &, const QVariantHash &, const HeaderHash &)
+@fn QtRestClient::RestClass::deleteResource(const QString &, const QVariantHash &, const HeaderHash &) const
 
 @note Not all parameters may apply to all overloads - choose the matching ones
 
 @tparam DT The expected type of the reply to this request. Defaults to `QObject*`
 @tparam ET A type to be used for replies with an error. Defaults to `QObject*`
 
-@param methodPath The path to added to the classes base URL
-@param relativeUrl A URL to be resolved relative to the classes base URL, use as URl for the request
+@param methodPath (optional) The path to added to the classes base URL
+@param relativeUrl (optional) A URL to be resolved relative to the classes base URL, use as URl for the request
 @param parameters A collection of query parameters to be added to the request URL
 @param headers Additional HTTP-headers to be added to the request
 
@@ -155,7 +155,7 @@ the documentation fo call for more details.
 */
 
 /*!
-@fn QtRestClient::RestClass::patch(const QString &, const QVariantHash &, const HeaderHash &)
+@fn QtRestClient::RestClass::patch(const QString &, const QVariantHash &, const HeaderHash &) const
 
 @note Not all parameters may apply to all overloads - choose the matching ones
 
@@ -163,8 +163,8 @@ the documentation fo call for more details.
 @tparam ET A type to be used for replies with an error. Defaults to `QObject*`
 @tparam RO The type of the data specified with the `body` parameter
 
-@param methodPath The path to added to the classes base URL
-@param relativeUrl A URL to be resolved relative to the classes base URL, use as URl for the request
+@param methodPath (optional) The path to added to the classes base URL
+@param relativeUrl (optional) A URL to be resolved relative to the classes base URL, use as URl for the request
 @param body The body object to be sent together with the request
 @param parameters A collection of query parameters to be added to the request URL
 @param headers Additional HTTP-headers to be added to the request
@@ -173,6 +173,27 @@ the documentation fo call for more details.
 @throw QJsonSerializationException Will be thrown, if the `body` cannot be serializer to JSON
 
 A wrapper that calls `call(RestClass::PatchVerb, ...)`. It's a shortcut for PATCH-requests. Check
+the documentation fo call for more details.
+
+@sa RestClass::call(QByteArray, const QString &, const QVariantHash &, const HeaderHash &)
+*/
+
+/*!
+@fn QtRestClient::RestClass::head(const QString &, const QVariantHash &, const HeaderHash &) const
+
+@note Not all parameters may apply to all overloads - choose the matching ones
+
+@tparam DT The expected type of the reply to this request. Defaults to `QObject*`
+@tparam ET A type to be used for replies with an error. Defaults to `QObject*`
+
+@param methodPath (optional) The path to added to the classes base URL
+@param relativeUrl (optional) A URL to be resolved relative to the classes base URL, use as URl for the request
+@param parameters A collection of query parameters to be added to the request URL
+@param headers Additional HTTP-headers to be added to the request
+
+@returns A generic reply object for `DT` and `ET`, to handle the reply to this request
+
+A wrapper that calls `call(RestClass::HeadVerb, ...)`. It's a shortcut for HEAD-requests. Check
 the documentation fo call for more details.
 
 @sa RestClass::call(QByteArray, const QString &, const QVariantHash &, const HeaderHash &)

@@ -927,6 +927,7 @@ EXCLUDE_PATTERNS       = moc_* \
 
 EXCLUDE_SYMBOLS        = QtRestClient::MetaComponent \
 						 QtRestClient::PagingData \
+						 QtRestClientDeclarativeModule \
 						 \
 						 QAbstractAspect \
 						 QBasicAtomicInteger \

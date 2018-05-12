@@ -69,6 +69,12 @@ The iterators parameters are:
 */
 
 /*!
+@fn QtRestClient::Paging::iterate(QObject *, const std::function<bool(T, int)>&, int, int) const
+@param scope (optional) A scope to limit the callback to
+@copydetails Paging::iterate(const std::function<bool(T, int)>&, int, int) const
+*/
+
+/*!
 @fn QtRestClient::Paging::iterate(const std::function<bool(T, int)> &, const std::function<void(QString, int, RestReply::ErrorType)> &, const std::function<QString(EO, int)>&, int, int) const
 
 @tparam EO The type of the negative result
@@ -76,6 +82,12 @@ The iterators parameters are:
 @param failureTransformer Will be passed to GenericRestReply::onAllErrors for all replies
 
 @copydetails QtRestClient::Paging::iterate(const std::function<bool(T, int)>&, int, int) const
+*/
+
+/*!
+@fn QtRestClient::Paging::iterate(QObject *, const std::function<bool(T, int)> &, const std::function<void(QString, int, RestReply::ErrorType)> &, const std::function<QString(EO, int)>&, int, int) const
+@param scope (optional) A scope to limit the callback to
+@copydetails Paging::iterate(const std::function<bool(T, int)> &, const std::function<void(QString, int, RestReply::ErrorType)> &, const std::function<QString(EO, int)>&, int, int) const
 */
 
 /*!
@@ -87,4 +99,10 @@ The iterators parameters are:
 @param exceptionHandler Will be passed to GenericRestReply::onSerializeException for all replies
 
 @copydetails QtRestClient::Paging::iterate(const std::function<bool(T, int)>&, int, int) const
+*/
+
+/*!
+@fn QtRestClient::Paging::iterate(QObject *, const std::function<bool(T, int)>&, const std::function<void(int, EO)>&, const std::function<void(QString, int, RestReply::ErrorType)>&, const std::function<void(QJsonSerializerException &)>&, int, int) const
+@param scope (optional) A scope to limit the callback to
+@copydetails Paging::iterate(const std::function<bool(T, int)>&, const std::function<void(int, EO)>&, const std::function<void(QString, int, RestReply::ErrorType)>&, const std::function<void(QJsonSerializerException &)>&, int, int) const
 */

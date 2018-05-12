@@ -58,6 +58,18 @@ public:
 				const std::function<void(T*, bool)> &extensionHandler,
 				const std::function<void(QString, int, RestReply::ErrorType)> &errorHandler = {},
 				const std::function<QString(ET, int)> &failureTransformer = {});
+	//! @brief Extends the object by using a handler
+	//! @param client The rest client to be used to create the network request
+	//! @param scope (optional) A scope to limit the callback to
+	//! @param extensionHandler The handler to be called with the extended object
+	//! @param errorHandler Will be passed to GenericRestReply::onAllErrors
+	//! @param failureTransformer Will be passed to GenericRestReply::onAllErrors
+	//! @details If the object is already extended it will simply be passed to the handler. If not,
+	//! an internal extension is performed, and the handler called for the result.
+	//!
+	//! The handlers parameters are:
+	//! - The deserialized extended object (T*)
+	//! - The information, whether the object was extended by sending a request (`true`) or already available (`false`) (bool)
 	template<typename ET = QObject*>
 	void extend(RestClient *client,
 				QObject *scope,
@@ -113,6 +125,18 @@ public:
 				const std::function<void(T, bool)> &extensionHandler,
 				const std::function<void(QString, int, RestReply::ErrorType)> &errorHandler = {},
 				const std::function<QString(ET, int)> &failureTransformer = {});
+	//! @brief Extends the object by using a handler
+	//! @param client The rest client to be used to create the network request
+	//! @param scope (optional) A scope to limit the callback to
+	//! @param extensionHandler The handler to be called with the extended object
+	//! @param errorHandler Will be passed to GenericRestReply::onAllErrors
+	//! @param failureTransformer Will be passed to GenericRestReply::onAllErrors
+	//! @details If the object is already extended it will simply be passed to the handler. If not,
+	//! an internal extension is performed, and the handler called for the result.
+	//!
+	//! The handlers parameters are:
+	//! - The deserialized extended object (T)
+	//! - The information, whether the object was extended by sending a request (`true`) or already available (`false`) (bool)
 	template<typename ET = QObject*>
 	void extend(RestClient *client,
 				QObject *scope,

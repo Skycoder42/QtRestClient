@@ -64,7 +64,7 @@ public:
 
 	//! Sets the content of the generated network request
 	RequestBuilder &setBody(QByteArray body, const QByteArray &contentType);
-	//! @copybrief RequestBuilder::setBody(const QByteArray &, const QByteArray &)
+	//! @copybrief RequestBuilder::setBody(QByteArray, const QByteArray &)
 	RequestBuilder &setBody(const QJsonObject &body);
 	//! @copydoc RequestBuilder::setBody(const QJsonObject &)
 	RequestBuilder &setBody(const QJsonArray &body);

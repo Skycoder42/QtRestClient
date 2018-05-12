@@ -39,31 +39,39 @@ public:
 
 	//! Set a handler to be called if the request succeeded
 	RestReply *onSucceeded(const std::function<void(int, QJsonObject)> &handler);
+	//! @copybrief onSucceeded(const std::function<void(int, QJsonObject)>&)
 	RestReply *onSucceeded(QObject *scope, const std::function<void(int, QJsonObject)> &handler);
-	//! @copydoc onSucceeded(std::function<void(int, QJsonObject)>)
+	//! @copydoc onSucceeded(const std::function<void(int, QJsonObject)>&)
 	RestReply *onSucceeded(const std::function<void(int, QJsonArray)> &handler);
+	//! @copydoc onSucceeded(QObject *, const std::function<void(int, QJsonObject)>&)
 	RestReply *onSucceeded(QObject *scope, const std::function<void(int, QJsonArray)> &handler);
 	//! Set a handler to be called if the request failed
 	RestReply *onFailed(const std::function<void(int, QJsonObject)> &handler);
+	//! @copybrief onFailed(const std::function<void(int, QJsonObject)>&)
 	RestReply *onFailed(QObject *scope, const std::function<void(int, QJsonObject)> &handler);
-	//! @copydoc onFailed(std::function<void(int, QJsonObject)>)
+	//! @copydoc onFailed(const std::function<void(int, QJsonObject)>&)
 	RestReply *onFailed(const std::function<void(int, QJsonArray)> &handler);
+	//! @copydoc onFailed(QObject *, const std::function<void(int, QJsonObject)>&)
 	RestReply *onFailed(QObject *scope, const std::function<void(int, QJsonArray)> &handler);
 	//! Set a handler to be called when the request was completed, regardless of success or failure
 	RestReply *onCompleted(const std::function<void(int)> &handler);
+	//! @copybrief onCompleted(const std::function<void(int)>&)
 	RestReply *onCompleted(QObject *scope, const std::function<void(int)> &handler);
 	//! Set a handler to be called if a network error or json parse error occures
 	RestReply *onError(const std::function<void(QString, int, ErrorType)> &handler);
+	//! @copybrief onError(const std::function<void(QString, int, ErrorType)>&)
 	RestReply *onError(QObject *scope, const std::function<void(QString, int, ErrorType)> &handler);
 	//! Set a handler to be called if the request did not succeed
 	RestReply *onAllErrors(const std::function<void(QString, int, ErrorType)> &handler,
 						   const std::function<QString(QJsonObject, int)> &failureTransformer = {});
+	//! @copybrief onAllErrors(const std::function<void(QString, int, ErrorType)>&, const std::function<QString(QJsonObject, int)>&)
 	RestReply *onAllErrors(QObject *scope,
 						   const std::function<void(QString, int, ErrorType)> &handler,
 						   const std::function<QString(QJsonObject, int)> &failureTransformer = {});
-	//! @copydoc onAllErrors(std::function<void(QString, int, ErrorType)>, std::function<QString(QJsonObject, int)>)
+	//! @copydoc onAllErrors(const std::function<void(QString, int, ErrorType)>&, const std::function<QString(QJsonObject, int)>&)
 	RestReply *onAllErrors(const std::function<void(QString, int, ErrorType)> &handler,
 						   const std::function<QString(QJsonArray, int)> &failureTransformer);
+	//! @copydoc onAllErrors(QObject *, const std::function<void(QString, int, ErrorType)>&, const std::function<QString(QJsonObject, int)>&)
 	RestReply *onAllErrors(QObject *scope,
 						   const std::function<void(QString, int, ErrorType)> &handler,
 						   const std::function<QString(QJsonArray, int)> &failureTransformer);

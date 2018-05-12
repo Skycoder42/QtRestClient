@@ -162,7 +162,7 @@ If you don't specify a ssl configuration, the builder will use the default confi
 */
 
 /*!
-@fn QtRestClient::RequestBuilder::setBody(const QByteArray &, const QByteArray &)
+@fn QtRestClient::RequestBuilder::setBody(QByteArray, const QByteArray &)
 
 @param body The data to be sent as Content
 @param contentType The content type for the Content

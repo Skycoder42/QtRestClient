@@ -11,7 +11,7 @@ way, you can directly use them without ever caring about the JSON in the backgro
 */
 
 /*!
-@fn QtRestClient::GenericRestReply::onSucceeded
+@fn QtRestClient::GenericRestReply::onSucceeded(const std::function<void(int, DataClassType)>&)
 
 @param handler The function to be called on success
 @returns A reference to this reply
@@ -24,7 +24,13 @@ The handlers arguments are:
 */
 
 /*!
-@fn QtRestClient::GenericRestReply::onFailed
+@fn QtRestClient::GenericRestReply::onSucceeded(QObject*, const std::function<void(int, DataClassType)>&)
+@param scope (optional) A scope to limit the callback to
+@copydetails GenericRestReply::onSucceeded(const std::function<void(int, DataClassType)>&)
+*/
+
+/*!
+@fn QtRestClient::GenericRestReply::onFailed(const std::function<void(int, ErrorClassType)>&)
 
 @param handler The function to be called on failure
 @returns A reference to this reply
@@ -36,6 +42,11 @@ The handlers arguments are:
 @sa GenericRestReply::onAllErrors, GenericRestReply::onSucceeded, RestReply::onFailed
 */
 
+/*!
+@fn QtRestClient::GenericRestReply::onFailed(QObject*, const std::function<void(int, ErrorClassType)>&)
+@param scope (optional) A scope to limit the callback to
+@copydetails GenericRestReply::onFailed(const std::function<void(int, ErrorClassType)>&)
+*/
 
 /*!
 @fn QtRestClient::GenericRestReply::onSerializeException
@@ -50,7 +61,7 @@ The handlers arguments are:
 */
 
 /*!
-@fn QtRestClient::GenericRestReply::onAllErrors
+@fn QtRestClient::GenericRestReply::onAllErrors(const std::function<void(QString, int, ErrorType)>&, const std::function<QString(ErrorClassType, int)>&)
 
 @param handler The function to be called on any error
 @param failureTransformer A function to be called to extract an error string from the failure data
@@ -76,4 +87,10 @@ The failureTransformer arguments are
 
 @sa GenericRestReply::onError, GenericRestReply::onFailed,
 GenericRestReply::onSerializeException, RestReply::onAllErrors
+*/
+
+/*!
+@fn QtRestClient::GenericRestReply::onAllErrors(QObject*, const std::function<void(QString, int, ErrorType)>&, const std::function<QString(ErrorClassType, int)>&)
+@param scope (optional) A scope to limit the callback to
+@copydetails GenericRestReply::onAllErrors(const std::function<void(QString, int, ErrorType)>&, const std::function<QString(ErrorClassType, int)>&)
 */
