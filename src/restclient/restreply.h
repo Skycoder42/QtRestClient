@@ -39,21 +39,33 @@ public:
 
 	//! Set a handler to be called if the request succeeded
 	RestReply *onSucceeded(const std::function<void(int, QJsonObject)> &handler);
+	RestReply *onSucceeded(QObject *scope, const std::function<void(int, QJsonObject)> &handler);
 	//! @copydoc onSucceeded(std::function<void(int, QJsonObject)>)
 	RestReply *onSucceeded(const std::function<void(int, QJsonArray)> &handler);
+	RestReply *onSucceeded(QObject *scope, const std::function<void(int, QJsonArray)> &handler);
 	//! Set a handler to be called if the request failed
 	RestReply *onFailed(const std::function<void(int, QJsonObject)> &handler);
+	RestReply *onFailed(QObject *scope, const std::function<void(int, QJsonObject)> &handler);
 	//! @copydoc onFailed(std::function<void(int, QJsonObject)>)
 	RestReply *onFailed(const std::function<void(int, QJsonArray)> &handler);
+	RestReply *onFailed(QObject *scope, const std::function<void(int, QJsonArray)> &handler);
 	//! Set a handler to be called when the request was completed, regardless of success or failure
 	RestReply *onCompleted(const std::function<void(int)> &handler);
+	RestReply *onCompleted(QObject *scope, const std::function<void(int)> &handler);
 	//! Set a handler to be called if a network error or json parse error occures
 	RestReply *onError(const std::function<void(QString, int, ErrorType)> &handler);
+	RestReply *onError(QObject *scope, const std::function<void(QString, int, ErrorType)> &handler);
 	//! Set a handler to be called if the request did not succeed
 	RestReply *onAllErrors(const std::function<void(QString, int, ErrorType)> &handler,
 						   const std::function<QString(QJsonObject, int)> &failureTransformer = {});
+	RestReply *onAllErrors(QObject *scope,
+						   const std::function<void(QString, int, ErrorType)> &handler,
+						   const std::function<QString(QJsonObject, int)> &failureTransformer = {});
 	//! @copydoc onAllErrors(std::function<void(QString, int, ErrorType)>, std::function<QString(QJsonObject, int)>)
 	RestReply *onAllErrors(const std::function<void(QString, int, ErrorType)> &handler,
+						   const std::function<QString(QJsonArray, int)> &failureTransformer);
+	RestReply *onAllErrors(QObject *scope,
+						   const std::function<void(QString, int, ErrorType)> &handler,
 						   const std::function<QString(QJsonArray, int)> &failureTransformer);
 
 	//! @writeAcFn{RestReply::autoDelete}

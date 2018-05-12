@@ -156,10 +156,28 @@ void IntegrationTest::testQObjectPagingChain()
 	pagingClass->deleteLater();
 }
 
-template <typename T>
-static void DO_NOT_CALL_compilation_test_template()
+template <typename TRest, typename TErr = QObject*>
+static void DO_NOT_CALL_compilation_test_reply()
 {
-	T object = T();
+	GenericRestReply<TRest, TErr> *rep = nullptr;
+	rep->onSucceeded({});
+	rep->onSucceeded(nullptr, {});
+	rep->onFailed({});
+	rep->onFailed(nullptr, {});
+	rep->onSerializeException({});
+	rep->onAllErrors({}, {});
+	rep->onAllErrors(nullptr, {}, {});
+	rep->onCompleted({});
+	rep->onCompleted(nullptr, {});
+	rep->onError({});
+	rep->onError(nullptr, {});
+	rep->disableAutoDelete();
+}
+
+template <typename T>
+static void DO_NOT_CALL_compilation_test_class()
+{
+	T object;
 	QList<T> list;
 	RestClass *postClass = nullptr;
 
@@ -226,9 +244,74 @@ static void DO_NOT_CALL_compilation_test_template()
 
 static void DO_NOT_CALL_compilation_test()
 {
-	DO_NOT_CALL_compilation_test_template<JphPost*>();//object
-	DO_NOT_CALL_compilation_test_template<JphUser>();//gadget
-	DO_NOT_CALL_compilation_test_template<JphUserSimple>();//gadget
+	DO_NOT_CALL_compilation_test_reply<void>();
+	DO_NOT_CALL_compilation_test_reply<JphPost*>();
+	DO_NOT_CALL_compilation_test_reply<JphUser>();
+	DO_NOT_CALL_compilation_test_reply<JphUserSimple>();
+	DO_NOT_CALL_compilation_test_reply<JphPostSimple*>();
+	DO_NOT_CALL_compilation_test_reply<QList<JphPost*>>();
+	DO_NOT_CALL_compilation_test_reply<QList<JphUser>>();
+	DO_NOT_CALL_compilation_test_reply<QList<JphUserSimple>>();
+	DO_NOT_CALL_compilation_test_reply<QList<JphPostSimple*>>();
+	DO_NOT_CALL_compilation_test_reply<Paging<JphPost*>>();
+	DO_NOT_CALL_compilation_test_reply<Paging<JphUser>>();
+	DO_NOT_CALL_compilation_test_reply<Paging<JphUserSimple>>();
+	DO_NOT_CALL_compilation_test_reply<Paging<JphPostSimple*>>();
+
+	//special call iterate
+	{
+		Paging<JphPost*> paging;
+		paging.iterate({}, 10, 5);
+		paging.iterate(nullptr, {}, 10, 5);
+		paging.iterate({}, {}, {}, 10, 5);
+		paging.iterate(nullptr, {}, {}, {}, 10, 5);
+		paging.iterate({}, {}, {}, {}, 10, 5);
+		paging.iterate(nullptr, {}, {}, {}, {}, 10, 5);
+		GenericRestReply<Paging<JphPost*>> *rep = nullptr;
+		rep->iterate({}, 10, 5);
+		rep->iterate(nullptr, {}, 10, 5);
+	}
+	{
+		Paging<JphUser> paging;
+		paging.iterate({}, 10, 5);
+		paging.iterate(nullptr, {}, 10, 5);
+		paging.iterate({}, {}, {}, 10, 5);
+		paging.iterate(nullptr, {}, {}, {}, 10, 5);
+		paging.iterate({}, {}, {}, {}, 10, 5);
+		paging.iterate(nullptr, {}, {}, {}, {}, 10, 5);
+		GenericRestReply<Paging<JphUser>> *rep = nullptr;
+		rep->iterate({}, 10, 5);
+		rep->iterate(nullptr, {}, 10, 5);
+	}
+	{
+		Paging<JphUserSimple> paging;
+		paging.iterate({}, 10, 5);
+		paging.iterate(nullptr, {}, 10, 5);
+		paging.iterate({}, {}, {}, 10, 5);
+		paging.iterate(nullptr, {}, {}, {}, 10, 5);
+		paging.iterate({}, {}, {}, {}, 10, 5);
+		paging.iterate(nullptr, {}, {}, {}, {}, 10, 5);
+		GenericRestReply<Paging<JphUserSimple>> *rep = nullptr;
+		rep->iterate({}, 10, 5);
+		rep->iterate(nullptr, {}, 10, 5);
+	}
+	{
+		Paging<JphPostSimple*> paging;
+		paging.iterate({}, 10, 5);
+		paging.iterate(nullptr, {}, 10, 5);
+		paging.iterate({}, {}, {}, 10, 5);
+		paging.iterate(nullptr, {}, {}, {}, 10, 5);
+		paging.iterate({}, {}, {}, {}, 10, 5);
+		paging.iterate(nullptr, {}, {}, {}, {}, 10, 5);
+		GenericRestReply<Paging<JphPostSimple*>> *rep = nullptr;
+		rep->iterate({}, 10, 5);
+		rep->iterate(nullptr, {}, 10, 5);
+	}
+
+	DO_NOT_CALL_compilation_test_class<JphPost*>();//object
+	DO_NOT_CALL_compilation_test_class<JphUser>();//gadget
+	DO_NOT_CALL_compilation_test_class<JphUserSimple>();//gadget
+	DO_NOT_CALL_compilation_test_class<JphPostSimple*>();//object
 
 	JphUserSimple s;
 	s.hasExtension();
@@ -236,6 +319,7 @@ static void DO_NOT_CALL_compilation_test()
 	s.currentExtended();
 	s.extend(nullptr);
 	s.extend(nullptr, {});
+	s.extend(nullptr, nullptr, {});
 
 	JphPostSimple *p;
 	p->hasExtension();
@@ -243,6 +327,7 @@ static void DO_NOT_CALL_compilation_test()
 	p->currentExtended();
 	p->extend(nullptr);
 	p->extend(nullptr, {});
+	p->extend(nullptr, nullptr, {});
 }
 
 QTEST_MAIN(IntegrationTest)

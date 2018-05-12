@@ -129,6 +129,12 @@ void Paging<T>::iterate(const std::function<bool (T, int)> &iterator, int to, in
 }
 
 template<typename T>
+void Paging<T>::iterate(QObject *scope, const std::function<bool (T, int)> &iterator, int to, int from) const
+{
+	iterate(scope, iterator, {}, {}, to, from);
+}
+
+template<typename T>
 template<typename EO>
 void Paging<T>::iterate(const std::function<bool(T, int)> &iterator, const std::function<void(QString, int, RestReply::ErrorType)> &errorHandler, const std::function<QString (EO, int)> &failureTransformer, int to, int from) const
 {
@@ -158,6 +164,34 @@ void Paging<T>::iterate(const std::function<bool(T, int)> &iterator, const std::
 
 template<typename T>
 template<typename EO>
+void Paging<T>::iterate(QObject *scope, const std::function<bool(T, int)> &iterator, const std::function<void(QString, int, RestReply::ErrorType)> &errorHandler, const std::function<QString (EO, int)> &failureTransformer, int to, int from) const
+{
+	Q_ASSERT(from >= d->iPaging->offset());
+
+	auto index = internalIterate(iterator, to ,from);
+	if(index < 0)
+		return;
+
+	//calc total limit -> only if supports indexes
+	int max = INT_MAX;
+	if(d->iPaging->offset() >= 0) {
+		if(to >= 0)
+			max = qMin(to, d->iPaging->total());
+		else
+			max = d->iPaging->total();
+	}
+
+	//continue to the next one
+	if(index < max && d->iPaging->hasNext()) {
+		next()->onSucceeded(scope, [iterator, errorHandler, failureTransformer, to, index](int, Paging<T> paging) {
+				  paging.iterate(iterator, errorHandler, failureTransformer, to, index);
+			  })
+			  ->onAllErrors(scope, errorHandler, failureTransformer);
+	}
+}
+
+template<typename T>
+template<typename EO>
 void Paging<T>::iterate(const std::function<bool(T, int)> &iterator, const std::function<void(int, EO)> &failureHandler, const std::function<void(QString, int, RestReply::ErrorType)> &errorHandler, const std::function<void(QJsonSerializerException &)> &exceptionHandler, int to, int from) const
 {
 	Q_ASSERT(from >= d->iPaging->offset());
@@ -182,6 +216,36 @@ void Paging<T>::iterate(const std::function<bool(T, int)> &iterator, const std::
 			  })
 			  ->onFailed(failureHandler)
 			  ->onError(errorHandler)
+			  ->onSerializeException(exceptionHandler);
+	}
+}
+
+template<typename T>
+template<typename EO>
+void Paging<T>::iterate(QObject *scope, const std::function<bool(T, int)> &iterator, const std::function<void(int, EO)> &failureHandler, const std::function<void(QString, int, RestReply::ErrorType)> &errorHandler, const std::function<void(QJsonSerializerException &)> &exceptionHandler, int to, int from) const
+{
+	Q_ASSERT(from >= d->iPaging->offset());
+
+	auto index = internalIterate(iterator, to ,from);
+	if(index < 0)
+		return;
+
+	//calc total limit -> only if supports indexes
+	int max = INT_MAX;
+	if(d->iPaging->offset() >= 0) {
+		if(to >= 0)
+			max = qMin(to, d->iPaging->total());
+		else
+			max = d->iPaging->total();
+	}
+
+	//continue to the next one
+	if(index < max && d->iPaging->hasNext()) {
+		next()->onSucceeded(scope, [iterator, failureHandler, errorHandler, exceptionHandler, to, index](int, Paging<T> paging) {
+				  paging.iterate(iterator, failureHandler, errorHandler, exceptionHandler, to, index);
+			  })
+			  ->onFailed(scope, failureHandler)
+			  ->onError(scope, errorHandler)
 			  ->onSerializeException(exceptionHandler);
 	}
 }

@@ -68,6 +68,7 @@ public:
 
 	//! Iterates over all paging objects
 	void iterate(const std::function<bool(T, int)> &iterator, int to = -1, int from = 0) const;
+	void iterate(QObject *scope, const std::function<bool(T, int)> &iterator, int to = -1, int from = 0) const;
 	//! Iterates over all paging objects, with error handling
 	template<typename EO = QObject*>
 	void iterate(const std::function<bool(T, int)> &iterator,
@@ -75,9 +76,24 @@ public:
 				 const std::function<QString(EO, int)> &failureTransformer = {},
 				 int to = -1,
 				 int from = 0) const;
+	template<typename EO = QObject*>
+	void iterate(QObject *scope,
+				 const std::function<bool(T, int)> &iterator,
+				 const std::function<void(QString, int, RestReply::ErrorType)> &errorHandler,
+				 const std::function<QString(EO, int)> &failureTransformer = {},
+				 int to = -1,
+				 int from = 0) const;
 	//! Iterates over all paging objects, with error handling
 	template<typename EO = QObject*>
 	void iterate(const std::function<bool(T, int)> &iterator,
+				 const std::function<void(int, EO)> &failureHandler,
+				 const std::function<void(QString, int, RestReply::ErrorType)> &errorHandler = {},
+				 const std::function<void(QJsonSerializerException &)> &exceptionHandler = {},
+				 int to = -1,
+				 int from = 0) const;
+	template<typename EO = QObject*>
+	void iterate(QObject *scope,
+				 const std::function<bool(T, int)> &iterator,
 				 const std::function<void(int, EO)> &failureHandler,
 				 const std::function<void(QString, int, RestReply::ErrorType)> &errorHandler = {},
 				 const std::function<void(QJsonSerializerException &)> &exceptionHandler = {},
