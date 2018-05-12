@@ -119,7 +119,7 @@ void QmlPaging::iterate(const QJSValue &iterator, const QJSValue &failureHandler
 		QPointer<RestClient> client{_client};
 		QPointer<QJSEngine> engine{_engine};
 
-		auto reply = next()->onSucceeded([=](int, const QJsonObject &data) {
+		auto reply = next()->onSucceeded([client, engine, iterator, failureHandler, errorHandler, to, index](int, const QJsonObject &data) {
 			if(!client || !engine)
 				return;
 			auto paging = create(client, engine, data);
@@ -127,7 +127,7 @@ void QmlPaging::iterate(const QJSValue &iterator, const QJSValue &failureHandler
 		});
 
 		if(failureHandler.isCallable()) {
-			reply->onFailed([=](int code, const QJsonObject &data) {
+			reply->onFailed([engine, failureHandler](int code, const QJsonObject &data) {
 				if(!engine)
 					return;
 				auto fn = failureHandler;
@@ -138,7 +138,7 @@ void QmlPaging::iterate(const QJSValue &iterator, const QJSValue &failureHandler
 			});
 		}
 		if(errorHandler.isCallable()) {
-			reply->onError([=](const QString &error, int code, RestReply::ErrorType type) {
+			reply->onError([errorHandler](const QString &error, int code, RestReply::ErrorType type) {
 				auto fn = errorHandler;
 				fn.call({error, code, type});
 			});

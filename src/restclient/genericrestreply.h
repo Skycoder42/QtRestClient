@@ -282,7 +282,7 @@ GenericRestReply<DataClassType, ErrorClassType> *GenericRestReply<DataClassType,
 		MetaComponent<ErrorClassType>::deleteLater(obj);
 	});
 	this->onError(scope, handler);
-	this->onSerializeException([=](QJsonSerializerException exception){
+	this->onSerializeException([handler](QJsonSerializerException exception){
 		handler(QString::fromUtf8(exception.what()), 0, DeserializationError);
 	});
 	return this;
@@ -397,7 +397,7 @@ GenericRestReply<void, ErrorClassType> *GenericRestReply<void, ErrorClassType>::
 		MetaComponent<ErrorClassType>::deleteLater(obj);
 	});
 	this->onError(scope, handler);
-	this->onSerializeException([=](QJsonSerializerException exception){
+	this->onSerializeException([handler](QJsonSerializerException exception){
 		handler(QString::fromUtf8(exception.what()), 0, DeserializationError);
 	});
 	return this;
@@ -519,7 +519,7 @@ GenericRestReply<QList<DataClassType>, ErrorClassType> *GenericRestReply<QList<D
 		MetaComponent<ErrorClassType>::deleteLater(obj);
 	});
 	this->onError(scope, handler);
-	this->onSerializeException([=](QJsonSerializerException exception){
+	this->onSerializeException([handler](QJsonSerializerException exception){
 		handler(QString::fromUtf8(exception.what()), 0, DeserializationError);
 	});
 	return this;
@@ -644,7 +644,7 @@ GenericRestReply<Paging<DataClassType>, ErrorClassType> *GenericRestReply<Paging
 		MetaComponent<ErrorClassType>::deleteLater(obj);
 	});
 	this->onError(scope, handler);
-	this->onSerializeException([=](QJsonSerializerException exception){
+	this->onSerializeException([handler](QJsonSerializerException exception){
 		handler(QString::fromUtf8(exception.what()), 0, DeserializationError);
 	});
 	return this;
