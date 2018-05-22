@@ -1,7 +1,7 @@
 #include "classbuilder.h"
 #include <QJsonArray>
 
-#if !QT_HAS_INCLUDE(<variant>)
+#if !QT_HAS_INCLUDE(<variant>) ||  __cplusplus < 201703L
 template <>
 const ClassBuilder::Expression &ClassBuilder::get(const ClassBuilder::RestAccess::Method::PathInfoBase &info) {
 	Q_ASSERT(!info.isParams);
@@ -46,8 +46,8 @@ bool ClassBuilder::is<QString>(const ClassBuilder::RestAccess::Method::PathInfo 
 }
 #endif
 
-ClassBuilder::ClassBuilder(QXmlStreamReader &reader, QObject *parent) :
-	RestBuilder(reader, parent)
+ClassBuilder::ClassBuilder(QXmlStreamReader &reader) :
+	RestBuilder(reader)
 {}
 
 bool ClassBuilder::canReadType(const QString &type)
@@ -162,25 +162,25 @@ ClassBuilder::RestAccess::Method ClassBuilder::readMethod()
 	method.postParams = readAttrib<bool>(QStringLiteral("postParams"),
 										 method.verb == QStringLiteral("POST") && method.body.isEmpty());
 	if(method.postParams && !method.body.isEmpty())
-		throwReader(tr("You cannot have post params AND a method body at the same time"));
+		throwReader(QStringLiteral("You cannot have post params AND a method body at the same time"));
 
 	enum { None, Url, Path } mode = None;
 	while(reader.readNextStartElement()) {
 		checkError();
 		if(reader.name() == QStringLiteral("Url")) {
 			if(mode != None)
-				throwReader(tr("You can only specify a single <Url> element per method, and only if you haven't already used <Path> or <PathParam>"));
+				throwReader(QStringLiteral("You can only specify a single <Url> element per method, and only if you haven't already used <Path> or <PathParam>"));
 			mode = Url;
 			method.path = reader.readElementText();
 			checkError();
 		} else if(reader.name() == QStringLiteral("Path")) {
 			if(mode == Url)
-				throwReader(tr("You cannot specify a <Path> element if you already used <Url>"));
+				throwReader(QStringLiteral("You cannot specify a <Path> element if you already used <Url>"));
 			mode = Path;
 			get<RestAccess::Method::PathInfoList>(method.path).append(readExpression());
 		} else if(reader.name() == QStringLiteral("PathParam")) {
 			if(mode == Url)
-				throwReader(tr("You cannot specify a <PathParam> element if you already used <Url>"));
+				throwReader(QStringLiteral("You cannot specify a <PathParam> element if you already used <Url>"));
 			mode = Path;
 			get<RestAccess::Method::PathInfoList>(method.path).append(readBaseParam());
 		} else if(reader.name() == QStringLiteral("Param"))
@@ -372,6 +372,7 @@ QString ClassBuilder::writeMethodParams(const RestAccess::Method &method, bool a
 		}
 	}
 	// add normal parameters
+	parameters.reserve(parameters.size() + method.params.size());
 	for(const auto &param : method.params)
 		parameters.append(writeParamArg(param, asHeader));
 
@@ -475,7 +476,7 @@ void ClassBuilder::writeClassDefinitions()
 
 void ClassBuilder::writeMethodDefinitions()
 {
-	for(const auto &method : data.methods) {
+	for(const auto &method : qAsConst(data.methods)) {
 		source << "\nQtRestClient::GenericRestReply<" << method.returns << ", " << method.except << "> *" << data.name << "::" << method.name
 			   << "(" << writeMethodParams(method, false) << ")\n"
 			   << "{\n";
@@ -588,6 +589,7 @@ void ClassBuilder::writeApiCreation()
 		   << "\t\tclient->setBaseUrl(QUrl{" << writeExpression(apiData.baseUrl, true) << "});\n";
 	if(!apiData.apiVersion.isNull()) {
 		QStringList args;
+		args.reserve(apiData.apiVersion.segmentCount());
 		for(const auto &segment : apiData.apiVersion.segments())
 			args.append(QString::number(segment));
 		source << "\t\tclient->setApiVersion(QVersionNumber{" << args.join(QStringLiteral(", ")) << "});\n";
@@ -691,6 +693,7 @@ void ClassBuilder::writeQmlDefinitions()
 			}
 		}
 		// add normal parameters
+		parameters.reserve(parameters.size() + method.params.size());
 		for(const auto &param : method.params)
 			parameters.append(param.key);
 

@@ -3,16 +3,14 @@
 
 #include "restbuilder.h"
 #include <QVersionNumber>
-#if QT_HAS_INCLUDE(<variant>)
+#if QT_HAS_INCLUDE(<variant>) && __cplusplus >= 201703L
 #include <variant>
 #endif
 
 class ClassBuilder : public RestBuilder
 {
-	Q_OBJECT
-
 public:
-	explicit ClassBuilder(QXmlStreamReader &reader, QObject *parent = nullptr);
+	explicit ClassBuilder(QXmlStreamReader &reader);
 
 	static bool canReadType(const QString &type);
 
@@ -50,7 +48,7 @@ private:
 			QString except;
 			bool postParams = false;
 
-#if QT_HAS_INCLUDE(<variant>)
+#if QT_HAS_INCLUDE(<variant>) && __cplusplus >= 201703L
 			using PathInfoBase = std::variant<Expression, BaseParam>;
 			using PathInfoList = QList<PathInfoBase>;
 			using PathInfo = std::variant<PathInfoList, QString>;
@@ -152,7 +150,7 @@ private:
 
 	bool writeMethodPath(const ClassBuilder::RestAccess::Method::PathInfo &info);
 
-#if QT_HAS_INCLUDE(<variant>)
+#if QT_HAS_INCLUDE(<variant>) && __cplusplus >= 201703L
 	template <typename TVariant, typename TInfo>
 	static constexpr TVariant &get(TInfo &info) {
 		return std::get<TVariant>(info);

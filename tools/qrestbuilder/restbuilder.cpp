@@ -8,10 +8,11 @@
 #include <QJsonObject>
 #include <QJsonArray>
 
-RestBuilder::RestBuilder(QXmlStreamReader &inStream, QObject *parent) :
-	QObject(parent),
+RestBuilder::RestBuilder(QXmlStreamReader &inStream) :
 	reader(inStream)
 {}
+
+RestBuilder::~RestBuilder() = default;
 
 QString RestBuilder::readType(QXmlStreamReader &inStream)
 {
@@ -25,12 +26,12 @@ void RestBuilder::build(const QString &in, const QString &hOut, const QString &c
 	QFileInfo inInfo(in);
 	fileName = inInfo.baseName();
 
-	QSaveFile headerFile(hOut, this);
+	QSaveFile headerFile(hOut);
 	if(!headerFile.open(QIODevice::WriteOnly | QIODevice::Text))
 		throwFile(headerFile);
 	header.setDevice(&headerFile);
 
-	QSaveFile sourceFile(cppOut, this);
+	QSaveFile sourceFile(cppOut);
 	if(!sourceFile.open(QIODevice::WriteOnly | QIODevice::Text))
 		throwFile(sourceFile);
 	source.setDevice(&sourceFile);
@@ -62,9 +63,9 @@ bool RestBuilder::readAttrib<bool>(const QString &key, const bool &defaultValue,
 		else if(reader.attributes().value(key) == QStringLiteral("false"))
 			return false;
 		else
-			throwReader(tr("Value of attribute \"%1\" is not a xs:boolean!").arg(key));
+			throwReader(QStringLiteral("Value of attribute \"%1\" is not a xs:boolean!").arg(key));
 	} else if(required)
-		throwReader(tr("Required attribute \"%1\" but was not set").arg(key));
+		throwReader(QStringLiteral("Required attribute \"%1\" but was not set").arg(key));
 	else
 		return defaultValue;
 }
@@ -90,7 +91,7 @@ RestBuilder::BaseParam RestBuilder::readBaseParam()
 
 void RestBuilder::throwFile(const QFileDevice &file) const
 {
-	throw tr("%1: %2").arg(file.fileName(), file.errorString());
+	throw QStringLiteral("%1: %2").arg(file.fileName(), file.errorString());
 }
 
 void RestBuilder::throwReader(const QString &overwriteError) const
@@ -100,8 +101,8 @@ void RestBuilder::throwReader(const QString &overwriteError) const
 
 void RestBuilder::throwReader(QXmlStreamReader &stream, const QString &overwriteError)
 {
-	throw tr("%1:%2:%3: %4")
-			.arg(qobject_cast<QFileDevice*>(stream.device())->fileName())
+	throw QStringLiteral("%1:%2:%3: %4")
+			.arg(dynamic_cast<QFileDevice*>(stream.device())->fileName())
 			.arg(stream.lineNumber())
 			.arg(stream.columnNumber())
 			.arg(overwriteError.isNull() ? stream.errorString() : overwriteError);
@@ -109,7 +110,7 @@ void RestBuilder::throwReader(QXmlStreamReader &stream, const QString &overwrite
 
 void RestBuilder::throwChild()
 {
-	throwReader(tr("Unexpected child element: %1").arg(reader.name()));
+	throwReader(QStringLiteral("Unexpected child element: %1").arg(reader.name()));
 }
 
 void RestBuilder::checkError()

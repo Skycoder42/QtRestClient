@@ -3,16 +3,11 @@
 
 #include <functional>
 #include <QJsonObject>
-#include <QObject>
 #include <QXmlStreamWriter>
 
-class XmlConverter : public QObject
+class XmlConverter
 {
-	Q_OBJECT
-
 public:
-	explicit XmlConverter(QObject *parent = nullptr);
-
 	void convert(const QString &type, const QString &in, const QString &out);
 
 private:

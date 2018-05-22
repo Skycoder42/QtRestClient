@@ -5,10 +5,8 @@
 
 class ObjectBuilder : public RestBuilder
 {
-	Q_OBJECT
-
 public:
-	explicit ObjectBuilder(QXmlStreamReader &inStream, QObject *parent = nullptr);
+	explicit ObjectBuilder(QXmlStreamReader &inStream);
 
 	static bool canReadType(const QString &type);
 

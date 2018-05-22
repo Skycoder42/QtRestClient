@@ -4,8 +4,8 @@
 #include <QJsonArray>
 #include <QVersionNumber>
 
-ObjectBuilder::ObjectBuilder(QXmlStreamReader &inStream, QObject *parent) :
-	RestBuilder(inStream, parent)
+ObjectBuilder::ObjectBuilder(QXmlStreamReader &inStream) :
+	RestBuilder(inStream)
 {}
 
 bool ObjectBuilder::canReadType(const QString &type)

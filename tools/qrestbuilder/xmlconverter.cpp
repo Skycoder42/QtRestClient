@@ -4,25 +4,21 @@
 #include <QJsonDocument>
 #include <QVariant>
 
-XmlConverter::XmlConverter(QObject *parent) :
-	QObject(parent)
-{}
-
 void XmlConverter::convert(const QString &type, const QString &in, const QString &out)
 {
 	QFile inFile(in);
 	if(!inFile.open(QIODevice::ReadOnly | QIODevice::Text))
-		throw tr("%1: %2").arg(inFile.fileName(), inFile.errorString());
+		throw QStringLiteral("%1: %2").arg(inFile.fileName(), inFile.errorString());
 
 	QJsonParseError error;
 	auto doc = QJsonDocument::fromJson(inFile.readAll(), &error);
 	if(error.error != QJsonParseError::NoError)
-		throw tr("%1: %2").arg(in, error.errorString());
+		throw QStringLiteral("%1: %2").arg(in, error.errorString());
 	inFile.close();
 
 	QFile outFile(out);
 	if(!outFile.open(QIODevice::WriteOnly | QIODevice::Text))
-		throw tr("%1: %2").arg(outFile.fileName(), outFile.errorString());
+		throw QStringLiteral("%1: %2").arg(outFile.fileName(), outFile.errorString());
 	QXmlStreamWriter writer(&outFile);
 	writer.setAutoFormatting(true);
 	writer.setAutoFormattingIndent(-1);
@@ -33,10 +29,10 @@ void XmlConverter::convert(const QString &type, const QString &in, const QString
 	else if(type == QStringLiteral("class"))
 		writeClassXml(doc.object(), writer);
 	else
-		throw tr("Invalid conversion input type: %1. Must be either \"object\" or \"class\"").arg(type);
+		throw QStringLiteral("Invalid conversion input type: %1. Must be either \"object\" or \"class\"").arg(type);
 
 	if(writer.hasError())
-		throw tr("%1: %2").arg(outFile.fileName(), outFile.errorString());
+		throw QStringLiteral("%1: %2").arg(outFile.fileName(), outFile.errorString());
 	writer.writeEndDocument();
 	outFile.close();
 }
@@ -49,7 +45,7 @@ void XmlConverter::writeObjectXml(const QJsonObject &data, QXmlStreamWriter &wri
 	else if(data[QStringLiteral("$type")] == QStringLiteral("gadget"))
 		isObject = false;
 	else
-		throw tr("Unknown type: %1").arg(data[QStringLiteral("$type")].toString());
+		throw QStringLiteral("Unknown type: %1").arg(data[QStringLiteral("$type")].toString());
 
 	if(isObject)
 		writer.writeStartElement(QStringLiteral("RestObject"));
@@ -115,7 +111,7 @@ void XmlConverter::writeClassXml(const QJsonObject &data, QXmlStreamWriter &writ
 	else if(data[QStringLiteral("type")] == QStringLiteral("class"))
 		isApi = false;
 	else
-		throw tr("Unknown type: %1").arg(data[QStringLiteral("type")].toString());
+		throw QStringLiteral("Unknown type: %1").arg(data[QStringLiteral("type")].toString());
 
 	if(isApi)
 		writer.writeStartElement(QStringLiteral("RestApi"));

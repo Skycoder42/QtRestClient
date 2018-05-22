@@ -19,45 +19,31 @@ int main(int argc, char *argv[])
 	QCoreApplication::setOrganizationName(QStringLiteral(COMPANY));
 	QCoreApplication::setOrganizationDomain(QStringLiteral(BUNDLE_PREFIX));
 
-	QStringList trList = {QStringLiteral("qtbase"), QStringLiteral("qrestbuilder")};
-	for(const auto &trFile : trList) {
-		auto translator = new QTranslator(&a);
-		if(translator->load(QLocale(),
-							trFile,
-							QStringLiteral("_"),
-							QLibraryInfo::location(QLibraryInfo::TranslationsPath)))
-			a.installTranslator(translator);
-		else {
-			qWarning() << "Failed to load translations file" << trFile;
-			delete translator;
-		}
-	}
-
 	QCommandLineParser parser;
-	parser.setApplicationDescription(QCoreApplication::translate("PARSER", "A tool to create code for a rest API based on an API description"));
+	parser.setApplicationDescription(QStringLiteral("A tool to create code for a rest API based on an API description"));
 	parser.addVersionOption();
 	parser.addHelpOption();
 
 	parser.addOption({
 						 {QStringLiteral("c"), QStringLiteral("convert")},
-						 QCoreApplication::translate("PARSER", "Convert a legacy json file of <type> to the new XML format. "
+						 QStringLiteral("Convert a legacy json file of <type> to the new XML format. "
 						 "Use --impl to specify the name of the RC-XML file to be created."),
-						 QCoreApplication::translate("PARSER", "type")
+						 QStringLiteral("type")
 					 });
 	parser.addOption({
 						 QStringLiteral("in"),
-						 QCoreApplication::translate("PARSER", "The input JSON <file> containing the API definition"),
-						 QCoreApplication::translate("PARSER", "file")
+						 QStringLiteral("The input JSON <file> containing the API definition"),
+						 QStringLiteral("file")
 					 });
 	parser.addOption({
 						 QStringLiteral("header"),
-						 QCoreApplication::translate("PARSER", "The <name> of the header file to generate"),
-						 QCoreApplication::translate("PARSER", "name")
+						 QStringLiteral("The <name> of the header file to generate"),
+						 QStringLiteral("name")
 					 });
 	parser.addOption({
 						 QStringLiteral("impl"),
-						 QCoreApplication::translate("PARSER", "The <name> of the implementation file to generate"),
-						 QCoreApplication::translate("PARSER", "name")
+						 QStringLiteral("The <name> of the implementation file to generate"),
+						 QStringLiteral("name")
 					 });
 
 	parser.process(a);
@@ -73,7 +59,7 @@ int main(int argc, char *argv[])
 
 		QFile inFile(parser.value(QStringLiteral("in")));
 		if(!inFile.open(QIODevice::ReadOnly | QIODevice::Text))
-			throw QCoreApplication::translate("PARSER", "%1: %2").arg(inFile.fileName(), inFile.errorString());
+			throw QStringLiteral("%1: %2").arg(inFile.fileName(), inFile.errorString());
 		QXmlStreamReader reader(&inFile);
 
 		auto type = RestBuilder::readType(reader);
@@ -83,7 +69,7 @@ int main(int argc, char *argv[])
 		else if(ClassBuilder::canReadType(type))
 			builder.reset(new ClassBuilder(reader));
 		else
-			throw QCoreApplication::translate("PARSER", "Unsupported document type: %1").arg(type);
+			throw QStringLiteral("Unsupported document type: %1").arg(type);
 
 		builder->build(parser.value(QStringLiteral("in")),
 					   parser.value(QStringLiteral("header")),

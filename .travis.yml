@@ -15,6 +15,7 @@ env:
     - STATIC_QT_MODS=qttools
     - STATIC_EXTRA_MODS=qtjsonserializer
     - DOCKER_IMAGE=json
+    - QMAKE_FLAGS="CONFIG+=no_host_tools"
 
 matrix:
   include:

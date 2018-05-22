@@ -8,12 +8,11 @@
 #include <QXmlStreamReader>
 #include <QTextStream>
 
-class RestBuilder : public QObject
+class RestBuilder
 {
-	Q_OBJECT
-
 public:
-	explicit RestBuilder(QXmlStreamReader &inStream, QObject *parent = nullptr);
+	explicit RestBuilder(QXmlStreamReader &inStream);
+	virtual ~RestBuilder();
 
 	static QString readType(QXmlStreamReader &inStream);
 
@@ -69,7 +68,7 @@ T RestBuilder::readAttrib(const QString &key, const T &defaultValue, bool requir
 	if(reader.attributes().hasAttribute(key))
 		return QVariant(reader.attributes().value(key).toString()).template value<T>();
 	else if(required)
-		throwReader(tr("Required attribute \"%1\" but was not set").arg(key));
+		throwReader(QStringLiteral("Required attribute \"%1\" but was not set").arg(key));
 	else
 		return defaultValue;
 }

@@ -1,7 +1,6 @@
 option(host_build)
 
 QT = core
-CONFIG += console c++11
 
 TARGET = qrestbuilder
 VERSION = $$MODULE_VERSION
@@ -14,7 +13,11 @@ DEFINES += "VERSION=\\\"$$VERSION\\\""
 DEFINES += "COMPANY=\\\"$$COMPANY\\\""
 DEFINES += "BUNDLE_PREFIX=\\\"$$BUNDLE_PREFIX\\\""
 
-load(qt_tool)
+HEADERS += \
+	restbuilder.h \
+	objectbuilder.h \
+	classbuilder.h \
+	xmlconverter.h
 
 SOURCES += \
 	main.cpp \
@@ -23,13 +26,8 @@ SOURCES += \
 	classbuilder.cpp \
 	xmlconverter.cpp
 
-HEADERS += \
-	restbuilder.h \
-	objectbuilder.h \
-	classbuilder.h \
-	xmlconverter.h
-
-include(translations/translations.pri)
+load(qt_tool)
+CONFIG += console c++17
 
 win32 {
 	QMAKE_TARGET_PRODUCT = "Qt Rest API Builder"
@@ -39,15 +37,4 @@ win32 {
 	QMAKE_TARGET_BUNDLE_PREFIX = $${BUNDLE_PREFIX}.
 }
 
-#not found by linker?
-unix:!mac:!static_host_build {
-	LIBS += -L$$OUT_PWD/../../../lib #required to make this the first place to search
-	LIBS += -L$$[QT_INSTALL_LIBS] -licudata
-	LIBS += -L$$[QT_INSTALL_LIBS] -licui18n
-	LIBS += -L$$[QT_INSTALL_LIBS] -licuuc
-}
-
 DISTFILES += qrestbuilder.xsd
-
-# DEBUG
-win32:message($$CONFIG)
