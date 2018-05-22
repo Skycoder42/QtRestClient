@@ -27,7 +27,6 @@ SOURCES += \
 	xmlconverter.cpp
 
 load(qt_tool)
-CONFIG += console c++17
 
 win32 {
 	QMAKE_TARGET_PRODUCT = "Qt Rest API Builder"

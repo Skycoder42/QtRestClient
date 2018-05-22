@@ -15,7 +15,6 @@ env:
     - STATIC_QT_MODS=qttools
     - STATIC_EXTRA_MODS=qtjsonserializer
     - DOCKER_IMAGE=json
-    - QMAKE_FLAGS="CONFIG+=no_host_tools"
 
 matrix:
   include:
@@ -46,7 +45,7 @@ matrix:
 
 before_install:
   - git clone https://github.com/Skycoder42/QtModules.git ./qtmodules-travis
-  - ./tests/ci/setup.sh
+#  - ./tests/ci/setup.sh
   - travis_wait 40 ./qtmodules-travis/ci/$TRAVIS_OS_NAME/setup.sh
 
 script:
@@ -60,7 +59,7 @@ deploy:
   api_key:
     secure: juYFBTtn/vpb/c4WthQIeAqWqeW0zrg2Sl7BeEj7Udi8NQoWafrMGq8xSGfodkbK1yugxGFYQ6u1UOKoK4M2JHuDzHnNCRBwgJ9X89RlmRISALUnTXQRketdyo2ydy89sVEdppG9v2eXyC4R599GmE/I49jLkXLvED1j8uSLhZNDR2OYUH+no0gpnULnbHCZtwBr4wRYi1tH0hPf3xeoDFX5Tgz4yVgyX9+paBJln+Ate5CzlGyuT8AD4Sw+zRAixh6uUlFj90cXIc/JzJkHvPRoHy73TwauFurq2CaPc+UyIgQhISUZyArFi/mMpc1FVkBrKrb5eu1FmUiOkQtbIiMW51yGD8bW+N10oR2TJQU1/tyk4TLGvSISAx5Op07Q665w/qIQsbV6TNZxsNarWFI1VgOn49NOglc8dxeYAoE1IGKc+fbupYgQUcDKfrOx0/kRmc2VkBmPANh4FNAkREBQkvFGoEmHvhuBMs/eCDYWz/mu3ORQqmWZK415JWukgwxeuz0c1GWEPSx8S+L20K+iCZH3+kByerFPDc5185V0M90o9DzK0UNXhH+TGfP4cozrv43L/tTRAwaJTyVguj6p/+CRwifpLVOashcmer6JkDXVPqf+q8z588LLWDTuficj4rY95Cd+WxqBy5j97//5L4ckYqkDfTB7vE4d5cI=
   file_glob: true
-  file: install/opt/build_*_$QT_VER.tar.xz
+  file: install/build_*_$QT_VER.tar.xz
   on:
     repo: Skycoder42/QtRestClient
     tags: true

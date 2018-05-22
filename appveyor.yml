@@ -9,7 +9,6 @@ environment:
   EXTRA_MODULES: .skycoder42.jsonserializer
   STATIC_QT_MODS: qttools
   STATIC_EXTRA_MODS: qtjsonserializer
-  QMAKE_FLAGS: CONFIG+=no_host_tools
 
   matrix:
     - PLATFORM: msvc2017_64
