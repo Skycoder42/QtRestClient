@@ -14,6 +14,6 @@
 		"qbs/Qt/restbuilder": "Tools/QtCreator/share/qtcreator/qbs/share/qbs/modules/Qt/restbuilder"
 	},
 	"hostbuilds": [
-		"bin/qrestbuilder"
+		"bin/qrestbuilder*"
 	]
 }
