@@ -12,8 +12,6 @@ env:
     - QPMX_CACHE_DIR=$HOME/.qpmx-cache
     - QT_VER=5.11.0
     - EXTRA_MODULES=.skycoder42.jsonserializer
-    - STATIC_QT_MODS=qttools
-    - STATIC_EXTRA_MODS=qtjsonserializer
     - DOCKER_IMAGE=json
 
 matrix:

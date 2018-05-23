@@ -7,8 +7,6 @@ version: build-{build}
 environment:
   QT_VER: 5.11.0
   EXTRA_MODULES: .skycoder42.jsonserializer
-  STATIC_QT_MODS: qttools
-  STATIC_EXTRA_MODS: qtjsonserializer
 
   matrix:
     - PLATFORM: msvc2017_64
