@@ -13,6 +13,7 @@ env:
     - QT_VER=5.11.2
     - EXTRA_MODULES=.skycoder42.jsonserializer
     - DOCKER_IMAGE=common
+    - MAKE_RUN_TESTS=true
 
 matrix:
   include:

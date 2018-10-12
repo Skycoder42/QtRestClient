@@ -15,6 +15,6 @@ else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$LIB_PW
 else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$LIB_PWD/debug/testlib.lib
 else:unix: PRE_TARGETDEPS += $$LIB_PWD/libtestlib.a
 
-mac: QMAKE_LFLAGS += '-Wl,-rpath,\'$$OUT_PWD/../../../../lib\''
-
 DEFINES -= QT_ASCII_CAST_WARNINGS
+
+include($$PWD/../testrun.pri)
