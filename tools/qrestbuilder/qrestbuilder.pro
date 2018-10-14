@@ -1,6 +1,7 @@
 option(host_build)
 
 QT = core
+!force_bootstrap:qtHaveModule(xmlpatterns): QT += xmlpatterns
 
 TARGET = qrestbuilder
 VERSION = $$MODULE_VERSION
@@ -17,7 +18,9 @@ HEADERS += \
 	restbuilder.h \
 	objectbuilder.h \
 	classbuilder.h \
-	xmlconverter.h
+	xmlconverter.h \
+	../../src/3rdparty/optional-lite/optional.hpp \
+	../../src/3rdparty/variant-lite/variant.hpp
 
 SOURCES += \
 	main.cpp \
@@ -25,6 +28,13 @@ SOURCES += \
 	objectbuilder.cpp \
 	classbuilder.cpp \
 	xmlconverter.cpp
+
+XML_SCHEMA_DEFINITIONS += \
+	qrestbuilder.xsd
+
+INCLUDEPATH +=  \
+	../../src/3rdparty/optional-lite \
+	../../src/3rdparty/variant-lite
 
 load(qt_tool)
 
@@ -36,4 +46,5 @@ win32 {
 	QMAKE_TARGET_BUNDLE_PREFIX = $${BUNDLE_PREFIX}.
 }
 
-DISTFILES += qrestbuilder.xsd
+!ReleaseBuild:!DebugBuild:!system(qpmx -d $$shell_quote($$_PRO_FILE_PWD_) --qmake-run init $$QPMX_EXTRA_OPTIONS $$shell_quote($$QMAKE_QMAKE) $$shell_quote($$OUT_PWD)): error(qpmx initialization failed. Check the compilation log for details.)
+else: include($$OUT_PWD/qpmx_generated.pri)

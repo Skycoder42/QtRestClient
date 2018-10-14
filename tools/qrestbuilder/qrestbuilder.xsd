@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
-	<xs:annotation>
-		<xs:documentation>Created with EditiX (http://www.editix.com) at Sat May 05 10:30:03 CEST 2018</xs:documentation>
-	</xs:annotation>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+		   xmlns:qxg="https://skycoder42.de/xml/schemas/QXmlCodeGen">
+	<!-- QXG Definitions -->
+	<qxg:config class="RestBuilderBase"
+				stdcompat="true"
+				schemaUrl="qrc:/schemas/qrestbuilder.xsd">
+	</qxg:config>
 
 	<!-- Shared datatypes -->
 	<xs:complexType name="Include">
@@ -15,7 +17,7 @@
 	</xs:complexType>
 	<xs:complexType name="BaseParam">
 		<xs:simpleContent>
-			<xs:extension base="xs:string">
+			<xs:extension base="xs:string" qxg:member="defaultValue">
 				<xs:attribute name="key" type="xs:string" use="required"/>
 				<xs:attribute name="type" type="xs:string" use="required"/>
 				<xs:attribute default="false" name="asStr" type="xs:boolean" use="optional"/>
@@ -26,59 +28,80 @@
 	<!-- object/gadget types -->
 	<xs:complexType name="EnumKey">
 		<xs:simpleContent>
-			<xs:extension base="xs:string">
+			<xs:extension base="xs:string" qxg:member="value">
 				<xs:attribute name="name" type="xs:string" use="required"/>
 			</xs:extension>
 		</xs:simpleContent>
 	</xs:complexType>
 	<xs:complexType name="Enum">
 		<xs:sequence>
-			<xs:element maxOccurs="unbounded" minOccurs="1" name="Key" type="EnumKey"/>
+			<xs:element maxOccurs="unbounded" minOccurs="1" name="Key" type="EnumKey" qxg:member="keys"/>
 		</xs:sequence>
 		<xs:attribute name="name" type="xs:string" use="required"/>
 		<xs:attribute default="int" name="base" type="xs:string" use="optional"/>
 		<xs:attribute default="false" name="isFlags" type="xs:boolean" use="optional"/>
 	</xs:complexType>
 	<xs:complexType name="Property">
-		<xs:complexContent>
+		<xs:simpleContent>
 			<xs:extension base="BaseParam">
 				<xs:attribute default="false" name="generateReset" type="xs:boolean" use="optional"/>
 			</xs:extension>
-		</xs:complexContent>
+		</xs:simpleContent>
 	</xs:complexType>
 
 	<xs:complexType name="RestContent">
 		<xs:sequence>
-			<xs:element maxOccurs="unbounded" minOccurs="0" name="Include" type="Include"/>
-			<xs:element maxOccurs="unbounded" minOccurs="0" name="Enum" type="Enum"/>
-			<xs:element maxOccurs="unbounded" minOccurs="1" name="Property" type="Property"/>
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="Include" type="Include" qxg:member="includes"/>
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="Enum" type="Enum" qxg:member="enums"/>
+			<xs:element maxOccurs="unbounded" minOccurs="1" name="Property" type="Property" qxg:member="properties"/>
 		</xs:sequence>
 		<xs:attribute name="name" type="xs:string" use="required"/>
 		<xs:attribute default="QObject" name="base" type="xs:string" use="optional"/>
-		<xs:attribute name="export" type="xs:string" use="optional"/>
+		<xs:attribute name="export" type="xs:string" use="optional" qxg:member="exportKey"/>
 		<xs:attribute name="qmlUri" type="xs:string" use="optional"/>
 		<xs:attribute default="true" name="registerConverters" type="xs:boolean" use="optional"/>
 		<xs:attribute default="true" name="testEquality" type="xs:boolean" use="optional"/>
 		<xs:attribute default="false" name="generateEquals" type="xs:boolean" use="optional"/>
 		<xs:attribute default="true" name="generateReset" type="xs:boolean" use="optional"/>
-		<xs:attribute name="namespace" type="xs:string" use="optional"/>
+		<xs:attribute name="namespace" type="xs:string" use="optional" qxg:member="nspace"/>
 		<xs:attribute name="simpleHref" type="xs:string" use="optional"/>
 	</xs:complexType>
+
+	<xs:complexType name="RestObject">
+		<xs:complexContent>
+			<xs:extension base="RestContent" />
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="RestGadget">
+		<xs:complexContent>
+			<xs:extension base="RestContent" />
+		</xs:complexContent>
+	</xs:complexType>
+
 
 	<!-- class/api types -->
 	<xs:complexType name="Expression">
 		<xs:simpleContent>
-			<xs:extension base="xs:string">
+			<xs:extension base="xs:string" qxg:member="value">
 				<xs:attribute default="false" name="expr" type="xs:boolean" use="optional"/>
 			</xs:extension>
 		</xs:simpleContent>
 	</xs:complexType>
 	<xs:complexType name="FixedParam">
-		<xs:complexContent>
+		<xs:simpleContent>
 			<xs:extension base="Expression">
 				<xs:attribute name="key" type="xs:string" use="required"/>
 			</xs:extension>
-		</xs:complexContent>
+		</xs:simpleContent>
+	</xs:complexType>
+
+	<xs:complexType name="PathGroup">
+		<xs:sequence>
+			<xs:choice maxOccurs="unbounded" minOccurs="0" qxg:member="segments">
+				<xs:element name="FixedSegment" type="Expression"/>
+				<xs:element name="ParamSegment" type="BaseParam"/>
+			</xs:choice>
+		</xs:sequence>
 	</xs:complexType>
 
 	<xs:complexType name="Class">
@@ -87,38 +110,33 @@
 	</xs:complexType>
 	<xs:complexType name="Method">
 		<xs:sequence>
-			<xs:choice maxOccurs="1" minOccurs="0">
-				<xs:sequence>
-					<xs:choice maxOccurs="unbounded" minOccurs="0">
-						<xs:element name="Path" type="Expression"/>
-						<xs:element name="PathParam" type="BaseParam"/>
-					</xs:choice>
-				</xs:sequence>
+			<xs:choice maxOccurs="1" minOccurs="0" qxg:member="path">
+				<xs:element name="Path" type="PathGroup"/>
 				<xs:element name="Url" type="Expression"/>
 			</xs:choice>
-			<xs:element maxOccurs="unbounded" minOccurs="0" name="Param" type="BaseParam"/>
-			<xs:element maxOccurs="unbounded" minOccurs="0" name="Header" type="FixedParam"/>
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="Param" type="BaseParam" qxg:member="params"/>
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="Header" type="FixedParam" qxg:member="headers"/>
 		</xs:sequence>
 		<xs:attribute name="name" type="xs:string" use="required"/>
 		<xs:attribute default="GET" name="verb" type="xs:string" use="optional"/>
 		<xs:attribute name="body" type="xs:string" use="optional"/>
 		<xs:attribute name="returns" type="xs:string" use="optional"/>
 		<xs:attribute default="QObject*" name="except" type="xs:string" use="optional"/>
-		<xs:attribute name="postParams" type="xs:boolean" use="optional"/>
+		<xs:attribute name="postParams" type="xs:boolean" default="false" use="optional"/>
 	</xs:complexType>
 
 	<xs:complexType name="RestAccess">
 		<xs:sequence>
-			<xs:element maxOccurs="unbounded" minOccurs="0" name="Include" type="Include"/>
-			<xs:element maxOccurs="unbounded" minOccurs="0" name="Class" type="Class"/>
-			<xs:element maxOccurs="unbounded" minOccurs="0" name="Method" type="Method"/>
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="Include" type="Include" qxg:member="includes"/>
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="Class" type="Class" qxg:member="classes"/>
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="Method" type="Method" qxg:member="methods"/>
 		</xs:sequence>
 		<xs:attribute name="name" type="xs:string" use="required"/>
-		<xs:attribute name="export" type="xs:string" use="optional"/>
+		<xs:attribute name="export" type="xs:string" use="optional" qxg:member="exportKeys"/>
 		<xs:attribute name="qmlUri" type="xs:string" use="optional"/>
 		<xs:attribute default="QObject" name="base" type="xs:string" use="optional"/>
 		<xs:attribute default="QObject*" name="except" type="xs:string" use="optional"/>
-		<xs:attribute name="namespace" type="xs:string" use="optional"/>
+		<xs:attribute name="namespace" type="xs:string" use="optional" qxg:member="nspace"/>
 	</xs:complexType>
 
 	<!-- class only types -->
@@ -134,19 +152,19 @@
 
 	<!-- API only types -->
 	<xs:complexType name="BaseUrl">
-		<xs:complexContent>
+		<xs:simpleContent>
 			<xs:extension base="Expression">
 				<xs:attribute name="apiVersion" type="xs:string" use="optional"/>
 			</xs:extension>
-		</xs:complexContent>
+		</xs:simpleContent>
 	</xs:complexType>
 	<xs:complexType name="RestApi">
 		<xs:complexContent>
 			<xs:extension base="RestAccess">
 				<xs:sequence>
 					<xs:element maxOccurs="1" minOccurs="1" name="BaseUrl" type="BaseUrl"/>
-					<xs:element maxOccurs="unbounded" minOccurs="0" name="Parameter" type="FixedParam"/>
-					<xs:element maxOccurs="unbounded" minOccurs="0" name="Header" type="FixedParam"/>
+					<xs:element maxOccurs="unbounded" minOccurs="0" name="Parameter" type="FixedParam" qxg:member="params"/>
+					<xs:element maxOccurs="unbounded" minOccurs="0" name="Header" type="FixedParam" qxg:member="headers"/>
 				</xs:sequence>
 				<xs:attribute name="globalName" type="xs:string" use="optional"/>
 				<xs:attribute default="true" name="autoCreate" type="xs:boolean" use="optional"/>
@@ -155,8 +173,8 @@
 	</xs:complexType>
 
 	<!-- root elements-->
-	<xs:element name="RestObject" type="RestContent"/>
-	<xs:element name="RestGadget" type="RestContent"/>
+	<xs:element name="RestObject" type="RestObject"/>
+	<xs:element name="RestGadget" type="RestGadget"/>
 	<xs:element name="RestClass" type="RestClass"/>
 	<xs:element name="RestApi" type="RestApi"/>
 </xs:schema>
