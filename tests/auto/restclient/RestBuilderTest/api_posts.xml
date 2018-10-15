@@ -5,19 +5,21 @@
 		   namespace="TestSpace">
 	<Include local="true">post.h</Include>
 
-	<Path expr="false">posts</Path>
-
 	<Method name="listPosts"
 			verb="GET"
 			returns="QList&lt;TestSpace::Post&gt;" />
 	<Method name="post"
 			returns="TestSpace::Post">
-		<PathParam key="id" type="int"/>
+		<Path>
+			<ParamSegment key="id" type="int"/>
+		</Path>
 	</Method>
 	<Method name="postuser"
 			returns="User*">
-		<PathParam key="id" type="int"/>
-		<Path>user</Path>
+		<Path>
+			<ParamSegment key="id" type="int"/>
+			<FixedSegment>user</FixedSegment>
+		</Path>
 		<!-- Are combined as: <restclass_path>/<id>/name -->
 	</Method>
 	<Method name="addPost"
@@ -25,4 +27,6 @@
 			body="TestSpace::Post">
 		<Url>../post-add&amp;complete=true</Url>
 	</Method>
+
+	<Path expr="false">posts</Path>
 </RestClass>

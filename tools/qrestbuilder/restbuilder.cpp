@@ -8,32 +8,20 @@
 #include <QJsonObject>
 #include <QJsonArray>
 
-RestBuilder::RestBuilder(QXmlStreamReader &inStream) :
-	reader(inStream)
-{}
-
 RestBuilder::~RestBuilder() = default;
-
-QString RestBuilder::readType(QXmlStreamReader &inStream)
-{
-	if(!inStream.readNextStartElement())
-		throwReader(inStream);
-	return inStream.name().toString();
-}
 
 void RestBuilder::build(const QString &in, const QString &hOut, const QString &cppOut)
 {
-	QFileInfo inInfo(in);
-	fileName = inInfo.baseName();
+	fileName = QFileInfo{in}.baseName();
 
 	QSaveFile headerFile(hOut);
 	if(!headerFile.open(QIODevice::WriteOnly | QIODevice::Text))
-		throwFile(headerFile);
+		throw RestBuilderXmlReader::FileException(headerFile);
 	header.setDevice(&headerFile);
 
 	QSaveFile sourceFile(cppOut);
 	if(!sourceFile.open(QIODevice::WriteOnly | QIODevice::Text))
-		throwFile(sourceFile);
+		throw RestBuilderXmlReader::FileException(sourceFile);
 	source.setDevice(&sourceFile);
 
 	try {
@@ -43,10 +31,10 @@ void RestBuilder::build(const QString &in, const QString &hOut, const QString &c
 
 		header.flush();
 		if(!headerFile.commit())
-			throwFile(headerFile);
+			throw RestBuilderXmlReader::FileException(headerFile);
 		source.flush();
 		if(!sourceFile.commit())
-			throwFile(sourceFile);
+			throw RestBuilderXmlReader::FileException(sourceFile);
 	} catch(...) {
 		headerFile.cancelWriting();
 		sourceFile.cancelWriting();
@@ -54,85 +42,20 @@ void RestBuilder::build(const QString &in, const QString &hOut, const QString &c
 	}
 }
 
-template<>
-bool RestBuilder::readAttrib<bool>(const QString &key, const bool &defaultValue, bool required) const
+QString RestBuilder::exportedName(const QString &name, const RestBuilderXmlReader::optional<QString> &exportKey) const
 {
-	if(reader.attributes().hasAttribute(key)) {
-		if(reader.attributes().value(key) == QStringLiteral("true"))
-			return true;
-		else if(reader.attributes().value(key) == QStringLiteral("false"))
-			return false;
-		else
-			throwReader(QStringLiteral("Value of attribute \"%1\" is not a xs:boolean!").arg(key));
-	} else if(required)
-		throwReader(QStringLiteral("Required attribute \"%1\" but was not set").arg(key));
+	if(exportKey)
+		return exportKey.value() + QLatin1Char(' ') + name;
 	else
-		return defaultValue;
-}
-
-RestBuilder::Include RestBuilder::readInclude()
-{
-	auto local = readAttrib<bool>(QStringLiteral("local"), false);
-	auto include = reader.readElementText();
-	checkError();
-	return {local, include};
-}
-
-RestBuilder::BaseParam RestBuilder::readBaseParam()
-{
-	BaseParam param;
-	param.key = readAttrib(QStringLiteral("key"), {}, true);
-	param.type = readAttrib(QStringLiteral("type"), {}, true);
-	param.asStr = readAttrib<bool>(QStringLiteral("asStr"), false);
-	param.defaultValue = reader.readElementText();
-	checkError();
-	return param;
-}
-
-void RestBuilder::throwFile(const QFileDevice &file) const
-{
-	throw QStringLiteral("%1: %2").arg(file.fileName(), file.errorString());
-}
-
-void RestBuilder::throwReader(const QString &overwriteError) const
-{
-	throwReader(reader, overwriteError);
-}
-
-void RestBuilder::throwReader(QXmlStreamReader &stream, const QString &overwriteError)
-{
-	throw QStringLiteral("%1:%2:%3: %4")
-			.arg(dynamic_cast<QFileDevice*>(stream.device())->fileName())
-			.arg(stream.lineNumber())
-			.arg(stream.columnNumber())
-			.arg(overwriteError.isNull() ? stream.errorString() : overwriteError);
-}
-
-void RestBuilder::throwChild()
-{
-	throwReader(QStringLiteral("Unexpected child element: %1").arg(reader.name()));
-}
-
-void RestBuilder::checkError()
-{
-	if(reader.hasError())
-		throwReader();
-}
-
-QString RestBuilder::exportedName(const QString &name, const QString &exportKey) const
-{
-	if(exportKey.isEmpty())
 		return name;
-	else
-		return exportKey + QLatin1Char(' ') + name;
 }
 
-QString RestBuilder::nsName(const QString &name, const QString &nspace) const
+QString RestBuilder::nsName(const QString &name, const RestBuilderXmlReader::optional<QString> &nspace) const
 {
-	if(nspace.isEmpty())
-		return name;
+	if(nspace)
+		return nspace.value() + QStringLiteral("::") + name;
 	else
-		return nspace + QStringLiteral("::") + name;
+		return name;
 }
 
 QString RestBuilder::nsInject(const QString &name, const QString &prefix) const
@@ -142,7 +65,7 @@ QString RestBuilder::nsInject(const QString &name, const QString &prefix) const
 	return nList.join(QStringLiteral("::"));
 }
 
-void RestBuilder::writeIncludes(const QList<Include> &includes)
+void RestBuilder::writeIncludes(const QList<RestBuilderXmlReader::Include> &includes)
 {
 	for(const auto &inc : includes) {
 		if(inc.local)
@@ -153,7 +76,7 @@ void RestBuilder::writeIncludes(const QList<Include> &includes)
 	header << "\n";
 }
 
-QString RestBuilder::writeParamDefault(const BaseParam &param)
+QString RestBuilder::writeParamDefault(const RestBuilderXmlReader::BaseParam &param)
 {
 	if(param.asStr) {
 		if(param.type == QStringLiteral("QString"))
@@ -166,7 +89,7 @@ QString RestBuilder::writeParamDefault(const BaseParam &param)
 		return param.defaultValue;
 }
 
-QString RestBuilder::writeParamArg(const RestBuilder::BaseParam &param, bool withDefault)
+QString RestBuilder::writeParamArg(const RestBuilderXmlReader::BaseParam &param, bool withDefault)
 {
 	QString res = QStringLiteral("const ") + param.type + QStringLiteral(" &") + param.key;
 	if(withDefault && !param.defaultValue.isEmpty())

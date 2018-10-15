@@ -2,7 +2,7 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
 		   xmlns:qxg="https://skycoder42.de/xml/schemas/QXmlCodeGen">
 	<!-- QXG Definitions -->
-	<qxg:config class="RestBuilderBase"
+	<qxg:config class="RestBuilderXmlReader"
 				stdcompat="true"
 				schemaUrl="qrc:/schemas/qrestbuilder.xsd">
 	</qxg:config>
@@ -56,12 +56,12 @@
 			<xs:element maxOccurs="unbounded" minOccurs="1" name="Property" type="Property" qxg:member="properties"/>
 		</xs:sequence>
 		<xs:attribute name="name" type="xs:string" use="required"/>
-		<xs:attribute default="QObject" name="base" type="xs:string" use="optional"/>
+		<xs:attribute name="base" type="xs:string" use="optional"/>
 		<xs:attribute name="export" type="xs:string" use="optional" qxg:member="exportKey"/>
 		<xs:attribute name="qmlUri" type="xs:string" use="optional"/>
 		<xs:attribute default="true" name="registerConverters" type="xs:boolean" use="optional"/>
 		<xs:attribute default="true" name="testEquality" type="xs:boolean" use="optional"/>
-		<xs:attribute default="false" name="generateEquals" type="xs:boolean" use="optional"/>
+		<xs:attribute name="generateEquals" type="xs:boolean" use="optional"/>
 		<xs:attribute default="true" name="generateReset" type="xs:boolean" use="optional"/>
 		<xs:attribute name="namespace" type="xs:string" use="optional" qxg:member="nspace"/>
 		<xs:attribute name="simpleHref" type="xs:string" use="optional"/>
@@ -95,13 +95,14 @@
 		</xs:simpleContent>
 	</xs:complexType>
 
-	<xs:complexType name="PathGroup">
+	<xs:complexType name="PathGroup" mixed="true" qxg:member="path">
 		<xs:sequence>
 			<xs:choice maxOccurs="unbounded" minOccurs="0" qxg:member="segments">
 				<xs:element name="FixedSegment" type="Expression"/>
 				<xs:element name="ParamSegment" type="BaseParam"/>
 			</xs:choice>
 		</xs:sequence>
+		<xs:attribute default="false" name="expr" type="xs:boolean" use="optional"/>
 	</xs:complexType>
 
 	<xs:complexType name="Class">
@@ -120,9 +121,9 @@
 		<xs:attribute name="name" type="xs:string" use="required"/>
 		<xs:attribute default="GET" name="verb" type="xs:string" use="optional"/>
 		<xs:attribute name="body" type="xs:string" use="optional"/>
-		<xs:attribute name="returns" type="xs:string" use="optional"/>
-		<xs:attribute default="QObject*" name="except" type="xs:string" use="optional"/>
-		<xs:attribute name="postParams" type="xs:boolean" default="false" use="optional"/>
+		<xs:attribute name="returns" type="xs:string" use="optional" default="void"/>
+		<xs:attribute name="except" type="xs:string" use="optional"/>
+		<xs:attribute name="postParams" type="xs:boolean" use="optional"/>
 	</xs:complexType>
 
 	<xs:complexType name="RestAccess">
@@ -132,7 +133,7 @@
 			<xs:element maxOccurs="unbounded" minOccurs="0" name="Method" type="Method" qxg:member="methods"/>
 		</xs:sequence>
 		<xs:attribute name="name" type="xs:string" use="required"/>
-		<xs:attribute name="export" type="xs:string" use="optional" qxg:member="exportKeys"/>
+		<xs:attribute name="export" type="xs:string" use="optional" qxg:member="exportKey"/>
 		<xs:attribute name="qmlUri" type="xs:string" use="optional"/>
 		<xs:attribute default="QObject" name="base" type="xs:string" use="optional"/>
 		<xs:attribute default="QObject*" name="except" type="xs:string" use="optional"/>

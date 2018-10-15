@@ -1,16 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<RestClass xmlns="https://skycoder42.de/QtRestClient/RestClass" name="PostClass">
+<RestClass name="PostClass">
 	<Include>post.h</Include>
-	<Path>posts</Path>
 	<Method name="deletePost" verb="DELETE" returns="void">
-		<PathParam key="id" type="int"/>
+		<Path>
+			<ParamSegment key="id" type="int"/>
+		</Path>
 	</Method>
 	<Method name="listPosts" verb="GET" returns="QList&lt;Post&gt;"/>
 	<Method name="post" verb="GET" returns="Post">
-		<PathParam key="id" type="int"/>
+		<Path>
+			<ParamSegment key="id" type="int"/>
+		</Path>
 	</Method>
 	<Method name="savePost" verb="POST" body="Post" returns="Post"/>
 	<Method name="updatePost" verb="PUT" body="Post" returns="Post">
-		<PathParam key="id" type="int"/>
+		<Path>
+			<ParamSegment key="id" type="int"/>
+		</Path>
 	</Method>
+	<Path>posts</Path>
 </RestClass>

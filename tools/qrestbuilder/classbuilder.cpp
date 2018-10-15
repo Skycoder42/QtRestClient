@@ -1,207 +1,49 @@
 #include "classbuilder.h"
 #include <QJsonArray>
 
-#if !QT_HAS_INCLUDE(<variant>) ||  __cplusplus < 201703L
-template <>
-const ClassBuilder::Expression &ClassBuilder::get(const ClassBuilder::RestAccess::Method::PathInfoBase &info) {
-	Q_ASSERT(!info.isParams);
-	return info.path;
-}
-template <>
-const RestBuilder::BaseParam &ClassBuilder::get(const ClassBuilder::RestAccess::Method::PathInfoBase &info) {
-	Q_ASSERT(info.isParams);
-	return info.pathParams;
-}
-template <>
-ClassBuilder::RestAccess::Method::PathInfoList &ClassBuilder::get(ClassBuilder::RestAccess::Method::PathInfo &info) {
-	Q_ASSERT(info.isPath);
-	return info.path;
-}
-template <>
-const ClassBuilder::RestAccess::Method::PathInfoList &ClassBuilder::get(const ClassBuilder::RestAccess::Method::PathInfo &info) {
-	Q_ASSERT(info.isPath);
-	return info.path;
-}
-template <>
-const QString &ClassBuilder::get(const ClassBuilder::RestAccess::Method::PathInfo &info) {
-	Q_ASSERT(!info.isPath);
-	return info.url;
-}
-
-template <>
-bool ClassBuilder::is<ClassBuilder::Expression>(const ClassBuilder::RestAccess::Method::PathInfoBase &info) {
-	return !info.isParams;
-}
-template <>
-bool ClassBuilder::is<RestBuilder::BaseParam>(const ClassBuilder::RestAccess::Method::PathInfoBase &info) {
-	return info.isParams;
-}
-template <>
-bool ClassBuilder::is<ClassBuilder::RestAccess::Method::PathInfoList>(const ClassBuilder::RestAccess::Method::PathInfo &info) {
-	return info.isPath;
-}
-template <>
-bool ClassBuilder::is<QString>(const ClassBuilder::RestAccess::Method::PathInfo &info) {
-	return !info.isPath;
-}
-#endif
-
-ClassBuilder::ClassBuilder(QXmlStreamReader &reader) :
-	RestBuilder(reader)
+ClassBuilder::ClassBuilder(RestBuilderXmlReader::RestClass restClass) :
+	classData{std::move(restClass)},
+	data{classData},
+	isApi{false}
 {}
 
-bool ClassBuilder::canReadType(const QString &type)
-{
-	return type == QStringLiteral("RestApi") ||
-			type == QStringLiteral("RestClass");
-}
+ClassBuilder::ClassBuilder(RestBuilderXmlReader::RestApi restApi) :
+	apiData{std::move(restApi)},
+	data{apiData},
+	isApi{true}
+{}
 
 void ClassBuilder::build()
 {
-	readData();
-	if(isApi)
-		generateApi();
-	else
-		generateClass();
-}
-
-void ClassBuilder::readData()
-{
-	if(reader.name() == QStringLiteral("RestApi"))
-		isApi = true;
-	else if(reader.name() == QStringLiteral("RestClass"))
-		isApi = false;
-	else
-		Q_UNREACHABLE();
-
-	// read common data
-	data.name = readAttrib(QStringLiteral("name"), {}, true);
-	data.base = readAttrib(QStringLiteral("base"), QStringLiteral("QObject"));
-	data.except = readAttrib(QStringLiteral("except"), QStringLiteral("QObject*"));
-	data.exportKey = readAttrib(QStringLiteral("export"));
-	data.nspace = readAttrib(QStringLiteral("namespace"));
-	data.qmlUri = readAttrib(QStringLiteral("qmlUri"));
-	if(isApi) {
-		apiData.globalName = readAttrib(QStringLiteral("globalName"));
-		if(!apiData.globalName.isEmpty())
-			apiData.autoCreate = readAttrib<bool>(QStringLiteral("autoCreate"), true);
-	}
-
-	data.includes = {
+	//data preprocessing
+	data.includes = QList<RestBuilderXmlReader::Include>{
 		{false, QStringLiteral("QtCore/QString")},
 		{false, QStringLiteral("QtCore/QStringList")},
 		{false, QStringLiteral("QtCore/QScopedPointer")},
 		{false, QStringLiteral("QtRestClient/RestClient")},
 		{false, QStringLiteral("QtRestClient/RestClass")}
-	};
-	if(hasQml() && isApi)
+	} + data.includes;
+	if(data.qmlUri && isApi)
 		data.includes.append({false, QStringLiteral("QtQml/QQmlParserStatus")});
 
-	// read content
-	while(reader.readNextStartElement()) {
-		checkError();
-		if(reader.name() == QStringLiteral("Include"))
-			data.includes.append(readInclude());
-		else if(reader.name() == QStringLiteral("Class"))
-			data.classes.append(readClass());
-		else if(reader.name() == QStringLiteral("Method"))
-			data.methods.append(readMethod());
-		else if(isApi && reader.name() == QStringLiteral("BaseUrl")) {
-			apiData.apiVersion = QVersionNumber::fromString(readAttrib(QStringLiteral("apiVersion")));
-			apiData.baseUrl = readExpression();
-		} else if(isApi && reader.name() == QStringLiteral("Parameter"))
-			apiData.params.append(readFixedParam());
-		else if(isApi && reader.name() == QStringLiteral("Header"))
-			apiData.headers.append(readFixedParam());
-		else if(!isApi && reader.name() == QStringLiteral("Path"))
-			classData.path = readExpression();
-		else
-			throwChild();
+	for(auto &method : data.methods) {
+		if(!method.except)
+			method.except = data.except;
+
+		if(!method.postParams)
+			method.postParams = method.verb == QStringLiteral("POST") && !method.body;
+		if(method.postParams.value() && method.body)
+			throw QStringLiteral("You cannot have post params AND a method body at the same time"); //TODO real execption
 	}
-	checkError();
-}
 
-ClassBuilder::Expression ClassBuilder::readExpression()
-{
-	Expression expr;
-	expr.expr = readAttrib<bool>(QStringLiteral("expr"), false);
-	expr.value = reader.readElementText();
-	checkError();
-	return expr;
-}
+	if(!isApi || !apiData.globalName)
+		apiData.autoCreate = false;
 
-ClassBuilder::FixedParam ClassBuilder::readFixedParam()
-{
-	FixedParam param;
-	param.key = readAttrib(QStringLiteral("key"), {}, true);
-	param.expr = readAttrib<bool>(QStringLiteral("expr"), false);
-	param.value = reader.readElementText();
-	checkError();
-	return param;
-}
-
-ClassBuilder::RestAccess::Class ClassBuilder::readClass()
-{
-	RestAccess::Class restClass;
-	restClass.key = readAttrib(QStringLiteral("key"), {}, true);
-	restClass.type = readAttrib(QStringLiteral("type"), {}, true);
-	if(reader.readNextStartElement())
-		throwChild();
-	checkError();
-	return restClass;
-}
-
-ClassBuilder::RestAccess::Method ClassBuilder::readMethod()
-{
-	RestAccess::Method method;
-	method.name = readAttrib(QStringLiteral("name"), {}, true);
-	method.verb = readAttrib(QStringLiteral("verb"), QStringLiteral("GET"));
-	method.body = readAttrib(QStringLiteral("body"));
-	method.returns = readAttrib(QStringLiteral("returns"), QStringLiteral("void"));
-	method.except = readAttrib(QStringLiteral("except"), data.except);
-	method.postParams = readAttrib<bool>(QStringLiteral("postParams"),
-										 method.verb == QStringLiteral("POST") && method.body.isEmpty());
-	if(method.postParams && !method.body.isEmpty())
-		throwReader(QStringLiteral("You cannot have post params AND a method body at the same time"));
-
-	enum { None, Url, Path } mode = None;
-	while(reader.readNextStartElement()) {
-		checkError();
-		if(reader.name() == QStringLiteral("Url")) {
-			if(mode != None)
-				throwReader(QStringLiteral("You can only specify a single <Url> element per method, and only if you haven't already used <Path> or <PathParam>"));
-			mode = Url;
-			method.path = reader.readElementText();
-			checkError();
-		} else if(reader.name() == QStringLiteral("Path")) {
-			if(mode == Url)
-				throwReader(QStringLiteral("You cannot specify a <Path> element if you already used <Url>"));
-			mode = Path;
-			get<RestAccess::Method::PathInfoList>(method.path).append(readExpression());
-		} else if(reader.name() == QStringLiteral("PathParam")) {
-			if(mode == Url)
-				throwReader(QStringLiteral("You cannot specify a <PathParam> element if you already used <Url>"));
-			mode = Path;
-			get<RestAccess::Method::PathInfoList>(method.path).append(readBaseParam());
-		} else if(reader.name() == QStringLiteral("Param"))
-			method.params.append(readBaseParam());
-		else if(reader.name() == QStringLiteral("Header"))
-			method.headers.append(readFixedParam());
-		else
-			throwChild();
-	}
-	checkError();
-	return method;
-}
-
-bool ClassBuilder::hasNs()
-{
-	return !data.nspace.isEmpty();
-}
-
-bool ClassBuilder::hasQml()
-{
-	return !data.qmlUri.isEmpty();
+	// cpp code generation
+	if(isApi)
+		generateApi();
+	else
+		generateClass();
 }
 
 void ClassBuilder::generateClass()
@@ -210,17 +52,17 @@ void ClassBuilder::generateClass()
 	writeClassBeginDeclaration();
 	writeClassMainDeclaration();
 	header << "};\n\n";
-	if(hasQml())
+	if(data.qmlUri)
 		writeQmlDeclaration();
-	if(hasNs())
+	if(data.nspace)
 		header << "}\n\n";
-	if(hasQml())
+	if(data.qmlUri)
 		header << "Q_DECLARE_METATYPE(" << nsName(QStringLiteral("Qml") + data.name, data.nspace) << ")\n\n";
 
 	//write source
 	writeClassBeginDefinition();
 	writeClassMainDefinition();
-	if(hasQml())
+	if(data.qmlUri)
 		writeQmlDefinitions();
 	writeStartupCode();
 }
@@ -234,9 +76,9 @@ void ClassBuilder::generateApi()
 	writeClassMainDeclaration();
 	header << "\n\tstatic QtRestClient::RestClient *generateClient();\n"
 		   << "};\n\n";
-	if(hasQml())
+	if(data.qmlUri)
 		writeQmlDeclaration();
-	if(hasNs())
+	if(data.nspace)
 		header << "}\n\n";
 
 	//write source
@@ -250,11 +92,11 @@ void ClassBuilder::generateApi()
 		   << "{}\n";
 	writeClassMainDefinition();
 	//write API generation
-	if(!apiData.globalName.isEmpty())
+	if(apiData.globalName)
 		writeGlobalApiGeneration();
 	else
 		writeLocalApiGeneration();
-	if(hasQml())
+	if(data.qmlUri)
 		writeQmlDefinitions();
 	writeStartupCode();
 }
@@ -262,8 +104,8 @@ void ClassBuilder::generateApi()
 void ClassBuilder::writeClassBeginDeclaration()
 {
 	writeIncludes(data.includes);
-	if(hasNs())
-		header << "namespace " << data.nspace << " {\n\n";
+	if(data.nspace)
+		header << "namespace " << data.nspace.value() << " {\n\n";
 	header << "class " << data.name << "Private;\n"
 		   << "class " << data.name << "PrivateFactory;\n";
 	header << "class " << exportedName(data.name, data.exportKey) << " : public " << data.base << "\n"
@@ -286,7 +128,7 @@ void ClassBuilder::writeClassMainDeclaration()
 		header << '\n';
 
 	for(const auto &method : qAsConst(data.methods)) {
-		header << "\tQtRestClient::GenericRestReply<" << method.returns << ", " << method.except << "> *" << method.name
+		header << "\tQtRestClient::GenericRestReply<" << method.returns << ", " << method.except.value() << "> *" << method.name
 			   << "(" << writeMethodParams(method, true) << ");\n";
 	}
 	if(!data.methods.isEmpty())
@@ -302,22 +144,22 @@ void ClassBuilder::writeClassMainDeclaration()
 void ClassBuilder::writeClassBeginDefinition()
 {
 	source << "#include \"" << fileName << ".h\"\n\n";
-	if(isApi || hasQml()) {
+	if(isApi || data.qmlUri) {
 		source << "#include <QtCore/QCoreApplication>\n"
 			   << "#include <QtCore/QTimer>\n";
 	}
-	if(hasQml()) {
+	if(data.qmlUri) {
 		source << "#include <QtQml/QQmlEngine>\n"
 			   << "#include <QtQml/QQmlContext>\n";
 	}
 	source << "#include <QtCore/QPointer>\n"
 		   << "using namespace QtRestClient;\n";
-	if(hasNs())
-		source << "using namespace " << data.nspace << ";\n";
-	if(isApi || classData.path.value.isEmpty())
+	if(data.nspace)
+		source << "using namespace " << data.nspace.value() << ";\n";
+	if(isApi || !classData.path)
 		source << "\nconst QString " << data.name << "::Path;\n";
 	else
-		source << "\nconst QString " << data.name << "::Path{" << writeExpression(classData.path, true) << "};\n";
+		source << "\nconst QString " << data.name << "::Path{" << writeExpression(classData.path.value(), true) << "};\n";
 	writePrivateDefinitions();
 	writeFactoryDefinition();
 }
@@ -347,7 +189,7 @@ void ClassBuilder::writeClassMainDefinition()
 		   << "}\n";
 }
 
-QString ClassBuilder::writeExpression(const ClassBuilder::Expression &expression, bool asString)
+QString ClassBuilder::writeExpression(const RestBuilderXmlReader::Expression &expression, bool asString)
 {
 	if(expression.expr)
 		return expression.value;
@@ -357,16 +199,17 @@ QString ClassBuilder::writeExpression(const ClassBuilder::Expression &expression
 		return QLatin1Char('"') + expression.value + QLatin1Char('"');
 }
 
-QString ClassBuilder::writeMethodParams(const RestAccess::Method &method, bool asHeader)
+QString ClassBuilder::writeMethodParams(const RestBuilderXmlReader::Method &method, bool asHeader)
 {
 	QStringList parameters;
-	if(!method.body.isEmpty())
-		parameters.append(QStringLiteral("const ") + method.body + QStringLiteral(" &__body"));
+	if(method.body)
+		parameters.append(QStringLiteral("const ") + method.body.value() + QStringLiteral(" &__body"));
 	// add path parameters
-	if(is<RestAccess::Method::PathInfoList>(method.path)) {
-		for(const auto &seg : qAsConst(get<RestAccess::Method::PathInfoList>(method.path))) {
-			if(is<BaseParam>(seg)) {
-				const auto &param = get<BaseParam>(seg);
+	if(method.path &&
+	   nonstd::holds_alternative<RestBuilderXmlReader::PathGroup>(method.path.value())) {
+		for(const auto &seg : qAsConst(nonstd::get<RestBuilderXmlReader::PathGroup>(method.path.value()).segments)) {
+			if(nonstd::holds_alternative<RestBuilderXmlReader::BaseParam>(seg)) {
+				const auto &param = nonstd::get<RestBuilderXmlReader::BaseParam>(seg);
 				parameters.append(writeParamArg(param, asHeader));
 			}
 		}
@@ -403,8 +246,8 @@ void ClassBuilder::writeFactoryDeclaration()
 void ClassBuilder::writePrivateDefinitions()
 {
 	// class
-	if(hasNs())
-		source << "\nnamespace " << data.nspace << " {\n";
+	if(data.nspace)
+		source << "\nnamespace " << data.nspace.value() << " {\n";
 	source << "\nclass " << data.name << "Private\n"
 		   << "{\n"
 		   << "public:\n"
@@ -429,7 +272,7 @@ void ClassBuilder::writePrivateDefinitions()
 		   << "\tQStringList subPath;\n"
 		   << "};\n\n";
 
-	if(hasNs())
+	if(data.nspace)
 		source << "}\n";
 }
 
@@ -477,12 +320,13 @@ void ClassBuilder::writeClassDefinitions()
 void ClassBuilder::writeMethodDefinitions()
 {
 	for(const auto &method : qAsConst(data.methods)) {
-		source << "\nQtRestClient::GenericRestReply<" << method.returns << ", " << method.except << "> *" << data.name << "::" << method.name
+		source << "\nQtRestClient::GenericRestReply<" << method.returns << ", " << method.except.value() << "> *" << data.name << "::" << method.name
 			   << "(" << writeMethodParams(method, false) << ")\n"
 			   << "{\n";
 
 		//create parameters
-		auto hasPath = writeMethodPath(method.path);
+		if(method.path)
+			writeMethodPath(method.path.value());
 		source << "\tQVariantHash __params {\n";
 		for(const auto &param : method.params)
 			source << "\t\t{QStringLiteral(\"" << param.key << "\"), QVariant::fromValue(" << param.key << ")},\n";
@@ -493,13 +337,13 @@ void ClassBuilder::writeMethodDefinitions()
 		source << "\t};\n\n";
 
 		//make call
-		source << "\tauto __reply = d->restClass->call<" << method.returns << ", " << method.except << ">(\"" << method.verb << "\", ";
-		if(hasPath)
+		source << "\tauto __reply = d->restClass->call<" << method.returns << ", " << method.except.value() << ">(\"" << method.verb << "\", ";
+		if(method.path)
 			source << "__path, ";
-		if(!method.body.isEmpty())
+		if(method.body)
 			source << "__body, ";
 		source << "__params, __headers";
-		if(method.postParams)
+		if(method.postParams.value())
 			source << ", true";
 		source << ");\n";
 
@@ -508,7 +352,7 @@ void ClassBuilder::writeMethodDefinitions()
 				   << "\t__reply->onAllErrors([__this](const QString &__e, int __c, RestReply::ErrorType __t){\n"
 				   << "\t\tif(__this)\n"
 				   << "\t\t\temit __this->apiError(__e, __c, __t);\n"
-				   << "\t}, [__this](" << method.except << " __o, int __c){\n"
+				   << "\t}, [__this](" << method.except.value() << " __o, int __c){\n"
 				   << "\t\tif(__this && __this->d->errorTranslator)\n"
 				   << "\t\t\treturn __this->d->errorTranslator(__o, __c);\n"
 				   << "\t\telse\n"
@@ -523,7 +367,7 @@ void ClassBuilder::writeMethodDefinitions()
 
 void ClassBuilder::writeStartupCode()
 {
-	if(!apiData.autoCreate && !hasQml())
+	if(!apiData.autoCreate && !data.qmlUri)
 		return;
 
 	source << "\nnamespace {\n\n"
@@ -532,8 +376,8 @@ void ClassBuilder::writeStartupCode()
 
 	if(apiData.autoCreate)
 		source << "\tQTimer::singleShot(0, &" << data.name << "::factory);\n";
-	if(hasQml()) {
-		auto uriParts = data.qmlUri.split(QLatin1Char(' '), QString::SkipEmptyParts);
+	if(data.qmlUri) {
+		auto uriParts = data.qmlUri.value().split(QLatin1Char(' '), QString::SkipEmptyParts);
 		auto uriPath = uriParts.takeFirst();
 		auto uriVersion = QVersionNumber::fromString(uriParts.join(QLatin1Char(' ')));
 		if(uriVersion.isNull())
@@ -573,11 +417,11 @@ void ClassBuilder::writeGlobalApiGeneration()
 {
 	source << "\nRestClient *" << data.name << "::generateClient()\n"
 		   << "{\n"
-		   << "\tauto client = apiClient(QStringLiteral(\"" << apiData.globalName << "\"));\n"
+		   << "\tauto client = apiClient(QStringLiteral(\"" << apiData.globalName.value() << "\"));\n"
 		   << "\tif(!client) {\n"
 		   << "\t\t";
 	writeApiCreation();
-	source << "\t\taddGlobalApi(QStringLiteral(\"" << apiData.globalName << "\"), client);\n"
+	source << "\t\taddGlobalApi(QStringLiteral(\"" << apiData.globalName.value() << "\"), client);\n"
 		   << "\t}\n"
 		   << "\treturn client;\n"
 		   << "}\n";
@@ -587,10 +431,11 @@ void ClassBuilder::writeApiCreation()
 {
 	source << "client = new RestClient(QCoreApplication::instance());\n"
 		   << "\t\tclient->setBaseUrl(QUrl{" << writeExpression(apiData.baseUrl, true) << "});\n";
-	if(!apiData.apiVersion.isNull()) {
+	if(apiData.baseUrl.apiVersion) {
+		auto vNum = QVersionNumber::fromString(apiData.baseUrl.apiVersion.value());
 		QStringList args;
-		args.reserve(apiData.apiVersion.segmentCount());
-		for(const auto &segment : apiData.apiVersion.segments())
+		args.reserve(vNum.segmentCount());
+		for(const auto &segment : vNum.segments())
 			args.append(QString::number(segment));
 		source << "\t\tclient->setApiVersion(QVersionNumber{" << args.join(QStringLiteral(", ")) << "});\n";
 	}
@@ -683,13 +528,14 @@ void ClassBuilder::writeQmlDefinitions()
 			   << "\tauto reply = _d->" << method.name << "(";
 
 		QStringList parameters;
-		if(!method.body.isEmpty())
+		if(method.body)
 			parameters.append(QStringLiteral("__body"));
 		// add path parameters
-		if(is<RestAccess::Method::PathInfoList>(method.path)) {
-			for(const auto &seg : qAsConst(get<RestAccess::Method::PathInfoList>(method.path))) {
-				if(is<BaseParam>(seg))
-					parameters.append(get<BaseParam>(seg).key);
+		if(method.path &&
+		   nonstd::holds_alternative<RestBuilderXmlReader::PathGroup>(method.path.value())) {
+			for(const auto &seg : qAsConst(nonstd::get<RestBuilderXmlReader::PathGroup>(method.path.value()).segments)) {
+				if(nonstd::holds_alternative<RestBuilderXmlReader::BaseParam>(seg))
+					parameters.append(nonstd::get<RestBuilderXmlReader::BaseParam>(seg).key);
 			}
 		}
 		// add normal parameters
@@ -706,31 +552,27 @@ void ClassBuilder::writeQmlDefinitions()
 			   << "\t\t->newInstance(Q_ARG(QJsonSerializer*, _d->restClient()->serializer()),\n"
 			   << "\t\t\tQ_ARG(QJSEngine*, reinterpret_cast<QJSEngine*>(_engine)),\n"
 			   << "\t\t\tQ_ARG(int, QMetaType::type(\"" << method.returns << "\")),\n"
-			   << "\t\t\tQ_ARG(int, QMetaType::type(\"" << method.except << "\")),\n"
+			   << "\t\t\tQ_ARG(int, QMetaType::type(\"" << method.except.value() << "\")),\n"
 			   << "\t\t\tQ_ARG(QtRestClient::RestReply*, reply)));\n"
 			   << "}\n";
 	}
 }
 
-bool ClassBuilder::writeMethodPath(const RestAccess::Method::PathInfo &info)
+void ClassBuilder::writeMethodPath(const RestBuilderXmlReader::variant<RestBuilderXmlReader::PathGroup, RestBuilderXmlReader::Expression> &info)
 {
-	if(is<RestAccess::Method::PathInfoList>(info)) {
-		const auto &pathList = get<RestAccess::Method::PathInfoList>(info);
-		if(pathList.isEmpty())
-			return false;
-		else {
-			source << "\tQString __path = QStringList {\n";
-			for(const auto &seg : pathList) {
-				if(is<BaseParam>(seg))
-					source << "\t\tQVariant::fromValue(" << get<BaseParam>(seg).key << ").toString(),\n";
-				else if(is<Expression>(seg))
-					source << "\t\t" << writeExpression(get<Expression>(seg), true) << ",\n";
-			}
-			source << "\t}.join(QLatin1Char('/'));\n\n";
+	if(nonstd::holds_alternative<RestBuilderXmlReader::PathGroup>(info)) {
+		auto pathList = nonstd::get<RestBuilderXmlReader::PathGroup>(info);
+		if(pathList.segments.isEmpty() && pathList.path)
+			pathList.segments.append(RestBuilderXmlReader::Expression{pathList.expr, pathList.path.value()});
+
+		source << "\tQString __path = QStringList {\n";
+		for(const auto &seg : qAsConst(pathList.segments)) {
+			if(nonstd::holds_alternative<RestBuilderXmlReader::BaseParam>(seg))
+				source << "\t\tQVariant::fromValue(" << nonstd::get<RestBuilderXmlReader::BaseParam>(seg).key << ").toString(),\n";
+			else if(nonstd::holds_alternative<RestBuilderXmlReader::Expression>(seg))
+				source << "\t\t" << writeExpression(nonstd::get<RestBuilderXmlReader::Expression>(seg), true) << ",\n";
 		}
-	} else if(is<QString>(info))
-		source << "\tQUrl __path {QStringLiteral(\"" << get<QString>(info) << "\")};\n\n";
-	else
-		return false;
-	return true;
+		source << "\t}.join(QLatin1Char('/'));\n\n";
+	} else if(nonstd::holds_alternative<RestBuilderXmlReader::Expression>(info))
+		source << "\tQUrl __path {" << writeExpression(nonstd::get<RestBuilderXmlReader::Expression>(info), true) << "};\n\n";
 }

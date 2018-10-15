@@ -32,6 +32,8 @@ SOURCES += \
 XML_SCHEMA_DEFINITIONS += \
 	qrestbuilder.xsd
 
+contains(QT, xmlpatterns): RESOURCES += qrestbuilder.qrc
+
 INCLUDEPATH +=  \
 	../../src/3rdparty/optional-lite \
 	../../src/3rdparty/variant-lite

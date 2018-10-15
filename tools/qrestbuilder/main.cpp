@@ -11,6 +11,9 @@
 
 #include "xmlconverter.h"
 
+//testing
+#include <qrestbuilder.h>
+
 int main(int argc, char *argv[])
 {
 	QCoreApplication a(argc, argv);
@@ -59,22 +62,32 @@ int main(int argc, char *argv[])
 
 		QFile inFile(parser.value(QStringLiteral("in")));
 		if(!inFile.open(QIODevice::ReadOnly | QIODevice::Text))
-			throw QStringLiteral("%1: %2").arg(inFile.fileName(), inFile.errorString());
+			throw RestBuilderXmlReader::FileException{inFile};
 		QXmlStreamReader reader(&inFile);
 
-		auto type = RestBuilder::readType(reader);
+		//TEST
+		RestBuilderXmlReader builderBase;
+		auto data = builderBase.readDocument(parser.value(QStringLiteral("in")));
+
 		QScopedPointer<RestBuilder> builder;
-		if(ObjectBuilder::canReadType(type))
-			builder.reset(new ObjectBuilder(reader));
-		else if(ClassBuilder::canReadType(type))
-			builder.reset(new ClassBuilder(reader));
+		if(nonstd::holds_alternative<RestBuilderXmlReader::RestObject>(data))
+			builder.reset(new ObjectBuilder(nonstd::get<RestBuilderXmlReader::RestObject>(data)));
+		else if(nonstd::holds_alternative<RestBuilderXmlReader::RestGadget>(data))
+			builder.reset(new ObjectBuilder(nonstd::get<RestBuilderXmlReader::RestGadget>(data)));
+		else if(nonstd::holds_alternative<RestBuilderXmlReader::RestClass>(data))
+			builder.reset(new ClassBuilder(nonstd::get<RestBuilderXmlReader::RestClass>(data)));
+		else if(nonstd::holds_alternative<RestBuilderXmlReader::RestApi>(data))
+			builder.reset(new ClassBuilder(nonstd::get<RestBuilderXmlReader::RestApi>(data)));
 		else
-			throw QStringLiteral("Unsupported document type: %1").arg(type);
+			Q_UNREACHABLE();
 
 		builder->build(parser.value(QStringLiteral("in")),
 					   parser.value(QStringLiteral("header")),
 					   parser.value(QStringLiteral("impl")));
 		return EXIT_SUCCESS;
+	} catch(RestBuilderXmlReader::Exception &e) {
+		qCritical() << e.what();
+		return EXIT_FAILURE;
 	} catch (const QString &str) {
 		qCritical() << qUtf8Printable(str);
 		return EXIT_FAILURE;

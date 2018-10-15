@@ -4,107 +4,42 @@
 #include <QJsonArray>
 #include <QVersionNumber>
 
-ObjectBuilder::ObjectBuilder(QXmlStreamReader &inStream) :
-	RestBuilder(inStream)
+ObjectBuilder::ObjectBuilder(RestBuilderXmlReader::RestObject restObject) :
+	isObject{true},
+	data{std::move(restObject)}
 {}
 
-bool ObjectBuilder::canReadType(const QString &type)
-{
-	return type == QStringLiteral("RestObject") ||
-			type == QStringLiteral("RestGadget");
-}
+ObjectBuilder::ObjectBuilder(RestBuilderXmlReader::RestGadget restGadget) :
+	isObject{false},
+	data{std::move(restGadget)}
+{}
 
 void ObjectBuilder::build()
 {
-	readData();
-	if(data.isObject)
+	// data  preprocessing
+	data.includes = QList<RestBuilderXmlReader::Include>{
+		{false, QStringLiteral("QtCore/QObject")},
+		{false, QStringLiteral("QtCore/QString")},
+		{false, isObject ? QStringLiteral("QtCore/QScopedPointer") : QStringLiteral("QtCore/QSharedData")}
+	} + data.includes;
+	if(isObject && !data.base)
+		data.base = QStringLiteral("QObject");
+
+	// cpp code generation
+	if(isObject)
 		generateApiObject();
 	else
 		generateApiGadget();
-}
-
-void ObjectBuilder::readData()
-{
-	if(reader.name() == QStringLiteral("RestObject"))
-		data.isObject = true;
-	else if(reader.name() == QStringLiteral("RestGadget"))
-		data.isObject = false;
-	else
-		Q_UNREACHABLE();
-
-	data.name = readAttrib(QStringLiteral("name"), {}, true);
-	data.base = readAttrib(QStringLiteral("base"), data.isObject ? QStringLiteral("QObject") : QString{});
-	data.exportKey = readAttrib(QStringLiteral("export"));
-	data.nspace = readAttrib(QStringLiteral("namespace"));
-	data.qmlUri = readAttrib(QStringLiteral("qmlUri"));
-	data.registerConverters = readAttrib<bool>(QStringLiteral("registerConverters"), true);
-	data.testEquality = readAttrib<bool>(QStringLiteral("testEquality"), true);
-	data.generateEquals = readAttrib<bool>(QStringLiteral("generateEquals"), !data.isObject);
-	data.generateReset = readAttrib<bool>(QStringLiteral("generateReset"), true);
-	data.simpleHref = readAttrib(QStringLiteral("simpleHref"));
-
-	data.includes = {
-		{false, QStringLiteral("QtCore/QObject")},
-		{false, QStringLiteral("QtCore/QString")},
-		{false, data.isObject ? QStringLiteral("QtCore/QScopedPointer") : QStringLiteral("QtCore/QSharedData")}
-	};
-
-	while(reader.readNextStartElement()) {
-		checkError();
-		if(reader.name() == QStringLiteral("Include"))
-			data.includes.append(readInclude());
-		else if(reader.name() == QStringLiteral("Enum"))
-			data.enums.append(readEnum());
-		else if(reader.name() == QStringLiteral("Property"))
-			data.properties.append(readProperty());
-		else
-			throwChild();
-	}
-	checkError();
-}
-
-ObjectBuilder::XmlContent::Enum ObjectBuilder::readEnum()
-{
-	XmlContent::Enum enumElement;
-	enumElement.name = readAttrib(QStringLiteral("name"), {}, true);
-	enumElement.base = readAttrib(QStringLiteral("base"));
-	enumElement.isFlags = readAttrib<bool>(QStringLiteral("isFlags"), false);
-
-	while(reader.readNextStartElement()) {
-		checkError();
-		auto name = readAttrib(QStringLiteral("name"));
-		enumElement.keys.append({name, reader.readElementText()});
-		checkError();
-	}
-	return enumElement;
-}
-
-ObjectBuilder::XmlContent::Property ObjectBuilder::readProperty()
-{
-	auto generateReset = readAttrib<bool>(QStringLiteral("generateReset"), data.generateReset);
-	XmlContent::Property prop = readBaseParam();
-	prop.generateReset = generateReset;
-	return prop;
-}
-
-bool ObjectBuilder::hasNs()
-{
-	return !data.nspace.isEmpty();
-}
-
-bool ObjectBuilder::hasQml()
-{
-	return !data.qmlUri.isEmpty();
 }
 
 void ObjectBuilder::generateApiObject()
 {
 	//write header
 	writeIncludes(data.includes);
-	if(hasNs())
-		header << "namespace " << data.nspace << " {\n\n";
+	if(data.nspace)
+		header << "namespace " << data.nspace.value() << " {\n\n";
 	header << "class " << data.name << "Private;\n"
-		   << "class " << exportedName(data.name, data.exportKey) << " : public " << data.base << "\n"
+		   << "class " << exportedName(data.name, data.exportKey) << " : public " << data.base.value() << "\n"
 		   << "{\n"
 		   << "\tQ_OBJECT\n\n";
 	writeProperties();
@@ -114,7 +49,7 @@ void ObjectBuilder::generateApiObject()
 	header << "\tQ_INVOKABLE " << data.name << "(QObject *parent = nullptr);\n"
 		   << "\t~User() override;\n\n";
 	writeReadDeclarations();
-	if(data.generateEquals)
+	if(data.generateEquals.value_or(!isObject))
 		writeEqualsDeclaration();
 	header << "\npublic Q_SLOTS:\n";
 	writeWriteDeclarations();
@@ -126,7 +61,7 @@ void ObjectBuilder::generateApiObject()
 	header << "\nprivate:\n"
 		   << "\tQScopedPointer<" << data.name << "Private> d;\n"
 		   << "};\n\n";
-	if(hasNs())
+	if(data.nspace)
 		header << "}\n\n";
 	writeFlagOperators();
 
@@ -134,12 +69,12 @@ void ObjectBuilder::generateApiObject()
 	writeSourceIncludes();
 	writePrivateClass();
 	source << data.name << "::" << data.name << "(QObject *parent) :\n"
-		   << "\t" << data.base << "{parent},\n"
+		   << "\t" << data.base.value() << "{parent},\n"
 		   << "\td{new " << data.name << "Private{}}\n"
 		   << "{}\n\n"
 		   << data.name << "::~" << data.name << "() = default;\n\n";
 	writeReadDefinitions();
-	if(data.generateEquals)
+	if(data.generateEquals.value_or(!isObject))
 		writeEqualsDefinition();
 	writeWriteDefinitions();
 	writeResetDefinitions();
@@ -150,13 +85,13 @@ void ObjectBuilder::generateApiGadget()
 {
 	//write header
 	writeIncludes(data.includes);
-	if(hasNs())
-		header << "namespace " << data.nspace << " {\n\n";
+	if(data.nspace)
+		header << "namespace " << data.nspace.value() << " {\n\n";
 	header << "class " << data.name << "Data;\n";
-	if(data.base.isEmpty())
-		header << "class " << exportedName(data.name, data.exportKey) << "\n";
+	if(data.base)
+		header << "class " << exportedName(data.name, data.exportKey) << " : public " << data.base.value() << "\n";
 	else
-		header << "class " << exportedName(data.name, data.exportKey) << " : public " << data.base << "\n";
+		header << "class " << exportedName(data.name, data.exportKey) << "\n";
 	header << "{\n"
 		   << "\tQ_GADGET\n\n";
 	writeProperties();
@@ -173,12 +108,12 @@ void ObjectBuilder::generateApiGadget()
 	header << '\n';
 	writeWriteDeclarations();
 	writeResetDeclarations();
-	if(data.generateEquals)
+	if(data.generateEquals.value_or(!isObject))
 		writeEqualsDeclaration();
 	header << "\nprivate:\n"
 		   << "\t QSharedDataPointer<" << data.name << "Data> d;\n"
 		   << "};\n\n";
-	if(hasNs())
+	if(data.nspace)
 		header << "}\n\n";
 	header << "Q_DECLARE_METATYPE(" << nsName(data.name, data.nspace) << ")\n\n";
 	writeFlagOperators();
@@ -187,8 +122,8 @@ void ObjectBuilder::generateApiGadget()
 	writeSourceIncludes();
 	writeDataClass();
 	source << data.name << "::" << data.name << "() :\n";
-	if(!data.base.isEmpty())
-		source << "\t" << data.base << "{},\n";
+	if(data.base)
+		source << "\t" << data.base.value() << "{},\n";
 	source << "\td{new " << data.name << "Data{}}\n"
 		   << "{}\n\n"
 		   << data.name << "::" << data.name << "(const " << data.name << " &other) = default;\n\n"
@@ -199,7 +134,7 @@ void ObjectBuilder::generateApiGadget()
 	writeReadDefinitions();
 	writeWriteDefinitions();
 	writeResetDefinitions();
-	if(data.generateEquals)
+	if(data.generateEquals.value_or(!isObject))
 		writeEqualsDefinition();
 	writeSetupHooks();
 }
@@ -218,9 +153,9 @@ void ObjectBuilder::writeEnums()
 			header << "\tenum " << eElem.name << " {\n";
 		for(const auto &value : eElem.keys) {
 			if(value.value.isEmpty())
-				header << "\t\t" << value.key << ",\n";
+				header << "\t\t" << value.name << ",\n";
 			else
-				header << "\t\t" << value.key << " = " << value.value << ",\n";
+				header << "\t\t" << value.name << " = " << value.value << ",\n";
 		}
 		header << "\t};\n";
 
@@ -254,7 +189,7 @@ void ObjectBuilder::writeProperties()
 			   << " WRITE " << setter(prop.key);
 		if(prop.generateReset)
 			header << " RESET re" << setter(prop.key);
-		if(data.isObject)
+		if(isObject)
 			header << " NOTIFY " << prop.key << "Changed";
 		header << ")\n";
 	}
@@ -264,7 +199,7 @@ void ObjectBuilder::writeReadDeclarations()
 {
 	for(const auto &prop : qAsConst(data.properties))
 		header << "\t" << prop.type << " " << prop.key << "() const;\n";
-	if(!data.simpleHref.isEmpty())
+	if(data.simpleHref)
 		header << "\n\tQUrl extensionHref() const override;\n";
 }
 
@@ -296,7 +231,7 @@ void ObjectBuilder::writeMemberDeclarations()
 
 void ObjectBuilder::writeEqualsDeclaration()
 {
-	if(data.isObject) {
+	if(isObject) {
 		header << "\n\tQ_INVOKABLE bool equals(const " << data.name << " *other) const;\n";
 	} else {
 		header << "\n\tbool operator==(const " << data.name << " &other) const;\n";
@@ -312,10 +247,10 @@ void ObjectBuilder::writeSourceIncludes()
 		source << "#include <QtCore/QCoreApplication>\n"
 			   << "#include <QtJsonSerializer/QJsonSerializer>\n";
 	}
-	if(hasQml())
+	if(data.qmlUri)
 		source << "#include <QtQml/qqml.h>\n";
-	if(hasNs())
-		source << "using namespace " << data.nspace << ";\n";
+	if(data.nspace)
+		source << "using namespace " << data.nspace.value() << ";\n";
 	source << '\n';
 }
 
@@ -327,10 +262,10 @@ void ObjectBuilder::writeReadDefinitions()
 			   << "\treturn d->" << prop.key << ";\n"
 			   << "}\n";
 	}
-	if(!data.simpleHref.isEmpty()) {
+	if(data.simpleHref) {
 		source << "\nQUrl " << data.name << "::extensionHref() const\n"
 			   << "{\n"
-			   << "\treturn d->" << data.simpleHref << ";\n"
+			   << "\treturn d->" << data.simpleHref.value() << ";\n"
 			   << "}\n";
 	}
 }
@@ -345,7 +280,7 @@ void ObjectBuilder::writeWriteDefinitions()
 				   << "\t\treturn;\n\n";
 		}
 		source << "\td->" << prop.key << " = std::move(" << prop.key <<");\n";
-		if(data.isObject)
+		if(isObject)
 			source << "\temit " << prop.key << "Changed(d->" << prop.key << ");\n";
 		source << "}\n";
 	}
@@ -371,9 +306,9 @@ void ObjectBuilder::writeResetDefinitions()
 
 void ObjectBuilder::writeEqualsDefinition()
 {
-	QString otherPrefix = (data.isObject ? QStringLiteral("->") : QStringLiteral(".")) + QStringLiteral("d->");
+	QString otherPrefix = (isObject ? QStringLiteral("->") : QStringLiteral(".")) + QStringLiteral("d->");
 	//equals
-	if(data.isObject)
+	if(isObject)
 		source << "\nbool " << data.name << "::" << "equals(const " << data.name << " *other) const\n";
 	else
 		source << "\nbool " << data.name << "::" << "operator==(const " << data.name << " &other) const\n";
@@ -385,7 +320,7 @@ void ObjectBuilder::writeEqualsDefinition()
 		   << "}\n";
 
 	//unequals
-	if(!data.isObject) {
+	if(!isObject) {
 		source << "\nbool " << data.name << "::" << "operator!=(const " << data.name << " &other) const\n"
 			   << "{\n"
 			   << "\treturn false";
@@ -399,8 +334,8 @@ void ObjectBuilder::writeEqualsDefinition()
 void ObjectBuilder::writePrivateClass()
 {
 	QString name = data.name + QStringLiteral("Private");
-	if(hasNs())
-		source << "namespace " << data.nspace << " {\n\n";
+	if(data.nspace)
+		source << "namespace " << data.nspace.value() << " {\n\n";
 	source << "class " << name << "\n"
 		   << "{\n"
 		   << "public:\n"
@@ -409,15 +344,15 @@ void ObjectBuilder::writePrivateClass()
 	source << "\t{}\n\n";
 	writeMemberDeclarations();
 	source << "};\n\n";
-	if(hasNs())
+	if(data.nspace)
 		source << "}\n\n";
 }
 
 void ObjectBuilder::writeDataClass()
 {
 	QString name = data.name + QStringLiteral("Data");
-	if(hasNs())
-		source << "namespace " << data.nspace << " {\n\n";
+	if(data.nspace)
+		source << "namespace " << data.nspace.value() << " {\n\n";
 	source << "class " << name << " : public QSharedData\n"
 		   << "{\n"
 		   << "public:\n"
@@ -429,7 +364,7 @@ void ObjectBuilder::writeDataClass()
 		   << "\t" << name << "(" << name << " &&other) = default;\n\n";
 	writeMemberDeclarations();
 	source << "};\n\n";
-	if(hasNs())
+	if(data.nspace)
 		source << "}\n\n";
 }
 
@@ -449,7 +384,7 @@ void ObjectBuilder::writeMemberDefinitions(bool skipComma)
 
 void ObjectBuilder::writeSetupHooks()
 {
-	if(!data.registerConverters && !hasQml())
+	if(!data.registerConverters && !data.qmlUri)
 		return;
 
 	source << "\nnamespace {\n\n"
@@ -457,14 +392,14 @@ void ObjectBuilder::writeSetupHooks()
 		   << "{\n";
 
 	if(data.registerConverters)
-		source << "\tQJsonSerializer::registerListConverters<" << data.name << (data.isObject ? "*" : "") << ">();\n";
-	if(hasQml()) {
-		auto uriParts = data.qmlUri.split(QLatin1Char(' '), QString::SkipEmptyParts);
+		source << "\tQJsonSerializer::registerListConverters<" << data.name << (isObject ? "*" : "") << ">();\n";
+	if(data.qmlUri) {
+		auto uriParts = data.qmlUri.value().split(QLatin1Char(' '), QString::SkipEmptyParts);
 		auto uriPath = uriParts.takeFirst();
 		auto uriVersion = QVersionNumber::fromString(uriParts.join(QLatin1Char(' ')));
 		if(uriVersion.isNull())
 			uriVersion = {1,0};
-		if(data.isObject) {
+		if(isObject) {
 			source << "\tqmlRegisterType<" << data.name << ">(\""
 				   << uriPath << "\", " << uriVersion.majorVersion() << ", " << uriVersion.minorVersion()
 				   << ", \"" << data.name << "\");\n";

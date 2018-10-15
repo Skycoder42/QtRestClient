@@ -3,12 +3,13 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QVariant>
+#include <qrestbuilder.h>
 
 void XmlConverter::convert(const QString &type, const QString &in, const QString &out)
 {
 	QFile inFile(in);
 	if(!inFile.open(QIODevice::ReadOnly | QIODevice::Text))
-		throw QStringLiteral("%1: %2").arg(inFile.fileName(), inFile.errorString());
+		throw RestBuilderXmlReader::FileException{inFile};
 
 	QJsonParseError error;
 	auto doc = QJsonDocument::fromJson(inFile.readAll(), &error);
@@ -18,7 +19,7 @@ void XmlConverter::convert(const QString &type, const QString &in, const QString
 
 	QFile outFile(out);
 	if(!outFile.open(QIODevice::WriteOnly | QIODevice::Text))
-		throw QStringLiteral("%1: %2").arg(outFile.fileName(), outFile.errorString());
+		throw RestBuilderXmlReader::FileException{outFile};
 	QXmlStreamWriter writer(&outFile);
 	writer.setAutoFormatting(true);
 	writer.setAutoFormattingIndent(-1);
@@ -32,7 +33,7 @@ void XmlConverter::convert(const QString &type, const QString &in, const QString
 		throw QStringLiteral("Invalid conversion input type: %1. Must be either \"object\" or \"class\"").arg(type);
 
 	if(writer.hasError())
-		throw QStringLiteral("%1: %2").arg(outFile.fileName(), outFile.errorString());
+		throw RestBuilderXmlReader::FileException{outFile};
 	writer.writeEndDocument();
 	outFile.close();
 }
@@ -165,8 +166,14 @@ void XmlConverter::writeClassXml(const QJsonObject &data, QXmlStreamWriter &writ
 
 		// path stuff (fixed + params)
 		writeExpr(method, writer, QStringLiteral("url"));
-		writeExpr(method, writer, QStringLiteral("path"));
-		writeParamList(method[QStringLiteral("pathParams")].toArray(), writer, QStringLiteral("PathParam"));
+		if(method[QStringLiteral("pathParams")].toArray().isEmpty())
+			writeExpr(method, writer, QStringLiteral("path"));
+		else {
+			writer.writeStartElement(QStringLiteral("Path"));
+			writeExpr(method, writer, QStringLiteral("path"), QStringLiteral("FixedSegment"));
+			writeParamList(method[QStringLiteral("pathParams")].toArray(), writer, QStringLiteral("ParamSegment"));
+			writer.writeEndElement();
+		}
 
 		//params and header
 		writeParamList(method[QStringLiteral("parameters")].toArray(), writer, QStringLiteral("Param"));

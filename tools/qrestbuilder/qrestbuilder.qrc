@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/schemas">
+        <file>qrestbuilder.xsd</file>
+    </qresource>
+</RCC>

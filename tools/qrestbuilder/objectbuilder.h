@@ -6,57 +6,14 @@
 class ObjectBuilder : public RestBuilder
 {
 public:
-	explicit ObjectBuilder(QXmlStreamReader &inStream);
-
-	static bool canReadType(const QString &type);
+	ObjectBuilder(RestBuilderXmlReader::RestObject restObject);
+	ObjectBuilder(RestBuilderXmlReader::RestGadget restGadget);
 
 private:
-	struct XmlContent {
-		bool isObject = false;
-		QString name;
-		QString base;
-		QString exportKey;
-		QString nspace;
-		QString qmlUri;
-		bool registerConverters = false;
-		bool testEquality = false;
-		bool generateEquals = false;
-		bool generateReset = false;
-		QString simpleHref;
-
-		QList<Include> includes;
-
-		struct Enum {
-			QString name;
-			QString base;
-			bool isFlags = false;
-
-			struct Key {
-				QString key;
-				QString value;
-			};
-			QList<Key> keys;
-		};
-		QList<Enum> enums;
-
-		struct Property : public BaseParam {
-			bool generateReset = false;
-
-			inline Property(const BaseParam &base = {}) :
-				BaseParam(base)
-			{}
-		};
-		QList<Property> properties;
-	} data;
+	bool isObject;
+	RestBuilderXmlReader::RestContent data;
 
 	void build() override;
-
-	void readData();
-	XmlContent::Enum readEnum();
-	XmlContent::Property readProperty();
-
-	bool hasNs();
-	bool hasQml();
 
 	void generateApiObject();
 	void generateApiGadget();

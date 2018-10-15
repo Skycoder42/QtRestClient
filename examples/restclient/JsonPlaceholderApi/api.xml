@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<RestApi xmlns="https://skycoder42.de/QtRestClient/RestClass" name="ExampleApi" globalName="jsonplaceholder">
+<RestApi name="ExampleApi" globalName="jsonplaceholder">
 	<Include>api_posts.h</Include>
-	<BaseUrl>https://jsonplaceholder.typicode.com</BaseUrl>
 	<Class key="posts" type="PostClass"/>
+	<BaseUrl>https://jsonplaceholder.typicode.com</BaseUrl>
 </RestApi>
