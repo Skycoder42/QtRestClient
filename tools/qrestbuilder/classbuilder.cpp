@@ -4,12 +4,14 @@
 ClassBuilder::ClassBuilder(RestBuilderXmlReader::RestClass restClass) :
 	classData{std::move(restClass)},
 	data{classData},
+	elements{classData},
 	isApi{false}
 {}
 
 ClassBuilder::ClassBuilder(RestBuilderXmlReader::RestApi restApi) :
 	apiData{std::move(restApi)},
 	data{apiData},
+	elements{apiData},
 	isApi{true}
 {}
 
@@ -26,7 +28,7 @@ void ClassBuilder::build()
 	if(data.qmlUri && isApi)
 		data.includes.append({false, QStringLiteral("QtQml/QQmlParserStatus")});
 
-	for(auto &method : data.methods) {
+	for(auto &method : elements.methods) {
 		if(!method.except)
 			method.except = data.except;
 
@@ -122,16 +124,16 @@ void ClassBuilder::writeClassMainDeclaration()
 		   << "\tQtRestClient::RestClient *restClient() const;\n"
 		   << "\tQtRestClient::RestClass *restClass() const;\n\n";
 
-	for(const auto &subClass : qAsConst(data.classes))
+	for(const auto &subClass : qAsConst(elements.classes))
 		header << "\t" << subClass.type << " *" << subClass.key << "() const;\n";
-	if(!data.classes.isEmpty())
+	if(!elements.classes.isEmpty())
 		header << '\n';
 
-	for(const auto &method : qAsConst(data.methods)) {
+	for(const auto &method : qAsConst(elements.methods)) {
 		header << "\tQtRestClient::GenericRestReply<" << method.returns << ", " << method.except.value() << "> *" << method.name
 			   << "(" << writeMethodParams(method, true) << ");\n";
 	}
-	if(!data.methods.isEmpty())
+	if(!elements.methods.isEmpty())
 		header << '\n';
 
 	header << "\tvoid setErrorTranslator(std::function<QString(" << data.except << ", int)> fn);\n\n";
@@ -233,9 +235,9 @@ void ClassBuilder::writeFactoryDeclaration()
 		   << "\t\tFactory(Factory &&other);\n"
 		   << "\t\tFactory &operator=(Factory &&other);\n"
 		   << "\t\t~Factory();\n\n";
-	for(const auto &subClass : qAsConst(data.classes))
+	for(const auto &subClass : qAsConst(elements.classes))
 		header << "\t\t" << subClass.type << "::Factory " << subClass.key << "() const;\n";
-	if(!data.classes.isEmpty())
+	if(!elements.classes.isEmpty())
 		header << '\n';
 	header << "\t\t" << data.name << " *instance(QObject *parent = nullptr) const;\n\n"
 		   << "\tprivate:\n"
@@ -256,7 +258,7 @@ void ClassBuilder::writePrivateDefinitions()
 		   << "\t{}\n\n"
 		   << "\tRestClass *restClass;\n"
 		   << "\tstd::function<QString(" << data.except << ", int)> errorTranslator;\n";
-	for(const auto &subClass : qAsConst(data.classes))
+	for(const auto &subClass : qAsConst(elements.classes))
 		source << '\t' << subClass.type << " *" << subClass.key << " = nullptr;\n";
 	source << "};\n\n";
 
@@ -293,7 +295,7 @@ void ClassBuilder::writeFactoryDefinition()
 		   << "\treturn *this;\n"
 		   << "}\n\n"
 		   << data.name << "::Factory::~Factory() = default;\n";
-	for(const auto &subClass : qAsConst(data.classes)) {
+	for(const auto &subClass : qAsConst(elements.classes)) {
 		source << "\n" << subClass.type << "::Factory " << data.name << "::Factory::" << subClass.key << "() const\n"
 			   << "{\n"
 			   << "\treturn {d->client, std::move(d->subPath)};\n"
@@ -307,7 +309,7 @@ void ClassBuilder::writeFactoryDefinition()
 
 void ClassBuilder::writeClassDefinitions()
 {
-	for(const auto &subClass : qAsConst(data.classes)) {
+	for(const auto &subClass : qAsConst(elements.classes)) {
 		source << "\n" << subClass.type << " *" << data.name << "::" << subClass.key << "() const\n"
 			   << "{\n"
 			   << "\tif(!d->" << subClass.key << ")\n"
@@ -319,7 +321,7 @@ void ClassBuilder::writeClassDefinitions()
 
 void ClassBuilder::writeMethodDefinitions()
 {
-	for(const auto &method : qAsConst(data.methods)) {
+	for(const auto &method : qAsConst(elements.methods)) {
 		source << "\nQtRestClient::GenericRestReply<" << method.returns << ", " << method.except.value() << "> *" << data.name << "::" << method.name
 			   << "(" << writeMethodParams(method, false) << ")\n"
 			   << "{\n";
@@ -457,9 +459,9 @@ void ClassBuilder::writeQmlDeclaration()
 			   << "{\n"
 			   << "\tQ_GADGET\n\n";
 	}
-	for(const auto &subClass : qAsConst(data.classes))
+	for(const auto &subClass : qAsConst(elements.classes))
 		header << "\tQ_PROPERTY(" << nsInject(subClass.type, QStringLiteral("Qml")) << " " << subClass.key << " READ " << subClass.key << " CONSTANT)\n";
-	if(!data.classes.isEmpty())
+	if(!elements.classes.isEmpty())
 		header << '\n';
 
 	if(isApi) {
@@ -472,16 +474,16 @@ void ClassBuilder::writeQmlDeclaration()
 			   << "\tQml" << data.name << "(" << data.name << "* instance = nullptr, void *engine = nullptr);\n\n";
 	}
 
-	for(const auto &subClass : qAsConst(data.classes))
+	for(const auto &subClass : qAsConst(elements.classes))
 		header << "\t" << nsInject(subClass.type, QStringLiteral("Qml")) << " " << subClass.key << "() const;\n";
-	if(!data.classes.isEmpty())
+	if(!elements.classes.isEmpty())
 		header << '\n';
 
-	for(const auto &method : qAsConst(data.methods)) {
+	for(const auto &method : qAsConst(elements.methods)) {
 		header << "\tQ_INVOKABLE QtRestClient::QmlGenericRestReply *" << method.name
 			   << "(" << writeMethodParams(method, true) << ");\n";
 	}
-	if(!data.methods.isEmpty())
+	if(!elements.methods.isEmpty())
 		header << '\n';
 
 	header << "private:\n"
@@ -512,14 +514,14 @@ void ClassBuilder::writeQmlDefinitions()
 			   << "{}\n";
 	}
 
-	for(const auto &subClass : qAsConst(data.classes)) {
+	for(const auto &subClass : qAsConst(elements.classes)) {
 		source << "\n" << nsInject(subClass.type, QStringLiteral("Qml")) << " Qml" << data.name << "::" << subClass.key << "() const\n"
 			   << "{\n"
 			   << "\treturn {_d ? _d->"  << subClass.key << "() : nullptr, _engine};\n"
 			   << "}\n";
 	}
 
-	for(const auto &method : qAsConst(data.methods)) {
+	for(const auto &method : qAsConst(elements.methods)) {
 		source << "\nQtRestClient::QmlGenericRestReply *Qml" << data.name << "::" << method.name
 			   << "(" << writeMethodParams(method, false) << ")\n"
 			   << "{\n"

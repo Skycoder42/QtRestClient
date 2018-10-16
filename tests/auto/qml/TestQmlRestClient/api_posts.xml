@@ -6,6 +6,8 @@
 		   qmlUri="de.skycoder42.qtrestclient.test 2.0">
 	<Include local="true">post.h</Include>
 
+	<Path expr="false">posts</Path>
+
 	<Method name="listPosts"
 			verb="GET"
 			returns="QList&lt;TestSpace::Post&gt;" />
@@ -28,6 +30,4 @@
 			body="TestSpace::Post">
 		<Url>../post-add&amp;complete=true</Url>
 	</Method>
-
-	<Path expr="false">posts</Path>
 </RestClass>

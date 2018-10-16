@@ -126,11 +126,16 @@
 		<xs:attribute name="postParams" type="xs:boolean" use="optional"/>
 	</xs:complexType>
 
+	<xs:group name="RestAccessElements">
+		<xs:sequence>
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="Class" type="Class" qxg:member="classes"/>
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="Method" type="Method" qxg:member="methods"/>
+		</xs:sequence>
+	</xs:group>
+
 	<xs:complexType name="RestAccess">
 		<xs:sequence>
 			<xs:element maxOccurs="unbounded" minOccurs="0" name="Include" type="Include" qxg:member="includes"/>
-			<xs:element maxOccurs="unbounded" minOccurs="0" name="Class" type="Class" qxg:member="classes"/>
-			<xs:element maxOccurs="unbounded" minOccurs="0" name="Method" type="Method" qxg:member="methods"/>
 		</xs:sequence>
 		<xs:attribute name="name" type="xs:string" use="required"/>
 		<xs:attribute name="export" type="xs:string" use="optional" qxg:member="exportKey"/>
@@ -146,6 +151,7 @@
 			<xs:extension base="RestAccess">
 				<xs:sequence>
 					<xs:element maxOccurs="1" minOccurs="0" name="Path" type="Expression"/>
+					<xs:group ref="RestAccessElements" qxg:inherit="true"/>
 				</xs:sequence>
 			</xs:extension>
 		</xs:complexContent>
@@ -166,6 +172,7 @@
 					<xs:element maxOccurs="1" minOccurs="1" name="BaseUrl" type="BaseUrl"/>
 					<xs:element maxOccurs="unbounded" minOccurs="0" name="Parameter" type="FixedParam" qxg:member="params"/>
 					<xs:element maxOccurs="unbounded" minOccurs="0" name="Header" type="FixedParam" qxg:member="headers"/>
+					<xs:group ref="RestAccessElements" qxg:inherit="true"/>
 				</xs:sequence>
 				<xs:attribute name="globalName" type="xs:string" use="optional"/>
 				<xs:attribute default="true" name="autoCreate" type="xs:boolean" use="optional"/>

@@ -14,6 +14,7 @@ private:
 	RestBuilderXmlReader::RestClass classData;
 	RestBuilderXmlReader::RestApi apiData;
 	RestBuilderXmlReader::RestAccess &data;
+	RestBuilderXmlReader::RestAccessElements &elements;
 	bool isApi;
 
 	void build() override;

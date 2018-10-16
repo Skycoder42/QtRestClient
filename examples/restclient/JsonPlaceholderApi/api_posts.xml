@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <RestClass name="PostClass">
 	<Include>post.h</Include>
+	<Path>posts</Path>
 	<Method name="deletePost" verb="DELETE" returns="void">
 		<Path>
 			<ParamSegment key="id" type="int"/>
@@ -18,5 +19,4 @@
 			<ParamSegment key="id" type="int"/>
 		</Path>
 	</Method>
-	<Path>posts</Path>
 </RestClass>
