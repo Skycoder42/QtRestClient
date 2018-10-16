@@ -24,6 +24,11 @@
 		</Path>
 		<!-- Are combined as: <restclass_path>/<id>/name -->
 	</Method>
+	<Method name="allusers"
+			returns="QList&lt;User*&gt;">
+		<Path>users</Path>
+		<!-- Are combined as: <restclass_path>/<id>/name -->
+	</Method>
 	<Method name="addPost"
 			verb="PUT"
 			body="TestSpace::Post">
