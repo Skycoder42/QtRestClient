@@ -8,9 +8,18 @@
 
 namespace QtRestClient {
 
+template <typename T>
+using EnableGadgetType = typename std::enable_if<_qjsonserializer_helpertypes::gadget_helper<T>::value>::type;
+template <typename T>
+using EnableObjectType = typename std::enable_if<std::is_base_of<QObject, T>::value>::type;
+
+//! @private
+template <typename T, typename Enable = void>
+class MetaComponent : public std::false_type {};
+
 //! @private
 template <typename T>
-class MetaComponent : public _qjsonserializer_helpertypes::gadget_helper<T>
+class MetaComponent<T, EnableGadgetType<T>> : public std::true_type
 {
 public:
 	static inline void deleteLater(T) {}
@@ -19,7 +28,7 @@ public:
 
 //! @private
 template <typename T>
-class MetaComponent<T*> : public std::is_base_of<QObject, T>
+class MetaComponent<T*, EnableObjectType<T>> : public std::true_type
 {
 public:
 	static inline void deleteLater(T *obj) {
@@ -28,6 +37,19 @@ public:
 	static inline void deleteAllLater(const QList<T*> &list) {
 		for(T *obj : list)
 			obj->deleteLater();
+	}
+};
+
+//! @private
+template <typename T>
+class MetaComponent<T*, EnableGadgetType<T>> : public std::true_type
+{
+public:
+	static inline void deleteLater(T *gad) {
+		delete gad;
+	}
+	static inline void deleteAllLater(const QList<T*> &list) {
+		qDeleteAll(list);
 	}
 };
 
