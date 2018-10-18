@@ -12,6 +12,9 @@
 
 namespace QtRestClient {
 
+template <typename DataClassType, typename ErrorClassType>
+class GenericRestReplyAwaitable;
+
 //! A class to handle generic replies for generic requests
 template <typename DataClassType, typename ErrorClassType = QObject*>
 class GenericRestReply : public RestReply
@@ -53,6 +56,8 @@ public:
 	GenericRestReply<DataClassType, ErrorClassType> *onError(QObject *scope, const std::function<void(QString, int, ErrorType)> &handler);
 	//! @copydoc RestReply::disableAutoDelete
 	GenericRestReply<DataClassType, ErrorClassType> *disableAutoDelete();
+
+	GenericRestReplyAwaitable<DataClassType, ErrorClassType> await();
 
 private:
 	RestClient *client;
@@ -101,6 +106,8 @@ public:
 	GenericRestReply<void, ErrorClassType> *onError(QObject *scope, const std::function<void(QString, int, ErrorType)> &handler);
 	//! @copydoc GenericRestReply::disableAutoDelete
 	GenericRestReply<void, ErrorClassType> *disableAutoDelete();
+
+	GenericRestReplyAwaitable<void, ErrorClassType> await();
 
 private:
 	RestClient *client;
@@ -151,6 +158,8 @@ public:
 	GenericRestReply<QList<DataClassType>, ErrorClassType> *onError(QObject *scope, const std::function<void(QString, int, ErrorType)> &handler);
 	//! @copydoc GenericRestReply::disableAutoDelete
 	GenericRestReply<QList<DataClassType>, ErrorClassType> *disableAutoDelete();
+
+	GenericRestReplyAwaitable<QList<DataClassType>, ErrorClassType> await();
 
 private:
 	RestClient *client;
@@ -207,6 +216,8 @@ public:
 	GenericRestReply<Paging<DataClassType>, ErrorClassType> *onError(QObject *scope, const std::function<void(QString, int, ErrorType)> &handler);
 	//! @copydoc GenericRestReply::disableAutoDelete
 	GenericRestReply<Paging<DataClassType>, ErrorClassType> *disableAutoDelete();
+
+	GenericRestReplyAwaitable<Paging<DataClassType>, ErrorClassType> await();
 
 private:
 	RestClient *client;

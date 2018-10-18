@@ -1,5 +1,6 @@
 #include "restreply.h"
 #include "restreply_p.h"
+#include "restreplyawaitable.h"
 
 #include <QtCore/QBuffer>
 #include <QtCore/QJsonDocument>
@@ -147,6 +148,11 @@ bool RestReply::autoDelete() const
 QNetworkReply *RestReply::networkReply() const
 {
 	return d->networkReply.data();
+}
+
+RestReplyAwaitable RestReply::await()
+{
+	return RestReplyAwaitable{this};
 }
 
 void RestReply::abort()

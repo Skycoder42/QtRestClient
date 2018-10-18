@@ -18,7 +18,9 @@ HEADERS +=  \
 	restreply.h \
 	simple.h \
 	metacomponent.h \
-	standardpaging_p.h
+	standardpaging_p.h \
+	restreplyawaitable.h \
+	restreplyawaitable_p.h
 
 SOURCES += \
 	requestbuilder.cpp \
@@ -26,7 +28,8 @@ SOURCES += \
 	restclient.cpp \
 	restreply.cpp \
 	standardpaging.cpp \
-	ipaging.cpp
+	ipaging.cpp \
+	restreplyawaitable.cpp
 
 load(qt_module)
 

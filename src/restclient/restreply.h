@@ -11,6 +11,7 @@
 namespace QtRestClient {
 
 class RestReplyPrivate;
+class RestReplyAwaitable;
 class QmlGenericRestReply; //needed for QML bindings
 //! A class to handle replies for JSON requests
 class Q_RESTCLIENT_EXPORT RestReply : public QObject
@@ -87,6 +88,8 @@ public:
 
 	//! Returns the network reply associated with the rest reply
 	QNetworkReply *networkReply() const;
+
+	RestReplyAwaitable await();
 
 public Q_SLOTS:
 	//! Aborts the request by calling QNetworkReply::abort
