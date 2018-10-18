@@ -12,10 +12,9 @@ class Q_RESTCLIENT_EXPORT RestReplyPrivate : public QObject
 	Q_OBJECT
 
 public:
-	static const QByteArray PropertyVerb;
 	static const QByteArray PropertyBuffer;
 
-	static QNetworkReply *compatSend(QNetworkAccessManager *nam, const QNetworkRequest &request, const QByteArray &verb, QIODevice *buffer);
+	static QNetworkReply *compatSend(QNetworkAccessManager *nam, const QNetworkRequest &request, const QByteArray &verb, const QByteArray &body);
 
 	QPointer<QNetworkReply> networkReply;
 	bool autoDelete = true;

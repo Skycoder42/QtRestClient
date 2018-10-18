@@ -198,21 +198,17 @@ QByteArray RestReply::jsonTypeName(QJsonValue::Type type)
 
 // ------------- Private Implementation -------------
 
-const QByteArray RestReplyPrivate::PropertyVerb("__QtRestClient_RestReplyPrivate_PropertyVerb");
 const QByteArray RestReplyPrivate::PropertyBuffer("__QtRestClient_RestReplyPrivate_PropertyBuffer");
 
-QNetworkReply *RestReplyPrivate::compatSend(QNetworkAccessManager *nam, const QNetworkRequest &request, const QByteArray &verb, QIODevice *buffer)
+QNetworkReply *RestReplyPrivate::compatSend(QNetworkAccessManager *nam, const QNetworkRequest &request, const QByteArray &verb, const QByteArray &body)
 {
-	auto reply = nam->sendCustomRequest(request, verb, buffer);
-	if(reply) {
-		reply->setProperty(PropertyVerb, verb);
-		if(buffer) {
-			buffer->setParent(reply);
-			reply->setProperty(PropertyBuffer, QVariant::fromValue(buffer));
-		}
-	} else if(buffer) {
-		buffer->close();
-		buffer->deleteLater();
+	QNetworkReply *reply = nullptr;
+	if(body.isEmpty())
+		reply = nam->sendCustomRequest(request, verb);
+	else {
+		reply = nam->sendCustomRequest(request, verb, body);
+		if(reply)
+			reply->setProperty(PropertyBuffer, body);
 	}
 	return reply;
 }
@@ -300,14 +296,10 @@ void RestReplyPrivate::retryReply()
 {
 	auto nam = networkReply->manager();
 	auto request = networkReply->request();
-	auto verb = networkReply->property(PropertyVerb).toByteArray();
-	if(verb.isEmpty())
-		verb = "GET";
-	auto buffer = networkReply->property(PropertyBuffer).value<QIODevice*>();
-	if(buffer)
-		buffer->setParent(nullptr);//prevent deletion
+	auto verb = request.attribute(QNetworkRequest::CustomVerbAttribute, QByteArray{"GET"}).toByteArray();
+	auto body = networkReply->property(PropertyBuffer).toByteArray();
 
 	networkReply->deleteLater();
-	networkReply = compatSend(nam, request, verb, buffer);
+	networkReply = compatSend(nam, request, verb, body);
 	connectReply(networkReply);
 }

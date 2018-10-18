@@ -258,17 +258,12 @@ QNetworkReply *RequestBuilder::send() const
 {
 	auto request = build();
 
-	QBuffer *buffer = nullptr;
-	if(!d->body.isEmpty()) {
-		buffer = new QBuffer();
-		buffer->setData(d->body);
-		buffer->open(QIODevice::ReadOnly);
-	} else if(d->headers.value(RequestBuilderPrivate::ContentType) == RequestBuilderPrivate::ContentTypeUrlEncoded &&
-			  !d->postQuery.isEmpty()) {
-		buffer = new QBuffer();
-		buffer->setData(d->postQuery.query().toUtf8());
-		buffer->open(QIODevice::ReadOnly);
-	}
+	QByteArray body;
+	if(!d->body.isEmpty())
+		body = d->body;
+	else if(d->headers.value(RequestBuilderPrivate::ContentType) == RequestBuilderPrivate::ContentTypeUrlEncoded &&
+			  !d->postQuery.isEmpty())
+		body = d->postQuery.query().toUtf8();
 
-	return RestReplyPrivate::compatSend(d->nam, request, d->verb, buffer);
+	return RestReplyPrivate::compatSend(d->nam, request, d->verb, body);
 }
