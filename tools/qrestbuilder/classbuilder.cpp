@@ -437,7 +437,7 @@ void ClassBuilder::writeApiCreation()
 		auto vNum = QVersionNumber::fromString(apiData.baseUrl.apiVersion.value());
 		QStringList args;
 		args.reserve(vNum.segmentCount());
-		for(const auto &segment : vNum.segments())
+		for(const auto &segment : vNum.segments()) // clazy:exclude=range-loop
 			args.append(QString::number(segment));
 		source << "\t\tclient->setApiVersion(QVersionNumber{" << args.join(QStringLiteral(", ")) << "});\n";
 	}

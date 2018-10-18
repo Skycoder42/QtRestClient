@@ -31,11 +31,11 @@ public:
 	//! Copy Constructor
 	Paging(const Paging<T> &other);
 	//! Move Constructor
-	Paging(Paging<T> &&other);
+	Paging(Paging<T> &&other) noexcept;
 	//! Copy assignment operator
 	Paging<T> &operator=(const Paging<T> &other);
 	//! Move assignment operator
-	Paging<T> &operator=(Paging<T> &&other);
+	Paging<T> &operator=(Paging<T> &&other) noexcept;
 	//! Constructs a paging from the interface, the data and a client
 	Paging(IPaging *iPaging, const QList<T> &data, RestClient *client);
 

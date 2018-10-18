@@ -29,7 +29,7 @@ private:
 	Post getPost() const;
 	void setPost(const Post &post);
 	void clearPost();
-	void onError(bool isLoad, QString error, int code, QtRestClient::RestReply::ErrorType type);
+	void onError(bool isLoad, const QString& error, int code, QtRestClient::RestReply::ErrorType type);
 };
 
 #endif // MAINWINDOW_H

@@ -276,7 +276,7 @@ void HttpConnection::reply()
 				QUrlQuery query;
 				query.setQuery(QString::fromUtf8(_content));
 				QJsonObject resObj;
-				for(const auto &param : query.queryItems())
+				for(const auto &param : query.queryItems(QUrl::FullyDecoded))
 					resObj.insert(param.first, param.second);
 				doc = QJsonDocument(resObj).toJson(QJsonDocument::Compact);
 			} else

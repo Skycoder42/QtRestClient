@@ -58,11 +58,11 @@ RequestBuilder::RequestBuilder(const QUrl &baseUrl, QNetworkAccessManager *nam) 
 
 RequestBuilder::RequestBuilder(const RequestBuilder &other) = default;
 
-RequestBuilder::RequestBuilder(RequestBuilder &&other) = default;
+RequestBuilder::RequestBuilder(RequestBuilder &&other) noexcept = default;
 
 RequestBuilder &RequestBuilder::operator=(const RequestBuilder &other) = default;
 
-RequestBuilder &RequestBuilder::operator=(RequestBuilder &&other) = default;
+RequestBuilder &RequestBuilder::operator=(RequestBuilder &&other) noexcept = default;
 
 RequestBuilder::~RequestBuilder() = default;
 
@@ -109,7 +109,7 @@ RequestBuilder &RequestBuilder::updateFromRelativeUrl(const QUrl &url, bool merg
 	d->path.clear();
 	if(mergeQuery) {
 		QUrlQuery query(url.query());
-		for(const auto &item : query.queryItems())
+		for(const auto &item : query.queryItems(QUrl::FullyDecoded)) // clazy:exclude=range-loop
 			d->query.addQueryItem(item.first, item.second);
 	} else
 		d->query = QUrlQuery(url.query());
@@ -126,7 +126,7 @@ RequestBuilder &RequestBuilder::addParameter(const QString &name, const QString 
 
 RequestBuilder &RequestBuilder::addParameters(const QUrlQuery &parameters)
 {
-	for(const auto &param : parameters.queryItems())
+	for(const auto &param : parameters.queryItems(QUrl::FullyDecoded)) // clazy:exclude=range-loop
 		d->query.addQueryItem(param.first, param.second);
 	return *this;
 }
@@ -214,7 +214,7 @@ RequestBuilder &RequestBuilder::addPostParameter(const QString &name, const QStr
 
 RequestBuilder &RequestBuilder::addPostParameters(const QUrlQuery &parameters)
 {
-	for(const auto &param : parameters.queryItems())
+	for(const auto &param : parameters.queryItems(QUrl::FullyDecoded)) // clazy:exclude=range-loop
 		d->postQuery.addQueryItem(param.first, param.second);
 	d->body.clear();
 	d->headers.insert(RequestBuilderPrivate::ContentType, RequestBuilderPrivate::ContentTypeUrlEncoded);

@@ -24,11 +24,11 @@ public:
 	//! Copy constructor
 	RequestBuilder(const RequestBuilder &other);
 	//! Move constructor
-	RequestBuilder(RequestBuilder &&other);
+	RequestBuilder(RequestBuilder &&other) noexcept;
 	//! Copy assignment operator
 	RequestBuilder &operator=(const RequestBuilder &other);
 	//! Move assignment operator
-	RequestBuilder &operator=(RequestBuilder &&other);
+	RequestBuilder &operator=(RequestBuilder &&other) noexcept;
 	~RequestBuilder();
 
 	//! Sets the credentails of the URL

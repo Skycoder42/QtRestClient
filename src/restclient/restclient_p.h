@@ -8,6 +8,7 @@ namespace QtRestClient {
 
 class Q_RESTCLIENT_EXPORT RestClientPrivate
 {
+	Q_DISABLE_COPY(RestClientPrivate)
 	friend class RestClient;
 
 public:

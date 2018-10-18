@@ -31,13 +31,13 @@ template<typename T>
 Paging<T>::Paging(const Paging<T> &other) = default;
 
 template<typename T>
-Paging<T>::Paging(Paging<T> &&other) = default;
+Paging<T>::Paging(Paging<T> &&other) noexcept = default;
 
 template<typename T>
 Paging<T> &Paging<T>::operator=(const Paging<T> &other) = default;
 
 template<typename T>
-Paging<T> &Paging<T>::operator=(Paging<T> &&other) = default;
+Paging<T> &Paging<T>::operator=(Paging<T> &&other) noexcept = default;
 
 template<typename T>
 Paging<T>::Paging(IPaging *iPaging, const QList<T> &data, RestClient *client) :

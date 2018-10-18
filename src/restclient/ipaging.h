@@ -12,7 +12,7 @@ class QJsonSerializer;
 namespace QtRestClient {
 
 //! Interface to parse generic paging objects and operate on them
-class Q_RESTCLIENT_EXPORT IPaging
+class Q_RESTCLIENT_EXPORT IPaging  // clazy:exclude=copyable-polymorphic
 {
 public:
 	virtual ~IPaging();

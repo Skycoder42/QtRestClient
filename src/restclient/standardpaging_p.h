@@ -9,7 +9,7 @@
 namespace QtRestClient {
 
 class StandardPagingPrivate;
-class Q_RESTCLIENT_EXPORT StandardPaging : public IPaging
+class Q_RESTCLIENT_EXPORT StandardPaging : public IPaging // clazy:exclude=copyable-polymorphic
 {
 	Q_GADGET
 
@@ -25,7 +25,9 @@ public:
 	//! Creates a standard paging from a valid json object
 	StandardPaging();
 	StandardPaging(const StandardPaging &other);
-	StandardPaging(StandardPaging &&other);
+	StandardPaging(StandardPaging &&other) noexcept;
+	StandardPaging &operator=(const StandardPaging &other);
+	StandardPaging &operator=(StandardPaging &&other) noexcept;
 	~StandardPaging() override;
 
 	QJsonArray items() const override;

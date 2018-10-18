@@ -25,7 +25,11 @@ StandardPaging::StandardPaging() :
 
 StandardPaging::StandardPaging(const StandardPaging &other) = default;
 
-StandardPaging::StandardPaging(StandardPaging &&other) = default;
+StandardPaging::StandardPaging(StandardPaging &&other) noexcept = default;
+
+StandardPaging &StandardPaging::operator=(const StandardPaging &other) = default;
+
+StandardPaging &StandardPaging::operator=(StandardPaging &&other) noexcept = default;
 
 StandardPaging::~StandardPaging() = default;
 

@@ -7,6 +7,7 @@ namespace QtRestClient {
 
 class Q_RESTCLIENT_EXPORT RestClassPrivate
 {
+	Q_DISABLE_COPY(RestClassPrivate)
 public:
 	RestClient *client;
 	QStringList subPath;
