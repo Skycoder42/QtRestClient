@@ -1,23 +1,13 @@
-#-------------------------------------------------
-#
-# Project created by QtCreator 2017-03-05T23:26:44
-#
-#-------------------------------------------------
-
-CONFIG += qrestbuilder
-
-QT       += testlib
-QT       -= gui
-
-TARGET = tst_restbuilder
-CONFIG   += console
-CONFIG   -= app_bundle
-
 TEMPLATE = app
 
-include(../tests.pri)
+QT += testlib
+QT -= gui
+CONFIG += console
+CONFIG -= app_bundle
 
-DEFINES += SRCDIR=\\\"$$PWD/\\\"
+TARGET = tst_restbuilder
+
+include(../tests.pri)
 
 HEADERS += \
 	testmacro.h
@@ -30,3 +20,5 @@ REST_API_FILES += \
 	api_posts.xml \
 	test_api.xml \
 	simplepost.xml
+
+DEFINES += SRCDIR=\\\"$$PWD/\\\"

@@ -38,6 +38,13 @@ features.files = $$FEATURES
 features.path = $$[QT_HOST_DATA]/mkspecs/features/
 INSTALLS += features
 
+lib_bundle: FRAMEWORK_HEADERS.files += \
+	$$absolute_path(Paging, $$INC_PATH/include/$$MODULE_INCNAME) \
+	$$absolute_path(RestReply, $$INC_PATH/include/$$MODULE_INCNAME)
+else: gen_headers.files += \
+	$$absolute_path(Paging, $$INC_PATH/include/$$MODULE_INCNAME) \
+	$$absolute_path(RestReply, $$INC_PATH/include/$$MODULE_INCNAME)
+
 win32 {
 	QMAKE_TARGET_PRODUCT = "QtRestClient"
 	QMAKE_TARGET_COMPANY = "Skycoder42"

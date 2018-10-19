@@ -1,20 +1,14 @@
-#-------------------------------------------------
-#
-# Project created by QtCreator 2016-12-31T15:14:24
-#
-#-------------------------------------------------
+TEMPLATE = app
 
-QT       += testlib
-
-QT       -= gui
+QT += testlib
+QT -= gui
+CONFIG += console
+CONFIG -= app_bundle
 
 TARGET = tst_restclient
-CONFIG   += console
-CONFIG   -= app_bundle
-
-TEMPLATE = app
 
 include(../tests.pri)
 
 SOURCES += tst_restclient.cpp
+
 DEFINES += SRCDIR=\\\"$$PWD/\\\"

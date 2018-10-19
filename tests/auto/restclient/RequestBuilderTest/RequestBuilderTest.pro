@@ -1,20 +1,14 @@
-#-------------------------------------------------
-#
-# Project created by QtCreator 2016-12-31T15:08:07
-#
-#-------------------------------------------------
+TEMPLATE = app
 
-QT       += testlib
-
-QT       -= gui
+QT += testlib
+QT -= gui
+CONFIG += console
+CONFIG -= app_bundle
 
 TARGET = tst_requestbuilder
-CONFIG   += console
-CONFIG   -= app_bundle
-
-TEMPLATE = app
 
 include(../tests.pri)
 
 SOURCES += tst_requestbuilder.cpp
+
 DEFINES += SRCDIR=\\\"$$PWD/\\\"

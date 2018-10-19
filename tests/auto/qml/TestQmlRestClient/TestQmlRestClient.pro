@@ -1,7 +1,7 @@
 TEMPLATE = app
 
-CONFIG += qmltestcase console
 QT += restclient
+CONFIG += qmltestcase console
 
 TARGET = tst_qmlrestclient
 
@@ -26,7 +26,6 @@ DISTFILES += \
 QML_IMPORT_PATH = $$OUT_PWD/../../../../qml/
 DEFINES += SRCDIR=\\\"$$_PRO_FILE_PWD_/\\\"
 DEFINES += QML_PATH=\\\"$$QML_IMPORT_PATH\\\"
-
 
 LIB_PWD = $$OUT_PWD/../../restclient/testlib
 include(../../restclient/tests.pri)

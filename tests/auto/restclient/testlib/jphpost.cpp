@@ -12,8 +12,8 @@ JphPost::JphPost(int id, int userId, QString title, QString body, QObject *paren
 	QObject(parent),
 	id(id),
 	userId(userId),
-	title(title),
-	body(body)
+	title(std::move(title)),
+	body(std::move(body))
 {}
 
 bool JphPost::equals(const JphPost *left, const QObject *right)
