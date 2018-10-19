@@ -89,7 +89,7 @@ public:
 	//! Returns the network reply associated with the rest reply
 	QNetworkReply *networkReply() const;
 
-	RestReplyAwaitable await();
+	RestReplyAwaitable awaitable();
 
 public Q_SLOTS:
 	//! Aborts the request by calling QNetworkReply::abort

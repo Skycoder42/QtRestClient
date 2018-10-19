@@ -3,7 +3,7 @@
 		   base="QObject"
 		   export="TEST_EXPORT"
 		   namespace="TestSpace"
-		   qmlUri="de.skycoder42.qtrestclient.test 2.0">
+		   qmlUri="de.skycoder42.qtrestclient.test 2.1">
 	<Include local="true">post.h</Include>
 
 	<Path expr="false">posts</Path>

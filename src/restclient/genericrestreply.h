@@ -57,7 +57,7 @@ public:
 	//! @copydoc RestReply::disableAutoDelete
 	GenericRestReply<DataClassType, ErrorClassType> *disableAutoDelete();
 
-	GenericRestReplyAwaitable<DataClassType, ErrorClassType> await();
+	GenericRestReplyAwaitable<DataClassType, ErrorClassType> awaitable();
 
 private:
 	RestClient *client;
@@ -107,7 +107,7 @@ public:
 	//! @copydoc GenericRestReply::disableAutoDelete
 	GenericRestReply<void, ErrorClassType> *disableAutoDelete();
 
-	GenericRestReplyAwaitable<void, ErrorClassType> await();
+	GenericRestReplyAwaitable<void, ErrorClassType> awaitable();
 
 private:
 	RestClient *client;
@@ -159,7 +159,7 @@ public:
 	//! @copydoc GenericRestReply::disableAutoDelete
 	GenericRestReply<QList<DataClassType>, ErrorClassType> *disableAutoDelete();
 
-	GenericRestReplyAwaitable<QList<DataClassType>, ErrorClassType> await();
+	GenericRestReplyAwaitable<QList<DataClassType>, ErrorClassType> awaitable();
 
 private:
 	RestClient *client;
@@ -217,7 +217,7 @@ public:
 	//! @copydoc GenericRestReply::disableAutoDelete
 	GenericRestReply<Paging<DataClassType>, ErrorClassType> *disableAutoDelete();
 
-	GenericRestReplyAwaitable<Paging<DataClassType>, ErrorClassType> await();
+	GenericRestReplyAwaitable<Paging<DataClassType>, ErrorClassType> awaitable();
 
 private:
 	RestClient *client;

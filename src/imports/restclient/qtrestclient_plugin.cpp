@@ -30,7 +30,7 @@ void QtRestClientDeclarativeModule::registerTypes(const char *uri)
 	qRegisterMetaType<QtRestClient::QmlGenericRestReply*>();
 	qRegisterMetaType<QtRestClient::QmlPaging>();
 
-	//Version 1.3
+	//Version 2.0
 	qmlRegisterUncreatableType<QtRestClient::RestReply>(uri, 2, 0, "RestReply", QStringLiteral("RestReplies can only be returned from restclass methods"));
 	qmlRegisterUncreatableType<QtRestClient::QmlGenericRestReply>(uri, 2, 0, "GenericRestReply", QStringLiteral("GenericRestReplies can only be returned from generated restclass methods"));
 	qmlRegisterUncreatableType<QtRestClient::QmlPaging>(uri, 2, 0, "Paging", QStringLiteral("Pagings can only be returned from the QtRestClient singleton"));
@@ -40,6 +40,9 @@ void QtRestClientDeclarativeModule::registerTypes(const char *uri)
 
 	qmlRegisterSingletonType<QtRestClient::QmlRestClientGlobal>(uri, 2, 0, "QtRestClient", create_qtrestclient);
 
+	//Version 2.1
+	qmlRegisterModule(uri, 2, 1);
+
 	// Check to make shure no module update is forgotten
-	static_assert(VERSION_MAJOR == 2 && VERSION_MINOR == 0, "QML module version needs to be updated");
+	static_assert(VERSION_MAJOR == 2 && VERSION_MINOR == 1, "QML module version needs to be updated");
 }

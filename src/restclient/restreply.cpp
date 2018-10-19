@@ -150,7 +150,7 @@ QNetworkReply *RestReply::networkReply() const
 	return d->networkReply.data();
 }
 
-RestReplyAwaitable RestReply::await()
+RestReplyAwaitable RestReply::awaitable()
 {
 	return RestReplyAwaitable{this};
 }

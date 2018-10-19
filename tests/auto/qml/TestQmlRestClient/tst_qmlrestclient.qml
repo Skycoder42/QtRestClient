@@ -1,7 +1,7 @@
 import QtQuick 2.5
-import de.skycoder42.RestClient 2.0
+import de.skycoder42.RestClient 2.1
 import QtTest 1.1
-import de.skycoder42.qtrestclient.test 2.0
+import de.skycoder42.qtrestclient.test 2.1
 
 Item {
 	id: root
