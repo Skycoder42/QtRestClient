@@ -264,6 +264,23 @@ the API-aspect, and simply interpret it as class. However, it is not recommended
 
 
 
+@subsection generator_doc_PathGroup Element Type: PathGroup
+Encapsulates a parameterized path. This item is a mixed element. If the content is string content,
+it behaves like a @ref generator_doc_Expression. Alternatively, you can use the elements listed
+below to create a partially paramterized path.
+
+@subsubsection generator_doc_PathGroup_children
+The following elements can be specified in any order. They are combined to a single
+path where each of the child elements represents one part of the path, all seperated
+by a slash.
+
+Name			| XML-Type										| Limits	| Description
+----------------|-----------------------------------------------|-----------|-------------
+ FixedSegment	| @ref generator_doc_Expression "Expression"	| 0 - ∞		| A fixed path segment to be added to the requests url path
+ ParamSegment	| @ref generator_doc_BaseParam "BaseParam"		| 0 - ∞		| A path segment as method parameter to be added to the requests url path
+
+
+
 @subsection generator_doc_Method Element Type: Method
 The main aspect of your class are the methods. They define what can be done by your class. They define a HTTP-request, that will
 be wrapped into a c++ method by the builder.
@@ -281,15 +298,13 @@ be wrapped into a c++ method by the builder.
 @subsubsection generator_doc_Method_children Allowed Child Elements
 Name		| XML-Type										| Limits	| Description
 ------------|-----------------------------------------------|-----------|-------------
- Path		| @ref generator_doc_Expression "Expression"	| 0 - ∞		| A fixed path segment to be added to the requests url path
- PathParam	| @ref generator_doc_BaseParam "BaseParam"		| 0 - ∞		| A path segment as method parameter to be added to the requests url path
+ Path		| @ref generator_doc_PathGroup "PathGroup	"	| 0 - 1		| A path to be added relative to the class sub url
  Url		| @ref generator_doc_Expression "Expression"	| 0 - 1		| A fixed URL to be resolved relative to the classes sub URL
  Param		| @ref generator_doc_BaseParam "BaseParam"		| 0 - ∞		| Additional method parameters to be used as query or past params for the request (Depending on `postParams`)
  Header		| @ref generator_doc_FixedParam "FixedParam"	| 0 - ∞		| Additional HTTP-Headers to be added to the HTTP-Request
 
-@attention You cannot combine `<Path>/<PathParam>` with `<Url>`. Either you use a combination of `<Path>/<PathParam>` elements
-to build a combine path from them, or you use a single `<Url>` to specify a whole, unparametrized URL. You can of couse specify
-neither as well
+@attention You cannot combine `<Path>` with `<Url>`. Either you use a of `<Path>` element to build a combine path from them,
+or you use a single `<Url>` to specify a whole, unparametrized, absolute URL. You can of cause specify neither as well.
 
 
 
@@ -302,5 +317,11 @@ So besides that extra attribute, it behaves just like an expression.
  Name		| Allowed values		| Default/Required	| Description
 ------------|-----------------------|-------------------|-------------
  apiVersion	| QVersionNumber string	| <i>none</i>		| An optional API version to be appended to the base URL as extra path segment
+
+@section generator_xsd The XSD definition
+The following file is the XSD the builder operates on. You can use it to verify your rest api
+xml files.
+
+@include qrestbuilder.xsd
 
 */
