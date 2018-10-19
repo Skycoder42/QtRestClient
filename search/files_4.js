@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['restclass_2eh',['restclass.h',['../restclass_8h.html',1,'']]]
+  ['qjsonserializer_2eh',['qjsonserializer.h',['https://skycoder42.github.io/QJsonSerializer/qjsonserializer_8h.html',0,'']]]
 ];

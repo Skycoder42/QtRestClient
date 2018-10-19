@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['headerhash',['HeaderHash',['https://doc.qt.io/qt-5/class_qt_data_sync_1_1_remote_config.html#a0e5a28d7f916ae250968f35074783b92',0,'QtDataSync::RemoteConfig::HeaderHash()'],['../namespace_qt_rest_client.html#a7740c5315769e26058b0ddd005885bdd',1,'QtRestClient::HeaderHash()']]]
+  ['fatalerrorhandler',['FatalErrorHandler',['https://doc.qt.io/qt-5/class_qt_data_sync_1_1_setup.html#a28e6964249f79a99c5b61f3b5ffcf14d',0,'QtDataSync::Setup']]]
 ];

@@ -11,8 +11,12 @@ var searchData=
   ['openglfeatures',['OpenGLFeatures',['https://doc.qt.io/qt-5/qopenglfunctions.html#OpenGLFeature-enum',0,'QOpenGLFunctions']]],
   ['openmode',['OpenMode',['https://doc.qt.io/qt-5/qiodevice.html#OpenModeFlag-enum',0,'QIODevice']]],
   ['openmultipledocuments',['OpenMultipleDocuments',['https://doc.qt.io/qt-5/classde_1_1skycoder42_1_1_qt_mvvm_1_1_quick_1_1_file_chooser.html#afe5e1dd628f5dab82cd11e25ea0922d6a479f95775cc5043249d9bfd43fe16672',0,'de::skycoder42::QtMvvm::Quick::FileChooser']]],
+  ['operationcompleted',['OperationCompleted',['https://doc.qt.io/qt-5/class_qt_service_1_1_service.html#a51705e52f2b7ae200f5940a9f9b2649eab158ad1f7d6ea5cc4dec3f3a3b1b3fdf',0,'QtService::Service']]],
+  ['operationexit',['OperationExit',['https://doc.qt.io/qt-5/class_qt_service_1_1_service.html#a51705e52f2b7ae200f5940a9f9b2649ead32e565fa94be868a7f6d5b76cb1d8d8',0,'QtService::Service']]],
+  ['operationfailed',['OperationFailed',['https://doc.qt.io/qt-5/class_qt_service_1_1_service.html#a51705e52f2b7ae200f5940a9f9b2649ea64ed0c57845b65f7c0ba3e5bf6451f4a',0,'QtService::Service']]],
+  ['operationpending',['OperationPending',['https://doc.qt.io/qt-5/class_qt_service_1_1_service.html#a51705e52f2b7ae200f5940a9f9b2649ea32508f4828ab4a7326780ec3043de44e',0,'QtService::Service']]],
   ['operations',['Operations',['https://doc.qt.io/qt-5/qt3drender-qmemorybarrier.html#Operation-enum',0,'Qt3DRender::QMemoryBarrier']]],
   ['optimizationflags',['OptimizationFlags',['https://doc.qt.io/qt-5/qgraphicsview.html#OptimizationFlag-enum',0,'QGraphicsView']]],
-  ['options',['Options',['https://doc.qt.io/qt-5/qfiledialog.html#Option-enum',0,'QFileDialog::Options()'],['https://doc.qt.io/qt-5/qfileiconprovider.html#Option-enum',0,'QFileIconProvider::Options()']]],
+  ['options',['Options',['https://doc.qt.io/qt-5/qfileiconprovider.html#Option-enum',0,'QFileIconProvider::Options()'],['https://doc.qt.io/qt-5/qfiledialog.html#Option-enum',0,'QFileDialog::Options()']]],
   ['orientations',['Orientations',['https://doc.qt.io/qt-5/qt.html#Orientation-enum',0,'Qt']]]
 ];

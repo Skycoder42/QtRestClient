@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <QtHelpProject version="1.0">
-  <namespace>de.skycoder42.qtrestclient.200</namespace>
+  <namespace>de.skycoder42.qtrestclient.210</namespace>
   <virtualFolder>doc_qtrestclient</virtualFolder>
-  <customFilter name="RestClient 2.0.0">
+  <customFilter name="RestClient 2.1.0">
     <filterAttribute>qtrestclient</filterAttribute>
-    <filterAttribute>2.0.0</filterAttribute>
+    <filterAttribute>2.1.0</filterAttribute>
   </customFilter>
   <filterSection>
     <filterAttribute>doxygen</filterAttribute>
     <toc>
-      <section title="QtRestClient 2.0.0" ref="index.html">
+      <section title="QtRestClient 2.1.0" ref="index.html">
         <section title="Features" ref="index.html#qtrestclient_readme_label_0" />
         <section title="Download/Installation" ref="index.html#qtrestclient_readme_label_1" />
         <section title="Usage" ref="index.html#qtrestclient_readme_label_2">
@@ -72,6 +72,9 @@
             <section title="Element Type: Class" ref="generator.html#generator_doc_Class">
               <section title="Attributes" ref="generator.html#generator_doc_Class_attribs" />
             </section>
+            <section title="Element Type: PathGroup" ref="generator.html#generator_doc_PathGroup">
+              <section title="generator_doc_PathGroup_children" ref="generator.html#generator_doc_PathGroup_children" />
+            </section>
             <section title="Element Type: Method" ref="generator.html#generator_doc_Method">
               <section title="Attributes" ref="generator.html#generator_doc_Method_attribs" />
               <section title="Allowed Child Elements" ref="generator.html#generator_doc_Method_children" />
@@ -80,6 +83,7 @@
               <section title="Attributes" ref="generator.html#generator_doc_BaseUrl_attribs" />
             </section>
           </section>
+          <section title="The XSD definition" ref="generator.html#generator_xsd" />
         </section>
         <section title="Namespaces" ref="namespaces.html">
           <section title="Namespace List" ref="namespaces.html">
@@ -155,8 +159,31 @@
               </section>
             </section>
             <section title="QtRestClient" ref="namespace_qt_rest_client.html">
+              <section title="AwaitedException" ref="class_qt_rest_client_1_1_awaited_exception.html">
+                <section title="AwaitedException" ref="class_qt_rest_client_1_1_awaited_exception.html#a717362a82d226fd64b5d535d75fb736a" />
+                <section title="clone" ref="class_qt_rest_client_1_1_awaited_exception.html#acbec95bfede1eb1b6df84ea157ccf511" />
+                <section title="errorArray" ref="class_qt_rest_client_1_1_awaited_exception.html#a79388d74b3281ac769b759a02711a1f7" />
+                <section title="errorCode" ref="class_qt_rest_client_1_1_awaited_exception.html#a986c69532bc981baca21f529a06a8d12" />
+                <section title="errorData" ref="class_qt_rest_client_1_1_awaited_exception.html#ae4eb5c62810938e3afbe2da8e39a362b" />
+                <section title="errorObject" ref="class_qt_rest_client_1_1_awaited_exception.html#a00f55f9119d872cbb490a7167310f802" />
+                <section title="errorString" ref="class_qt_rest_client_1_1_awaited_exception.html#a3aaf2811c8ec5cb889fb10e7811d4f2d" />
+                <section title="errorString" ref="class_qt_rest_client_1_1_awaited_exception.html#a1a63f3f954463aabc63e835be29427ee" />
+                <section title="errorString" ref="class_qt_rest_client_1_1_awaited_exception.html#aeee20bfd556d8829a2c062c446dc6c8a" />
+                <section title="errorType" ref="class_qt_rest_client_1_1_awaited_exception.html#af216cb4baf05c0a830c42df5db6276fc" />
+                <section title="raise" ref="class_qt_rest_client_1_1_awaited_exception.html#a482b1896544af3e91994ac1fbb4a8cd2" />
+                <section title="what" ref="class_qt_rest_client_1_1_awaited_exception.html#a971a2d197e0415d2147d72c0ce192c7d" />
+              </section>
+              <section title="GenericAwaitedException" ref="class_qt_rest_client_1_1_generic_awaited_exception.html">
+                <section title="GenericAwaitedException" ref="class_qt_rest_client_1_1_generic_awaited_exception.html#abb611375374d3c6988986ede17d21f50" />
+                <section title="GenericAwaitedException" ref="class_qt_rest_client_1_1_generic_awaited_exception.html#a3861953df9b260829c01df8de21ec03e" />
+                <section title="clone" ref="class_qt_rest_client_1_1_generic_awaited_exception.html#a92b1ec95ccb23564e797fc3024ebbc2b" />
+                <section title="errorString" ref="class_qt_rest_client_1_1_generic_awaited_exception.html#a1e6acaf7baa2489a5931e788987b0220" />
+                <section title="genericError" ref="class_qt_rest_client_1_1_generic_awaited_exception.html#ac50a13eba4f0803bbedae5dda967bf79" />
+                <section title="raise" ref="class_qt_rest_client_1_1_generic_awaited_exception.html#af7642581060f9ffa4a7ddc0331c79589" />
+              </section>
               <section title="GenericRestReply" ref="class_qt_rest_client_1_1_generic_rest_reply.html">
                 <section title="GenericRestReply" ref="class_qt_rest_client_1_1_generic_rest_reply.html#a6c10690806b14fa0f8fb30b714def2dd" />
+                <section title="awaitable" ref="class_qt_rest_client_1_1_generic_rest_reply.html#a58269fe86b7b5bce045d90371c05e01a" />
                 <section title="disableAutoDelete" ref="class_qt_rest_client_1_1_generic_rest_reply.html#a158d99f82acfb11bdbac61fd1ed6cdc4" />
                 <section title="onAllErrors" ref="class_qt_rest_client_1_1_generic_rest_reply.html#ad897de97c81fe2214b6e37b37ee1be5a" />
                 <section title="onAllErrors" ref="class_qt_rest_client_1_1_generic_rest_reply.html#a84ea5a3066dc6653a92ab6e04a7a49e0" />
@@ -172,6 +199,7 @@
               </section>
               <section title="GenericRestReply&lt; Paging&lt; DataClassType &gt;, ErrorClassType &gt;" ref="class_qt_rest_client_1_1_generic_rest_reply_3_01_paging_3_01_data_class_type_01_4_00_01_error_class_type_01_4.html">
                 <section title="GenericRestReply" ref="class_qt_rest_client_1_1_generic_rest_reply_3_01_paging_3_01_data_class_type_01_4_00_01_error_class_type_01_4.html#afe6d7f0179396dff9578f74d0991b86e" />
+                <section title="awaitable" ref="class_qt_rest_client_1_1_generic_rest_reply_3_01_paging_3_01_data_class_type_01_4_00_01_error_class_type_01_4.html#af34c8dfa2c1a13b4cf190edc1632bfc3" />
                 <section title="disableAutoDelete" ref="class_qt_rest_client_1_1_generic_rest_reply_3_01_paging_3_01_data_class_type_01_4_00_01_error_class_type_01_4.html#a6db7f159086de74d6d41def9a9d0f04a" />
                 <section title="iterate" ref="class_qt_rest_client_1_1_generic_rest_reply_3_01_paging_3_01_data_class_type_01_4_00_01_error_class_type_01_4.html#a9e30288f43ce462cf99528122fd367aa" />
                 <section title="iterate" ref="class_qt_rest_client_1_1_generic_rest_reply_3_01_paging_3_01_data_class_type_01_4_00_01_error_class_type_01_4.html#ab54750b167f7b67847937638264e96ac" />
@@ -189,6 +217,7 @@
               </section>
               <section title="GenericRestReply&lt; QList&lt; DataClassType &gt;, ErrorClassType &gt;" ref="class_qt_rest_client_1_1_generic_rest_reply_3_01_q_list_3_01_data_class_type_01_4_00_01_error_class_type_01_4.html">
                 <section title="GenericRestReply" ref="class_qt_rest_client_1_1_generic_rest_reply_3_01_q_list_3_01_data_class_type_01_4_00_01_error_class_type_01_4.html#a6cebc4231bc6e974be10a765381e26a2" />
+                <section title="awaitable" ref="class_qt_rest_client_1_1_generic_rest_reply_3_01_q_list_3_01_data_class_type_01_4_00_01_error_class_type_01_4.html#a0310b9c504de31dbb7673767c9da6483" />
                 <section title="disableAutoDelete" ref="class_qt_rest_client_1_1_generic_rest_reply_3_01_q_list_3_01_data_class_type_01_4_00_01_error_class_type_01_4.html#a3fb5bdbc8cf40c4cf4776f624ac6f8bd" />
                 <section title="onAllErrors" ref="class_qt_rest_client_1_1_generic_rest_reply_3_01_q_list_3_01_data_class_type_01_4_00_01_error_class_type_01_4.html#a703a15e7c5ae80c80d67e6264302bf15" />
                 <section title="onAllErrors" ref="class_qt_rest_client_1_1_generic_rest_reply_3_01_q_list_3_01_data_class_type_01_4_00_01_error_class_type_01_4.html#a55f6d3f389d1810644c61c7bffb556b4" />
@@ -204,6 +233,7 @@
               </section>
               <section title="GenericRestReply&lt; void, ErrorClassType &gt;" ref="class_qt_rest_client_1_1_generic_rest_reply_3_01void_00_01_error_class_type_01_4.html">
                 <section title="GenericRestReply" ref="class_qt_rest_client_1_1_generic_rest_reply_3_01void_00_01_error_class_type_01_4.html#ae53348fd3561c2f03adb8f8bf4fe92c9" />
+                <section title="awaitable" ref="class_qt_rest_client_1_1_generic_rest_reply_3_01void_00_01_error_class_type_01_4.html#afff22704054f6e48af4604d02bccc460" />
                 <section title="disableAutoDelete" ref="class_qt_rest_client_1_1_generic_rest_reply_3_01void_00_01_error_class_type_01_4.html#aa6509ce6920d1b440438cbfacbf89abf" />
                 <section title="onAllErrors" ref="class_qt_rest_client_1_1_generic_rest_reply_3_01void_00_01_error_class_type_01_4.html#af7e07bdcb1c7483d8065e4d8bed29b83" />
                 <section title="onAllErrors" ref="class_qt_rest_client_1_1_generic_rest_reply_3_01void_00_01_error_class_type_01_4.html#a9cbed882f17410096ddeae5568508282" />
@@ -216,6 +246,24 @@
                 <section title="onSerializeException" ref="class_qt_rest_client_1_1_generic_rest_reply_3_01void_00_01_error_class_type_01_4.html#ad00622950977493e54cc0e048caf4445" />
                 <section title="onSucceeded" ref="class_qt_rest_client_1_1_generic_rest_reply_3_01void_00_01_error_class_type_01_4.html#a2ccb3407d2b25d6567a5fb7d3a6bac1f" />
                 <section title="onSucceeded" ref="class_qt_rest_client_1_1_generic_rest_reply_3_01void_00_01_error_class_type_01_4.html#a21306baec3d8e9781466e005432eee61" />
+              </section>
+              <section title="GenericRestReplyAwaitable" ref="class_qt_rest_client_1_1_generic_rest_reply_awaitable.html">
+                <section title="exceptionType" ref="class_qt_rest_client_1_1_generic_rest_reply_awaitable.html#af0b95b00ba185cfc15fc1419163f8042" />
+                <section title="type" ref="class_qt_rest_client_1_1_generic_rest_reply_awaitable.html#ac146413efd3f1ca51c6832577135a626" />
+                <section title="GenericRestReplyAwaitable" ref="class_qt_rest_client_1_1_generic_rest_reply_awaitable.html#a10e7a62251c3847ca31633df3a2a3d6c" />
+                <section title="GenericRestReplyAwaitable" ref="class_qt_rest_client_1_1_generic_rest_reply_awaitable.html#a0fe7448f809e66f484168782159b2970" />
+                <section title="operator=" ref="class_qt_rest_client_1_1_generic_rest_reply_awaitable.html#a1aa32150b4cef400054fabe7d4dc6a4a" />
+                <section title="prepare" ref="class_qt_rest_client_1_1_generic_rest_reply_awaitable.html#a60bcc033bc5a4a672982be995f4af9f2" />
+                <section title="result" ref="class_qt_rest_client_1_1_generic_rest_reply_awaitable.html#af98bddda582a0e4815ec41712367fd78" />
+              </section>
+              <section title="GenericRestReplyAwaitable&lt; void, ErrorClassType &gt;" ref="class_qt_rest_client_1_1_generic_rest_reply_awaitable_3_01void_00_01_error_class_type_01_4.html">
+                <section title="exceptionType" ref="class_qt_rest_client_1_1_generic_rest_reply_awaitable_3_01void_00_01_error_class_type_01_4.html#aa92180012ae4379a123255e4aad6bb9f" />
+                <section title="type" ref="class_qt_rest_client_1_1_generic_rest_reply_awaitable_3_01void_00_01_error_class_type_01_4.html#aaa316e9003f7865b87ffa6bc5b008fe8" />
+                <section title="GenericRestReplyAwaitable" ref="class_qt_rest_client_1_1_generic_rest_reply_awaitable_3_01void_00_01_error_class_type_01_4.html#a5418054f9d25a59b8d452d41c4f94753" />
+                <section title="GenericRestReplyAwaitable" ref="class_qt_rest_client_1_1_generic_rest_reply_awaitable_3_01void_00_01_error_class_type_01_4.html#ab07fb836f1d106905ea258de65a6ad45" />
+                <section title="operator=" ref="class_qt_rest_client_1_1_generic_rest_reply_awaitable_3_01void_00_01_error_class_type_01_4.html#a2ce71f92529d1d61eb13009ecf498483" />
+                <section title="prepare" ref="class_qt_rest_client_1_1_generic_rest_reply_awaitable_3_01void_00_01_error_class_type_01_4.html#a1279e3047f54c8266ac6f73f58ffa721" />
+                <section title="result" ref="class_qt_rest_client_1_1_generic_rest_reply_awaitable_3_01void_00_01_error_class_type_01_4.html#a060670947913bdc87013ec05200be2e9" />
               </section>
               <section title="IPaging" ref="class_qt_rest_client_1_1_i_paging.html">
                 <section title="~IPaging" ref="class_qt_rest_client_1_1_i_paging.html#a681b5920a37e29ac7500c4304a628b8e" />
@@ -232,7 +280,7 @@
               <section title="Paging" ref="class_qt_rest_client_1_1_paging.html">
                 <section title="Paging" ref="class_qt_rest_client_1_1_paging.html#a89a8bc1ef2235e9d1c329016802d81d8" />
                 <section title="Paging" ref="class_qt_rest_client_1_1_paging.html#a921eccd6e05083071461d83c8b486b9c" />
-                <section title="Paging" ref="class_qt_rest_client_1_1_paging.html#a7c400d2a3d48ea7eb0dcd3e9068490fa" />
+                <section title="Paging" ref="class_qt_rest_client_1_1_paging.html#a8eb743196f6dac3f5ad0c5e4de80b793" />
                 <section title="Paging" ref="class_qt_rest_client_1_1_paging.html#a45d8da23ff30326539945af8deaaea91" />
                 <section title="deleteAllItems" ref="class_qt_rest_client_1_1_paging.html#abe66bfe8ec498f28a12d65790a5a3f4b" />
                 <section title="hasNext" ref="class_qt_rest_client_1_1_paging.html#a2c3c0ecaa072d32c54ebc271e0a73195" />
@@ -249,7 +297,7 @@
                 <section title="nextUrl" ref="class_qt_rest_client_1_1_paging.html#a6238765daaceeef14c65fefc568d980d" />
                 <section title="offset" ref="class_qt_rest_client_1_1_paging.html#ac7108221715647052a98cc36d35152bb" />
                 <section title="operator=" ref="class_qt_rest_client_1_1_paging.html#af654f5c5a4699a0c0b68380ff0876c42" />
-                <section title="operator=" ref="class_qt_rest_client_1_1_paging.html#a8455a5266ac6fda1312fff2412914a2b" />
+                <section title="operator=" ref="class_qt_rest_client_1_1_paging.html#a4303ef4ed459d4e5d100a9122332a6f4" />
                 <section title="previous" ref="class_qt_rest_client_1_1_paging.html#a608ab30fc23465a6e9ed4b431a38211f" />
                 <section title="previousUrl" ref="class_qt_rest_client_1_1_paging.html#af7128746a7d429a682a1133412121e37" />
                 <section title="properties" ref="class_qt_rest_client_1_1_paging.html#af3655a004895630f322e79c023628653" />
@@ -263,7 +311,7 @@
               <section title="RequestBuilder" ref="class_qt_rest_client_1_1_request_builder.html">
                 <section title="RequestBuilder" ref="class_qt_rest_client_1_1_request_builder.html#a4723e4ef16dee376d26bfc217d618528" />
                 <section title="RequestBuilder" ref="class_qt_rest_client_1_1_request_builder.html#ac6f4b1a1a249299f91a19ef616e53f34" />
-                <section title="RequestBuilder" ref="class_qt_rest_client_1_1_request_builder.html#a5b1b5c46e4cb1c3f64e4ef73545f233e" />
+                <section title="RequestBuilder" ref="class_qt_rest_client_1_1_request_builder.html#af78e6fae46a8af51734c67438a81b7c1" />
                 <section title="~RequestBuilder" ref="class_qt_rest_client_1_1_request_builder.html#a89b36f407946f45cd9a0faf59ad5e558" />
                 <section title="addHeader" ref="class_qt_rest_client_1_1_request_builder.html#a050d890a89d498d359800453f9dbcddc" />
                 <section title="addHeaders" ref="class_qt_rest_client_1_1_request_builder.html#a3c2fa87af51335a59c6652e37dfbb2cf" />
@@ -276,7 +324,7 @@
                 <section title="build" ref="class_qt_rest_client_1_1_request_builder.html#a97d846f60c84beae9dc07e05a2e88820" />
                 <section title="buildUrl" ref="class_qt_rest_client_1_1_request_builder.html#abd7f1ee8d422f55d2d04148266ac5425" />
                 <section title="operator=" ref="class_qt_rest_client_1_1_request_builder.html#a4fc2e7fee149b2d1fa5565a8b96db1f1" />
-                <section title="operator=" ref="class_qt_rest_client_1_1_request_builder.html#a3ca26fca8268a318d21e0e74fdc031c2" />
+                <section title="operator=" ref="class_qt_rest_client_1_1_request_builder.html#a3fbb4aed3c676843570978c06c6b9eee" />
                 <section title="send" ref="class_qt_rest_client_1_1_request_builder.html#a571aa171f59c3f59e0cb810a6ff4a1b1" />
                 <section title="setAttribute" ref="class_qt_rest_client_1_1_request_builder.html#a43694248daf05f0244973f5dbb709a52" />
                 <section title="setAttributes" ref="class_qt_rest_client_1_1_request_builder.html#a333b157496ff6c6aa2207d4aa4a549d8" />
@@ -427,6 +475,7 @@
                 <section title="abort" ref="class_qt_rest_client_1_1_rest_reply.html#ab9f0f6ac1b76f3d5d5a39ecdcbeacd9c" />
                 <section title="autoDelete" ref="class_qt_rest_client_1_1_rest_reply.html#a3db48238db31c1eb6e2a9a321ed41189" />
                 <section title="autoDeleteChanged" ref="class_qt_rest_client_1_1_rest_reply.html#a4d668de4196e4d0f08836fb450f0f5d8" />
+                <section title="awaitable" ref="class_qt_rest_client_1_1_rest_reply.html#ab30ee9e5989351650df18a75eec5d135" />
                 <section title="completed" ref="class_qt_rest_client_1_1_rest_reply.html#a7bf6b158f9d5de4f756f670f2e6b822e" />
                 <section title="disableAutoDelete" ref="class_qt_rest_client_1_1_rest_reply.html#a3c07dfee6aa61ee0ec46b8ae220f697c" />
                 <section title="downloadProgress" ref="class_qt_rest_client_1_1_rest_reply.html#a20717c0706d76cd5b8bd938b1830121b" />
@@ -459,6 +508,16 @@
                 <section title="RestReplyPrivate" ref="class_qt_rest_client_1_1_rest_reply.html#a87f1448763acf0374638eecd63f64877" />
                 <section title="autoDelete" ref="class_qt_rest_client_1_1_rest_reply.html#ae22e4e64eeefdec18bbd42f2174a750c" />
               </section>
+              <section title="RestReplyAwaitable" ref="class_qt_rest_client_1_1_rest_reply_awaitable.html">
+                <section title="exceptionType" ref="class_qt_rest_client_1_1_rest_reply_awaitable.html#a6c36de581ff2b22a5f3783883a028e44" />
+                <section title="type" ref="class_qt_rest_client_1_1_rest_reply_awaitable.html#a32418bc6e3a346b8373a1b64d8383e1a" />
+                <section title="RestReplyAwaitable" ref="class_qt_rest_client_1_1_rest_reply_awaitable.html#a9d1c90d335a848387cf0ec6e6fbaf71d" />
+                <section title="RestReplyAwaitable" ref="class_qt_rest_client_1_1_rest_reply_awaitable.html#a392159e1018e238a130e294d9c858f83" />
+                <section title="~RestReplyAwaitable" ref="class_qt_rest_client_1_1_rest_reply_awaitable.html#aba66e86a65cb2dbf504a6514d2fd552f" />
+                <section title="operator=" ref="class_qt_rest_client_1_1_rest_reply_awaitable.html#a24e99b82cf9b7e5aea45cdfe4b887d3f" />
+                <section title="prepare" ref="class_qt_rest_client_1_1_rest_reply_awaitable.html#ae0f7a16b61352708cacff718fe4142b7" />
+                <section title="result" ref="class_qt_rest_client_1_1_rest_reply_awaitable.html#a24b7a116e340c501fec8e8ed33f6b4f6" />
+              </section>
               <section title="Simple" ref="namespace_qt_rest_client.html#class_qt_rest_client_1_1_simple" />
               <section title="Simple&lt; T *, typename std::enable_if&lt; std::is_base_of&lt; QObject, T &gt;::value &gt;::type &gt;" ref="class_qt_rest_client_1_1_simple_3_01_t_01_5_00_01typename_01std_1_1enable__if_3_01std_1_1is__basd53df30d33fde91b51f378efb6baeecc.html">
                 <section title="Simple" ref="class_qt_rest_client_1_1_simple_3_01_t_01_5_00_01typename_01std_1_1enable__if_3_01std_1_1is__basd53df30d33fde91b51f378efb6baeecc.html#af87db7e0687c713b11ffb1c20ce7082b" />
@@ -485,10 +544,17 @@
           </section>
           <section title="Class Index" ref="classes.html" />
           <section title="Class Hierarchy" ref="hierarchy.html">
+            <section title="QtRestClient::GenericRestReplyAwaitable&lt; DataClassType, ErrorClassType &gt;" ref="class_qt_rest_client_1_1_generic_rest_reply_awaitable.html" />
+            <section title="QtRestClient::GenericRestReplyAwaitable&lt; void, ErrorClassType &gt;" ref="class_qt_rest_client_1_1_generic_rest_reply_awaitable_3_01void_00_01_error_class_type_01_4.html" />
             <section title="QtRestClient::IPaging" ref="class_qt_rest_client_1_1_i_paging.html" />
-            <section title="de::skycoder42::QtRestClient::Paging" ref="classde_1_1skycoder42_1_1_qt_rest_client_1_1_paging.html" />
             <section title="QtRestClient::Paging&lt; T &gt;" ref="class_qt_rest_client_1_1_paging.html" />
+            <section title="de::skycoder42::QtRestClient::Paging" ref="classde_1_1skycoder42_1_1_qt_rest_client_1_1_paging.html" />
             <section title="QtRestClient::PagingFactory" ref="class_qt_rest_client_1_1_paging_factory.html" />
+            <section title="QException" ref="class_q_exception.html">
+              <section title="QtRestClient::AwaitedException" ref="class_qt_rest_client_1_1_awaited_exception.html">
+                <section title="QtRestClient::GenericAwaitedException&lt; ErrorClassType &gt;" ref="class_qt_rest_client_1_1_generic_awaited_exception.html" />
+              </section>
+            </section>
             <section title="QObject" ref="class_q_object.html">
               <section title="QtRestClient::RestClass" ref="class_qt_rest_client_1_1_rest_class.html" />
               <section title="QtRestClient::RestClient" ref="class_qt_rest_client_1_1_rest_client.html">
@@ -508,6 +574,7 @@
               <section title="de::skycoder42::QtRestClient::RestClass" ref="classde_1_1skycoder42_1_1_qt_rest_client_1_1_rest_class.html" />
             </section>
             <section title="QtRestClient::RequestBuilder" ref="class_qt_rest_client_1_1_request_builder.html" />
+            <section title="QtRestClient::RestReplyAwaitable" ref="class_qt_rest_client_1_1_rest_reply_awaitable.html" />
             <section title="QtRestClient::Simple&lt; T, typename &gt;" ref="namespace_qt_rest_client.html#class_qt_rest_client_1_1_simple" />
             <section title="QtRestClient::Simple&lt; T, typename std::enable_if&lt; std::is_void&lt; typename T::QtGadgetHelper &gt;::value &gt;::type &gt;" ref="class_qt_rest_client_1_1_simple_3_01_t_00_01typename_01std_1_1enable__if_3_01std_1_1is__void_3_0e3917a0d7780becccdeb92e5e53ff1ab.html" />
           </section>
@@ -532,6 +599,7 @@
               <section title="s" ref="functions_s.html" />
               <section title="t" ref="functions_t.html" />
               <section title="u" ref="functions_u.html" />
+              <section title="w" ref="functions_w.html" />
             </section>
             <section title="Functions" ref="functions_func.html">
               <section title="a" ref="functions_func.html" />
@@ -552,8 +620,10 @@
               <section title="s" ref="functions_func_s.html" />
               <section title="t" ref="functions_func_t.html" />
               <section title="u" ref="functions_func_u.html" />
+              <section title="w" ref="functions_func_w.html" />
             </section>
             <section title="Variables" ref="functions_vars.html" />
+            <section title="Typedefs" ref="functions_type.html" />
             <section title="Enumerations" ref="functions_enum.html" />
             <section title="Enumerator" ref="functions_eval.html" />
             <section title="Properties" ref="functions_prop.html" />
@@ -661,6 +731,7 @@
             <section title="restclient.cpp" ref="restclient_8cpp_source.html" />
             <section title="restclient.h" ref="restclient_8h_source.html" />
             <section title="restreply.h" ref="restreply_8h_source.html" />
+            <section title="restreplyawaitable.h" ref="restreplyawaitable_8h_source.html" />
             <section title="simple.h" ref="simple_8h.html">
               <section title="Simple" ref="namespace_qt_rest_client.html#class_qt_rest_client_1_1_simple" />
               <section title="Simple&lt; T *, typename std::enable_if&lt; std::is_base_of&lt; QObject, T &gt;::value &gt;::type &gt;" ref="class_qt_rest_client_1_1_simple_3_01_t_01_5_00_01typename_01std_1_1enable__if_3_01std_1_1is__basd53df30d33fde91b51f378efb6baeecc.html">
@@ -756,10 +827,12 @@
       <keyword name="requestAttributes" id="QtRestClient::RestClient::requestAttributes" ref="class_qt_rest_client_1_1_rest_client.html#ad4a4f3e614bb525e756d2f85869a0307" />
       <keyword name="sslConfiguration" id="QtRestClient::RestClient::sslConfiguration" ref="class_qt_rest_client_1_1_rest_client.html#a2221112d8e0ae90c5125755a7a865a92" />
       <keyword name="builder" id="QtRestClient::RestClient::builder" ref="class_qt_rest_client_1_1_rest_client.html#adb823c9a8c96ce499c5dc4c81af2628c" />
+      <keyword name="metaObject" id="QObject::metaObject" ref="class_q_object.html#metaObject" />
+      <keyword name="qt_metacast" id="QObject::qt_metacast" ref="class_q_object.html#qt_metacast" />
+      <keyword name="qt_metacall" id="QObject::qt_metacall" ref="class_q_object.html#qt_metacall" />
       <keyword name="QObject" id="QObject::QObject" ref="class_q_object.html#QObject" />
       <keyword name="event" id="QObject::event" ref="class_q_object.html#event" />
       <keyword name="eventFilter" id="QObject::eventFilter" ref="class_q_object.html#eventFilter" />
-      <keyword name="metaObject" id="QObject::metaObject" ref="class_q_object.html#metaObject" />
       <keyword name="objectName" id="QObject::objectName" ref="class_q_object.html#objectName-prop" />
       <keyword name="setObjectName" id="QObject::setObjectName" ref="class_q_object.html#objectName-prop" />
       <keyword name="isWidgetType" id="QObject::isWidgetType" ref="class_q_object.html#isWidgetType" />
@@ -851,6 +924,36 @@
       <keyword name="apiClient" id="QtRestClient::apiClient" ref="namespace_qt_rest_client.html#a5806ebe135d28da2ff59ed7bb6d4734a" />
       <keyword name="apiRootClass" id="QtRestClient::apiRootClass" ref="namespace_qt_rest_client.html#a681be0d82f7bfa8bb977371af0187a91" />
       <keyword name="createApiClass" id="QtRestClient::createApiClass" ref="namespace_qt_rest_client.html#a4945a084dd4f6353820ceb5485ddf035" />
+      <keyword name="QtRestClient::AwaitedException" id="QtRestClient::AwaitedException" ref="class_qt_rest_client_1_1_awaited_exception.html" />
+      <keyword name="AwaitedException" id="QtRestClient::AwaitedException::AwaitedException" ref="class_qt_rest_client_1_1_awaited_exception.html#a717362a82d226fd64b5d535d75fb736a" />
+      <keyword name="errorCode" id="QtRestClient::AwaitedException::errorCode" ref="class_qt_rest_client_1_1_awaited_exception.html#a986c69532bc981baca21f529a06a8d12" />
+      <keyword name="errorType" id="QtRestClient::AwaitedException::errorType" ref="class_qt_rest_client_1_1_awaited_exception.html#af216cb4baf05c0a830c42df5db6276fc" />
+      <keyword name="errorData" id="QtRestClient::AwaitedException::errorData" ref="class_qt_rest_client_1_1_awaited_exception.html#ae4eb5c62810938e3afbe2da8e39a362b" />
+      <keyword name="errorObject" id="QtRestClient::AwaitedException::errorObject" ref="class_qt_rest_client_1_1_awaited_exception.html#a00f55f9119d872cbb490a7167310f802" />
+      <keyword name="errorArray" id="QtRestClient::AwaitedException::errorArray" ref="class_qt_rest_client_1_1_awaited_exception.html#a79388d74b3281ac769b759a02711a1f7" />
+      <keyword name="errorString" id="QtRestClient::AwaitedException::errorString" ref="class_qt_rest_client_1_1_awaited_exception.html#a3aaf2811c8ec5cb889fb10e7811d4f2d" />
+      <keyword name="errorString" id="QtRestClient::AwaitedException::errorString" ref="class_qt_rest_client_1_1_awaited_exception.html#a1a63f3f954463aabc63e835be29427ee" />
+      <keyword name="errorString" id="QtRestClient::AwaitedException::errorString" ref="class_qt_rest_client_1_1_awaited_exception.html#aeee20bfd556d8829a2c062c446dc6c8a" />
+      <keyword name="what" id="QtRestClient::AwaitedException::what" ref="class_qt_rest_client_1_1_awaited_exception.html#a971a2d197e0415d2147d72c0ce192c7d" />
+      <keyword name="raise" id="QtRestClient::AwaitedException::raise" ref="class_qt_rest_client_1_1_awaited_exception.html#a482b1896544af3e91994ac1fbb4a8cd2" />
+      <keyword name="clone" id="QtRestClient::AwaitedException::clone" ref="class_qt_rest_client_1_1_awaited_exception.html#acbec95bfede1eb1b6df84ea157ccf511" />
+      <keyword name="QtRestClient::GenericAwaitedException" id="QtRestClient::GenericAwaitedException" ref="class_qt_rest_client_1_1_generic_awaited_exception.html" />
+      <keyword name="GenericAwaitedException" id="QtRestClient::GenericAwaitedException::GenericAwaitedException" ref="class_qt_rest_client_1_1_generic_awaited_exception.html#abb611375374d3c6988986ede17d21f50" />
+      <keyword name="GenericAwaitedException" id="QtRestClient::GenericAwaitedException::GenericAwaitedException" ref="class_qt_rest_client_1_1_generic_awaited_exception.html#a3861953df9b260829c01df8de21ec03e" />
+      <keyword name="genericError" id="QtRestClient::GenericAwaitedException::genericError" ref="class_qt_rest_client_1_1_generic_awaited_exception.html#ac50a13eba4f0803bbedae5dda967bf79" />
+      <keyword name="errorString" id="QtRestClient::GenericAwaitedException::errorString" ref="class_qt_rest_client_1_1_generic_awaited_exception.html#a1e6acaf7baa2489a5931e788987b0220" />
+      <keyword name="raise" id="QtRestClient::GenericAwaitedException::raise" ref="class_qt_rest_client_1_1_generic_awaited_exception.html#af7642581060f9ffa4a7ddc0331c79589" />
+      <keyword name="clone" id="QtRestClient::GenericAwaitedException::clone" ref="class_qt_rest_client_1_1_generic_awaited_exception.html#a92b1ec95ccb23564e797fc3024ebbc2b" />
+      <keyword name="AwaitedException" id="QtRestClient::AwaitedException::AwaitedException" ref="class_qt_rest_client_1_1_awaited_exception.html#a717362a82d226fd64b5d535d75fb736a" />
+      <keyword name="errorCode" id="QtRestClient::AwaitedException::errorCode" ref="class_qt_rest_client_1_1_awaited_exception.html#a986c69532bc981baca21f529a06a8d12" />
+      <keyword name="errorType" id="QtRestClient::AwaitedException::errorType" ref="class_qt_rest_client_1_1_awaited_exception.html#af216cb4baf05c0a830c42df5db6276fc" />
+      <keyword name="errorData" id="QtRestClient::AwaitedException::errorData" ref="class_qt_rest_client_1_1_awaited_exception.html#ae4eb5c62810938e3afbe2da8e39a362b" />
+      <keyword name="errorObject" id="QtRestClient::AwaitedException::errorObject" ref="class_qt_rest_client_1_1_awaited_exception.html#a00f55f9119d872cbb490a7167310f802" />
+      <keyword name="errorArray" id="QtRestClient::AwaitedException::errorArray" ref="class_qt_rest_client_1_1_awaited_exception.html#a79388d74b3281ac769b759a02711a1f7" />
+      <keyword name="errorString" id="QtRestClient::AwaitedException::errorString" ref="class_qt_rest_client_1_1_awaited_exception.html#a3aaf2811c8ec5cb889fb10e7811d4f2d" />
+      <keyword name="errorString" id="QtRestClient::AwaitedException::errorString" ref="class_qt_rest_client_1_1_awaited_exception.html#a1a63f3f954463aabc63e835be29427ee" />
+      <keyword name="errorString" id="QtRestClient::AwaitedException::errorString" ref="class_qt_rest_client_1_1_awaited_exception.html#aeee20bfd556d8829a2c062c446dc6c8a" />
+      <keyword name="what" id="QtRestClient::AwaitedException::what" ref="class_qt_rest_client_1_1_awaited_exception.html#a971a2d197e0415d2147d72c0ce192c7d" />
       <keyword name="QtRestClient::GenericRestReply" id="QtRestClient::GenericRestReply" ref="class_qt_rest_client_1_1_generic_rest_reply.html" />
       <keyword name="GenericRestReply" id="QtRestClient::GenericRestReply::GenericRestReply" ref="class_qt_rest_client_1_1_generic_rest_reply.html#a6c10690806b14fa0f8fb30b714def2dd" />
       <keyword name="onSucceeded" id="QtRestClient::GenericRestReply::onSucceeded" ref="class_qt_rest_client_1_1_generic_rest_reply.html#a82f49c9ae519cfeef3d9d057cbbb9aba" />
@@ -865,6 +968,7 @@
       <keyword name="onError" id="QtRestClient::GenericRestReply::onError" ref="class_qt_rest_client_1_1_generic_rest_reply.html#adb8b7fff3106773b9ce120b8ad24e442" />
       <keyword name="onError" id="QtRestClient::GenericRestReply::onError" ref="class_qt_rest_client_1_1_generic_rest_reply.html#a4163818cbae3b300c0873a8671ee84b1" />
       <keyword name="disableAutoDelete" id="QtRestClient::GenericRestReply::disableAutoDelete" ref="class_qt_rest_client_1_1_generic_rest_reply.html#a158d99f82acfb11bdbac61fd1ed6cdc4" />
+      <keyword name="awaitable" id="QtRestClient::GenericRestReply::awaitable" ref="class_qt_rest_client_1_1_generic_rest_reply.html#a58269fe86b7b5bce045d90371c05e01a" />
       <keyword name="RestReply" id="QtRestClient::RestReply::RestReply" ref="class_qt_rest_client_1_1_rest_reply.html#acce4889dd37487d361d469d9bfb811e2" />
       <keyword name="onSucceeded" id="QtRestClient::RestReply::onSucceeded" ref="class_qt_rest_client_1_1_rest_reply.html#ace76499e9dc2fc87a290c061268f88bd" />
       <keyword name="onSucceeded" id="QtRestClient::RestReply::onSucceeded" ref="class_qt_rest_client_1_1_rest_reply.html#acadab0dced077b6c0e2d6dc30c8a98f6" />
@@ -885,10 +989,13 @@
       <keyword name="disableAutoDelete" id="QtRestClient::RestReply::disableAutoDelete" ref="class_qt_rest_client_1_1_rest_reply.html#a3c07dfee6aa61ee0ec46b8ae220f697c" />
       <keyword name="autoDelete" id="QtRestClient::RestReply::autoDelete" ref="class_qt_rest_client_1_1_rest_reply.html#a3db48238db31c1eb6e2a9a321ed41189" />
       <keyword name="networkReply" id="QtRestClient::RestReply::networkReply" ref="class_qt_rest_client_1_1_rest_reply.html#a105d2e27ae89ca6ac2801986bc8ab37b" />
+      <keyword name="awaitable" id="QtRestClient::RestReply::awaitable" ref="class_qt_rest_client_1_1_rest_reply.html#ab30ee9e5989351650df18a75eec5d135" />
+      <keyword name="metaObject" id="QObject::metaObject" ref="class_q_object.html#metaObject" />
+      <keyword name="qt_metacast" id="QObject::qt_metacast" ref="class_q_object.html#qt_metacast" />
+      <keyword name="qt_metacall" id="QObject::qt_metacall" ref="class_q_object.html#qt_metacall" />
       <keyword name="QObject" id="QObject::QObject" ref="class_q_object.html#QObject" />
       <keyword name="event" id="QObject::event" ref="class_q_object.html#event" />
       <keyword name="eventFilter" id="QObject::eventFilter" ref="class_q_object.html#eventFilter" />
-      <keyword name="metaObject" id="QObject::metaObject" ref="class_q_object.html#metaObject" />
       <keyword name="objectName" id="QObject::objectName" ref="class_q_object.html#objectName-prop" />
       <keyword name="setObjectName" id="QObject::setObjectName" ref="class_q_object.html#objectName-prop" />
       <keyword name="isWidgetType" id="QObject::isWidgetType" ref="class_q_object.html#isWidgetType" />
@@ -974,6 +1081,7 @@
       <keyword name="onError" id="QtRestClient::GenericRestReply&lt; Paging&lt; DataClassType &gt;, ErrorClassType &gt;::onError" ref="class_qt_rest_client_1_1_generic_rest_reply_3_01_paging_3_01_data_class_type_01_4_00_01_error_class_type_01_4.html#af37b528316852daad33f3657dbf77a46" />
       <keyword name="onError" id="QtRestClient::GenericRestReply&lt; Paging&lt; DataClassType &gt;, ErrorClassType &gt;::onError" ref="class_qt_rest_client_1_1_generic_rest_reply_3_01_paging_3_01_data_class_type_01_4_00_01_error_class_type_01_4.html#a99fa152bb0f2d3af4fc42614378c609b" />
       <keyword name="disableAutoDelete" id="QtRestClient::GenericRestReply&lt; Paging&lt; DataClassType &gt;, ErrorClassType &gt;::disableAutoDelete" ref="class_qt_rest_client_1_1_generic_rest_reply_3_01_paging_3_01_data_class_type_01_4_00_01_error_class_type_01_4.html#a6db7f159086de74d6d41def9a9d0f04a" />
+      <keyword name="awaitable" id="QtRestClient::GenericRestReply&lt; Paging&lt; DataClassType &gt;, ErrorClassType &gt;::awaitable" ref="class_qt_rest_client_1_1_generic_rest_reply_3_01_paging_3_01_data_class_type_01_4_00_01_error_class_type_01_4.html#af34c8dfa2c1a13b4cf190edc1632bfc3" />
       <keyword name="RestReply" id="QtRestClient::RestReply::RestReply" ref="class_qt_rest_client_1_1_rest_reply.html#acce4889dd37487d361d469d9bfb811e2" />
       <keyword name="onSucceeded" id="QtRestClient::RestReply::onSucceeded" ref="class_qt_rest_client_1_1_rest_reply.html#ace76499e9dc2fc87a290c061268f88bd" />
       <keyword name="onSucceeded" id="QtRestClient::RestReply::onSucceeded" ref="class_qt_rest_client_1_1_rest_reply.html#acadab0dced077b6c0e2d6dc30c8a98f6" />
@@ -994,10 +1102,13 @@
       <keyword name="disableAutoDelete" id="QtRestClient::RestReply::disableAutoDelete" ref="class_qt_rest_client_1_1_rest_reply.html#a3c07dfee6aa61ee0ec46b8ae220f697c" />
       <keyword name="autoDelete" id="QtRestClient::RestReply::autoDelete" ref="class_qt_rest_client_1_1_rest_reply.html#a3db48238db31c1eb6e2a9a321ed41189" />
       <keyword name="networkReply" id="QtRestClient::RestReply::networkReply" ref="class_qt_rest_client_1_1_rest_reply.html#a105d2e27ae89ca6ac2801986bc8ab37b" />
+      <keyword name="awaitable" id="QtRestClient::RestReply::awaitable" ref="class_qt_rest_client_1_1_rest_reply.html#ab30ee9e5989351650df18a75eec5d135" />
+      <keyword name="metaObject" id="QObject::metaObject" ref="class_q_object.html#metaObject" />
+      <keyword name="qt_metacast" id="QObject::qt_metacast" ref="class_q_object.html#qt_metacast" />
+      <keyword name="qt_metacall" id="QObject::qt_metacall" ref="class_q_object.html#qt_metacall" />
       <keyword name="QObject" id="QObject::QObject" ref="class_q_object.html#QObject" />
       <keyword name="event" id="QObject::event" ref="class_q_object.html#event" />
       <keyword name="eventFilter" id="QObject::eventFilter" ref="class_q_object.html#eventFilter" />
-      <keyword name="metaObject" id="QObject::metaObject" ref="class_q_object.html#metaObject" />
       <keyword name="objectName" id="QObject::objectName" ref="class_q_object.html#objectName-prop" />
       <keyword name="setObjectName" id="QObject::setObjectName" ref="class_q_object.html#objectName-prop" />
       <keyword name="isWidgetType" id="QObject::isWidgetType" ref="class_q_object.html#isWidgetType" />
@@ -1081,6 +1192,7 @@
       <keyword name="onError" id="QtRestClient::GenericRestReply&lt; QList&lt; DataClassType &gt;, ErrorClassType &gt;::onError" ref="class_qt_rest_client_1_1_generic_rest_reply_3_01_q_list_3_01_data_class_type_01_4_00_01_error_class_type_01_4.html#a7d2e53ea2a959ca441a2af1333a97b9a" />
       <keyword name="onError" id="QtRestClient::GenericRestReply&lt; QList&lt; DataClassType &gt;, ErrorClassType &gt;::onError" ref="class_qt_rest_client_1_1_generic_rest_reply_3_01_q_list_3_01_data_class_type_01_4_00_01_error_class_type_01_4.html#ac505cc6adc258e492a3970d308e8b15f" />
       <keyword name="disableAutoDelete" id="QtRestClient::GenericRestReply&lt; QList&lt; DataClassType &gt;, ErrorClassType &gt;::disableAutoDelete" ref="class_qt_rest_client_1_1_generic_rest_reply_3_01_q_list_3_01_data_class_type_01_4_00_01_error_class_type_01_4.html#a3fb5bdbc8cf40c4cf4776f624ac6f8bd" />
+      <keyword name="awaitable" id="QtRestClient::GenericRestReply&lt; QList&lt; DataClassType &gt;, ErrorClassType &gt;::awaitable" ref="class_qt_rest_client_1_1_generic_rest_reply_3_01_q_list_3_01_data_class_type_01_4_00_01_error_class_type_01_4.html#a0310b9c504de31dbb7673767c9da6483" />
       <keyword name="RestReply" id="QtRestClient::RestReply::RestReply" ref="class_qt_rest_client_1_1_rest_reply.html#acce4889dd37487d361d469d9bfb811e2" />
       <keyword name="onSucceeded" id="QtRestClient::RestReply::onSucceeded" ref="class_qt_rest_client_1_1_rest_reply.html#ace76499e9dc2fc87a290c061268f88bd" />
       <keyword name="onSucceeded" id="QtRestClient::RestReply::onSucceeded" ref="class_qt_rest_client_1_1_rest_reply.html#acadab0dced077b6c0e2d6dc30c8a98f6" />
@@ -1101,10 +1213,13 @@
       <keyword name="disableAutoDelete" id="QtRestClient::RestReply::disableAutoDelete" ref="class_qt_rest_client_1_1_rest_reply.html#a3c07dfee6aa61ee0ec46b8ae220f697c" />
       <keyword name="autoDelete" id="QtRestClient::RestReply::autoDelete" ref="class_qt_rest_client_1_1_rest_reply.html#a3db48238db31c1eb6e2a9a321ed41189" />
       <keyword name="networkReply" id="QtRestClient::RestReply::networkReply" ref="class_qt_rest_client_1_1_rest_reply.html#a105d2e27ae89ca6ac2801986bc8ab37b" />
+      <keyword name="awaitable" id="QtRestClient::RestReply::awaitable" ref="class_qt_rest_client_1_1_rest_reply.html#ab30ee9e5989351650df18a75eec5d135" />
+      <keyword name="metaObject" id="QObject::metaObject" ref="class_q_object.html#metaObject" />
+      <keyword name="qt_metacast" id="QObject::qt_metacast" ref="class_q_object.html#qt_metacast" />
+      <keyword name="qt_metacall" id="QObject::qt_metacall" ref="class_q_object.html#qt_metacall" />
       <keyword name="QObject" id="QObject::QObject" ref="class_q_object.html#QObject" />
       <keyword name="event" id="QObject::event" ref="class_q_object.html#event" />
       <keyword name="eventFilter" id="QObject::eventFilter" ref="class_q_object.html#eventFilter" />
-      <keyword name="metaObject" id="QObject::metaObject" ref="class_q_object.html#metaObject" />
       <keyword name="objectName" id="QObject::objectName" ref="class_q_object.html#objectName-prop" />
       <keyword name="setObjectName" id="QObject::setObjectName" ref="class_q_object.html#objectName-prop" />
       <keyword name="isWidgetType" id="QObject::isWidgetType" ref="class_q_object.html#isWidgetType" />
@@ -1188,6 +1303,7 @@
       <keyword name="onError" id="QtRestClient::GenericRestReply&lt; void, ErrorClassType &gt;::onError" ref="class_qt_rest_client_1_1_generic_rest_reply_3_01void_00_01_error_class_type_01_4.html#a2b2d0755321bb15c53c279853f8c485a" />
       <keyword name="onError" id="QtRestClient::GenericRestReply&lt; void, ErrorClassType &gt;::onError" ref="class_qt_rest_client_1_1_generic_rest_reply_3_01void_00_01_error_class_type_01_4.html#ac4e3c1068a65289580808f68444a143a" />
       <keyword name="disableAutoDelete" id="QtRestClient::GenericRestReply&lt; void, ErrorClassType &gt;::disableAutoDelete" ref="class_qt_rest_client_1_1_generic_rest_reply_3_01void_00_01_error_class_type_01_4.html#aa6509ce6920d1b440438cbfacbf89abf" />
+      <keyword name="awaitable" id="QtRestClient::GenericRestReply&lt; void, ErrorClassType &gt;::awaitable" ref="class_qt_rest_client_1_1_generic_rest_reply_3_01void_00_01_error_class_type_01_4.html#afff22704054f6e48af4604d02bccc460" />
       <keyword name="RestReply" id="QtRestClient::RestReply::RestReply" ref="class_qt_rest_client_1_1_rest_reply.html#acce4889dd37487d361d469d9bfb811e2" />
       <keyword name="onSucceeded" id="QtRestClient::RestReply::onSucceeded" ref="class_qt_rest_client_1_1_rest_reply.html#ace76499e9dc2fc87a290c061268f88bd" />
       <keyword name="onSucceeded" id="QtRestClient::RestReply::onSucceeded" ref="class_qt_rest_client_1_1_rest_reply.html#acadab0dced077b6c0e2d6dc30c8a98f6" />
@@ -1208,10 +1324,13 @@
       <keyword name="disableAutoDelete" id="QtRestClient::RestReply::disableAutoDelete" ref="class_qt_rest_client_1_1_rest_reply.html#a3c07dfee6aa61ee0ec46b8ae220f697c" />
       <keyword name="autoDelete" id="QtRestClient::RestReply::autoDelete" ref="class_qt_rest_client_1_1_rest_reply.html#a3db48238db31c1eb6e2a9a321ed41189" />
       <keyword name="networkReply" id="QtRestClient::RestReply::networkReply" ref="class_qt_rest_client_1_1_rest_reply.html#a105d2e27ae89ca6ac2801986bc8ab37b" />
+      <keyword name="awaitable" id="QtRestClient::RestReply::awaitable" ref="class_qt_rest_client_1_1_rest_reply.html#ab30ee9e5989351650df18a75eec5d135" />
+      <keyword name="metaObject" id="QObject::metaObject" ref="class_q_object.html#metaObject" />
+      <keyword name="qt_metacast" id="QObject::qt_metacast" ref="class_q_object.html#qt_metacast" />
+      <keyword name="qt_metacall" id="QObject::qt_metacall" ref="class_q_object.html#qt_metacall" />
       <keyword name="QObject" id="QObject::QObject" ref="class_q_object.html#QObject" />
       <keyword name="event" id="QObject::event" ref="class_q_object.html#event" />
       <keyword name="eventFilter" id="QObject::eventFilter" ref="class_q_object.html#eventFilter" />
-      <keyword name="metaObject" id="QObject::metaObject" ref="class_q_object.html#metaObject" />
       <keyword name="objectName" id="QObject::objectName" ref="class_q_object.html#objectName-prop" />
       <keyword name="setObjectName" id="QObject::setObjectName" ref="class_q_object.html#objectName-prop" />
       <keyword name="isWidgetType" id="QObject::isWidgetType" ref="class_q_object.html#isWidgetType" />
@@ -1281,6 +1400,22 @@
       <keyword name="disconnectNotify" id="QObject::disconnectNotify" ref="class_q_object.html#disconnectNotify" />
       <keyword name="autoDelete" id="QtRestClient::RestReply::autoDelete" ref="class_qt_rest_client_1_1_rest_reply.html#ae22e4e64eeefdec18bbd42f2174a750c" />
       <keyword name="objectName" id="QObject::objectName" ref="class_q_object.html#objectName-prop" />
+      <keyword name="QtRestClient::GenericRestReplyAwaitable" id="QtRestClient::GenericRestReplyAwaitable" ref="class_qt_rest_client_1_1_generic_rest_reply_awaitable.html" />
+      <keyword name="type" id="QtRestClient::GenericRestReplyAwaitable::type" ref="class_qt_rest_client_1_1_generic_rest_reply_awaitable.html#ac146413efd3f1ca51c6832577135a626" />
+      <keyword name="exceptionType" id="QtRestClient::GenericRestReplyAwaitable::exceptionType" ref="class_qt_rest_client_1_1_generic_rest_reply_awaitable.html#af0b95b00ba185cfc15fc1419163f8042" />
+      <keyword name="GenericRestReplyAwaitable" id="QtRestClient::GenericRestReplyAwaitable::GenericRestReplyAwaitable" ref="class_qt_rest_client_1_1_generic_rest_reply_awaitable.html#a10e7a62251c3847ca31633df3a2a3d6c" />
+      <keyword name="GenericRestReplyAwaitable" id="QtRestClient::GenericRestReplyAwaitable::GenericRestReplyAwaitable" ref="class_qt_rest_client_1_1_generic_rest_reply_awaitable.html#a0fe7448f809e66f484168782159b2970" />
+      <keyword name="operator=" id="QtRestClient::GenericRestReplyAwaitable::operator=" ref="class_qt_rest_client_1_1_generic_rest_reply_awaitable.html#a1aa32150b4cef400054fabe7d4dc6a4a" />
+      <keyword name="prepare" id="QtRestClient::GenericRestReplyAwaitable::prepare" ref="class_qt_rest_client_1_1_generic_rest_reply_awaitable.html#a60bcc033bc5a4a672982be995f4af9f2" />
+      <keyword name="result" id="QtRestClient::GenericRestReplyAwaitable::result" ref="class_qt_rest_client_1_1_generic_rest_reply_awaitable.html#af98bddda582a0e4815ec41712367fd78" />
+      <keyword name="QtRestClient::GenericRestReplyAwaitable&lt; void, ErrorClassType &gt;" id="QtRestClient::GenericRestReplyAwaitable&lt; void, ErrorClassType &gt;" ref="class_qt_rest_client_1_1_generic_rest_reply_awaitable_3_01void_00_01_error_class_type_01_4.html" />
+      <keyword name="type" id="QtRestClient::GenericRestReplyAwaitable&lt; void, ErrorClassType &gt;::type" ref="class_qt_rest_client_1_1_generic_rest_reply_awaitable_3_01void_00_01_error_class_type_01_4.html#aaa316e9003f7865b87ffa6bc5b008fe8" />
+      <keyword name="exceptionType" id="QtRestClient::GenericRestReplyAwaitable&lt; void, ErrorClassType &gt;::exceptionType" ref="class_qt_rest_client_1_1_generic_rest_reply_awaitable_3_01void_00_01_error_class_type_01_4.html#aa92180012ae4379a123255e4aad6bb9f" />
+      <keyword name="GenericRestReplyAwaitable" id="QtRestClient::GenericRestReplyAwaitable&lt; void, ErrorClassType &gt;::GenericRestReplyAwaitable" ref="class_qt_rest_client_1_1_generic_rest_reply_awaitable_3_01void_00_01_error_class_type_01_4.html#a5418054f9d25a59b8d452d41c4f94753" />
+      <keyword name="GenericRestReplyAwaitable" id="QtRestClient::GenericRestReplyAwaitable&lt; void, ErrorClassType &gt;::GenericRestReplyAwaitable" ref="class_qt_rest_client_1_1_generic_rest_reply_awaitable_3_01void_00_01_error_class_type_01_4.html#ab07fb836f1d106905ea258de65a6ad45" />
+      <keyword name="operator=" id="QtRestClient::GenericRestReplyAwaitable&lt; void, ErrorClassType &gt;::operator=" ref="class_qt_rest_client_1_1_generic_rest_reply_awaitable_3_01void_00_01_error_class_type_01_4.html#a2ce71f92529d1d61eb13009ecf498483" />
+      <keyword name="prepare" id="QtRestClient::GenericRestReplyAwaitable&lt; void, ErrorClassType &gt;::prepare" ref="class_qt_rest_client_1_1_generic_rest_reply_awaitable_3_01void_00_01_error_class_type_01_4.html#a1279e3047f54c8266ac6f73f58ffa721" />
+      <keyword name="result" id="QtRestClient::GenericRestReplyAwaitable&lt; void, ErrorClassType &gt;::result" ref="class_qt_rest_client_1_1_generic_rest_reply_awaitable_3_01void_00_01_error_class_type_01_4.html#a060670947913bdc87013ec05200be2e9" />
       <keyword name="QtRestClient::IPaging" id="QtRestClient::IPaging" ref="class_qt_rest_client_1_1_i_paging.html" />
       <keyword name="items" id="QtRestClient::IPaging::items" ref="class_qt_rest_client_1_1_i_paging.html#a5493368be64c3fb8597b3359e5857551" />
       <keyword name="total" id="QtRestClient::IPaging::total" ref="class_qt_rest_client_1_1_i_paging.html#ad843d960951aa92a29e6f492ce5ed5de" />
@@ -1294,9 +1429,9 @@
       <keyword name="QtRestClient::Paging" id="QtRestClient::Paging" ref="class_qt_rest_client_1_1_paging.html" />
       <keyword name="Paging" id="QtRestClient::Paging::Paging" ref="class_qt_rest_client_1_1_paging.html#a89a8bc1ef2235e9d1c329016802d81d8" />
       <keyword name="Paging" id="QtRestClient::Paging::Paging" ref="class_qt_rest_client_1_1_paging.html#a921eccd6e05083071461d83c8b486b9c" />
-      <keyword name="Paging" id="QtRestClient::Paging::Paging" ref="class_qt_rest_client_1_1_paging.html#a7c400d2a3d48ea7eb0dcd3e9068490fa" />
+      <keyword name="Paging" id="QtRestClient::Paging::Paging" ref="class_qt_rest_client_1_1_paging.html#a8eb743196f6dac3f5ad0c5e4de80b793" />
       <keyword name="operator=" id="QtRestClient::Paging::operator=" ref="class_qt_rest_client_1_1_paging.html#af654f5c5a4699a0c0b68380ff0876c42" />
-      <keyword name="operator=" id="QtRestClient::Paging::operator=" ref="class_qt_rest_client_1_1_paging.html#a8455a5266ac6fda1312fff2412914a2b" />
+      <keyword name="operator=" id="QtRestClient::Paging::operator=" ref="class_qt_rest_client_1_1_paging.html#a4303ef4ed459d4e5d100a9122332a6f4" />
       <keyword name="Paging" id="QtRestClient::Paging::Paging" ref="class_qt_rest_client_1_1_paging.html#a45d8da23ff30326539945af8deaaea91" />
       <keyword name="isValid" id="QtRestClient::Paging::isValid" ref="class_qt_rest_client_1_1_paging.html#a20da6023d4c7f6c3813b4856ebbdb340" />
       <keyword name="items" id="QtRestClient::Paging::items" ref="class_qt_rest_client_1_1_paging.html#ad67963fe90ebae534119bdefb3b57d7f" />
@@ -1321,9 +1456,9 @@
       <keyword name="QtRestClient::RequestBuilder" id="QtRestClient::RequestBuilder" ref="class_qt_rest_client_1_1_request_builder.html" />
       <keyword name="RequestBuilder" id="QtRestClient::RequestBuilder::RequestBuilder" ref="class_qt_rest_client_1_1_request_builder.html#a4723e4ef16dee376d26bfc217d618528" />
       <keyword name="RequestBuilder" id="QtRestClient::RequestBuilder::RequestBuilder" ref="class_qt_rest_client_1_1_request_builder.html#ac6f4b1a1a249299f91a19ef616e53f34" />
-      <keyword name="RequestBuilder" id="QtRestClient::RequestBuilder::RequestBuilder" ref="class_qt_rest_client_1_1_request_builder.html#a5b1b5c46e4cb1c3f64e4ef73545f233e" />
+      <keyword name="RequestBuilder" id="QtRestClient::RequestBuilder::RequestBuilder" ref="class_qt_rest_client_1_1_request_builder.html#af78e6fae46a8af51734c67438a81b7c1" />
       <keyword name="operator=" id="QtRestClient::RequestBuilder::operator=" ref="class_qt_rest_client_1_1_request_builder.html#a4fc2e7fee149b2d1fa5565a8b96db1f1" />
-      <keyword name="operator=" id="QtRestClient::RequestBuilder::operator=" ref="class_qt_rest_client_1_1_request_builder.html#a3ca26fca8268a318d21e0e74fdc031c2" />
+      <keyword name="operator=" id="QtRestClient::RequestBuilder::operator=" ref="class_qt_rest_client_1_1_request_builder.html#a3fbb4aed3c676843570978c06c6b9eee" />
       <keyword name="setCredentials" id="QtRestClient::RequestBuilder::setCredentials" ref="class_qt_rest_client_1_1_request_builder.html#a353451dd70886bfd663796621edfb717" />
       <keyword name="setVersion" id="QtRestClient::RequestBuilder::setVersion" ref="class_qt_rest_client_1_1_request_builder.html#a8877909ef514e997ceefb4cf1d9b052a" />
       <keyword name="addPath" id="QtRestClient::RequestBuilder::addPath" ref="class_qt_rest_client_1_1_request_builder.html#a46f75310ee8ed792cec4a6e2f1c6cf3c" />
@@ -1423,10 +1558,12 @@
       <keyword name="head" id="QtRestClient::RestClass::head" ref="class_qt_rest_client_1_1_rest_class.html#ab05b6a6a3be4aa3098fdb636b3ae584a" />
       <keyword name="head" id="QtRestClient::RestClass::head" ref="class_qt_rest_client_1_1_rest_class.html#add4a000beaaea9e5ae8d05ad663e79ff" />
       <keyword name="head" id="QtRestClient::RestClass::head" ref="class_qt_rest_client_1_1_rest_class.html#a9cf4614096b476fbfd29fdd2f458db22" />
+      <keyword name="metaObject" id="QObject::metaObject" ref="class_q_object.html#metaObject" />
+      <keyword name="qt_metacast" id="QObject::qt_metacast" ref="class_q_object.html#qt_metacast" />
+      <keyword name="qt_metacall" id="QObject::qt_metacall" ref="class_q_object.html#qt_metacall" />
       <keyword name="QObject" id="QObject::QObject" ref="class_q_object.html#QObject" />
       <keyword name="event" id="QObject::event" ref="class_q_object.html#event" />
       <keyword name="eventFilter" id="QObject::eventFilter" ref="class_q_object.html#eventFilter" />
-      <keyword name="metaObject" id="QObject::metaObject" ref="class_q_object.html#metaObject" />
       <keyword name="objectName" id="QObject::objectName" ref="class_q_object.html#objectName-prop" />
       <keyword name="setObjectName" id="QObject::setObjectName" ref="class_q_object.html#objectName-prop" />
       <keyword name="isWidgetType" id="QObject::isWidgetType" ref="class_q_object.html#isWidgetType" />
@@ -1526,10 +1663,12 @@
       <keyword name="requestAttributes" id="QtRestClient::RestClient::requestAttributes" ref="class_qt_rest_client_1_1_rest_client.html#ad4a4f3e614bb525e756d2f85869a0307" />
       <keyword name="sslConfiguration" id="QtRestClient::RestClient::sslConfiguration" ref="class_qt_rest_client_1_1_rest_client.html#a2221112d8e0ae90c5125755a7a865a92" />
       <keyword name="builder" id="QtRestClient::RestClient::builder" ref="class_qt_rest_client_1_1_rest_client.html#adb823c9a8c96ce499c5dc4c81af2628c" />
+      <keyword name="metaObject" id="QObject::metaObject" ref="class_q_object.html#metaObject" />
+      <keyword name="qt_metacast" id="QObject::qt_metacast" ref="class_q_object.html#qt_metacast" />
+      <keyword name="qt_metacall" id="QObject::qt_metacall" ref="class_q_object.html#qt_metacall" />
       <keyword name="QObject" id="QObject::QObject" ref="class_q_object.html#QObject" />
       <keyword name="event" id="QObject::event" ref="class_q_object.html#event" />
       <keyword name="eventFilter" id="QObject::eventFilter" ref="class_q_object.html#eventFilter" />
-      <keyword name="metaObject" id="QObject::metaObject" ref="class_q_object.html#metaObject" />
       <keyword name="objectName" id="QObject::objectName" ref="class_q_object.html#objectName-prop" />
       <keyword name="setObjectName" id="QObject::setObjectName" ref="class_q_object.html#objectName-prop" />
       <keyword name="isWidgetType" id="QObject::isWidgetType" ref="class_q_object.html#isWidgetType" />
@@ -1625,10 +1764,13 @@
       <keyword name="disableAutoDelete" id="QtRestClient::RestReply::disableAutoDelete" ref="class_qt_rest_client_1_1_rest_reply.html#a3c07dfee6aa61ee0ec46b8ae220f697c" />
       <keyword name="autoDelete" id="QtRestClient::RestReply::autoDelete" ref="class_qt_rest_client_1_1_rest_reply.html#a3db48238db31c1eb6e2a9a321ed41189" />
       <keyword name="networkReply" id="QtRestClient::RestReply::networkReply" ref="class_qt_rest_client_1_1_rest_reply.html#a105d2e27ae89ca6ac2801986bc8ab37b" />
+      <keyword name="awaitable" id="QtRestClient::RestReply::awaitable" ref="class_qt_rest_client_1_1_rest_reply.html#ab30ee9e5989351650df18a75eec5d135" />
+      <keyword name="metaObject" id="QObject::metaObject" ref="class_q_object.html#metaObject" />
+      <keyword name="qt_metacast" id="QObject::qt_metacast" ref="class_q_object.html#qt_metacast" />
+      <keyword name="qt_metacall" id="QObject::qt_metacall" ref="class_q_object.html#qt_metacall" />
       <keyword name="QObject" id="QObject::QObject" ref="class_q_object.html#QObject" />
       <keyword name="event" id="QObject::event" ref="class_q_object.html#event" />
       <keyword name="eventFilter" id="QObject::eventFilter" ref="class_q_object.html#eventFilter" />
-      <keyword name="metaObject" id="QObject::metaObject" ref="class_q_object.html#metaObject" />
       <keyword name="objectName" id="QObject::objectName" ref="class_q_object.html#objectName-prop" />
       <keyword name="setObjectName" id="QObject::setObjectName" ref="class_q_object.html#objectName-prop" />
       <keyword name="isWidgetType" id="QObject::isWidgetType" ref="class_q_object.html#isWidgetType" />
@@ -1689,6 +1831,14 @@
       <keyword name="JsonParseError" id="QtRestClient::RestReply::JsonParseError" ref="class_qt_rest_client_1_1_rest_reply.html#a7ac2c77cd405dff6fd116eaf3073fe2aa727e9ee3637c3897bd7d736ede79bfc4" />
       <keyword name="FailureError" id="QtRestClient::RestReply::FailureError" ref="class_qt_rest_client_1_1_rest_reply.html#a7ac2c77cd405dff6fd116eaf3073fe2aa279bf25eece14ead7f2fb2ca1f5c99b8" />
       <keyword name="DeserializationError" id="QtRestClient::RestReply::DeserializationError" ref="class_qt_rest_client_1_1_rest_reply.html#a7ac2c77cd405dff6fd116eaf3073fe2aa9a0c862f9ee36946a59f22c092970832" />
+      <keyword name="QtRestClient::RestReplyAwaitable" id="QtRestClient::RestReplyAwaitable" ref="class_qt_rest_client_1_1_rest_reply_awaitable.html" />
+      <keyword name="type" id="QtRestClient::RestReplyAwaitable::type" ref="class_qt_rest_client_1_1_rest_reply_awaitable.html#a32418bc6e3a346b8373a1b64d8383e1a" />
+      <keyword name="exceptionType" id="QtRestClient::RestReplyAwaitable::exceptionType" ref="class_qt_rest_client_1_1_rest_reply_awaitable.html#a6c36de581ff2b22a5f3783883a028e44" />
+      <keyword name="RestReplyAwaitable" id="QtRestClient::RestReplyAwaitable::RestReplyAwaitable" ref="class_qt_rest_client_1_1_rest_reply_awaitable.html#a9d1c90d335a848387cf0ec6e6fbaf71d" />
+      <keyword name="RestReplyAwaitable" id="QtRestClient::RestReplyAwaitable::RestReplyAwaitable" ref="class_qt_rest_client_1_1_rest_reply_awaitable.html#a392159e1018e238a130e294d9c858f83" />
+      <keyword name="operator=" id="QtRestClient::RestReplyAwaitable::operator=" ref="class_qt_rest_client_1_1_rest_reply_awaitable.html#a24e99b82cf9b7e5aea45cdfe4b887d3f" />
+      <keyword name="prepare" id="QtRestClient::RestReplyAwaitable::prepare" ref="class_qt_rest_client_1_1_rest_reply_awaitable.html#ae0f7a16b61352708cacff718fe4142b7" />
+      <keyword name="result" id="QtRestClient::RestReplyAwaitable::result" ref="class_qt_rest_client_1_1_rest_reply_awaitable.html#a24b7a116e340c501fec8e8ed33f6b4f6" />
       <keyword name="QtRestClient::Simple&lt; T *, typename std::enable_if&lt; std::is_base_of&lt; QObject, T &gt;::value &gt;::type &gt;" id="QtRestClient::Simple&lt; T *, typename std::enable_if&lt; std::is_base_of&lt; QObject, T &gt;::value &gt;::type &gt;" ref="class_qt_rest_client_1_1_simple_3_01_t_01_5_00_01typename_01std_1_1enable__if_3_01std_1_1is__basd53df30d33fde91b51f378efb6baeecc.html" />
       <keyword name="Simple" id="QtRestClient::Simple&lt; T *, typename std::enable_if&lt; std::is_base_of&lt; QObject, T &gt;::value &gt;::type &gt;::Simple" ref="class_qt_rest_client_1_1_simple_3_01_t_01_5_00_01typename_01std_1_1enable__if_3_01std_1_1is__basd53df30d33fde91b51f378efb6baeecc.html#af87db7e0687c713b11ffb1c20ce7082b" />
       <keyword name="extensionHref" id="QtRestClient::Simple&lt; T *, typename std::enable_if&lt; std::is_base_of&lt; QObject, T &gt;::value &gt;::type &gt;::extensionHref" ref="class_qt_rest_client_1_1_simple_3_01_t_01_5_00_01typename_01std_1_1enable__if_3_01std_1_1is__basd53df30d33fde91b51f378efb6baeecc.html#a87086e89d320d232b8863053407b1879" />
@@ -1698,10 +1848,12 @@
       <keyword name="extend" id="QtRestClient::Simple&lt; T *, typename std::enable_if&lt; std::is_base_of&lt; QObject, T &gt;::value &gt;::type &gt;::extend" ref="class_qt_rest_client_1_1_simple_3_01_t_01_5_00_01typename_01std_1_1enable__if_3_01std_1_1is__basd53df30d33fde91b51f378efb6baeecc.html#aba36c13f49ded31596bd5a23b67c5005" />
       <keyword name="extend" id="QtRestClient::Simple&lt; T *, typename std::enable_if&lt; std::is_base_of&lt; QObject, T &gt;::value &gt;::type &gt;::extend" ref="class_qt_rest_client_1_1_simple_3_01_t_01_5_00_01typename_01std_1_1enable__if_3_01std_1_1is__basd53df30d33fde91b51f378efb6baeecc.html#ad1fa9b959c54c88dda4e2d8b7ed9b273" />
       <keyword name="extend" id="QtRestClient::Simple&lt; T *, typename std::enable_if&lt; std::is_base_of&lt; QObject, T &gt;::value &gt;::type &gt;::extend" ref="class_qt_rest_client_1_1_simple_3_01_t_01_5_00_01typename_01std_1_1enable__if_3_01std_1_1is__basd53df30d33fde91b51f378efb6baeecc.html#a60bc6c9a79ffd80fc3d6e6a9a3b50c88" />
+      <keyword name="metaObject" id="QObject::metaObject" ref="class_q_object.html#metaObject" />
+      <keyword name="qt_metacast" id="QObject::qt_metacast" ref="class_q_object.html#qt_metacast" />
+      <keyword name="qt_metacall" id="QObject::qt_metacall" ref="class_q_object.html#qt_metacall" />
       <keyword name="QObject" id="QObject::QObject" ref="class_q_object.html#QObject" />
       <keyword name="event" id="QObject::event" ref="class_q_object.html#event" />
       <keyword name="eventFilter" id="QObject::eventFilter" ref="class_q_object.html#eventFilter" />
-      <keyword name="metaObject" id="QObject::metaObject" ref="class_q_object.html#metaObject" />
       <keyword name="objectName" id="QObject::objectName" ref="class_q_object.html#objectName-prop" />
       <keyword name="setObjectName" id="QObject::setObjectName" ref="class_q_object.html#objectName-prop" />
       <keyword name="isWidgetType" id="QObject::isWidgetType" ref="class_q_object.html#isWidgetType" />
@@ -1811,6 +1963,7 @@
       <file>restclient_8cpp_source.html</file>
       <file>restclient_8h_source.html</file>
       <file>restreply_8h_source.html</file>
+      <file>restreplyawaitable_8h_source.html</file>
       <file>simple_8h_source.html</file>
       <file>restclass_8h.html</file>
       <file>simple_8h.html</file>
@@ -1831,6 +1984,12 @@
       <file>classde_1_1skycoder42_1_1_qt_rest_client_1_1_rest_client.png</file>
       <file>classde_1_1skycoder42_1_1_qt_rest_client_1_1_rest_client-members.html</file>
       <file>namespace_qt_rest_client.html</file>
+      <file>class_qt_rest_client_1_1_awaited_exception.html</file>
+      <file>class_qt_rest_client_1_1_awaited_exception.png</file>
+      <file>class_qt_rest_client_1_1_awaited_exception-members.html</file>
+      <file>class_qt_rest_client_1_1_generic_awaited_exception.html</file>
+      <file>class_qt_rest_client_1_1_generic_awaited_exception.png</file>
+      <file>class_qt_rest_client_1_1_generic_awaited_exception-members.html</file>
       <file>class_qt_rest_client_1_1_generic_rest_reply.html</file>
       <file>class_qt_rest_client_1_1_generic_rest_reply.png</file>
       <file>class_qt_rest_client_1_1_generic_rest_reply-members.html</file>
@@ -1843,6 +2002,10 @@
       <file>class_qt_rest_client_1_1_generic_rest_reply_3_01void_00_01_error_class_type_01_4.html</file>
       <file>class_qt_rest_client_1_1_generic_rest_reply_3_01void_00_01_error_class_type_01_4.png</file>
       <file>class_qt_rest_client_1_1_generic_rest_reply_3_01void_00_01_error_class_type_01_4-members.html</file>
+      <file>class_qt_rest_client_1_1_generic_rest_reply_awaitable.html</file>
+      <file>class_qt_rest_client_1_1_generic_rest_reply_awaitable-members.html</file>
+      <file>class_qt_rest_client_1_1_generic_rest_reply_awaitable_3_01void_00_01_error_class_type_01_4.html</file>
+      <file>class_qt_rest_client_1_1_generic_rest_reply_awaitable_3_01void_00_01_error_class_type_01_4-members.html</file>
       <file>class_qt_rest_client_1_1_i_paging.html</file>
       <file>class_qt_rest_client_1_1_i_paging-members.html</file>
       <file>class_qt_rest_client_1_1_paging.html</file>
@@ -1860,6 +2023,8 @@
       <file>class_qt_rest_client_1_1_rest_reply.html</file>
       <file>class_qt_rest_client_1_1_rest_reply.png</file>
       <file>class_qt_rest_client_1_1_rest_reply-members.html</file>
+      <file>class_qt_rest_client_1_1_rest_reply_awaitable.html</file>
+      <file>class_qt_rest_client_1_1_rest_reply_awaitable-members.html</file>
       <file>class_qt_rest_client_1_1_simple_3_01_t_01_5_00_01typename_01std_1_1enable__if_3_01std_1_1is__basd53df30d33fde91b51f378efb6baeecc.html</file>
       <file>class_qt_rest_client_1_1_simple_3_01_t_01_5_00_01typename_01std_1_1enable__if_3_01std_1_1is__basd53df30d33fde91b51f378efb6baeecc.png</file>
       <file>class_qt_rest_client_1_1_simple_3_01_t_01_5_00_01typename_01std_1_1enable__if_3_01std_1_1is__bas8f9e064325d4950e1a3f6d7862103db7.html</file>
@@ -1902,6 +2067,7 @@
       <file>functions_s.html</file>
       <file>functions_t.html</file>
       <file>functions_u.html</file>
+      <file>functions_w.html</file>
       <file>functions_func.html</file>
       <file>functions_func_b.html</file>
       <file>functions_func_c.html</file>
@@ -1920,10 +2086,13 @@
       <file>functions_func_s.html</file>
       <file>functions_func_t.html</file>
       <file>functions_func_u.html</file>
+      <file>functions_func_w.html</file>
       <file>functions_vars.html</file>
       <file>functions_vars.html</file>
       <file>functions_vars.html</file>
       <file>functions_vars.html</file>
+      <file>functions_type.html</file>
+      <file>functions_type.html</file>
       <file>functions_enum.html</file>
       <file>functions_eval.html</file>
       <file>functions_eval.html</file>

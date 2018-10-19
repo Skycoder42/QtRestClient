@@ -31,6 +31,143 @@
     </member>
   </compound>
   <compound kind="class">
+    <name>QtRestClient::AwaitedException</name>
+    <filename>class_qt_rest_client_1_1_awaited_exception.html</filename>
+    <base>QException</base>
+    <member kind="function">
+      <type></type>
+      <name>AwaitedException</name>
+      <anchorfile>class_qt_rest_client_1_1_awaited_exception.html</anchorfile>
+      <anchor>a717362a82d226fd64b5d535d75fb736a</anchor>
+      <arglist>(int code, RestReply::ErrorType type, QVariant data)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>errorCode</name>
+      <anchorfile>class_qt_rest_client_1_1_awaited_exception.html</anchorfile>
+      <anchor>a986c69532bc981baca21f529a06a8d12</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>RestReply::ErrorType</type>
+      <name>errorType</name>
+      <anchorfile>class_qt_rest_client_1_1_awaited_exception.html</anchorfile>
+      <anchor>af216cb4baf05c0a830c42df5db6276fc</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>QVariant</type>
+      <name>errorData</name>
+      <anchorfile>class_qt_rest_client_1_1_awaited_exception.html</anchorfile>
+      <anchor>ae4eb5c62810938e3afbe2da8e39a362b</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>QJsonObject</type>
+      <name>errorObject</name>
+      <anchorfile>class_qt_rest_client_1_1_awaited_exception.html</anchorfile>
+      <anchor>a00f55f9119d872cbb490a7167310f802</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>QJsonArray</type>
+      <name>errorArray</name>
+      <anchorfile>class_qt_rest_client_1_1_awaited_exception.html</anchorfile>
+      <anchor>a79388d74b3281ac769b759a02711a1f7</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>QString</type>
+      <name>errorString</name>
+      <anchorfile>class_qt_rest_client_1_1_awaited_exception.html</anchorfile>
+      <anchor>a3aaf2811c8ec5cb889fb10e7811d4f2d</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>QString</type>
+      <name>errorString</name>
+      <anchorfile>class_qt_rest_client_1_1_awaited_exception.html</anchorfile>
+      <anchor>a1a63f3f954463aabc63e835be29427ee</anchor>
+      <arglist>(const std::function&lt; QString(QJsonObject, int)&gt; &amp;failureTransformer) const</arglist>
+    </member>
+    <member kind="function">
+      <type>QString</type>
+      <name>errorString</name>
+      <anchorfile>class_qt_rest_client_1_1_awaited_exception.html</anchorfile>
+      <anchor>aeee20bfd556d8829a2c062c446dc6c8a</anchor>
+      <arglist>(const std::function&lt; QString(QJsonArray, int)&gt; &amp;failureTransformer) const</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>what</name>
+      <anchorfile>class_qt_rest_client_1_1_awaited_exception.html</anchorfile>
+      <anchor>a971a2d197e0415d2147d72c0ce192c7d</anchor>
+      <arglist>() const noexcept override</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_NORETURN void</type>
+      <name>raise</name>
+      <anchorfile>class_qt_rest_client_1_1_awaited_exception.html</anchorfile>
+      <anchor>a482b1896544af3e91994ac1fbb4a8cd2</anchor>
+      <arglist>() const override</arglist>
+    </member>
+    <member kind="function">
+      <type>QException *</type>
+      <name>clone</name>
+      <anchorfile>class_qt_rest_client_1_1_awaited_exception.html</anchorfile>
+      <anchor>acbec95bfede1eb1b6df84ea157ccf511</anchor>
+      <arglist>() const override</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>QtRestClient::GenericAwaitedException</name>
+    <filename>class_qt_rest_client_1_1_generic_awaited_exception.html</filename>
+    <templarg></templarg>
+    <base>QtRestClient::AwaitedException</base>
+    <member kind="function">
+      <type></type>
+      <name>GenericAwaitedException</name>
+      <anchorfile>class_qt_rest_client_1_1_generic_awaited_exception.html</anchorfile>
+      <anchor>abb611375374d3c6988986ede17d21f50</anchor>
+      <arglist>(int code, RestReply::ErrorType type, const ErrorClassType &amp;data)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>GenericAwaitedException</name>
+      <anchorfile>class_qt_rest_client_1_1_generic_awaited_exception.html</anchorfile>
+      <anchor>a3861953df9b260829c01df8de21ec03e</anchor>
+      <arglist>(int code, RestReply::ErrorType type, const QString &amp;data)</arglist>
+    </member>
+    <member kind="function">
+      <type>ErrorClassType</type>
+      <name>genericError</name>
+      <anchorfile>class_qt_rest_client_1_1_generic_awaited_exception.html</anchorfile>
+      <anchor>ac50a13eba4f0803bbedae5dda967bf79</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>QString</type>
+      <name>errorString</name>
+      <anchorfile>class_qt_rest_client_1_1_generic_awaited_exception.html</anchorfile>
+      <anchor>a1e6acaf7baa2489a5931e788987b0220</anchor>
+      <arglist>(const std::function&lt; QString(ErrorClassType, int)&gt; &amp;failureTransformer) const</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_NORETURN void</type>
+      <name>raise</name>
+      <anchorfile>class_qt_rest_client_1_1_generic_awaited_exception.html</anchorfile>
+      <anchor>af7642581060f9ffa4a7ddc0331c79589</anchor>
+      <arglist>() const override</arglist>
+    </member>
+    <member kind="function">
+      <type>QException *</type>
+      <name>clone</name>
+      <anchorfile>class_qt_rest_client_1_1_generic_awaited_exception.html</anchorfile>
+      <anchor>a92b1ec95ccb23564e797fc3024ebbc2b</anchor>
+      <arglist>() const override</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
     <name>de::skycoder42::QtRestClient::GenericRestReply</name>
     <filename>classde_1_1skycoder42_1_1_qt_rest_client_1_1_generic_rest_reply.html</filename>
     <base>QtQml.QtObject</base>
@@ -181,6 +318,13 @@
       <anchor>a158d99f82acfb11bdbac61fd1ed6cdc4</anchor>
       <arglist>()</arglist>
     </member>
+    <member kind="function">
+      <type>GenericRestReplyAwaitable&lt; DataClassType, ErrorClassType &gt;</type>
+      <name>awaitable</name>
+      <anchorfile>class_qt_rest_client_1_1_generic_rest_reply.html</anchorfile>
+      <anchor>a58269fe86b7b5bce045d90371c05e01a</anchor>
+      <arglist>()</arglist>
+    </member>
   </compound>
   <compound kind="class">
     <name>QtRestClient::GenericRestReply&lt; Paging&lt; DataClassType &gt;, ErrorClassType &gt;</name>
@@ -293,6 +437,13 @@
       <anchor>a6db7f159086de74d6d41def9a9d0f04a</anchor>
       <arglist>()</arglist>
     </member>
+    <member kind="function">
+      <type>GenericRestReplyAwaitable&lt; Paging&lt; DataClassType &gt;, ErrorClassType &gt;</type>
+      <name>awaitable</name>
+      <anchorfile>class_qt_rest_client_1_1_generic_rest_reply_3_01_paging_3_01_data_class_type_01_4_00_01_error_class_type_01_4.html</anchorfile>
+      <anchor>af34c8dfa2c1a13b4cf190edc1632bfc3</anchor>
+      <arglist>()</arglist>
+    </member>
   </compound>
   <compound kind="class">
     <name>QtRestClient::GenericRestReply&lt; QList&lt; DataClassType &gt;, ErrorClassType &gt;</name>
@@ -389,6 +540,13 @@
       <name>disableAutoDelete</name>
       <anchorfile>class_qt_rest_client_1_1_generic_rest_reply_3_01_q_list_3_01_data_class_type_01_4_00_01_error_class_type_01_4.html</anchorfile>
       <anchor>a3fb5bdbc8cf40c4cf4776f624ac6f8bd</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>GenericRestReplyAwaitable&lt; QList&lt; DataClassType &gt;, ErrorClassType &gt;</type>
+      <name>awaitable</name>
+      <anchorfile>class_qt_rest_client_1_1_generic_rest_reply_3_01_q_list_3_01_data_class_type_01_4_00_01_error_class_type_01_4.html</anchorfile>
+      <anchor>a0310b9c504de31dbb7673767c9da6483</anchor>
       <arglist>()</arglist>
     </member>
   </compound>
@@ -488,6 +646,122 @@
       <anchor>aa6509ce6920d1b440438cbfacbf89abf</anchor>
       <arglist>()</arglist>
     </member>
+    <member kind="function">
+      <type>GenericRestReplyAwaitable&lt; void, ErrorClassType &gt;</type>
+      <name>awaitable</name>
+      <anchorfile>class_qt_rest_client_1_1_generic_rest_reply_3_01void_00_01_error_class_type_01_4.html</anchorfile>
+      <anchor>afff22704054f6e48af4604d02bccc460</anchor>
+      <arglist>()</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>QtRestClient::GenericRestReplyAwaitable</name>
+    <filename>class_qt_rest_client_1_1_generic_rest_reply_awaitable.html</filename>
+    <templarg>DataClassType</templarg>
+    <templarg>ErrorClassType</templarg>
+    <member kind="typedef">
+      <type>DataClassType</type>
+      <name>type</name>
+      <anchorfile>class_qt_rest_client_1_1_generic_rest_reply_awaitable.html</anchorfile>
+      <anchor>ac146413efd3f1ca51c6832577135a626</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>GenericAwaitedException&lt; ErrorClassType &gt;</type>
+      <name>exceptionType</name>
+      <anchorfile>class_qt_rest_client_1_1_generic_rest_reply_awaitable.html</anchorfile>
+      <anchor>af0b95b00ba185cfc15fc1419163f8042</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>GenericRestReplyAwaitable</name>
+      <anchorfile>class_qt_rest_client_1_1_generic_rest_reply_awaitable.html</anchorfile>
+      <anchor>a10e7a62251c3847ca31633df3a2a3d6c</anchor>
+      <arglist>(GenericRestReply&lt; DataClassType, ErrorClassType &gt; *reply)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>GenericRestReplyAwaitable</name>
+      <anchorfile>class_qt_rest_client_1_1_generic_rest_reply_awaitable.html</anchorfile>
+      <anchor>a0fe7448f809e66f484168782159b2970</anchor>
+      <arglist>(GenericRestReplyAwaitable&lt; DataClassType, ErrorClassType &gt; &amp;&amp;other) noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>GenericRestReplyAwaitable &amp;</type>
+      <name>operator=</name>
+      <anchorfile>class_qt_rest_client_1_1_generic_rest_reply_awaitable.html</anchorfile>
+      <anchor>a1aa32150b4cef400054fabe7d4dc6a4a</anchor>
+      <arglist>(GenericRestReplyAwaitable&lt; DataClassType, ErrorClassType &gt; &amp;&amp;other) noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>prepare</name>
+      <anchorfile>class_qt_rest_client_1_1_generic_rest_reply_awaitable.html</anchorfile>
+      <anchor>a60bcc033bc5a4a672982be995f4af9f2</anchor>
+      <arglist>(const std::function&lt; void()&gt; &amp;resume)</arglist>
+    </member>
+    <member kind="function">
+      <type>type</type>
+      <name>result</name>
+      <anchorfile>class_qt_rest_client_1_1_generic_rest_reply_awaitable.html</anchorfile>
+      <anchor>af98bddda582a0e4815ec41712367fd78</anchor>
+      <arglist>()</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>QtRestClient::GenericRestReplyAwaitable&lt; void, ErrorClassType &gt;</name>
+    <filename>class_qt_rest_client_1_1_generic_rest_reply_awaitable_3_01void_00_01_error_class_type_01_4.html</filename>
+    <templarg></templarg>
+    <member kind="typedef">
+      <type>void</type>
+      <name>type</name>
+      <anchorfile>class_qt_rest_client_1_1_generic_rest_reply_awaitable_3_01void_00_01_error_class_type_01_4.html</anchorfile>
+      <anchor>aaa316e9003f7865b87ffa6bc5b008fe8</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>GenericAwaitedException&lt; ErrorClassType &gt;</type>
+      <name>exceptionType</name>
+      <anchorfile>class_qt_rest_client_1_1_generic_rest_reply_awaitable_3_01void_00_01_error_class_type_01_4.html</anchorfile>
+      <anchor>aa92180012ae4379a123255e4aad6bb9f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>GenericRestReplyAwaitable</name>
+      <anchorfile>class_qt_rest_client_1_1_generic_rest_reply_awaitable_3_01void_00_01_error_class_type_01_4.html</anchorfile>
+      <anchor>a5418054f9d25a59b8d452d41c4f94753</anchor>
+      <arglist>(GenericRestReply&lt; void, ErrorClassType &gt; *reply)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>GenericRestReplyAwaitable</name>
+      <anchorfile>class_qt_rest_client_1_1_generic_rest_reply_awaitable_3_01void_00_01_error_class_type_01_4.html</anchorfile>
+      <anchor>ab07fb836f1d106905ea258de65a6ad45</anchor>
+      <arglist>(GenericRestReplyAwaitable&lt; void, ErrorClassType &gt; &amp;&amp;other) noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>GenericRestReplyAwaitable &amp;</type>
+      <name>operator=</name>
+      <anchorfile>class_qt_rest_client_1_1_generic_rest_reply_awaitable_3_01void_00_01_error_class_type_01_4.html</anchorfile>
+      <anchor>a2ce71f92529d1d61eb13009ecf498483</anchor>
+      <arglist>(GenericRestReplyAwaitable&lt; void, ErrorClassType &gt; &amp;&amp;other) noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>prepare</name>
+      <anchorfile>class_qt_rest_client_1_1_generic_rest_reply_awaitable_3_01void_00_01_error_class_type_01_4.html</anchorfile>
+      <anchor>a1279e3047f54c8266ac6f73f58ffa721</anchor>
+      <arglist>(const std::function&lt; void()&gt; &amp;resume)</arglist>
+    </member>
+    <member kind="function">
+      <type>type</type>
+      <name>result</name>
+      <anchorfile>class_qt_rest_client_1_1_generic_rest_reply_awaitable_3_01void_00_01_error_class_type_01_4.html</anchorfile>
+      <anchor>a060670947913bdc87013ec05200be2e9</anchor>
+      <arglist>()</arglist>
+    </member>
   </compound>
   <compound kind="class">
     <name>QtRestClient::IPaging</name>
@@ -557,94 +831,6 @@
     </member>
   </compound>
   <compound kind="class">
-    <name>de::skycoder42::QtRestClient::Paging</name>
-    <filename>classde_1_1skycoder42_1_1_qt_rest_client_1_1_paging.html</filename>
-    <member kind="slot">
-      <type>void</type>
-      <name>iterate</name>
-      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_paging.html</anchorfile>
-      <anchor>af05b1b17c20724347b28d46208b4200c</anchor>
-      <arglist>(const QJSValue &amp;iterator, int to=-1, int from=0)</arglist>
-    </member>
-    <member kind="slot">
-      <type>void</type>
-      <name>iterate</name>
-      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_paging.html</anchorfile>
-      <anchor>a1b81c0ed6bf03c2765208ba9377f6b27</anchor>
-      <arglist>(const QJSValue &amp;iterator, const QJSValue &amp;failureHandler, const QJSValue &amp;errorHandler, int to=-1, int from=0)</arglist>
-    </member>
-    <member kind="function">
-      <type>Q_INVOKABLE QtRestClient::RestReply *</type>
-      <name>next</name>
-      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_paging.html</anchorfile>
-      <anchor>a1ed2ea840a3fdc3071b9c9cb6ae1d57e</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>Q_INVOKABLE QtRestClient::RestReply *</type>
-      <name>previous</name>
-      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_paging.html</anchorfile>
-      <anchor>ac76131efb409a06d6dfafbfafc047398</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="property">
-      <type>QVariantList</type>
-      <name>items</name>
-      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_paging.html</anchorfile>
-      <anchor>aa7acab4f51e6f90f6f8dceeacdb65db0</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="property">
-      <type>int</type>
-      <name>total</name>
-      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_paging.html</anchorfile>
-      <anchor>a6de4c3ae36887704d63a52f7c32f4097</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="property">
-      <type>int</type>
-      <name>offset</name>
-      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_paging.html</anchorfile>
-      <anchor>a9e55c437281f924fb3db4014404a0897</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="property">
-      <type>bool</type>
-      <name>hasNext</name>
-      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_paging.html</anchorfile>
-      <anchor>a26ddd1158a7617db4317ab3260d167f4</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="property">
-      <type>QUrl</type>
-      <name>nextUrl</name>
-      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_paging.html</anchorfile>
-      <anchor>a6a17440f77ce0bbf748416610cfaa070</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="property">
-      <type>bool</type>
-      <name>hasPrevious</name>
-      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_paging.html</anchorfile>
-      <anchor>a1bf1b08e14a3856c49b528b7c0dd8d2d</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="property">
-      <type>QUrl</type>
-      <name>previousUrl</name>
-      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_paging.html</anchorfile>
-      <anchor>a48d10dd598a1771007ae4a8d94d9a21a</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="property">
-      <type>QVariantMap</type>
-      <name>properties</name>
-      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_paging.html</anchorfile>
-      <anchor>a5ca6191ed72d18bf9e7d821132e35b52</anchor>
-      <arglist></arglist>
-    </member>
-  </compound>
-  <compound kind="class">
     <name>QtRestClient::Paging</name>
     <filename>class_qt_rest_client_1_1_paging.html</filename>
     <templarg>T</templarg>
@@ -666,8 +852,8 @@
       <type></type>
       <name>Paging</name>
       <anchorfile>class_qt_rest_client_1_1_paging.html</anchorfile>
-      <anchor>a7c400d2a3d48ea7eb0dcd3e9068490fa</anchor>
-      <arglist>(Paging&lt; T &gt; &amp;&amp;other)</arglist>
+      <anchor>a8eb743196f6dac3f5ad0c5e4de80b793</anchor>
+      <arglist>(Paging&lt; T &gt; &amp;&amp;other) noexcept</arglist>
     </member>
     <member kind="function">
       <type>Paging&lt; T &gt; &amp;</type>
@@ -680,8 +866,8 @@
       <type>Paging&lt; T &gt; &amp;</type>
       <name>operator=</name>
       <anchorfile>class_qt_rest_client_1_1_paging.html</anchorfile>
-      <anchor>a8455a5266ac6fda1312fff2412914a2b</anchor>
-      <arglist>(Paging&lt; T &gt; &amp;&amp;other)</arglist>
+      <anchor>a4303ef4ed459d4e5d100a9122332a6f4</anchor>
+      <arglist>(Paging&lt; T &gt; &amp;&amp;other) noexcept</arglist>
     </member>
     <member kind="function">
       <type></type>
@@ -818,6 +1004,94 @@
     </member>
   </compound>
   <compound kind="class">
+    <name>de::skycoder42::QtRestClient::Paging</name>
+    <filename>classde_1_1skycoder42_1_1_qt_rest_client_1_1_paging.html</filename>
+    <member kind="slot">
+      <type>void</type>
+      <name>iterate</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_paging.html</anchorfile>
+      <anchor>af05b1b17c20724347b28d46208b4200c</anchor>
+      <arglist>(const QJSValue &amp;iterator, int to=-1, int from=0)</arglist>
+    </member>
+    <member kind="slot">
+      <type>void</type>
+      <name>iterate</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_paging.html</anchorfile>
+      <anchor>a1b81c0ed6bf03c2765208ba9377f6b27</anchor>
+      <arglist>(const QJSValue &amp;iterator, const QJSValue &amp;failureHandler, const QJSValue &amp;errorHandler, int to=-1, int from=0)</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_INVOKABLE QtRestClient::RestReply *</type>
+      <name>next</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_paging.html</anchorfile>
+      <anchor>a1ed2ea840a3fdc3071b9c9cb6ae1d57e</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_INVOKABLE QtRestClient::RestReply *</type>
+      <name>previous</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_paging.html</anchorfile>
+      <anchor>ac76131efb409a06d6dfafbfafc047398</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="property">
+      <type>QVariantList</type>
+      <name>items</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_paging.html</anchorfile>
+      <anchor>aa7acab4f51e6f90f6f8dceeacdb65db0</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="property">
+      <type>int</type>
+      <name>total</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_paging.html</anchorfile>
+      <anchor>a6de4c3ae36887704d63a52f7c32f4097</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="property">
+      <type>int</type>
+      <name>offset</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_paging.html</anchorfile>
+      <anchor>a9e55c437281f924fb3db4014404a0897</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="property">
+      <type>bool</type>
+      <name>hasNext</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_paging.html</anchorfile>
+      <anchor>a26ddd1158a7617db4317ab3260d167f4</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="property">
+      <type>QUrl</type>
+      <name>nextUrl</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_paging.html</anchorfile>
+      <anchor>a6a17440f77ce0bbf748416610cfaa070</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="property">
+      <type>bool</type>
+      <name>hasPrevious</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_paging.html</anchorfile>
+      <anchor>a1bf1b08e14a3856c49b528b7c0dd8d2d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="property">
+      <type>QUrl</type>
+      <name>previousUrl</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_paging.html</anchorfile>
+      <anchor>a48d10dd598a1771007ae4a8d94d9a21a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="property">
+      <type>QVariantMap</type>
+      <name>properties</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_paging.html</anchorfile>
+      <anchor>a5ca6191ed72d18bf9e7d821132e35b52</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="class">
     <name>QtRestClient::PagingFactory</name>
     <filename>class_qt_rest_client_1_1_paging_factory.html</filename>
     <member kind="function" virtualness="pure">
@@ -896,8 +1170,8 @@
       <type></type>
       <name>RequestBuilder</name>
       <anchorfile>class_qt_rest_client_1_1_request_builder.html</anchorfile>
-      <anchor>a5b1b5c46e4cb1c3f64e4ef73545f233e</anchor>
-      <arglist>(RequestBuilder &amp;&amp;other)</arglist>
+      <anchor>af78e6fae46a8af51734c67438a81b7c1</anchor>
+      <arglist>(RequestBuilder &amp;&amp;other) noexcept</arglist>
     </member>
     <member kind="function">
       <type>RequestBuilder &amp;</type>
@@ -910,8 +1184,8 @@
       <type>RequestBuilder &amp;</type>
       <name>operator=</name>
       <anchorfile>class_qt_rest_client_1_1_request_builder.html</anchorfile>
-      <anchor>a3ca26fca8268a318d21e0e74fdc031c2</anchor>
-      <arglist>(RequestBuilder &amp;&amp;other)</arglist>
+      <anchor>a3fbb4aed3c676843570978c06c6b9eee</anchor>
+      <arglist>(RequestBuilder &amp;&amp;other) noexcept</arglist>
     </member>
     <member kind="function">
       <type>RequestBuilder &amp;</type>
@@ -1073,102 +1347,6 @@
       <anchorfile>class_qt_rest_client_1_1_request_builder.html</anchorfile>
       <anchor>a571aa171f59c3f59e0cb810a6ff4a1b1</anchor>
       <arglist>() const</arglist>
-    </member>
-  </compound>
-  <compound kind="class">
-    <name>de::skycoder42::QtRestClient::RestClass</name>
-    <filename>classde_1_1skycoder42_1_1_qt_rest_client_1_1_rest_class.html</filename>
-    <base>QtQml.QtObject</base>
-    <member kind="signal">
-      <type>void</type>
-      <name>restClassChanged</name>
-      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>ac537f298550cb45d549d4ee8ef711947</anchor>
-      <arglist>(QtRestClient::RestClass *restClass)</arglist>
-    </member>
-    <member kind="signal">
-      <type>void</type>
-      <name>pathChanged</name>
-      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a07793a88884b042d52c8c2fa7b6ff4eb</anchor>
-      <arglist>(QString path)</arglist>
-    </member>
-    <member kind="function">
-      <type></type>
-      <name>QmlRestClass</name>
-      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>add0986f127511a612bdc9cfd1c4f4082</anchor>
-      <arglist>(QObject *parent=nullptr)</arglist>
-    </member>
-    <member kind="function">
-      <type>Q_INVOKABLE QtRestClient::RestReply *</type>
-      <name>call</name>
-      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a7197443e47543253b64ef4b16701f95a</anchor>
-      <arglist>(const QString &amp;verb, const QJSValue &amp;optBody={}, const QJSValue &amp;optPath={}, const QJSValue &amp;optParams={}, const QJSValue &amp;optAsPost={}, const QJSValue &amp;optHeaders={})</arglist>
-    </member>
-    <member kind="function">
-      <type>Q_INVOKABLE QtRestClient::RestReply *</type>
-      <name>get</name>
-      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>af6627a23ac359fd095c4d9bfbedc24d8</anchor>
-      <arglist>(const QJSValue &amp;optPath={}, const QJSValue &amp;optParams={}, const QJSValue &amp;optHeaders={})</arglist>
-    </member>
-    <member kind="function">
-      <type>Q_INVOKABLE QtRestClient::RestReply *</type>
-      <name>post</name>
-      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a1e7dca949187c1f91172a3166ef8a642</anchor>
-      <arglist>(const QJSValue &amp;optBody={}, const QJSValue &amp;optPath={}, const QJSValue &amp;optParams={}, const QJSValue &amp;optHeaders={})</arglist>
-    </member>
-    <member kind="function">
-      <type>Q_INVOKABLE QtRestClient::RestReply *</type>
-      <name>put</name>
-      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>ab3f0c533201b86c864e3ae8abf3ea54f</anchor>
-      <arglist>(const QJSValue &amp;body, const QJSValue &amp;optPath={}, const QJSValue &amp;optParams={}, const QJSValue &amp;optHeaders={})</arglist>
-    </member>
-    <member kind="function">
-      <type>Q_INVOKABLE QtRestClient::RestReply *</type>
-      <name>deleteResource</name>
-      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a3009dbc4aa3ffa0c0b98a988f024c7fa</anchor>
-      <arglist>(const QJSValue &amp;optPath={}, const QJSValue &amp;optParams={}, const QJSValue &amp;optHeaders={})</arglist>
-    </member>
-    <member kind="function">
-      <type>Q_INVOKABLE QtRestClient::RestReply *</type>
-      <name>patch</name>
-      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a3bded78ed789755c60ed2b852ccbcbec</anchor>
-      <arglist>(const QJSValue &amp;body, const QJSValue &amp;optPath={}, const QJSValue &amp;optParams={}, const QJSValue &amp;optHeaders={})</arglist>
-    </member>
-    <member kind="function">
-      <type>Q_INVOKABLE QtRestClient::RestReply *</type>
-      <name>head</name>
-      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a84993d17f755f5e716b5d832454ae7d0</anchor>
-      <arglist>(const QJSValue &amp;optPath={}, const QJSValue &amp;optParams={}, const QJSValue &amp;optHeaders={})</arglist>
-    </member>
-    <member kind="property">
-      <type>QtRestClient::RestClass</type>
-      <name>restClass</name>
-      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>a0395efae8494cdea963308845dd0cd7a</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="property">
-      <type>QString</type>
-      <name>path</name>
-      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>abb80afab01ce553ad7f488050c841e8f</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="property">
-      <type>QQmlListProperty&lt; de::skycoder42::QtRestClient::RestClass &gt;</type>
-      <name>classes</name>
-      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_rest_class.html</anchorfile>
-      <anchor>aa62b8005aa7358f128d73ce2a1ff86bd</anchor>
-      <arglist></arglist>
     </member>
   </compound>
   <compound kind="class">
@@ -2276,6 +2454,102 @@
     </member>
   </compound>
   <compound kind="class">
+    <name>de::skycoder42::QtRestClient::RestClass</name>
+    <filename>classde_1_1skycoder42_1_1_qt_rest_client_1_1_rest_class.html</filename>
+    <base>QtQml.QtObject</base>
+    <member kind="signal">
+      <type>void</type>
+      <name>restClassChanged</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>ac537f298550cb45d549d4ee8ef711947</anchor>
+      <arglist>(QtRestClient::RestClass *restClass)</arglist>
+    </member>
+    <member kind="signal">
+      <type>void</type>
+      <name>pathChanged</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>a07793a88884b042d52c8c2fa7b6ff4eb</anchor>
+      <arglist>(QString path)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>QmlRestClass</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>add0986f127511a612bdc9cfd1c4f4082</anchor>
+      <arglist>(QObject *parent=nullptr)</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_INVOKABLE QtRestClient::RestReply *</type>
+      <name>call</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>a7197443e47543253b64ef4b16701f95a</anchor>
+      <arglist>(const QString &amp;verb, const QJSValue &amp;optBody={}, const QJSValue &amp;optPath={}, const QJSValue &amp;optParams={}, const QJSValue &amp;optAsPost={}, const QJSValue &amp;optHeaders={})</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_INVOKABLE QtRestClient::RestReply *</type>
+      <name>get</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>af6627a23ac359fd095c4d9bfbedc24d8</anchor>
+      <arglist>(const QJSValue &amp;optPath={}, const QJSValue &amp;optParams={}, const QJSValue &amp;optHeaders={})</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_INVOKABLE QtRestClient::RestReply *</type>
+      <name>post</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>a1e7dca949187c1f91172a3166ef8a642</anchor>
+      <arglist>(const QJSValue &amp;optBody={}, const QJSValue &amp;optPath={}, const QJSValue &amp;optParams={}, const QJSValue &amp;optHeaders={})</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_INVOKABLE QtRestClient::RestReply *</type>
+      <name>put</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>ab3f0c533201b86c864e3ae8abf3ea54f</anchor>
+      <arglist>(const QJSValue &amp;body, const QJSValue &amp;optPath={}, const QJSValue &amp;optParams={}, const QJSValue &amp;optHeaders={})</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_INVOKABLE QtRestClient::RestReply *</type>
+      <name>deleteResource</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>a3009dbc4aa3ffa0c0b98a988f024c7fa</anchor>
+      <arglist>(const QJSValue &amp;optPath={}, const QJSValue &amp;optParams={}, const QJSValue &amp;optHeaders={})</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_INVOKABLE QtRestClient::RestReply *</type>
+      <name>patch</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>a3bded78ed789755c60ed2b852ccbcbec</anchor>
+      <arglist>(const QJSValue &amp;body, const QJSValue &amp;optPath={}, const QJSValue &amp;optParams={}, const QJSValue &amp;optHeaders={})</arglist>
+    </member>
+    <member kind="function">
+      <type>Q_INVOKABLE QtRestClient::RestReply *</type>
+      <name>head</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>a84993d17f755f5e716b5d832454ae7d0</anchor>
+      <arglist>(const QJSValue &amp;optPath={}, const QJSValue &amp;optParams={}, const QJSValue &amp;optHeaders={})</arglist>
+    </member>
+    <member kind="property">
+      <type>QtRestClient::RestClass</type>
+      <name>restClass</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>a0395efae8494cdea963308845dd0cd7a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="property">
+      <type>QString</type>
+      <name>path</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>abb80afab01ce553ad7f488050c841e8f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="property">
+      <type>QQmlListProperty&lt; de::skycoder42::QtRestClient::RestClass &gt;</type>
+      <name>classes</name>
+      <anchorfile>classde_1_1skycoder42_1_1_qt_rest_client_1_1_rest_class.html</anchorfile>
+      <anchor>aa62b8005aa7358f128d73ce2a1ff86bd</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="class">
     <name>QtRestClient::RestClient</name>
     <filename>class_qt_rest_client_1_1_rest_client.html</filename>
     <base>QObject</base>
@@ -2876,12 +3150,72 @@
       <anchor>a105d2e27ae89ca6ac2801986bc8ab37b</anchor>
       <arglist>() const</arglist>
     </member>
+    <member kind="function">
+      <type>RestReplyAwaitable</type>
+      <name>awaitable</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_reply.html</anchorfile>
+      <anchor>ab30ee9e5989351650df18a75eec5d135</anchor>
+      <arglist>()</arglist>
+    </member>
     <member kind="property">
       <type>bool</type>
       <name>autoDelete</name>
       <anchorfile>class_qt_rest_client_1_1_rest_reply.html</anchorfile>
       <anchor>ae22e4e64eeefdec18bbd42f2174a750c</anchor>
       <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>QtRestClient::RestReplyAwaitable</name>
+    <filename>class_qt_rest_client_1_1_rest_reply_awaitable.html</filename>
+    <member kind="typedef">
+      <type>QJsonValue</type>
+      <name>type</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_reply_awaitable.html</anchorfile>
+      <anchor>a32418bc6e3a346b8373a1b64d8383e1a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>AwaitedException</type>
+      <name>exceptionType</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_reply_awaitable.html</anchorfile>
+      <anchor>a6c36de581ff2b22a5f3783883a028e44</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>RestReplyAwaitable</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_reply_awaitable.html</anchorfile>
+      <anchor>a9d1c90d335a848387cf0ec6e6fbaf71d</anchor>
+      <arglist>(RestReply *reply)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>RestReplyAwaitable</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_reply_awaitable.html</anchorfile>
+      <anchor>a392159e1018e238a130e294d9c858f83</anchor>
+      <arglist>(RestReplyAwaitable &amp;&amp;other) noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>RestReplyAwaitable &amp;</type>
+      <name>operator=</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_reply_awaitable.html</anchorfile>
+      <anchor>a24e99b82cf9b7e5aea45cdfe4b887d3f</anchor>
+      <arglist>(RestReplyAwaitable &amp;&amp;other) noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>prepare</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_reply_awaitable.html</anchorfile>
+      <anchor>ae0f7a16b61352708cacff718fe4142b7</anchor>
+      <arglist>(std::function&lt; void()&gt; resume)</arglist>
+    </member>
+    <member kind="function">
+      <type>type</type>
+      <name>result</name>
+      <anchorfile>class_qt_rest_client_1_1_rest_reply_awaitable.html</anchorfile>
+      <anchor>a24b7a116e340c501fec8e8ed33f6b4f6</anchor>
+      <arglist>()</arglist>
     </member>
   </compound>
   <compound kind="class">
@@ -3026,10 +3360,14 @@
   <compound kind="namespace">
     <name>QtRestClient</name>
     <filename>namespace_qt_rest_client.html</filename>
+    <class kind="class">QtRestClient::AwaitedException</class>
+    <class kind="class">QtRestClient::GenericAwaitedException</class>
     <class kind="class">QtRestClient::GenericRestReply</class>
     <class kind="class">QtRestClient::GenericRestReply&lt; Paging&lt; DataClassType &gt;, ErrorClassType &gt;</class>
     <class kind="class">QtRestClient::GenericRestReply&lt; QList&lt; DataClassType &gt;, ErrorClassType &gt;</class>
     <class kind="class">QtRestClient::GenericRestReply&lt; void, ErrorClassType &gt;</class>
+    <class kind="class">QtRestClient::GenericRestReplyAwaitable</class>
+    <class kind="class">QtRestClient::GenericRestReplyAwaitable&lt; void, ErrorClassType &gt;</class>
     <class kind="class">QtRestClient::IPaging</class>
     <class kind="class">QtRestClient::Paging</class>
     <class kind="class">QtRestClient::PagingFactory</class>
@@ -3037,6 +3375,7 @@
     <class kind="class">QtRestClient::RestClass</class>
     <class kind="class">QtRestClient::RestClient</class>
     <class kind="class">QtRestClient::RestReply</class>
+    <class kind="class">QtRestClient::RestReplyAwaitable</class>
     <class kind="class">QtRestClient::Simple</class>
     <class kind="class">QtRestClient::Simple&lt; T *, typename std::enable_if&lt; std::is_base_of&lt; QObject, T &gt;::value &gt;::type &gt;</class>
     <class kind="class">QtRestClient::Simple&lt; T, typename std::enable_if&lt; std::is_void&lt; typename T::QtGadgetHelper &gt;::value &gt;::type &gt;</class>
@@ -3122,11 +3461,14 @@
     <docanchor file="generator" title="Attributes">generator_doc_FixedParam_attribs</docanchor>
     <docanchor file="generator" title="Element Type: Class">generator_doc_Class</docanchor>
     <docanchor file="generator" title="Attributes">generator_doc_Class_attribs</docanchor>
+    <docanchor file="generator" title="Element Type: PathGroup">generator_doc_PathGroup</docanchor>
+    <docanchor file="generator">generator_doc_PathGroup_children</docanchor>
     <docanchor file="generator" title="Element Type: Method">generator_doc_Method</docanchor>
     <docanchor file="generator" title="Attributes">generator_doc_Method_attribs</docanchor>
     <docanchor file="generator" title="Allowed Child Elements">generator_doc_Method_children</docanchor>
     <docanchor file="generator" title="Element Type: BaseUrl">generator_doc_BaseUrl</docanchor>
     <docanchor file="generator" title="Attributes">generator_doc_BaseUrl_attribs</docanchor>
+    <docanchor file="generator" title="The XSD definition">generator_xsd</docanchor>
   </compound>
   <compound kind="page">
     <name>index</name>
