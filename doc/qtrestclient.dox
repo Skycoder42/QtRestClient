@@ -10,7 +10,7 @@
 @brief The QML import for the QtRestClient QML module
 
 <b>Current Version</b><br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.0
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.1
 
 <b>Available Types</b>
 - QtRestClient (singleton)

@@ -89,6 +89,7 @@ public:
 	//! Returns the network reply associated with the rest reply
 	QNetworkReply *networkReply() const;
 
+	//! Returns an awaitable object for this reply
 	RestReplyAwaitable awaitable();
 
 public Q_SLOTS:

@@ -257,7 +257,7 @@ ALIASES                = "accessors{1}=<table><tr><th colspan= 2>Accessors</th><
 						 "writeAcFn{1}=WRITE accessor for \1" \
 						 "notifyAcFn{1}=NOTIFY accessor for \1" \
 						 "memberAcFn{1}=MEMBER accessor for \1" \
-						 "inherit{1}=Inherits 1" \
+						 "inherit{1}=Inherits \1" \
 						 "resetAcFn{1}=RESET accessor for \1"
 
 # This tag can be used to specify a number of word-keyword mappings (TCL only).
@@ -915,7 +915,8 @@ EXCLUDE_PATTERNS       = moc_* \
 						 qrc_* \
 						 tst_* \
 						 *_p.* \
-						 *.cpp
+						 *.cpp \
+						 */3rdparty/*
 
 # The EXCLUDE_SYMBOLS tag can be used to specify one or more symbol names
 # (namespaces, classes, functions, etc.) that should be excluded from the
@@ -931,6 +932,7 @@ EXCLUDE_SYMBOLS        = QtRestClient::MetaComponent \
 						 QtRestClientDeclarativeModule \
 						 \
 						 QAbstractAspect \
+						 QAbstractXmlReceiver \
 						 QBasicAtomicInteger \
 						 QBasicAtomicPointer \
 						 QComponent \
