@@ -9,11 +9,12 @@ osx_image: xcode10.1
 
 env:
   global:
-    - QPMX_CACHE_DIR=$HOME/.qpmx-cache
-    - QT_VER=5.12.0
+    - QDEP_CACHE_DIR=$HOME/.qdep-cache
+    - QT_VER=5.12.1
     - EXTRA_MODULES=.skycoder42.jsonserializer
     - DOCKER_IMAGE=common
     - MAKE_RUN_TESTS=true
+    - TARGET_NAME=qtrestclient
 
 matrix:
   include:
@@ -53,7 +54,7 @@ deploy:
   api_key:
     secure: juYFBTtn/vpb/c4WthQIeAqWqeW0zrg2Sl7BeEj7Udi8NQoWafrMGq8xSGfodkbK1yugxGFYQ6u1UOKoK4M2JHuDzHnNCRBwgJ9X89RlmRISALUnTXQRketdyo2ydy89sVEdppG9v2eXyC4R599GmE/I49jLkXLvED1j8uSLhZNDR2OYUH+no0gpnULnbHCZtwBr4wRYi1tH0hPf3xeoDFX5Tgz4yVgyX9+paBJln+Ate5CzlGyuT8AD4Sw+zRAixh6uUlFj90cXIc/JzJkHvPRoHy73TwauFurq2CaPc+UyIgQhISUZyArFi/mMpc1FVkBrKrb5eu1FmUiOkQtbIiMW51yGD8bW+N10oR2TJQU1/tyk4TLGvSISAx5Op07Q665w/qIQsbV6TNZxsNarWFI1VgOn49NOglc8dxeYAoE1IGKc+fbupYgQUcDKfrOx0/kRmc2VkBmPANh4FNAkREBQkvFGoEmHvhuBMs/eCDYWz/mu3ORQqmWZK415JWukgwxeuz0c1GWEPSx8S+L20K+iCZH3+kByerFPDc5185V0M90o9DzK0UNXhH+TGfP4cozrv43L/tTRAwaJTyVguj6p/+CRwifpLVOashcmer6JkDXVPqf+q8z588LLWDTuficj4rY95Cd+WxqBy5j97//5L4ckYqkDfTB7vE4d5cI=
   file_glob: true
-  file: install/build_*_$QT_VER.tar.xz
+  file: install/${TARGET_NAME}_*_$QT_VER.tar.xz
   on:
     repo: Skycoder42/QtRestClient
     tags: true
@@ -61,11 +62,9 @@ deploy:
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
-  - rm -rf $QPMX_CACHE_DIR/locks
-  - rm -rf $QPMX_CACHE_DIR/tmp
 cache:
   directories:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
     - $HOME/.android/build-cache
-    - $QPMX_CACHE_DIR
+    - $QDEP_CACHE_DIR
