@@ -7,10 +7,14 @@
 #include <QtCore/qobject.h>
 #include <QtCore/qbytearray.h>
 
-#if defined(QT_BUILD_RESTCLIENT_LIB)
-#	define Q_RESTCLIENT_EXPORT Q_DECL_EXPORT
+#ifndef QT_STATIC
+#  if defined(QT_BUILD_RESTCLIENT_LIB)
+#    define Q_RESTCLIENT_EXPORT Q_DECL_EXPORT
+#  else
+#    define Q_RESTCLIENT_EXPORT Q_DECL_IMPORT
+#  endif
 #else
-#	define Q_RESTCLIENT_EXPORT Q_DECL_IMPORT
+#  define Q_RESTCLIENT_EXPORT
 #endif
 
 //! The Namespace containing all classes of the QtRestClient module
