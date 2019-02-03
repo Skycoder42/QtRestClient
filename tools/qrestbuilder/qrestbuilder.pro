@@ -40,6 +40,8 @@ INCLUDEPATH +=  \
 
 load(qt_tool)
 
+QDEP_DEPENDS += Skycoder42/QXmlCodeGen
+
 win32 {
 	QMAKE_TARGET_PRODUCT = "Qt Rest API Builder"
 	QMAKE_TARGET_COMPANY = $$COMPANY
@@ -48,5 +50,4 @@ win32 {
 	QMAKE_TARGET_BUNDLE_PREFIX = $${BUNDLE_PREFIX}.
 }
 
-!ReleaseBuild:!DebugBuild:!system(qpmx -d $$shell_quote($$_PRO_FILE_PWD_) --qmake-run init $$QPMX_EXTRA_OPTIONS $$shell_quote($$QMAKE_QMAKE) $$shell_quote($$OUT_PWD)): error(qpmx initialization failed. Check the compilation log for details.)
-else: include($$OUT_PWD/qpmx_generated.pri)
+!load(qdep):error("Failed to load qdep feature! Run 'qdep.py prfgen --qmake $$QMAKE_QMAKE' to create it.")

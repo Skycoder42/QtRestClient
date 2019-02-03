@@ -245,6 +245,8 @@ void ObjectBuilder::writeSourceIncludes()
 		   << "#include <QtCore/QVariant>\n";
 	if(data.registerConverters) {
 		source << "#include <QtCore/QCoreApplication>\n"
+			   << "#include <QtCore/QQueue>\n" //TODO remove after fixed in serializer
+			   << "#include <QtCore/QStack>\n" //TODO remove after fixed in serializer
 			   << "#include <QtJsonSerializer/QJsonSerializer>\n";
 	}
 	if(data.qmlUri)
