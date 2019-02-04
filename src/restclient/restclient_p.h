@@ -1,7 +1,10 @@
 #ifndef QTRESTCLIENT_QRESTCLIENT_P_H
 #define QTRESTCLIENT_QRESTCLIENT_P_H
 
+#ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
 #include <QtJsonSerializer/QJsonSerializer>
+#endif
+
 #include "restclient.h"
 
 namespace QtRestClient {

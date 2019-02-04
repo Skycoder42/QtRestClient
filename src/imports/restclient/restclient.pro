@@ -11,16 +11,22 @@ HEADERS += \
 	qmlrestclass.h \
 	qmlrestclient.h \
 	qmlrestclientglobal.h \
-	qmlpaging.h \
-	qmlgenericrestreply.h
+	qmlpaging.h
 
 SOURCES += \
 	qtrestclient_plugin.cpp \
 	qmlrestclass.cpp \
 	qmlrestclient.cpp \
 	qmlrestclientglobal.cpp \
-	qmlpaging.cpp \
-	qmlgenericrestreply.cpp
+	qmlpaging.cpp
+
+!no_json_serializer {
+	HEADERS += \
+		qmlgenericrestreply.h
+
+	SOURCES += \
+		qmlgenericrestreply.cpp
+}
 
 OTHER_FILES += qmldir
 
