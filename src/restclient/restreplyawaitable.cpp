@@ -124,7 +124,7 @@ void AwaitedException::raise() const
 	throw *this;
 }
 
-QException *AwaitedException::clone() const
+AwaitedException::Base *AwaitedException::clone() const
 {
 	return new AwaitedException{this};
 }

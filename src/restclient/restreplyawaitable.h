@@ -5,14 +5,24 @@
 #include "QtRestClient/restreply.h"
 #include "QtRestClient/genericrestreply.h"
 
-#include <QtCore/qexception.h>
+#if !defined(QT_NO_EXCEPTIONS) && QT_CONFIG(future)
+#include <QtCore/QException>
+#define Q_EXCEPTION_BASE_CLASS QException
+#define Q_EXCEPTION_BASE_OR override
+#else
+#include <exception>
+#define Q_EXCEPTION_BASE_CLASS std::exception
+#define Q_EXCEPTION_BASE_OR
+#endif
 
 namespace QtRestClient {
 
 //! An exception that is throw on errors when awaiting a RestReply
-class Q_RESTCLIENT_EXPORT AwaitedException : public QException
+class Q_RESTCLIENT_EXPORT AwaitedException : public Q_EXCEPTION_BASE_CLASS
 {
 public:
+	using Base = Q_EXCEPTION_BASE_CLASS;
+
 	//! Constructor, takes an error code, type and additional data
 	AwaitedException(int code, RestReply::ErrorType type, QVariant data);
 
@@ -38,13 +48,13 @@ public:
 	const char *what() const noexcept override;
 
 	//! @inherit{QException::raise}
-	Q_NORETURN void raise() const override;
+	virtual Q_NORETURN void raise() const Q_EXCEPTION_BASE_OR;
 	//! @inherit{QException::clone}
-	QException *clone() const override;
+	virtual Base *clone() const Q_EXCEPTION_BASE_OR;
 
 protected:
 	//! @private
-	AwaitedException(const AwaitedException * const other);
+	AwaitedException(const AwaitedException * const other); //MAJOR use copy ctor instead
 
 	//! @private
 	const int _code;
@@ -100,7 +110,7 @@ public:
 	QString errorString(const std::function<QString(ErrorClassType, int)> &failureTransformer) const;
 
 	Q_NORETURN void raise() const override;
-	QException *clone() const override;
+	Base *clone() const override;
 
 protected:
 	//! @private
@@ -313,7 +323,7 @@ void GenericAwaitedException<ErrorClassType>::raise() const
 }
 
 template<typename ErrorClassType>
-QException *GenericAwaitedException<ErrorClassType>::clone() const
+AwaitedException::Base *GenericAwaitedException<ErrorClassType>::clone() const
 {
 	return new GenericAwaitedException<ErrorClassType>{this};
 }

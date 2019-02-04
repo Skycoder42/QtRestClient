@@ -54,7 +54,7 @@ void QtRestClient::QmlGenericRestReply::addSucceededHandler(const QJSValue &succ
 				auto fn = succeededHandler;
 				auto var = serializer->deserialize(arr, type, reply);
 				fn.call({code, engine->toScriptValue(var)});
-			} catch(QException &e) {
+			} catch(std::exception &e) {
 				qCritical() << e.what();
 			}
 		});
@@ -66,7 +66,7 @@ void QtRestClient::QmlGenericRestReply::addSucceededHandler(const QJSValue &succ
 				auto fn = succeededHandler;
 				auto var = type == QMetaType::Void ? QVariant{} : serializer->deserialize(obj, type, reply);
 				fn.call({code, engine->toScriptValue(var)});
-			} catch(QException &e) {
+			} catch(std::exception &e) {
 				qCritical() << e.what();
 			}
 		});
@@ -90,7 +90,7 @@ void QtRestClient::QmlGenericRestReply::addFailedHandler(const QJSValue &failedH
 				auto fn = failedHandler;
 				auto var = serializer->deserialize(arr, type, reply);
 				fn.call({code, engine->toScriptValue(var)});
-			} catch(QException &e) {
+			} catch(std::exception &e) {
 				qCritical() << e.what();
 			}
 		});
@@ -102,7 +102,7 @@ void QtRestClient::QmlGenericRestReply::addFailedHandler(const QJSValue &failedH
 				auto fn = failedHandler;
 				auto var = type == QMetaType::Void ? QVariant{} : serializer->deserialize(obj, type, reply);
 				fn.call({code, engine->toScriptValue(var)});
-			} catch(QException &e) {
+			} catch(std::exception &e) {
 				qCritical() << e.what();
 			}
 		});
