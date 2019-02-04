@@ -1,4 +1,4 @@
-QT += core network jsonserializer restclient
+QT += core network restclient
 
 isEmpty(LIB_PWD): LIB_PWD = $$OUT_PWD/../testlib
 
