@@ -29,7 +29,9 @@ void QtRestClientDeclarativeModule::registerTypes(const char *uri)
 {
 	Q_ASSERT(qstrcmp(uri, "de.skycoder42.RestClient") == 0);
 
+#ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
 	qRegisterMetaType<QtRestClient::QmlGenericRestReply*>();
+#endif
 	qRegisterMetaType<QtRestClient::QmlPaging>();
 
 	//Version 2.0
