@@ -3,7 +3,7 @@
 
 #include <QtNetwork/QAuthenticator>
 #include <QtWidgets/QMainWindow>
-#include <QtRestClient>
+#include <QtRestClient/RestClient>
 
 namespace Ui {
 	class MainWindow;

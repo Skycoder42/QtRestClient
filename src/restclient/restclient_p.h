@@ -24,7 +24,9 @@ public:
 #endif
 
 	QNetworkAccessManager *nam;
+#ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
 	QJsonSerializer *serializer;
+#endif
 	QScopedPointer<PagingFactory> pagingFactory;
 
 	RestClass *rootClass;

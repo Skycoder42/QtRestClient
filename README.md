@@ -21,7 +21,6 @@ There are multiple ways to install the Qt module, sorted by preference:
 
 1. Package Managers: The library is available via:
 	- **Arch-Linux:** AUR-Repository: [`qt5-restclient`](https://aur.archlinux.org/packages/qt5-restclient/)
-	- **Ubuntu:** Launchpad-PPA: [ppa:skycoder42/qt-modules](https://launchpad.net/~skycoder42/+archive/ubuntu/qt-modules), package `libqt5restclient[1/-dev]`
 	- **MacOs:**
 		- Tap: [`brew tap Skycoder42/qt-modules`](https://github.com/Skycoder42/homebrew-qt-modules)
 		- Package: `qtrestclient`
@@ -36,13 +35,17 @@ There are multiple ways to install the Qt module, sorted by preference:
 	4. Continue the setup and thats it! you can now use the module for all of your installed Kits for that Qt
 3. Download the compiled modules from the release page. **Note:** You will have to add the correct ones yourself and may need to adjust some paths to fit your installation!
 4. Build it yourself! **Note:** This requires perl to be installed. If you don't have/need cmake, you can ignore the related warnings. To automatically build and install to your Qt installation, run:
+	- Install and prepare [qdep](https://github.com/Skycoder42/qdep#installation)
+	- Install [QtJsonSerializer](https://github.com/Skycoder42/QtJsonSerializer#downloadinstallation)
 	- `qmake`
-	- `make qmake_all`
 	- `make` (If you want the tests/examples/etc. run `make all`)
-	- Optional steps:
-		- `make doxygen` to generate the documentation
-		- `make lrelease` to generate the translations
+	- Optional step: `make doxygen` to generate the documentation
 	- `make install`
+
+### Building without QtJsonSerializer/qdep
+If you only need the raw JSON-API, without the generic deserialization, then you can build the library without the support for those. To do so, simply run `qmake CONFIG+=no_json_serializer` instead of a parameterless qmake, and the project will be prepared without those generic APIS (it will also skip creation of qrestbuilder). This also means that the two dependencies, qdep and QtJsonSerializer, are *not required* anymore and do not have to be installed (you can ignore related warnings).
+
+**Important:** Please note that you must not include `#include <QtRestClient>` when using the library in this configuration. Instead, include the needed headers directly, e.g. `#include <QtRestClient/RestClient>`.
 
 ## Usage
 The restclient is provided as a Qt module. Thus, all you have to do is add the module, and then, in your project, add `QT += restclient` to your `.pro` file!

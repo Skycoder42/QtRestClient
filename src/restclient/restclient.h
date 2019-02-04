@@ -4,12 +4,16 @@
 #include "QtRestClient/qtrestclient_global.h"
 #include "QtRestClient/requestbuilder.h"
 
-#include <QtNetwork/qnetworkrequest.h>
 #include <QtCore/qobject.h>
 #include <QtCore/qurl.h>
 #include <QtCore/qurlquery.h>
 #include <QtCore/qversionnumber.h>
+
+#include <QtNetwork/qnetworkrequest.h>
+
+#ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
 class QJsonSerializer;
+#endif
 
 namespace QtRestClient {
 
@@ -51,8 +55,10 @@ public:
 
 	//! Returns the network access manager used by the restclient
 	QNetworkAccessManager *manager() const;
+#ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
 	//! Returns the json serializer used by the restclient
 	QJsonSerializer *serializer() const;
+#endif
 	//! Returns the paging factory used by the restclient
 	PagingFactory *pagingFactory() const;
 
@@ -77,8 +83,10 @@ public:
 public Q_SLOTS:
 	//! Sets the network access manager to be used by all requests for this client
 	void setManager(QNetworkAccessManager *manager);
+#ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
 	//! Sets the json serializer to be used by all requests for this client
 	void setSerializer(QJsonSerializer *serializer);
+#endif
 	//! Sets the paging factory to be used by all paging requests for this client
 	void setPagingFactory(PagingFactory *factory);
 

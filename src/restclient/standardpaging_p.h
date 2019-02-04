@@ -54,7 +54,11 @@ private:
 class Q_RESTCLIENT_EXPORT StandardPagingFactory : public PagingFactory
 {
 public:
+#ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
 	IPaging *createPaging(QJsonSerializer *serializer, const QJsonObject &data) const override;
+#else
+	IPaging *createPaging(const QJsonObject &data) const override;
+#endif
 
 private:
 	static bool validateUrl(const QJsonValue &value);

@@ -1,26 +1,38 @@
 TARGET = QtRestClient
 
-QT = core network jsonserializer
+QT = core network
 MODULE_CONFIG += c++14 qrestbuilder
 
-HEADERS +=  \
+!no_json_serializer {
+	!qtHaveModule(jsonserializer): warning("Unable to find QtJsonSerializer module. To build without it, add \"CONFIG+=no_json_serializer\" to your qmake command line")
+	QT += jsonserializer
+} else {
+	MODULE_DEFINES += Q_RESTCLIENT_NO_JSON_SERIALIZER
+	DEFINES += Q_RESTCLIENT_NO_JSON_SERIALIZER
+}
+
+HEADERS += \
 	restclass_p.h \
 	restclient_p.h \
 	restreply_p.h \
 	qtrestclient_global.h \
-	genericrestreply.h \
 	ipaging.h \
-	paging_fwd.h \
-	paging.h \
 	requestbuilder.h \
 	restclass.h \
 	restclient.h \
 	restreply.h \
-	simple.h \
-	metacomponent.h \
 	standardpaging_p.h \
 	restreplyawaitable.h \
 	restreplyawaitable_p.h
+
+!no_json_serializer {
+	HEADERS += \
+		metacomponent.h \
+		paging_fwd.h \
+		paging.h \
+		genericrestreply.h \
+		simple.h
+}
 
 SOURCES += \
 	requestbuilder.cpp \

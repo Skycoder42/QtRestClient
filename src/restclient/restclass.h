@@ -4,8 +4,11 @@
 #include "QtRestClient/qtrestclient_global.h"
 #include "QtRestClient/requestbuilder.h"
 #include "QtRestClient/restreply.h"
-#include "QtRestClient/genericrestreply.h"
 #include "QtRestClient/restclient.h"
+
+#ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
+#include "QtRestClient/genericrestreply.h"
+#endif
 
 #include <QtCore/qobject.h>
 
@@ -58,6 +61,7 @@ public:
 	RestReply *callJson(const QByteArray &verb, const QUrl &relativeUrl, const QJsonArray &body, const QVariantHash &parameters = {}, const HeaderHash &headers = {}) const;
 	//! @}
 
+#ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
 	//general calls
 	//! @{
 	//! @brief Performs a API call of the given verb with generic objects
@@ -329,6 +333,7 @@ public:
 		return call<DT, ET>(HeadVerb, relativeUrl, parameters, headers);
 	}
 	//! @}
+#endif
 
 	//! Creates a request builder for this class
 	virtual RequestBuilder builder() const;
@@ -363,6 +368,7 @@ private:
 
 // ------------- Generic Implementation -------------
 
+#ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
 template<typename DT, typename ET>
 GenericRestReply<DT, ET> *RestClass::call(const QByteArray &verb, const QString &methodPath, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody) const
 {
@@ -473,6 +479,7 @@ GenericRestReply<DT, ET> *RestClass::call(const QByteArray &verb, const QUrl &re
 										client(),
 										nullptr);
 }
+#endif
 
 template<typename... Args>
 QVariantHash RestClass::concatParams(const QString &key, const QVariant &value, Args... parameters)

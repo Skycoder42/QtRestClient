@@ -110,16 +110,32 @@ void StandardPaging::setJson(QJsonObject object)
 
 // ------------- Factory Implementation -------------
 
+#ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
 IPaging *StandardPagingFactory::createPaging(QJsonSerializer *serializer, const QJsonObject &data) const
 {
 	//validate data and next only -> only ones required
 	if(!validateUrl(data[QStringLiteral("next")]) ||
 	   !data[QStringLiteral("items")].isArray())
 		throw QJsonDeserializationException("Given JSON is not a default paging object!");
-	auto paging = new StandardPaging(serializer->deserialize<StandardPaging>(data));
+	auto paging = new StandardPaging{serializer->deserialize<StandardPaging>(data)};
 	paging->setJson(data);
 	return paging;
 }
+#else
+IPaging *StandardPagingFactory::createPaging(const QJsonObject &data) const
+{
+	auto paging = new StandardPaging{};
+	paging->setItems(data[QStringLiteral("items")].toArray());
+	paging->setTotal(data[QStringLiteral("total")].toInt());
+	paging->setOffset(data[QStringLiteral("offset")].toInt());
+	if(validateUrl(data[QStringLiteral("next")]))
+		paging->setNext(data[QLatin1String("next")].toString());
+	if(validateUrl(data[QStringLiteral("previous")]))
+		paging->setPrevious(data[QLatin1String("previous")].toString());
+	paging->setJson(data);
+	return paging;
+}
+#endif
 
 bool StandardPagingFactory::validateUrl(const QJsonValue &value)
 {

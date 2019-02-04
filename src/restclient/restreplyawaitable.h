@@ -3,7 +3,10 @@
 
 #include "QtRestClient/qtrestclient_global.h"
 #include "QtRestClient/restreply.h"
+
+#ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
 #include "QtRestClient/genericrestreply.h"
+#endif
 
 #if !defined(QT_NO_EXCEPTIONS) && QT_CONFIG(future)
 #include <QtCore/QException>
@@ -94,6 +97,7 @@ private:
 
 
 
+#ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
 //! An exception that is throw on errors when awaiting a GenericRestReply
 template <typename ErrorClassType = QObject*>
 class GenericAwaitedException : public AwaitedException
@@ -175,9 +179,11 @@ private:
 	QPointer<GenericRestReply<void, ErrorClassType>> reply;
 	QScopedPointer<exceptionType> errorResult;
 };
+#endif
 
 // ------------- Generic Implementation -------------
 
+#ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
 template<typename DataClassType, typename ErrorClassType>
 GenericRestReplyAwaitable<DataClassType, ErrorClassType>::GenericRestReplyAwaitable(GenericRestReply<DataClassType, ErrorClassType> *reply) :
 	reply{reply}
@@ -377,6 +383,7 @@ GenericRestReplyAwaitable<Paging<DataClassType>, ErrorClassType> GenericRestRepl
 {
 	return GenericRestReplyAwaitable<Paging<DataClassType>, ErrorClassType>{this};
 }
+#endif
 
 }
 

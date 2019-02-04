@@ -1,6 +1,6 @@
 TEMPLATE = subdirs
 
-SUBDIRS = qrestbuilder
+!no_json_serializer: SUBDIRS += qrestbuilder
 
 qrestbuilder.CONFIG += no_lrelease_target
 

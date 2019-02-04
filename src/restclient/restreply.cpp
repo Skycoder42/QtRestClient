@@ -10,8 +10,8 @@ using namespace QtRestClient;
 
 
 RestReply::RestReply(QNetworkReply *networkReply, QObject *parent) :
-	QObject(parent),
-	d(new RestReplyPrivate(networkReply, this))
+	QObject{parent},
+	d{new RestReplyPrivate{networkReply, this}}
 {
 	d->connectReply(networkReply);
 }

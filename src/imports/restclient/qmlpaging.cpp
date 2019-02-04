@@ -11,7 +11,11 @@ QmlPaging::QmlPaging(IPaging *iPaging, RestClient *client, QJSEngine *engine) :
 
 QmlPaging QmlPaging::create(RestClient *client, QJSEngine *engine, const QJsonObject &obj)
 {
+#ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
 	auto iPaging = client->pagingFactory()->createPaging(client->serializer(), obj);
+#else
+	auto iPaging = client->pagingFactory()->createPaging(obj);
+#endif
 	return {iPaging, client, engine};
 }
 

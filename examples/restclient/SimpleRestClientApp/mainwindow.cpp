@@ -3,6 +3,8 @@
 
 #include <QtCore/QJsonDocument>
 #include <QtCore/QTimer>
+#include <QtRestClient/RestReply>
+#include <QtRestClient/RestClass>
 using namespace QtRestClient;
 
 MainWindow::MainWindow(QWidget *parent) :

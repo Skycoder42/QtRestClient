@@ -11,8 +11,8 @@ const QByteArray RestClass::PatchVerb("PATCH");
 const QByteArray RestClass::HeadVerb("HEAD");
 
 RestClass::RestClass(RestClient *client, QStringList subPath, QObject *parent) :
-	QObject(parent),
-	d(new RestClassPrivate(client, std::move(subPath)))
+	QObject{parent},
+	d{new RestClassPrivate{client, std::move(subPath)}}
 {
 	connect(client, &RestClient::destroyed,
 			this, &RestClass::deleteLater);
@@ -190,6 +190,6 @@ QUrlQuery RestClassPrivate::hashToQuery(const QVariantHash &hash)
 }
 
 RestClassPrivate::RestClassPrivate(RestClient *client, QStringList subPath) :
-	client(client),
-	subPath(std::move(subPath))
+	client{client},
+	subPath{std::move(subPath)}
 {}

@@ -12,7 +12,9 @@ RestClient::RestClient(QObject *parent) :
 	QObject(parent),
 	d(new RestClientPrivate(this))
 {
+#ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
 	d->serializer->setAllowDefaultNull(true);
+#endif
 #if QT_VERSION >= QT_VERSION_CHECK(5, 9, 0)
 	d->nam->setRedirectPolicy(QNetworkRequest::NoLessSafeRedirectPolicy);
 #endif
@@ -35,10 +37,12 @@ QNetworkAccessManager *RestClient::manager() const
 	return d->nam;
 }
 
+#ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
 QJsonSerializer *RestClient::serializer() const
 {
 	return d->serializer;
 }
+#endif
 
 PagingFactory *RestClient::pagingFactory() const
 {
@@ -96,12 +100,14 @@ void RestClient::setManager(QNetworkAccessManager *manager)
 	manager->setParent(this);
 }
 
+#ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
 void RestClient::setSerializer(QJsonSerializer *serializer)
 {
 	d->serializer->deleteLater();
 	d->serializer = serializer;
 	serializer->setParent(this);
 }
+#endif
 
 void RestClient::setPagingFactory(PagingFactory *factory)
 {
@@ -220,7 +226,9 @@ RestClientPrivate::RestClientPrivate(RestClient *q_ptr) :
 	sslConfig{QSslConfiguration::defaultConfiguration()},
 #endif
 	nam{new QNetworkAccessManager{q_ptr}},
+#ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
 	serializer{new QJsonSerializer{q_ptr}},
+#endif
 	pagingFactory{new StandardPagingFactory{}},
 	rootClass{new RestClass{q_ptr, {}, q_ptr}}
 {}
