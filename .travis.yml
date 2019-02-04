@@ -25,6 +25,14 @@ matrix:
         - BUILD_EXAMPLES=true
     - os: linux
       env:
+        - DOCKER_IMAGE=base
+        - PLATFORM=gcc_64
+        - QMAKE_FLAGS="CONFIG+=no_json_serializer"
+        - NO_TESTS=true
+        - BUILD_EXAMPLES=true
+        - SKIP_UPLOAD=true
+    - os: linux
+      env:
         - PLATFORM=emscripten
     - os: linux
       env:
@@ -38,6 +46,14 @@ matrix:
     - os: osx
       env:
         - PLATFORM=clang_64
+    - os: osx
+      env:
+        - EXTRA_MODULES=
+        - PLATFORM=clang_64
+        - QMAKE_FLAGS="CONFIG+=no_json_serializer"
+        - NO_TESTS=true
+        - BUILD_EXAMPLES=true
+        - SKIP_UPLOAD=true
     - os: osx
       env:
         - PLATFORM=ios
