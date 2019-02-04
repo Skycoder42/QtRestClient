@@ -59,8 +59,10 @@ public:
 	RequestBuilder &setAttribute(QNetworkRequest::Attribute attribute, const QVariant &value);
 	//! Sets the given attributes on the generated network request
 	RequestBuilder &setAttributes(const QHash<QNetworkRequest::Attribute, QVariant> &attributes);
+#ifndef QT_NO_SSL
 	//! Sets the ssl configuration to be used by the network request
 	RequestBuilder &setSslConfig(QSslConfiguration sslConfig);
+#endif
 
 	//! Sets the content of the generated network request
 	RequestBuilder &setBody(QByteArray body, const QByteArray &contentType);

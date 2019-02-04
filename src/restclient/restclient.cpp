@@ -70,19 +70,23 @@ QHash<QNetworkRequest::Attribute, QVariant> RestClient::requestAttributes() cons
 	return d->attribs;
 }
 
+#ifndef QT_NO_SSL
 QSslConfiguration RestClient::sslConfiguration() const
 {
 	return d->sslConfig;
 }
+#endif
 
 RequestBuilder RestClient::builder() const
 {
 	return RequestBuilder(d->baseUrl, d->nam)
+#ifndef QT_NO_SSL
+			.setSslConfig(d->sslConfig)
+#endif
 			.setVersion(d->apiVersion)
 			.addHeaders(d->headers)
 			.addParameters(d->query)
-			.setAttributes(d->attribs)
-			.setSslConfig(d->sslConfig);
+			.setAttributes(d->attribs);
 }
 
 void RestClient::setManager(QNetworkAccessManager *manager)
@@ -160,6 +164,7 @@ void RestClient::setModernAttributes()
 	emit requestAttributesChanged(d->attribs, {});
 }
 
+#ifndef QT_NO_SSL
 void RestClient::setSslConfiguration(QSslConfiguration sslConfiguration)
 {
 	if (d->sslConfig == sslConfiguration)
@@ -168,6 +173,7 @@ void RestClient::setSslConfiguration(QSslConfiguration sslConfiguration)
 	d->sslConfig = std::move(sslConfiguration);
 	emit sslConfigurationChanged(d->sslConfig, {});
 }
+#endif
 
 void RestClient::addGlobalHeader(const QByteArray &name, const QByteArray &value)
 {
@@ -210,11 +216,13 @@ void RestClient::removeRequestAttribute(QNetworkRequest::Attribute attribute)
 QHash<QString, RestClient*> RestClientPrivate::globalApis;
 
 RestClientPrivate::RestClientPrivate(RestClient *q_ptr) :
-	sslConfig(QSslConfiguration::defaultConfiguration()),
-	nam(new QNetworkAccessManager(q_ptr)),
-	serializer(new QJsonSerializer(q_ptr)),
-	pagingFactory(new StandardPagingFactory()),
-	rootClass(new RestClass(q_ptr, {}, q_ptr))
+#ifndef QT_NO_SSL
+	sslConfig{QSslConfiguration::defaultConfiguration()},
+#endif
+	nam{new QNetworkAccessManager{q_ptr}},
+	serializer{new QJsonSerializer{q_ptr}},
+	pagingFactory{new StandardPagingFactory{}},
+	rootClass{new RestClass{q_ptr, {}, q_ptr}}
 {}
 
 // ------------- Global header implementation -------------

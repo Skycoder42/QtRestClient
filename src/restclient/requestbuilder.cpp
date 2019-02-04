@@ -8,6 +8,7 @@ using namespace QtRestClient;
 
 namespace QtRestClient {
 
+//TODO move in own header
 struct RequestBuilderPrivate : public QSharedData
 {
 	static const QByteArray ContentType;
@@ -26,21 +27,25 @@ struct RequestBuilderPrivate : public QSharedData
 	QString fragment;
 	HeaderHash headers;
 	QHash<QNetworkRequest::Attribute, QVariant> attributes;
+#ifndef QT_NO_SSL
 	QSslConfiguration sslConfig;
+#endif
 	QByteArray body;
 	QByteArray verb;
 	QUrlQuery postQuery;
 
 	inline RequestBuilderPrivate(const QUrl &baseUrl = QUrl(), QNetworkAccessManager *nam = nullptr) :
-		QSharedData(),
-		nam(nam),
-		base(baseUrl),
-		user(baseUrl.userName()),
-		pass(baseUrl.password()),
-		query(baseUrl.query()),
-		fragment(baseUrl.fragment()),
-		sslConfig(QSslConfiguration::defaultConfiguration()),
-		verb(RestClass::GetVerb)
+		QSharedData{},
+		nam{nam},
+		base{baseUrl},
+		user{baseUrl.userName()},
+		pass{baseUrl.password()},
+		query{baseUrl.query()},
+		fragment{baseUrl.fragment()},
+#ifndef QT_NO_SSL
+		sslConfig{QSslConfiguration::defaultConfiguration()},
+#endif
+		verb{RestClass::GetVerb}
 	{}
 
 	inline RequestBuilderPrivate(const RequestBuilderPrivate &other) = default;
@@ -53,7 +58,7 @@ const QByteArray RequestBuilderPrivate::ContentTypeUrlEncoded = "application/x-w
 }
 
 RequestBuilder::RequestBuilder(const QUrl &baseUrl, QNetworkAccessManager *nam) :
-	d(new RequestBuilderPrivate(baseUrl, nam))
+	d{new RequestBuilderPrivate{baseUrl, nam}}
 {}
 
 RequestBuilder::RequestBuilder(const RequestBuilder &other) = default;
@@ -168,11 +173,13 @@ RequestBuilder &RequestBuilder::setAttributes(const QHash<QNetworkRequest::Attri
 	return *this;
 }
 
+#ifndef QT_NO_SSL
 RequestBuilder &RequestBuilder::setSslConfig(QSslConfiguration sslConfig)
 {
 	d->sslConfig = std::move(sslConfig);
 	return *this;
 }
+#endif
 
 RequestBuilder &RequestBuilder::setBody(QByteArray body, const QByteArray &contentType)
 {
@@ -250,7 +257,9 @@ QNetworkRequest RequestBuilder::build() const
 		request.setRawHeader(it.key(), it.value());
 	for(auto it = d->attributes.constBegin(); it != d->attributes.constEnd(); it++)
 		request.setAttribute(it.key(), it.value());
+#ifndef QT_NO_SSL
 	request.setSslConfiguration(d->sslConfig);
+#endif
 	return request;
 }
 

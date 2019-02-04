@@ -239,8 +239,10 @@ void RestReplyPrivate::connectReply(QNetworkReply *reply)
 	//forward some signals
 	connect(reply, QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::error),
 			q, &RestReply::networkError);
+#ifndef QT_NO_SSL
 	connect(reply, &QNetworkReply::sslErrors,
 			this, &RestReplyPrivate::handleSslErrors);
+#endif
 	connect(reply, &QNetworkReply::downloadProgress,
 			q, &RestReply::downloadProgress);
 	connect(reply, &QNetworkReply::uploadProgress,
@@ -290,6 +292,7 @@ void RestReplyPrivate::replyFinished()
 		q->deleteLater();
 }
 
+#ifndef QT_NO_SSL
 void RestReplyPrivate::handleSslErrors(const QList<QSslError> &errors)
 {
 	bool ignore = false;
@@ -297,6 +300,7 @@ void RestReplyPrivate::handleSslErrors(const QList<QSslError> &errors)
 	if(ignore)
 		networkReply->ignoreSslErrors(errors);
 }
+#endif
 
 void RestReplyPrivate::retryReply()
 {

@@ -115,8 +115,10 @@ Q_SIGNALS:
 
 	//! Forwards QNetworkReply::error(QNetworkReply::NetworkError)
 	void networkError(QNetworkReply::NetworkError error);
+#ifndef QT_NO_SSL
 	//! Forwards QNetworkReply::sslErrors
-	void sslErrors(const QList<QSslError> &errors, bool &ignoreErrors);
+	void sslErrors(const QList<QSslError> &errors, bool &ignoreErrors); //MAJOR make pointer, not ref
+#endif
 
 	//! Forwards QNetworkReply::downloadProgress
 	void downloadProgress(qint64 bytesReceived, qint64 bytesTotal);

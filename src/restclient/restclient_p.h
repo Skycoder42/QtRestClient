@@ -19,7 +19,9 @@ public:
 	HeaderHash headers;
 	QUrlQuery query;
 	QHash<QNetworkRequest::Attribute, QVariant> attribs;
+#ifndef QT_NO_SSL
 	QSslConfiguration sslConfig;
+#endif
 
 	QNetworkAccessManager *nam;
 	QJsonSerializer *serializer;

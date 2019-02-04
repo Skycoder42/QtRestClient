@@ -33,8 +33,11 @@ class Q_RESTCLIENT_EXPORT RestClient : public QObject
 	Q_PROPERTY(QUrlQuery globalParameters READ globalParameters WRITE setGlobalParameters NOTIFY globalParametersChanged)
 	//! A collection of attributes to be set on every request
 	Q_PROPERTY(QHash<QNetworkRequest::Attribute, QVariant> requestAttributes READ requestAttributes WRITE setRequestAttributes NOTIFY requestAttributesChanged)
+
+#ifndef QT_NO_SSL
 	//! The SSL configuration to be used for HTTPS
 	Q_PROPERTY(QSslConfiguration sslConfiguration READ sslConfiguration WRITE setSslConfiguration NOTIFY sslConfigurationChanged)
+#endif
 
 public:
 	//! Constructor
@@ -63,8 +66,10 @@ public:
 	QUrlQuery globalParameters() const;
 	//! @readAcFn{RestClient::requestAttributes}
 	QHash<QNetworkRequest::Attribute, QVariant> requestAttributes() const;
+#ifndef QT_NO_SSL
 	//! @readAcFn{RestClient::sslConfiguration}
 	QSslConfiguration sslConfiguration() const;
+#endif
 
 	//! Creates a request builder with all the settings of this client
 	virtual RequestBuilder builder() const;
@@ -89,8 +94,10 @@ public Q_SLOTS:
 	void setRequestAttributes(QHash<QNetworkRequest::Attribute, QVariant> requestAttributes);
 	//! Sets modern attributes in RestClient::requestAttributes
 	void setModernAttributes();
+#ifndef QT_NO_SSL
 	//! @writeAcFn{RestClient::sslConfiguration}
 	void setSslConfiguration(QSslConfiguration sslConfiguration);
+#endif
 
 	//! @writeAcFn{RestClient::globalHeaders}
 	void addGlobalHeader(const QByteArray &name, const QByteArray &value);
@@ -118,8 +125,10 @@ Q_SIGNALS:
 	void globalParametersChanged(QUrlQuery globalParameters, QPrivateSignal);
 	//! @notifyAcFn{RestClient::requestAttributes}
 	void requestAttributesChanged(QHash<QNetworkRequest::Attribute, QVariant> requestAttributes, QPrivateSignal);
+#ifndef QT_NO_SSL
 	//! @notifyAcFn{RestClient::sslConfiguration}
 	void sslConfigurationChanged(QSslConfiguration sslConfiguration, QPrivateSignal);
+#endif
 
 private:
 	QScopedPointer<RestClientPrivate> d;
