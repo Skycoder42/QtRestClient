@@ -45,6 +45,8 @@ There are multiple ways to install the Qt module, sorted by preference:
 ### Building without QtJsonSerializer/qdep
 If you only need the raw JSON-API, without the generic deserialization, then you can build the library without the support for those. To do so, simply run `qmake CONFIG+=no_json_serializer` instead of a parameterless qmake, and the project will be prepared without those generic APIS (it will also skip creation of qrestbuilder). This also means that the two dependencies, qdep and QtJsonSerializer, are *not required* anymore and do not have to be installed (you can ignore related warnings).
 
+Also, when building the library in this configuration, do not run `make all`, as the tests will fail to build against this configuration. Simply run `make` instead. To build the examples, run `make sub-examples`.
+
 **Important:** Please note that you must not include `#include <QtRestClient>` when using the library in this configuration. Instead, include the needed headers directly, e.g. `#include <QtRestClient/RestClient>`.
 
 ## Usage
