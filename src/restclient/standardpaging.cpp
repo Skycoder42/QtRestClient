@@ -1,5 +1,9 @@
 #include <limits>
+
+#ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
 #include <QtJsonSerializer/QJsonSerializer>
+#endif
+
 #include "standardpaging_p.h"
 using namespace QtRestClient;
 
