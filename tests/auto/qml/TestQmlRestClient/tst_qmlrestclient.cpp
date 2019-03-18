@@ -1,13 +1,29 @@
 #include <QtCore>
+#include <QQmlEngine>
+#include <QQmlContext>
 #include <QtQuickTest/quicktest.h>
 #include "testlib.h"
+
+class Setup : public QObject
+{
+	Q_OBJECT
+
+public:
+	Setup() {}
+
+public slots:
+	void qmlEngineAvailable(QQmlEngine *engine)
+	{
+		engine->rootContext()->setContextProperty("testPort", TEST_PORT);
+	}
+};
 
 static void initImportPath()
 {
 	qputenv("QML2_IMPORT_PATH", QML_PATH);
 
 	//start the http server
-	auto server = new HttpServer(38723, qApp);
+	auto server = new HttpServer(TEST_PORT, qApp);
 	server->verifyRunning();
 	server->setAdvancedData();
 
@@ -31,4 +47,6 @@ static void initImportPath()
 }
 Q_COREAPP_STARTUP_FUNCTION(initImportPath)
 
-QUICK_TEST_MAIN(qmlrestclient)
+QUICK_TEST_MAIN_WITH_SETUP(qmlrestclient, Setup)
+
+#include "tst_qmlrestclient.moc"

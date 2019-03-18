@@ -13,7 +13,7 @@ Item {
 
 		RestClient {
 			id: api
-			baseUrl: "http://localhost:38723"
+			baseUrl: "http://localhost:%1".arg(testPort)
 
 			Component.onCompleted: QtRestClient.addGlobalApi("testapi", api)
 

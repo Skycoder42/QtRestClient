@@ -5,6 +5,9 @@ CONFIG += qmltestcase console
 
 TARGET = tst_qmlrestclient
 
+CONFIG(release, debug|release): DEFINES += "TEST_PORT=38723"
+CONFIG(debug, debug|release): DEFINES += "TEST_PORT=38724"
+
 HEADERS += \
 	testmacro.h
 
