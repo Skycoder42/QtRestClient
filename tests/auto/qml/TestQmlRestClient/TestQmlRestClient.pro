@@ -32,3 +32,9 @@ DEFINES += QML_PATH=\\\"$$QML_IMPORT_PATH\\\"
 
 LIB_PWD = $$OUT_PWD/../../restclient/testlib
 include(../../restclient/tests.pri)
+
+win32:msvc:CONFIG(debug, debug|release) {
+	QMAKE_EXTRA_TARGETS -= runtarget
+	runtarget_dummy.target = run-tests
+	QMAKE_EXTRA_TARGETS += runtarget_dummy
+}
