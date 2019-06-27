@@ -27,7 +27,9 @@ public:
 
 public Q_SLOTS:
 	void replyFinished();
+#ifndef QT_NO_SSL
 	void handleSslErrors(const QList<QSslError> &errors);
+#endif
 
 private Q_SLOTS:
 	void retryReply();
