@@ -1,6 +1,7 @@
 #include "restreply.h"
 #include "restreply_p.h"
 #include "restreplyawaitable.h"
+#include "restclass.h"
 
 #include <QtCore/QBuffer>
 #include <QtCore/QJsonDocument>
@@ -209,6 +210,23 @@ const QByteArray RestReplyPrivate::PropertyBuffer("__QtRestClient_RestReplyPriva
 QNetworkReply *RestReplyPrivate::compatSend(QNetworkAccessManager *nam, const QNetworkRequest &request, const QByteArray &verb, const QByteArray &body)
 {
 	QNetworkReply *reply = nullptr;
+#ifdef Q_OS_WASM  // WORKAROUND until QTBUG-76775 was fixed
+	if (verb == RestClass::GetVerb)
+		reply = nam->get(request);
+	else if (verb == RestClass::PostVerb) {
+		reply = nam->post(request, body);
+		if(reply)
+			reply->setProperty(PropertyBuffer, body);
+	} else if (verb == RestClass::PutVerb) {
+		reply = nam->put(request, body);
+		if(reply)
+			reply->setProperty(PropertyBuffer, body);
+	} else if (verb == RestClass::DeleteVerb)
+		reply = nam->deleteResource(request);
+	else if (verb == RestClass::PatchVerb)
+		reply = nam->head(request);
+	else
+#endif
 	if(body.isEmpty())
 		reply = nam->sendCustomRequest(request, verb);
 	else {
