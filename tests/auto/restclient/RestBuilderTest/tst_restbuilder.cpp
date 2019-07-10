@@ -73,7 +73,7 @@ void RestBuilderTest::testCustomCompiledObject()
 	QCOMPARE(user.property("id").toInt(), 42);
 	QCOMPARE(user.property("name").toString(), QStringLiteral("baum"));
 	QCOMPARE(user.property("gender").value<User::GenderType>(), User::Male);
-	QCOMPARE(user.property("title").toInt(), (int)User::Doctor | User::Professor);
+	QCOMPARE(user.property("title").toInt(), static_cast<int>(User::Doctor | User::Professor));
 }
 
 void RestBuilderTest::testCustomCompiledGadget()
@@ -158,7 +158,7 @@ void RestBuilderTest::testCustomCompiledApiPosts()
 	QSignalSpy deleteSpy3(reply3, &QtRestClient::RestReply::destroyed);
 
 	QVERIFY(errorSpy.wait());
-	QCOMPARE(errorSpy[0][2].toInt(), (int)QtRestClient::RestReply::FailureError);
+	QCOMPARE(errorSpy[0][2].toInt(), static_cast<int>(QtRestClient::RestReply::FailureError));
 	QCOMPARE(errorSpy[0][1].toInt(), 404);
 
 	QVERIFY(deleteSpy3.wait());

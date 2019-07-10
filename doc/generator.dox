@@ -184,6 +184,7 @@ a base param, but with an addition property, that is specific to properties.
  Name			| Allowed values	| Default/Required													| Description
 ----------------|-------------------|-------------------------------------------------------------------|-------------
  generateReset	| bool				| @ref generator_doc_RestObject_attribs "RestObject.generateReset" 	| Specify whether a reset accessor method should be generated. This value is inherited from the one specified in the parent rest object or gadget. If that one is not specified, the default is true
+ metaType		| c++ type name		| @ref generator_doc_BaseParam_attribs "BaseParam.type"			 	| Set an extra type to use for the *declaration* of properties and their accessors. Can become useful if a type was registered in the metasystem under a different typename then it's canonical name
 
 
 

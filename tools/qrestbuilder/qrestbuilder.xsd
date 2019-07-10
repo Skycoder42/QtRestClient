@@ -44,6 +44,7 @@
 		<xs:simpleContent>
 			<xs:extension base="BaseParam">
 				<xs:attribute default="false" name="generateReset" type="xs:boolean" use="optional"/>
+				<xs:attribute name="metaType" type="xs:string" use="optional"/>
 			</xs:extension>
 		</xs:simpleContent>
 	</xs:complexType>

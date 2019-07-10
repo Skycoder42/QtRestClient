@@ -57,7 +57,7 @@ void ObjectBuilder::generateApiObject()
 
 	header << "\nQ_SIGNALS:\n";
 	for(const auto &prop : qAsConst(data.properties))
-		header << "\tvoid " << prop.key << "Changed(const " << prop.type << " &" << prop.key << ");\n";
+		header << "\tvoid " << prop.key << "Changed(const " << prop.metaType.value_or(prop.type) << " &" << prop.key << ");\n";
 	header << "\nprivate:\n"
 		   << "\tQScopedPointer<" << data.name << "Private> d;\n"
 		   << "};\n\n";
@@ -184,7 +184,7 @@ void ObjectBuilder::writeFlagOperators()
 void ObjectBuilder::writeProperties()
 {
 	for(const auto &prop : qAsConst(data.properties)) {
-		header << "\tQ_PROPERTY(" << prop.type << " " << prop.key
+		header << "\tQ_PROPERTY(" << prop.metaType.value_or(prop.type) << " " << prop.key
 			   << " READ " << prop.key
 			   << " WRITE " << setter(prop.key);
 		if(prop.generateReset)
@@ -198,7 +198,7 @@ void ObjectBuilder::writeProperties()
 void ObjectBuilder::writeReadDeclarations()
 {
 	for(const auto &prop : qAsConst(data.properties))
-		header << "\t" << prop.type << " " << prop.key << "() const;\n";
+		header << "\t" << prop.metaType.value_or(prop.type) << " " << prop.key << "() const;\n";
 	if(data.simpleHref)
 		header << "\n\tQUrl extensionHref() const override;\n";
 }
@@ -206,7 +206,7 @@ void ObjectBuilder::writeReadDeclarations()
 void ObjectBuilder::writeWriteDeclarations()
 {
 	for(const auto &prop : qAsConst(data.properties))
-		header << "\tvoid " << setter(prop.key) << "(" << prop.type << " " << prop.key << ");\n";
+		header << "\tvoid " << setter(prop.key) << "(" << prop.metaType.value_or(prop.type) << " " << prop.key << ");\n";
 }
 
 void ObjectBuilder::writeResetDeclarations()
