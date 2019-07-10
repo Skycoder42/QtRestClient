@@ -139,7 +139,6 @@ bool QtRestClient::QmlGenericRestReply::isList(int type) const
 {
 	const static QRegularExpression regex {
 		QStringLiteral(R"__(^QList<.*>$)__"),
-		QRegularExpression::OptimizeOnFirstUsageOption |
 		QRegularExpression::DontCaptureOption
 	};
 

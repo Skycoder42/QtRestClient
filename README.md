@@ -37,9 +37,12 @@ There are multiple ways to install the Qt module, sorted by preference:
 4. Build it yourself! **Note:** This requires perl to be installed. If you don't have/need cmake, you can ignore the related warnings. To automatically build and install to your Qt installation, run:
 	- Install and prepare [qdep](https://github.com/Skycoder42/qdep#installation)
 	- Install [QtJsonSerializer](https://github.com/Skycoder42/QtJsonSerializer#downloadinstallation)
+	- Download the sources. Either use `git clone` or download from the releases. If you choose the second option, you have to manually create a folder named `.git` in the projects root directory, otherwise the build will fail.
 	- `qmake`
 	- `make` (If you want the tests/examples/etc. run `make all`)
-	- Optional step: `make doxygen` to generate the documentation
+	- Optional steps:
+		- `make doxygen` to generate the documentation
+		- `make -j1 run-tests` to build and run all tests
 	- `make install`
 
 ### Building without QtJsonSerializer/qdep

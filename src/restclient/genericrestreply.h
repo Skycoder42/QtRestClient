@@ -366,7 +366,9 @@ GenericRestReply<void, ErrorClassType>::GenericRestReply(QNetworkReply *networkR
 	RestReply(networkReply, parent),
 	client(client),
 	exceptionHandler()
-{}
+{
+	setAllowEmptyReplies(true);
+}
 
 template<typename ErrorClassType>
 GenericRestReply<void, ErrorClassType> *GenericRestReply<void, ErrorClassType>::onSucceeded(const std::function<void (int)> &handler)

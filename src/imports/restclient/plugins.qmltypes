@@ -469,6 +469,7 @@ Module {
             }
         }
         Property { name: "autoDelete"; type: "bool" }
+        Property { name: "allowEmptyReplies"; type: "bool" }
         Signal {
             name: "completed"
             Parameter { name: "httpStatus"; type: "int" }
@@ -513,6 +514,10 @@ Module {
             name: "autoDeleteChanged"
             Parameter { name: "autoDelete"; type: "bool" }
         }
+        Signal {
+            name: "allowEmptyRepliesChanged"
+            Parameter { name: "allowEmptyReplies"; type: "bool" }
+        }
         Method { name: "abort" }
         Method { name: "retry" }
         Method {
@@ -522,6 +527,10 @@ Module {
         Method {
             name: "setAutoDelete"
             Parameter { name: "autoDelete"; type: "bool" }
+        }
+        Method {
+            name: "setAllowEmptyReplies"
+            Parameter { name: "allowEmptyReplies"; type: "bool" }
         }
         Method { name: "disableAutoDelete"; type: "RestReply*" }
     }

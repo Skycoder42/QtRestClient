@@ -18,6 +18,7 @@ public:
 
 	QPointer<QNetworkReply> networkReply;
 	bool autoDelete = true;
+	bool allowEmptyReplies = false;
 	int retryDelay = -1;
 
 	RestReplyPrivate(QNetworkReply *networkReply, RestReply *q_ptr);

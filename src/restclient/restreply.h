@@ -21,6 +21,7 @@ class Q_RESTCLIENT_EXPORT RestReply : public QObject
 
 	//! Speciefies, whether the reply should be automatically deleted
 	Q_PROPERTY(bool autoDelete READ autoDelete WRITE setAutoDelete NOTIFY autoDeleteChanged)
+	Q_PROPERTY(bool allowEmptyReplies READ allowsEmptyReplies WRITE setAllowEmptyReplies NOTIFY allowEmptyRepliesChanged)
 
 public:
 	//! Defines the different possible error types
@@ -46,6 +47,8 @@ public:
 	RestReply *onSucceeded(const std::function<void(int, QJsonArray)> &handler);
 	//! @copydoc onSucceeded(QObject *, const std::function<void(int, QJsonObject)>&)
 	RestReply *onSucceeded(QObject *scope, const std::function<void(int, QJsonArray)> &handler);
+	RestReply *onSucceeded(const std::function<void(int)> &handler);
+	RestReply *onSucceeded(QObject *scope, const std::function<void(int)> &handler);
 	//! Set a handler to be called if the request failed
 	RestReply *onFailed(const std::function<void(int, QJsonObject)> &handler);
 	//! @copybrief onFailed(const std::function<void(int, QJsonObject)>&)
@@ -54,6 +57,8 @@ public:
 	RestReply *onFailed(const std::function<void(int, QJsonArray)> &handler);
 	//! @copydoc onFailed(QObject *, const std::function<void(int, QJsonObject)>&)
 	RestReply *onFailed(QObject *scope, const std::function<void(int, QJsonArray)> &handler);
+	RestReply *onFailed(const std::function<void(int)> &handler);
+	RestReply *onFailed(QObject *scope, const std::function<void(int)> &handler);
 	//! Set a handler to be called when the request was completed, regardless of success or failure
 	RestReply *onCompleted(const std::function<void(int)> &handler);
 	//! @copybrief onCompleted(const std::function<void(int)>&)
@@ -85,6 +90,8 @@ public:
 
 	//! @readAcFn{RestReply::autoDelete}
 	bool autoDelete() const;
+	//! @readAcFn{RestReply::allowEmptyReplies}
+	bool allowsEmptyReplies() const;
 
 	//! Returns the network reply associated with the rest reply
 	QNetworkReply *networkReply() const;
@@ -102,6 +109,8 @@ public Q_SLOTS:
 
 	//! @writeAcFn{RestReply::autoDelete}
 	void setAutoDelete(bool autoDelete);
+	//! @writeAcFn{RestReply::allowEmptyReplies}
+	void setAllowEmptyReplies(bool allowEmptyReplies);
 
 Q_SIGNALS:
 	//! Is emitted when the request completed, i.e. succeeded or failed
@@ -127,6 +136,8 @@ Q_SIGNALS:
 
 	//! @notifyAcFn{RestReply::autoDelete}
 	void autoDeleteChanged(bool autoDelete, QPrivateSignal);
+	//! @notifyAcFn{RestReply::allowEmptyReplies}
+	void allowEmptyRepliesChanged(bool allowEmptyReplies, QPrivateSignal);
 
 protected:
 	//! @private

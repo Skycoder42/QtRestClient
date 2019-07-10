@@ -47,6 +47,21 @@ RestReply *RestReply::onSucceeded(QObject *scope, const std::function<void (int,
 	return this;
 }
 
+RestReply *RestReply::onSucceeded(const std::function<void (int)> &handler)
+{
+	return onSucceeded(this, handler);
+}
+
+RestReply *RestReply::onSucceeded(QObject *scope, const std::function<void (int)> &handler)
+{
+	if(!handler)
+		return this;
+	connect(this, &RestReply::succeeded, scope, [handler](int code, const QJsonValue &){
+		handler(code);
+	});
+	return this;
+}
+
 RestReply *RestReply::onFailed(const std::function<void (int, QJsonObject)> &handler)
 {
 	return onFailed(this, handler);
@@ -73,6 +88,21 @@ RestReply *RestReply::onFailed(QObject *scope, const std::function<void (int, QJ
 		return this;
 	connect(this, &RestReply::failed, scope, [handler](int code, const QJsonValue &value){
 		handler(code, value.toArray());
+	});
+	return this;
+}
+
+RestReply *RestReply::onFailed(const std::function<void (int)> &handler)
+{
+	return onFailed(this, handler);
+}
+
+RestReply *RestReply::onFailed(QObject *scope, const std::function<void (int)> &handler)
+{
+	if(!handler)
+		return this;
+	connect(this, &RestReply::failed, scope, [handler](int code, const QJsonValue &){
+		handler(code);
 	});
 	return this;
 }
@@ -146,6 +176,11 @@ bool RestReply::autoDelete() const
 	return d->autoDelete;
 }
 
+bool RestReply::allowsEmptyReplies() const
+{
+	return d->allowEmptyReplies;
+}
+
 QNetworkReply *RestReply::networkReply() const
 {
 	return d->networkReply.data();
@@ -178,6 +213,15 @@ void RestReply::setAutoDelete(bool autoDelete)
 
 	d->autoDelete = autoDelete;
 	emit autoDeleteChanged(autoDelete, {});
+}
+
+void RestReply::setAllowEmptyReplies(bool allowEmptyReplies)
+{
+	if (d->allowEmptyReplies == allowEmptyReplies)
+		return;
+
+	d->allowEmptyReplies = allowEmptyReplies;
+	emit allowEmptyRepliesChanged(d->allowEmptyReplies, {});
 }
 
 QByteArray RestReply::jsonTypeName(QJsonValue::Type type)
@@ -276,19 +320,24 @@ void RestReplyPrivate::connectReply(QNetworkReply *reply)
 void RestReplyPrivate::replyFinished()
 {
 	retryDelay = -1;
+	const auto status = networkReply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
 
 	//read json first to allow data for certain network fails
 	auto readData = networkReply->readAll();
-	QJsonParseError jError;
-	auto jDoc = QJsonDocument::fromJson(readData, &jError);
 	QJsonValue jValue;
-	if(jDoc.isObject())
-		jValue = jDoc.object();
-	else if(jDoc.isArray())
-		jValue = jDoc.array();
+	QJsonParseError jError {0, QJsonParseError::NoError};
+	// always allow empty replies for NO_CONTENT, errors and if explicitly allowed
+	if (readData.isEmpty() && (status == 204 || status >= 300 || allowEmptyReplies))  // 204 = NO_CONTENT
+		jValue = QJsonValue::Null;  // set to NULL to indicate and empty body
+	else {
+		auto jDoc = QJsonDocument::fromJson(readData, &jError);
+		if(jDoc.isObject())
+			jValue = jDoc.object();
+		else if(jDoc.isArray())
+			jValue = jDoc.array();
+	}
 
 	//check "http errors", because they can have data, but only if json is valid
-	auto status = networkReply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
 	if(jError.error == QJsonParseError::NoError && status >= 300)//first: status code error + valid json
 		emit q->failed(status, jValue, {});
 	else if(networkReply->error() != QNetworkReply::NoError)//next: check normal network errors
