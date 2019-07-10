@@ -100,10 +100,10 @@ void ObjectBuilder::generateApiGadget()
 		writeEnums();
 	header << "\t" << data.name << "();\n"
 		   << "\t" << data.name << "(const " << data.name << " &other);\n"
-		   << "\t" << data.name << "(" << data.name << " &&other);\n"
+		   << "\t" << data.name << "(" << data.name << " &&other) noexcept;\n"
 		   << "\t~" << data.name << "();\n\n"
 		   << "\t" << data.name << " &operator=(const " << data.name << " &other);\n"
-		   << "\t" << data.name << " &operator=(" << data.name << " &&other);\n\n";
+		   << "\t" << data.name << " &operator=(" << data.name << " &&other) noexcept;\n\n";
 	writeReadDeclarations();
 	header << '\n';
 	writeWriteDeclarations();
@@ -127,10 +127,10 @@ void ObjectBuilder::generateApiGadget()
 	source << "\td{new " << data.name << "Data{}}\n"
 		   << "{}\n\n"
 		   << data.name << "::" << data.name << "(const " << data.name << " &other) = default;\n\n"
-		   << data.name << "::" << data.name << "(" << data.name << " &&other) = default;\n\n"
+		   << data.name << "::" << data.name << "(" << data.name << " &&other) noexcept = default;\n\n"
 		   << data.name << "::~" << data.name << "() = default;\n\n"
 		   << data.name << " &" << data.name << "::operator=(const " << data.name << " &other) = default;\n\n"
-		   << data.name << " &" << data.name << "::operator=(" << data.name << " &&other) = default;\n";
+		   << data.name << " &" << data.name << "::operator=(" << data.name << " &&other) noexcept = default;\n";
 	writeReadDefinitions();
 	writeWriteDefinitions();
 	writeResetDefinitions();
