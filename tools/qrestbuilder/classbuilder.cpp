@@ -208,10 +208,10 @@ QString ClassBuilder::writeMethodParams(const RestBuilderXmlReader::Method &meth
 		parameters.append(QStringLiteral("const ") + method.body.value() + QStringLiteral(" &__body"));
 	// add path parameters
 	if(method.path &&
-	   nonstd::holds_alternative<RestBuilderXmlReader::PathGroup>(method.path.value())) {
-		for(const auto &seg : qAsConst(nonstd::get<RestBuilderXmlReader::PathGroup>(method.path.value()).segments)) {
-			if(nonstd::holds_alternative<RestBuilderXmlReader::BaseParam>(seg)) {
-				const auto &param = nonstd::get<RestBuilderXmlReader::BaseParam>(seg);
+	   std::holds_alternative<RestBuilderXmlReader::PathGroup>(method.path.value())) {
+		for(const auto &seg : qAsConst(std::get<RestBuilderXmlReader::PathGroup>(method.path.value()).segments)) {
+			if(std::holds_alternative<RestBuilderXmlReader::BaseParam>(seg)) {
+				const auto &param = std::get<RestBuilderXmlReader::BaseParam>(seg);
 				parameters.append(writeParamArg(param, asHeader));
 			}
 		}
@@ -534,10 +534,10 @@ void ClassBuilder::writeQmlDefinitions()
 			parameters.append(QStringLiteral("__body"));
 		// add path parameters
 		if(method.path &&
-		   nonstd::holds_alternative<RestBuilderXmlReader::PathGroup>(method.path.value())) {
-			for(const auto &seg : qAsConst(nonstd::get<RestBuilderXmlReader::PathGroup>(method.path.value()).segments)) {
-				if(nonstd::holds_alternative<RestBuilderXmlReader::BaseParam>(seg))
-					parameters.append(nonstd::get<RestBuilderXmlReader::BaseParam>(seg).key);
+		   std::holds_alternative<RestBuilderXmlReader::PathGroup>(method.path.value())) {
+			for(const auto &seg : qAsConst(std::get<RestBuilderXmlReader::PathGroup>(method.path.value()).segments)) {
+				if(std::holds_alternative<RestBuilderXmlReader::BaseParam>(seg))
+					parameters.append(std::get<RestBuilderXmlReader::BaseParam>(seg).key);
 			}
 		}
 		// add normal parameters
@@ -562,19 +562,19 @@ void ClassBuilder::writeQmlDefinitions()
 
 void ClassBuilder::writeMethodPath(const RestBuilderXmlReader::variant<RestBuilderXmlReader::PathGroup, RestBuilderXmlReader::Expression> &info)
 {
-	if(nonstd::holds_alternative<RestBuilderXmlReader::PathGroup>(info)) {
-		auto pathList = nonstd::get<RestBuilderXmlReader::PathGroup>(info);
+	if(std::holds_alternative<RestBuilderXmlReader::PathGroup>(info)) {
+		auto pathList = std::get<RestBuilderXmlReader::PathGroup>(info);
 		if(pathList.segments.isEmpty() && pathList.path)
 			pathList.segments.append(RestBuilderXmlReader::Expression{pathList.expr, pathList.path.value()});
 
 		source << "\tQString __path = QStringList {\n";
 		for(const auto &seg : qAsConst(pathList.segments)) {
-			if(nonstd::holds_alternative<RestBuilderXmlReader::BaseParam>(seg))
-				source << "\t\tQVariant::fromValue(" << nonstd::get<RestBuilderXmlReader::BaseParam>(seg).key << ").toString(),\n";
-			else if(nonstd::holds_alternative<RestBuilderXmlReader::Expression>(seg))
-				source << "\t\t" << writeExpression(nonstd::get<RestBuilderXmlReader::Expression>(seg), true) << ",\n";
+			if(std::holds_alternative<RestBuilderXmlReader::BaseParam>(seg))
+				source << "\t\tQVariant::fromValue(" << std::get<RestBuilderXmlReader::BaseParam>(seg).key << ").toString(),\n";
+			else if(std::holds_alternative<RestBuilderXmlReader::Expression>(seg))
+				source << "\t\t" << writeExpression(std::get<RestBuilderXmlReader::Expression>(seg), true) << ",\n";
 		}
 		source << "\t}.join(QLatin1Char('/'));\n\n";
-	} else if(nonstd::holds_alternative<RestBuilderXmlReader::Expression>(info))
-		source << "\tQUrl __path {" << writeExpression(nonstd::get<RestBuilderXmlReader::Expression>(info), true) << "};\n\n";
+	} else if(std::holds_alternative<RestBuilderXmlReader::Expression>(info))
+		source << "\tQUrl __path {" << writeExpression(std::get<RestBuilderXmlReader::Expression>(info), true) << "};\n\n";
 }

@@ -1,7 +1,7 @@
 TARGET = QtRestClient
 
 QT = core network
-MODULE_CONFIG += c++14 qrestbuilder
+MODULE_CONFIG += qrestbuilder
 
 !no_json_serializer {
 	!qtHaveModule(jsonserializer): warning("Unable to find QtJsonSerializer module. To build without it, add \"CONFIG+=no_json_serializer\" to your qmake command line")

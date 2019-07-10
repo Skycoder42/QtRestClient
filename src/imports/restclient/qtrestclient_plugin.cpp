@@ -48,7 +48,8 @@ void QtRestClientDeclarativeModule::registerTypes(const char *uri)
 
 	//Version 2.1
 	qmlRegisterModule(uri, 2, 1);
+	qmlRegisterModule(uri, 2, 2);
 
 	// Check to make shure no module update is forgotten
-	static_assert(VERSION_MAJOR == 2 && VERSION_MINOR == 1, "QML module version needs to be updated");
+	static_assert(VERSION_MAJOR == 2 && VERSION_MINOR == 2, "QML module version needs to be updated");
 }

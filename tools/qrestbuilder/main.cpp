@@ -70,14 +70,14 @@ int main(int argc, char *argv[])
 		auto data = builderBase.readDocument(parser.value(QStringLiteral("in")));
 
 		QScopedPointer<RestBuilder> builder;
-		if(nonstd::holds_alternative<RestBuilderXmlReader::RestObject>(data))
-			builder.reset(new ObjectBuilder(nonstd::get<RestBuilderXmlReader::RestObject>(data)));
-		else if(nonstd::holds_alternative<RestBuilderXmlReader::RestGadget>(data))
-			builder.reset(new ObjectBuilder(nonstd::get<RestBuilderXmlReader::RestGadget>(data)));
-		else if(nonstd::holds_alternative<RestBuilderXmlReader::RestClass>(data))
-			builder.reset(new ClassBuilder(nonstd::get<RestBuilderXmlReader::RestClass>(data)));
-		else if(nonstd::holds_alternative<RestBuilderXmlReader::RestApi>(data))
-			builder.reset(new ClassBuilder(nonstd::get<RestBuilderXmlReader::RestApi>(data)));
+		if(std::holds_alternative<RestBuilderXmlReader::RestObject>(data))
+			builder.reset(new ObjectBuilder(std::get<RestBuilderXmlReader::RestObject>(data)));
+		else if(std::holds_alternative<RestBuilderXmlReader::RestGadget>(data))
+			builder.reset(new ObjectBuilder(std::get<RestBuilderXmlReader::RestGadget>(data)));
+		else if(std::holds_alternative<RestBuilderXmlReader::RestClass>(data))
+			builder.reset(new ClassBuilder(std::get<RestBuilderXmlReader::RestClass>(data)));
+		else if(std::holds_alternative<RestBuilderXmlReader::RestApi>(data))
+			builder.reset(new ClassBuilder(std::get<RestBuilderXmlReader::RestApi>(data)));
 		else
 			Q_UNREACHABLE();
 
