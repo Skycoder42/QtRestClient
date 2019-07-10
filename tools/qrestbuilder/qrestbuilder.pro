@@ -2,6 +2,7 @@ option(host_build)
 
 QT = core
 !force_bootstrap:qtHaveModule(xmlpatterns): QT += xmlpatterns
+CONFIG += c++17
 
 TARGET = qrestbuilder
 VERSION = $$MODULE_VERSION
@@ -31,10 +32,6 @@ XML_SCHEMA_DEFINITIONS += \
 	qrestbuilder.xsd
 
 contains(QT, xmlpatterns): RESOURCES += qrestbuilder.qrc
-
-INCLUDEPATH +=  \
-	../../src/3rdparty/optional-lite \
-	../../src/3rdparty/variant-lite
 
 load(qt_tool)
 
