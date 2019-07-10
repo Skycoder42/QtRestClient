@@ -2,7 +2,6 @@ option(host_build)
 
 QT = core
 !force_bootstrap:qtHaveModule(xmlpatterns): QT += xmlpatterns
-CONFIG += c++17
 
 TARGET = qrestbuilder
 VERSION = $$MODULE_VERSION
@@ -46,3 +45,6 @@ win32 {
 }
 
 !load(qdep):error("Failed to load qdep feature! Run 'qdep.py prfgen --qmake $$QMAKE_QMAKE' to create it.")
+
+CONFIG += c++17
+message($$CONFIG)
