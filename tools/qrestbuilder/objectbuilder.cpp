@@ -201,6 +201,18 @@ void ObjectBuilder::writeProperties()
 			header << " RESET re" << setter(prop.key);
 		if(isObject)
 			header << " NOTIFY " << prop.key << "Changed";
+		if (prop.revision)
+			header << " REVISION " << *prop.revision;
+		if (prop.designable)
+			header << " DESIGNABLE " << boolValue(*prop.designable);
+		if (prop.scriptable)
+			header << " SCRIPTABLE " << boolValue(*prop.scriptable);
+		if (prop.stored)
+			header << " STORED " << boolValue(*prop.stored);
+		if (prop.user)
+			header << " USER " << boolValue(*prop.user);
+		if (prop.final)
+			header << " FINAL";
 		header << ")\n";
 	}
 }

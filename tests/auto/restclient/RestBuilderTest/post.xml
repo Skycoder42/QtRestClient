@@ -8,9 +8,9 @@
 	<Include local="true">user.h</Include>
 	<Include local="true">testmacro.h</Include>
 
-	<Property key="id" type="int" generateReset="true">-1</Property>
+	<Property key="id" type="int" generateReset="true" user="true">-1</Property>
 	<Property key="title" type="QString"/>
-	<Property key="version" type="QVersionNumber"/>
+	<Property key="version" type="QVersionNumber" designable="false" scriptable="true" stored="false"/>
 	<Property key="body" type="QString"/>
-	<Property key="user" type="User*">nullptr</Property>
+	<Property key="user" type="User*" revision="1" final="true">nullptr</Property>
 </RestGadget>

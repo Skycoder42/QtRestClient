@@ -65,6 +65,11 @@ QString RestBuilder::nsInject(const QString &name, const QString &prefix) const
 	return nList.join(QStringLiteral("::"));
 }
 
+QString RestBuilder::boolValue(bool value) const
+{
+	return value ? QStringLiteral("true") : QStringLiteral("false");
+}
+
 void RestBuilder::writeIncludes(const QList<RestBuilderXmlReader::Include> &includes)
 {
 	for(const auto &inc : includes) {

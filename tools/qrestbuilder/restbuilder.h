@@ -22,6 +22,7 @@ protected:
 	QString exportedName(const QString &name, const RestBuilderXmlReader::optional<QString> &exportKey) const;
 	QString nsName(const QString &name, const RestBuilderXmlReader::optional<QString> &nspace) const;
 	QString nsInject(const QString &name, const QString &prefix) const;
+	QString boolValue(bool value) const;
 
 	void writeIncludes(const QList<RestBuilderXmlReader::Include> &includes = {});
 	QString writeParamDefault(const RestBuilderXmlReader::BaseParam &param);
