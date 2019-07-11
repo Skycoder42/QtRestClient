@@ -195,6 +195,56 @@ a base param, but with an addition property, that is specific to properties.
 
 
 
+@subsection generator_doc_PropertyMethod Element Type: PropertyMethod
+The PropertyMethod element allows you to declare custom methods for @ref generator_doc_UserProperty "UserProperties". The attributes
+of this element differ slightly, depending on whether it's a read, write, reset or notify method.
+
+@subsubsection ggenerator_doc_PropertyMethod_attribs Attributes
+ Name		| Allowed values	| Default/Required	| Accessors				| Description
+------------|-------------------|-------------------|-----------------------|-------------
+ name		| c++ method name	| <i>required</i>	| <i>all</i>			| The c++ name of the generated method
+ virtual	| bool				| false				| read, write, reset	| Make the generated method virtual
+ invokable	| bool				| false				| read					| Make the generated method Q_INVOKABLE
+ parameter	| c++ variable name	| "value"			| write					| Specify a custom name for the setters parameter
+ declare	| bool				| true				| notify				| If set to false, the signal will not be declared
+
+@subsubsection generator_doc_PropertyMethod_content Content
+Only methods for the read, write and reset accessor are allowed a content. That content is the definition of the
+method to be generated. If specified, both the declaration and the definition are generated. If left empty,
+neither are. For signals, only declarations are needed, as MOC generates the definition. Use the `declare`
+attribute there to control this behaviour.
+
+
+
+@subsection generator_doc_UserProperty Element Type: UserProperty
+A special form of a property where you must specify your own methods, instead of automatically generating
+them based of their type and name.
+
+@subsubsection generator_doc_UserProperty_attribs Attributes
+ Name		| Allowed values	| Default/Required	| Description
+------------|-------------------|-------------------|-------------
+ key		| property name		| <i>required</i>	| The property name
+ type		| c++ type name		| <i>required</i>	| The property type
+ metaType	| c++ type name		| type				| Set an extra type to use for the *declaration* of properties and their accessors. Can become useful if a type was registered in the metasystem under a different typename then it's canonical name
+ member		| c++ variable name	| key				| The name of the member variable to store the properties data. You can access it in the accessors via `d-><member>`
+ revision	| int				| <i>none</i>		| Add the REVISION attribute to the properties declaration
+ designable	| bool				| <i>none</i>		| Add the DESIGNABLE attribute to the properties declaration
+ scriptable	| bool				| <i>none</i>		| Add the SCRIPTABLE attribute to the properties declaration
+ stored		| bool				| <i>none</i>		| Add the STORED attribute to the properties declaration
+ user		| bool				| <i>none</i>		| Add the USER attribute to the properties declaration
+ final		| bool				| false				| Add the FINALS attribute to the properties declaration if set to true
+
+@subsubsection generator_doc_UserProperty_children Allowed Child Elements
+ Name		| XML-Type												| Limits	| Description
+------------|-------------------------------------------------------|-----------|-------------
+ Read		| @ref generator_doc_PropertyMethod "PropertyMethod"	| 1			| The method for the READ-accessor
+ Write		| @ref generator_doc_PropertyMethod "PropertyMethod"	| 0 - 1		| The method for the WRITE-accessor
+ Reset		| @ref generator_doc_PropertyMethod "PropertyMethod"	| 0 - 1		| The method for the RESET-accessor
+ Notify		| @ref generator_doc_PropertyMethod "PropertyMethod"	| 0 - 1		| The method for the NOTIFY-accessor
+ Default	| @ref generator_doc_Expression "Expression"			| 0 - 1		| The default value of the property
+
+
+
 @subsection generator_doc_Enum Element Type: Enum
 If you want to use custom enum types in you class, use this element. It allows you to generate enums and flags
 that are automatically registered with Qt.

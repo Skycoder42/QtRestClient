@@ -11,7 +11,7 @@
 	</UserProperty>
 
 	<UserProperty key="test2" type="bool" member="_test2">
-		<Read name="get2">
+		<Read name="get2" invokable="true">
 			return d->_test2;
 		</Read>
 		<Write name="set2" parameter="x">
