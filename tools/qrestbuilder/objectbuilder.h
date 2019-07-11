@@ -28,12 +28,14 @@ private:
 	void writeWriteDeclarations();
 	void writeResetDeclarations();
 	void writeEqualsDeclaration();
+	void writeQHashDeclaration(bool asFriend);
 	void writeSourceIncludes();
 	void writeAggregateConstructorDefinition();
 	void writeReadDefinitions();
 	void writeWriteDefinitions();
 	void writeResetDefinitions();
 	void writeEqualsDefinition();
+	void writeQHashDefinition();
 	void writePrivateClass();
 	void writeDataClass();
 	void writeMemberDefinitions();

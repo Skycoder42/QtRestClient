@@ -50,7 +50,7 @@ void ObjectBuilder::generateApiObject()
 	writeAggregateConstructorDeclaration();
 	header << "\t~User() override;\n\n";
 	writeReadDeclarations();
-	if(data.generateEquals.value_or(!isObject))
+	if(data.generateEquals.value_or(false))
 		writeEqualsDeclaration();
 	header << "\npublic Q_SLOTS:\n";
 	writeWriteDeclarations();
@@ -76,7 +76,7 @@ void ObjectBuilder::generateApiObject()
 	writeAggregateConstructorDefinition();
 	source << data.name << "::~" << data.name << "() = default;\n\n";
 	writeReadDefinitions();
-	if(data.generateEquals.value_or(!isObject))
+	if(data.generateEquals.value_or(false))
 		writeEqualsDefinition();
 	writeWriteDefinitions();
 	writeResetDefinitions();
@@ -111,11 +111,15 @@ void ObjectBuilder::generateApiGadget()
 	header << '\n';
 	writeWriteDeclarations();
 	writeResetDeclarations();
-	if(data.generateEquals.value_or(!isObject))
+	if(data.generateEquals.value_or(true))
 		writeEqualsDeclaration();
-	header << "\nprivate:\n"
-		   << "\t QSharedDataPointer<" << data.name << "Data> d;\n"
+	header << "\nprivate:\n";
+	if (data.generateEquals.value_or(true))
+		writeQHashDeclaration(true);
+	header << "\tQSharedDataPointer<" << data.name << "Data> d;\n"
 		   << "};\n\n";
+	if (data.generateEquals.value_or(true))
+		writeQHashDeclaration(false);
 	if(data.nspace)
 		header << "}\n\n";
 	header << "Q_DECLARE_METATYPE(" << nsName(data.name, data.nspace) << ")\n\n";
@@ -138,8 +142,10 @@ void ObjectBuilder::generateApiGadget()
 	writeReadDefinitions();
 	writeWriteDefinitions();
 	writeResetDefinitions();
-	if(data.generateEquals.value_or(!isObject))
+	if(data.generateEquals.value_or(true)) {
 		writeEqualsDefinition();
+		writeQHashDefinition();
+	}
 	writeSetupHooks();
 }
 
@@ -269,17 +275,25 @@ void ObjectBuilder::writeEqualsDeclaration()
 	} else {
 		header << "\n\tbool operator==(const " << data.name << " &other) const;\n";
 		header << "\tbool operator!=(const " << data.name << " &other) const;\n";
-	}
+}
+}
+
+void ObjectBuilder::writeQHashDeclaration(bool asFriend)
+{
+	if (asFriend)
+		header << "\tfriend ";
+	header << exportedName(QStringLiteral("uint qHash"), data.exportKey)
+		   << "(const " << data.name << " &data, uint seed" << (asFriend ? "" : " = 0") << ");\n\n";
 }
 
 void ObjectBuilder::writeSourceIncludes()
 {
 	source << "#include \"" << fileName << ".h\"\n\n"
+		   << "#include <limits>\n"
 		   << "#include <QtCore/QVariant>\n";
 	if(data.registerConverters) {
 		source << "#include <QtCore/QCoreApplication>\n"
-			   << "#include <QtCore/QQueue>\n" //TODO remove after fixed in serializer
-			   << "#include <QtCore/QStack>\n" //TODO remove after fixed in serializer
+			   << "#include <QtCore/QHash>\n"
 			   << "#include <QtJsonSerializer/QJsonSerializer>\n";
 	}
 	if(data.qmlUri)
@@ -401,6 +415,31 @@ void ObjectBuilder::writeEqualsDefinition()
 		source << ";\n"
 			   << "}\n";
 	}
+}
+
+void ObjectBuilder::writeQHashDefinition()
+{
+	source << "\nnamespace {\n\n"
+		   << "inline uint seed_rot(uint x, uint &n) {\n"
+		   << "\tn %= std::numeric_limits<uint>::digits;\n"
+		   << "\tx = (x << n) | (x >> ((-n) & (std::numeric_limits<uint>::digits - 1)));\n"
+		   << "\t++n;\n"
+		   << "\treturn x;\n"
+		   << "}\n\n"
+		   << "template <typename T>\n"
+		   << "inline uint dynHash(const T &data, uint seed) {\n"
+		   << "\treturn qHash(data, seed);\n"
+		   << "}\n\n"
+		   << "}\n\n"
+
+		   << "uint " << nsName(QStringLiteral("qHash"), data.nspace)
+		   << "(const " << data.name << "& data, uint seed)\n"
+		   << "{\n"
+		   << "\tauto n = 0u;\n"
+		   << "\treturn seed_rot(seed, n)";
+	for(const auto &prop : qAsConst(data.properties))
+		source << "\n\t\t^ dynHash(data.d->" << prop.key << ", seed_rot(seed, n))";
+	source << ";\n}\n";
 }
 
 void ObjectBuilder::writePrivateClass()
