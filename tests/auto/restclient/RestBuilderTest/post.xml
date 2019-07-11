@@ -2,7 +2,8 @@
 <RestGadget name="Post"
 			export="TEST_EXPORT"
 			generateReset="false"
-			namespace="TestSpace">
+			namespace="TestSpace"
+			aggregateDefaults="true">
 	<Include>QVersionNumber</Include>
 	<Include local="true">user.h</Include>
 	<Include local="true">testmacro.h</Include>

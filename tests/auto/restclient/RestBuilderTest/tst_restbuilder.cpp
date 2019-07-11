@@ -74,6 +74,9 @@ void RestBuilderTest::testCustomCompiledObject()
 	QCOMPARE(user.property("name").toString(), QStringLiteral("baum"));
 	QCOMPARE(user.property("gender").value<User::GenderType>(), User::Male);
 	QCOMPARE(user.property("title").toInt(), static_cast<int>(User::Doctor | User::Professor));
+
+	User user2 {42, QStringLiteral("baum"), User::Male, User::Doctor | User::Professor};
+	QVERIFY(user.equals(&user2));
 }
 
 void RestBuilderTest::testCustomCompiledGadget()
@@ -81,9 +84,13 @@ void RestBuilderTest::testCustomCompiledGadget()
 	Post post;
 
 	post.setId(42);
-	post.setTitle("baum");
-	post.setBody("baum == 42");
+	post.setTitle(QStringLiteral("baum"));
+	post.setVersion(QVersionNumber{1, 1, 0});
+	post.setBody(QStringLiteral("baum == 42"));
 	QCOMPARE(post.user(), nullptr);
+
+	Post post2 {42, QStringLiteral("baum"), QVersionNumber{1, 1, 0}, QStringLiteral("baum == 42")};
+	QCOMPARE(post2, post);
 }
 
 void RestBuilderTest::testCustomCompiledApi()

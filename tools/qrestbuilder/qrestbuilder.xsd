@@ -66,6 +66,7 @@
 		<xs:attribute default="true" name="generateReset" type="xs:boolean" use="optional"/>
 		<xs:attribute name="namespace" type="xs:string" use="optional" qxg:member="nspace"/>
 		<xs:attribute name="simpleHref" type="xs:string" use="optional"/>
+		<xs:attribute default="false" name="aggregateDefaults" type="xs:boolean" use="optional"/>
 	</xs:complexType>
 
 	<xs:complexType name="RestObject">

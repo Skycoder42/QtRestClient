@@ -62,6 +62,7 @@ how the final c++ code is beeing generated.
  generateReset		| bool					| true									| If enabled, reset methods are generated for all properties. Can still be set per property
  simpleHref			| c++ property name		| <i>none</i>							| Optional name of the property that holds the href to extend a simple object. Can only be used if base is or extends QtRestClient::Simple
  qmlUri				| qml import URI		| <i>none</i>							| A QML import URI (+version), e.g. "com.example.api 1.0" - If specified, QML bindings are generated for the object/gadget
+ aggregateDefaults	| bool					| false									| Specifies whether the generated aggregate constructor should have default values for all arguments after the second or not
 
 @subsubsection generator_doc_RestObject_children Allowed Child Elements
  Name		| XML-Type									| Limits	| Description

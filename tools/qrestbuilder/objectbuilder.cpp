@@ -46,8 +46,9 @@ void ObjectBuilder::generateApiObject()
 	header << "\npublic:\n";
 	if(!data.enums.isEmpty())
 		writeEnums();
-	header << "\tQ_INVOKABLE " << data.name << "(QObject *parent = nullptr);\n"
-		   << "\t~User() override;\n\n";
+	header << "\tQ_INVOKABLE explicit " << data.name << "(QObject *parent = nullptr);\n";
+	writeAggregateConstructorDeclaration();
+	header << "\t~User() override;\n\n";
 	writeReadDeclarations();
 	if(data.generateEquals.value_or(!isObject))
 		writeEqualsDeclaration();
@@ -71,8 +72,9 @@ void ObjectBuilder::generateApiObject()
 	source << data.name << "::" << data.name << "(QObject *parent) :\n"
 		   << "\t" << data.base.value() << "{parent},\n"
 		   << "\td{new " << data.name << "Private{}}\n"
-		   << "{}\n\n"
-		   << data.name << "::~" << data.name << "() = default;\n\n";
+		   << "{}\n\n";
+	writeAggregateConstructorDefinition();
+	source << data.name << "::~" << data.name << "() = default;\n\n";
 	writeReadDefinitions();
 	if(data.generateEquals.value_or(!isObject))
 		writeEqualsDefinition();
@@ -98,8 +100,9 @@ void ObjectBuilder::generateApiGadget()
 	header << "\npublic:\n";
 	if(!data.enums.isEmpty())
 		writeEnums();
-	header << "\t" << data.name << "();\n"
-		   << "\t" << data.name << "(const " << data.name << " &other);\n"
+	header << "\t" << data.name << "();\n";
+	writeAggregateConstructorDeclaration();
+	header << "\t" << data.name << "(const " << data.name << " &other);\n"
 		   << "\t" << data.name << "(" << data.name << " &&other) noexcept;\n"
 		   << "\t~" << data.name << "();\n\n"
 		   << "\t" << data.name << " &operator=(const " << data.name << " &other);\n"
@@ -125,8 +128,9 @@ void ObjectBuilder::generateApiGadget()
 	if(data.base)
 		source << "\t" << data.base.value() << "{},\n";
 	source << "\td{new " << data.name << "Data{}}\n"
-		   << "{}\n\n"
-		   << data.name << "::" << data.name << "(const " << data.name << " &other) = default;\n\n"
+		   << "{}\n\n";
+	writeAggregateConstructorDefinition();
+	source << data.name << "::" << data.name << "(const " << data.name << " &other) = default;\n\n"
 		   << data.name << "::" << data.name << "(" << data.name << " &&other) noexcept = default;\n\n"
 		   << data.name << "::~" << data.name << "() = default;\n\n"
 		   << data.name << " &" << data.name << "::operator=(const " << data.name << " &other) = default;\n\n"
@@ -195,6 +199,41 @@ void ObjectBuilder::writeProperties()
 	}
 }
 
+void ObjectBuilder::writeAggregateConstructorDeclaration()
+{
+	auto offsetSpaces = data.name.size() + 1;
+	auto offsetTabs = 1 + offsetSpaces / 4;
+	offsetSpaces %= 4;
+	header << "\t" << data.name << "(";
+	auto isFirst = true;
+	for (const auto &prop : qAsConst(data.properties)) {
+		if (isFirst) {
+			isFirst = false;
+			header << prop.type << " " << prop.key;
+		} else {
+			header << ",\n"
+				   << QByteArray(offsetTabs, '\t')
+				   << QByteArray(offsetSpaces, ' ')
+				   << prop.type << " " << prop.key;
+			if (data.aggregateDefaults) {
+				if (prop.defaultValue.isEmpty())
+					header << " = {}";
+				else
+					header << " = " << writeParamDefault(prop);
+			}
+		}
+	}
+
+	if (isObject) {
+		header << ",\n"
+			   << QByteArray(offsetTabs, '\t')
+			   << QByteArray(offsetSpaces, ' ')
+			   << "QObject *parent = nullptr";
+	}
+
+	header << ");\n";
+}
+
 void ObjectBuilder::writeReadDeclarations()
 {
 	for(const auto &prop : qAsConst(data.properties))
@@ -223,12 +262,6 @@ void ObjectBuilder::writeResetDeclarations()
 	}
 }
 
-void ObjectBuilder::writeMemberDeclarations()
-{
-	for(const auto &prop : qAsConst(data.properties))
-		source << "\t" << prop.type << " " << prop.key << ";\n";
-}
-
 void ObjectBuilder::writeEqualsDeclaration()
 {
 	if(isObject) {
@@ -253,7 +286,44 @@ void ObjectBuilder::writeSourceIncludes()
 		source << "#include <QtQml/qqml.h>\n";
 	if(data.nspace)
 		source << "using namespace " << data.nspace.value() << ";\n";
-	source << '\n';
+					source << '\n';
+}
+
+void ObjectBuilder::writeAggregateConstructorDefinition()
+{
+	auto isFirst = true;
+	source << data.name << "::" << data.name << "(";
+	for (const auto &prop : qAsConst(data.properties)) {
+		if (isFirst)
+			isFirst = false;
+		else
+			source << ", ";
+		source << prop.type << " " << prop.key;
+	}
+	if (isObject)
+		source << ", QObject *parent";
+	source << ") :\n";
+
+	if (isObject) {
+		source << "\t" << data.base.value() << "{parent},\n"
+			   << "\td{new " << data.name << "Private{";
+		isFirst = true;
+	} else {
+		if(data.base)
+			source << "\t" << data.base.value() << "{},\n";
+		source << "\td{new " << data.name << "Data{QSharedData{}";
+	}
+
+	for (const auto &prop : qAsConst(data.properties)) {
+		if (isFirst)
+			isFirst = false;
+		else
+			source << ", ";
+		source << "std::move(" << prop.key << ")";
+	}
+
+	source << "}}\n"
+		   << "{}\n\n";
 }
 
 void ObjectBuilder::writeReadDefinitions()
@@ -340,11 +410,8 @@ void ObjectBuilder::writePrivateClass()
 		source << "namespace " << data.nspace.value() << " {\n\n";
 	source << "class " << name << "\n"
 		   << "{\n"
-		   << "public:\n"
-		   << "\t" << name << "() :\n";
-	writeMemberDefinitions(true);
-	source << "\t{}\n\n";
-	writeMemberDeclarations();
+		   << "public:\n";
+	writeMemberDefinitions();
 	source << "};\n\n";
 	if(data.nspace)
 		source << "}\n\n";
@@ -357,30 +424,20 @@ void ObjectBuilder::writeDataClass()
 		source << "namespace " << data.nspace.value() << " {\n\n";
 	source << "class " << name << " : public QSharedData\n"
 		   << "{\n"
-		   << "public:\n"
-		   << "\t" << name << "() :\n"
-		   << "\t\tQSharedData{}\n";
-	writeMemberDefinitions(false);
-	source << "\t{}\n\n"
-		   << "\t" << name << "(const " << name << " &other) = default;\n"
-		   << "\t" << name << "(" << name << " &&other) = default;\n\n";
-	writeMemberDeclarations();
+		   << "public:\n";
+	writeMemberDefinitions();
 	source << "};\n\n";
 	if(data.nspace)
 		source << "}\n\n";
 }
 
-void ObjectBuilder::writeMemberDefinitions(bool skipComma)
+void ObjectBuilder::writeMemberDefinitions()
 {
 	for(const auto &prop : qAsConst(data.properties)) {
-		if(skipComma) {
-			source << "\t\t" << prop.key << "{";
-			skipComma = false;
-		} else
-			source << "\t\t," << prop.key << "{";
+		source << "\t" << prop.type << " " << prop.key << " {";
 		if(!prop.defaultValue.isEmpty())
 			source << writeParamDefault(prop);
-		source << "}\n";
+		source << "};\n";
 	}
 }
 

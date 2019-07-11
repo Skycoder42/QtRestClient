@@ -23,19 +23,20 @@ private:
 	void writeEnums();
 	void writeFlagOperators();
 	void writeProperties();
+	void writeAggregateConstructorDeclaration();
 	void writeReadDeclarations();
 	void writeWriteDeclarations();
 	void writeResetDeclarations();
-	void writeMemberDeclarations();
 	void writeEqualsDeclaration();
 	void writeSourceIncludes();
+	void writeAggregateConstructorDefinition();
 	void writeReadDefinitions();
 	void writeWriteDefinitions();
 	void writeResetDefinitions();
 	void writeEqualsDefinition();
 	void writePrivateClass();
 	void writeDataClass();
-	void writeMemberDefinitions(bool skipComma);
+	void writeMemberDefinitions();
 	void writeSetupHooks();
 };
 
