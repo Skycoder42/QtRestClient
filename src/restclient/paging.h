@@ -55,6 +55,12 @@ bool Paging<T>::isValid() const
 }
 
 template<typename T>
+IPaging *Paging<T>::iPaging() const
+{
+	return d->iPaging.data();
+}
+
+template<typename T>
 QList<T> Paging<T>::items() const
 {
 	return d->data;

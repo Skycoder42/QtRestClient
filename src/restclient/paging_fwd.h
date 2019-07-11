@@ -41,6 +41,8 @@ public:
 
 	//! Returns true, if the current paging object is a valid one
 	bool isValid() const;
+	//! Returns the internally used IPaging instance
+	IPaging *iPaging() const;
 
 	//! @copybrief IPaging::items
 	QList<T> items() const;
