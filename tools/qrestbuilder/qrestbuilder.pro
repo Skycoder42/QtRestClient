@@ -34,6 +34,10 @@ XML_SCHEMA_DEFINITIONS += \
 
 contains(QT, xmlpatterns): RESOURCES += qrestbuilder.qrc
 
+INCLUDEPATH +=  \
+	../../src/3rdparty/optional-lite \
+	../../src/3rdparty/variant-lite
+
 load(qt_tool)
 
 QDEP_DEPENDS += Skycoder42/QXmlCodeGen
@@ -47,6 +51,3 @@ win32 {
 }
 
 !load(qdep):error("Failed to load qdep feature! Run 'qdep.py prfgen --qmake $$QMAKE_QMAKE' to create it.")
-
-CONFIG += c++17
-message($$CONFIG)
