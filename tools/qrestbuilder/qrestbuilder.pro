@@ -18,7 +18,9 @@ HEADERS += \
 	restbuilder.h \
 	objectbuilder.h \
 	classbuilder.h \
-	xmlconverter.h
+	xmlconverter.h \
+	../../src/3rdparty/optional-lite/optional.hpp \
+	../../src/3rdparty/variant-lite/variant.hpp
 
 SOURCES += \
 	main.cpp \

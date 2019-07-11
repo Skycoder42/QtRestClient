@@ -3,6 +3,7 @@
 		   xmlns:qxg="https://skycoder42.de/xml/schemas/QXmlCodeGen">
 	<!-- QXG Definitions -->
 	<qxg:config class="RestBuilderXmlReader"
+				stdcompat="true"
 				schemaUrl="qrc:/schemas/qrestbuilder.xsd">
 	</qxg:config>
 
