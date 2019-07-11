@@ -14,6 +14,6 @@ SOURCES += \
 
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
-QDEP_DEPENDS += Skycoder42/QtCoroutines
+QDEP_DEPENDS += Skycoder42/QtCoroutines@1.1.2
 
-!load(qdep):warning("Failed to load qdep feature! Run 'qdep.py prfgen --qmake $$QMAKE_QMAKE' to create it.")
+!load(qdep):warning("Failed to load qdep feature! Run 'qdep prfgen --qmake $$QMAKE_QMAKE' to create it.")

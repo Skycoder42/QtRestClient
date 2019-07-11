@@ -40,7 +40,7 @@ INCLUDEPATH +=  \
 
 load(qt_tool)
 
-QDEP_DEPENDS += Skycoder42/QXmlCodeGen
+QDEP_DEPENDS += Skycoder42/QXmlCodeGen@1.4.3
 
 win32 {
 	QMAKE_TARGET_PRODUCT = "Qt Rest API Builder"
@@ -50,4 +50,4 @@ win32 {
 	QMAKE_TARGET_BUNDLE_PREFIX = $${BUNDLE_PREFIX}.
 }
 
-!load(qdep):error("Failed to load qdep feature! Run 'qdep.py prfgen --qmake $$QMAKE_QMAKE' to create it.")
+!load(qdep):error("Failed to load qdep feature! Run 'qdep prfgen --qmake $$QMAKE_QMAKE' to create it.")
