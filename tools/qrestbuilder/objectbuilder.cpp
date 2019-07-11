@@ -59,10 +59,10 @@ void ObjectBuilder::generateApiObject()
 	header << "\nQ_SIGNALS:\n";
 	for(const auto &propVar : qAsConst(data.properties)) {
 		if (nonstd::holds_alternative<RestBuilderXmlReader::Property>(propVar)) {
-			const auto &prop = std::get<RestBuilderXmlReader::Property>(propVar);
+			const auto &prop = nonstd::get<RestBuilderXmlReader::Property>(propVar);
 			header << "\tvoid " << prop.key << "Changed(const " << prop.metaType.value_or(prop.type) << " &" << prop.key << ");\n";
 		} else {
-			const auto &prop = std::get<RestBuilderXmlReader::UserProperty>(propVar);
+			const auto &prop = nonstd::get<RestBuilderXmlReader::UserProperty>(propVar);
 			if (prop.notify && prop.notify->declare)
 				header << "\tvoid " << prop.notify->name << "(const " << prop.metaType.value_or(prop.type) << " &" << prop.key << ");\n";
 		}
@@ -165,17 +165,17 @@ QString ObjectBuilder::setter(const QString &name)
 const RestBuilderXmlReader::TypedVariableAttribs &ObjectBuilder::propertyBasics(const nonstd::variant<RestBuilderXmlReader::Property, RestBuilderXmlReader::UserProperty> &prop) const
 {
 	if (nonstd::holds_alternative<RestBuilderXmlReader::Property>(prop))
-		return std::get<RestBuilderXmlReader::Property>(prop);
+		return nonstd::get<RestBuilderXmlReader::Property>(prop);
 	else
-		return std::get<RestBuilderXmlReader::UserProperty>(prop);
+		return nonstd::get<RestBuilderXmlReader::UserProperty>(prop);
 }
 
 const RestBuilderXmlReader::PropertyAttribs &ObjectBuilder::propertyAttribs(const nonstd::variant<RestBuilderXmlReader::Property, RestBuilderXmlReader::UserProperty> &prop) const
 {
 	if (nonstd::holds_alternative<RestBuilderXmlReader::Property>(prop))
-		return std::get<RestBuilderXmlReader::Property>(prop);
+		return nonstd::get<RestBuilderXmlReader::Property>(prop);
 	else
-		return std::get<RestBuilderXmlReader::UserProperty>(prop);
+		return nonstd::get<RestBuilderXmlReader::UserProperty>(prop);
 }
 
 ObjectBuilder::SudoProperty ObjectBuilder::sudoProperty(const nonstd::variant<RestBuilderXmlReader::Property, RestBuilderXmlReader::UserProperty> &prop) const
@@ -228,7 +228,7 @@ void ObjectBuilder::writeProperties()
 	for(const auto &propVar : qAsConst(data.properties)) {
 		const RestBuilderXmlReader::PropertyAttribs *attribs;
 		if (nonstd::holds_alternative<RestBuilderXmlReader::Property>(propVar)) {
-			const auto &prop = std::get<RestBuilderXmlReader::Property>(propVar);
+			const auto &prop = nonstd::get<RestBuilderXmlReader::Property>(propVar);
 			header << "\tQ_PROPERTY(" << prop.metaType.value_or(prop.type) << " " << prop.key
 				   << " READ " << prop.key
 				   << " WRITE " << setter(prop.key);
@@ -238,7 +238,7 @@ void ObjectBuilder::writeProperties()
 				header << " NOTIFY " << prop.key << "Changed";
 			attribs = &prop;
 		} else {
-			const auto &prop = std::get<RestBuilderXmlReader::UserProperty>(propVar);
+			const auto &prop = nonstd::get<RestBuilderXmlReader::UserProperty>(propVar);
 			header << "\tQ_PROPERTY(" << prop.metaType.value_or(prop.type) << " " << prop.key
 				   << " READ " << prop.read.name;
 			if (prop.write)
@@ -287,13 +287,13 @@ void ObjectBuilder::writeAggregateConstructorDeclaration()
 				   << propBase.type << " " << propBase.key;
 			if (data.aggregateDefaults) {
 				if (nonstd::holds_alternative<RestBuilderXmlReader::Property>(propVar)) {
-					const auto &prop = std::get<RestBuilderXmlReader::Property>(propVar);
+					const auto &prop = nonstd::get<RestBuilderXmlReader::Property>(propVar);
 					if (prop.defaultValue.isEmpty())
 						header << " = {}";
 					else
 						header << " = " << writeParamDefault(prop);
 				} else {
-					const auto &prop = std::get<RestBuilderXmlReader::UserProperty>(propVar);
+					const auto &prop = nonstd::get<RestBuilderXmlReader::UserProperty>(propVar);
 					if (prop.defaultValue)
 						header << " = " << writeExpression(*prop.defaultValue, true);
 					else
@@ -318,10 +318,10 @@ void ObjectBuilder::writeReadDeclarations()
 {
 	for(const auto &propVar : qAsConst(data.properties)) {
 		if (nonstd::holds_alternative<RestBuilderXmlReader::Property>(propVar)) {
-			const auto &prop = std::get<RestBuilderXmlReader::Property>(propVar);
+			const auto &prop = nonstd::get<RestBuilderXmlReader::Property>(propVar);
 			header << "\t" << prop.metaType.value_or(prop.type) << " " << prop.key << "() const;\n";
 		} else {
-			const auto &prop = std::get<RestBuilderXmlReader::UserProperty>(propVar);
+			const auto &prop = nonstd::get<RestBuilderXmlReader::UserProperty>(propVar);
 			if (!prop.read.definition.isEmpty()) {
 				header << "\t";
 				if (prop.read.invokable)
@@ -340,10 +340,10 @@ void ObjectBuilder::writeWriteDeclarations()
 {
 	for(const auto &propVar : qAsConst(data.properties)) {
 		if (nonstd::holds_alternative<RestBuilderXmlReader::Property>(propVar)) {
-			const auto &prop = std::get<RestBuilderXmlReader::Property>(propVar);
+			const auto &prop = nonstd::get<RestBuilderXmlReader::Property>(propVar);
 			header << "\tvoid " << setter(prop.key) << "(" << prop.metaType.value_or(prop.type) << " " << prop.key << ");\n";
 		} else {
-			const auto &prop = std::get<RestBuilderXmlReader::UserProperty>(propVar);
+			const auto &prop = nonstd::get<RestBuilderXmlReader::UserProperty>(propVar);
 			if (prop.write && !prop.write->definition.isEmpty()) {
 				header << "\t";
 				if (prop.write->isVirtual)
@@ -359,7 +359,7 @@ void ObjectBuilder::writeResetDeclarations()
 	auto once = true;
 	for(const auto &propVar : qAsConst(data.properties)) {
 		if (nonstd::holds_alternative<RestBuilderXmlReader::Property>(propVar)) {
-			const auto &prop = std::get<RestBuilderXmlReader::Property>(propVar);
+			const auto &prop = nonstd::get<RestBuilderXmlReader::Property>(propVar);
 			if(!prop.generateReset)
 				continue;
 			if(once) {
@@ -368,7 +368,7 @@ void ObjectBuilder::writeResetDeclarations()
 			}
 			header << "\tvoid re" << setter(prop.key) << "();\n";
 		} else {
-			const auto &prop = std::get<RestBuilderXmlReader::UserProperty>(propVar);
+			const auto &prop = nonstd::get<RestBuilderXmlReader::UserProperty>(propVar);
 			if (prop.reset && !prop.reset->definition.isEmpty()) {
 				if(once) {
 					once = false;
@@ -462,13 +462,13 @@ void ObjectBuilder::writeReadDefinitions()
 {
 	for(const auto &propVar : qAsConst(data.properties)) {
 		if (nonstd::holds_alternative<RestBuilderXmlReader::Property>(propVar)) {
-			const auto &prop = std::get<RestBuilderXmlReader::Property>(propVar);
+			const auto &prop = nonstd::get<RestBuilderXmlReader::Property>(propVar);
 			source << "\n" << prop.type << " " << data.name << "::" << prop.key << "() const\n"
 				   << "{\n"
 				   << "\treturn d->" << prop.key << ";\n"
 				   << "}\n";
 		} else {
-			const auto &prop = std::get<RestBuilderXmlReader::UserProperty>(propVar);
+			const auto &prop = nonstd::get<RestBuilderXmlReader::UserProperty>(propVar);
 			if (!prop.read.definition.isEmpty()) {
 				source << "\n" << prop.type << " " << data.name << "::" << prop.read.name << "() const\n"
 					   << "{\n\t"
@@ -490,7 +490,7 @@ void ObjectBuilder::writeWriteDefinitions()
 {
 	for(const auto &propVar : qAsConst(data.properties)) {
 		if (nonstd::holds_alternative<RestBuilderXmlReader::Property>(propVar)) {
-			const auto &prop = std::get<RestBuilderXmlReader::Property>(propVar);
+			const auto &prop = nonstd::get<RestBuilderXmlReader::Property>(propVar);
 			source << "\nvoid " << data.name << "::" << setter(prop.key) << "(" << prop.type << " " << prop.key << ")\n"
 				   << "{\n";
 			if(data.testEquality) {
@@ -502,7 +502,7 @@ void ObjectBuilder::writeWriteDefinitions()
 				source << "\temit " << prop.key << "Changed(d->" << prop.key << ");\n";
 			source << "}\n";
 		} else {
-			const auto &prop = std::get<RestBuilderXmlReader::UserProperty>(propVar);
+			const auto &prop = nonstd::get<RestBuilderXmlReader::UserProperty>(propVar);
 			if (prop.write && !prop.write->definition.isEmpty()) {
 				source << "\nvoid " << data.name << "::" << prop.write->name << "(" << prop.type << " " << prop.write->parameter << ")\n"
 					   << "{\n\t"
@@ -517,7 +517,7 @@ void ObjectBuilder::writeResetDefinitions()
 {
 	for(const auto &propVar : qAsConst(data.properties)) {
 		if (nonstd::holds_alternative<RestBuilderXmlReader::Property>(propVar)) {
-			const auto &prop = std::get<RestBuilderXmlReader::Property>(propVar);
+			const auto &prop = nonstd::get<RestBuilderXmlReader::Property>(propVar);
 			if(!prop.generateReset)
 				continue;
 
@@ -531,7 +531,7 @@ void ObjectBuilder::writeResetDefinitions()
 			source << ");\n"
 				   << "}\n";
 		} else {
-			const auto &prop = std::get<RestBuilderXmlReader::UserProperty>(propVar);
+			const auto &prop = nonstd::get<RestBuilderXmlReader::UserProperty>(propVar);
 			if (prop.reset && !prop.reset->definition.isEmpty()) {
 				source << "\nvoid " << data.name << "::" << prop.reset->name << "()\n"
 					   << "{\n\t"
@@ -632,13 +632,13 @@ void ObjectBuilder::writeMemberDefinitions()
 {
 	for(const auto &propVar : qAsConst(data.properties)) {
 		if (nonstd::holds_alternative<RestBuilderXmlReader::Property>(propVar)) {
-			const auto &prop = std::get<RestBuilderXmlReader::Property>(propVar);
+			const auto &prop = nonstd::get<RestBuilderXmlReader::Property>(propVar);
 			source << "\t" << prop.type << " " << prop.key << " {";
 			if(!prop.defaultValue.isEmpty())
 				source << writeParamDefault(prop);
 			source << "};\n";
 		} else {
-			const auto &prop = std::get<RestBuilderXmlReader::UserProperty>(propVar);
+			const auto &prop = nonstd::get<RestBuilderXmlReader::UserProperty>(propVar);
 			source << "\t" << prop.type << " " << prop.member.value_or(prop.key) << " {";
 			if(prop.defaultValue)
 				source << writeExpression(*prop.defaultValue, true);
