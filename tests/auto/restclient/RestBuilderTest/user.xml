@@ -4,7 +4,7 @@
 			registerConverters="true"
 			testEquality="false"
 			generateEquals="true">
-	<Enum name="GenderType">
+	<Enum name="GenderType" isClass="true">
 		<Key name="Male"/>
 		<Key name="Female"/>
 	</Enum>
@@ -18,6 +18,6 @@
 
 	<Property key="id" type="int">-1</Property>
 	<Property key="name" type="QString" asStr="true">Anonymous</Property>
-	<Property key="gender" type="User::GenderType" metaType="GenderType" generateReset="false">User::Male</Property>
+	<Property key="gender" type="User::GenderType" metaType="GenderType" generateReset="false">User::GenderType::Male</Property>
 	<Property key="title" type="User::UserTypes" metaType="UserTypes">User::Person</Property>
 </RestObject>

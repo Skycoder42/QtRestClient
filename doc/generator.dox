@@ -199,6 +199,7 @@ that are automatically registered with Qt.
  name		| c++ class name				| <i>required</i>	| The c++ name of the generated enum
  base		| name of a valid parent class	| <i>none</i>		| If you need a custom base class for your enum, use this property. But remember that Qt discourages this!
  isFlags	| bool							| false				| If set to true, a QFlag type is generated and registered instead of a normal enum
+ isClass	| bool							| false				| If set to true, a `enum class` get created instead of a normal `enum`
 
 @subsubsection generator_doc_Enum_children Allowed Child Elements
 Name	| XML-Type								| Limits	| Description

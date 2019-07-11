@@ -152,9 +152,9 @@ void ObjectBuilder::writeEnums()
 {
 	for(const auto &eElem : qAsConst(data.enums)) {
 		if(!eElem.base.isEmpty())
-			header << "\tenum " << eElem.name << " : " << eElem.base << " {\n";
+			header << "\tenum " << (eElem.isClass ? "class " : "") << eElem.name << " : " << eElem.base << " {\n";
 		else
-			header << "\tenum " << eElem.name << " {\n";
+			header << "\tenum " << (eElem.isClass ? "class " : "") << eElem.name << " {\n";
 		for(const auto &value : eElem.keys) {
 			if(value.value.isEmpty())
 				header << "\t\t" << value.name << ",\n";

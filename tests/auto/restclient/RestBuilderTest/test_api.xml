@@ -21,7 +21,7 @@
 			except="QObject*"
 			postParams="true">
 		<Param key="name" type="QString"/>
-		<Param key="gender" type="User::GenderType">User::Female</Param>
+		<Param key="gender" type="User::GenderType">User::GenderType::Female</Param>
 		<Header key="Request-Style">babaric</Header>
 	</Method>
 </RestApi>

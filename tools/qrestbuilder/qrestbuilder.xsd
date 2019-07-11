@@ -40,6 +40,7 @@
 		<xs:attribute name="name" type="xs:string" use="required"/>
 		<xs:attribute default="int" name="base" type="xs:string" use="optional"/>
 		<xs:attribute default="false" name="isFlags" type="xs:boolean" use="optional"/>
+		<xs:attribute default="false" name="isClass" type="xs:boolean" use="optional"/>
 	</xs:complexType>
 	<xs:complexType name="Property">
 		<xs:simpleContent>
