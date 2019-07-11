@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RestObject name="UserProps"
+			aggregateDefaults="true"
+			registerConverters="false">
+	<Include local="true">testmacro.h</Include>
+
+	<UserProperty key="test1" type="int">
+		<Read name="testMe" virtual="true">
+			return 42;
+		</Read>
+	</UserProperty>
+
+	<UserProperty key="test2" type="bool" member="_test2">
+		<Read name="get2">
+			return d->_test2;
+		</Read>
+		<Write name="set2" parameter="x">
+			d->_test2 = x;
+			emit not2(d->_test2);
+		</Write>
+		<Reset name="clear2">
+			d->_test2 = false;
+			emit not2(false);
+		</Reset>
+		<Notify name="not2"/>
+	</UserProperty>
+
+	<UserProperty key="test3" type="int">
+		<Read name="testMe" />
+	</UserProperty>
+</RestObject>

@@ -19,6 +19,7 @@ REST_API_FILES += \
 	post.xml \
 	api_posts.xml \
 	test_api.xml \
-	simplepost.xml
+	simplepost.xml \
+	user_props.xml
 
 DEFINES += SRCDIR=\\\"$$PWD/\\\"

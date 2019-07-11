@@ -191,16 +191,6 @@ void ClassBuilder::writeClassMainDefinition()
 		   << "}\n";
 }
 
-QString ClassBuilder::writeExpression(const RestBuilderXmlReader::Expression &expression, bool asString)
-{
-	if(expression.expr)
-		return expression.value;
-	else if(asString)
-		return QStringLiteral("QStringLiteral(\"") + expression.value + QStringLiteral("\")");
-	else
-		return QLatin1Char('"') + expression.value + QLatin1Char('"');
-}
-
 QString ClassBuilder::writeMethodParams(const RestBuilderXmlReader::Method &method, bool asHeader)
 {
 	QStringList parameters;

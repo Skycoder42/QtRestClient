@@ -21,7 +21,7 @@ class Q_RESTCLIENT_EXPORT RestReply : public QObject
 
 	//! Speciefies, whether the reply should be automatically deleted
 	Q_PROPERTY(bool autoDelete READ autoDelete WRITE setAutoDelete NOTIFY autoDeleteChanged)
-	Q_PROPERTY(bool allowEmptyReplies READ allowsEmptyReplies WRITE setAllowEmptyReplies NOTIFY allowEmptyRepliesChanged)
+	Q_PROPERTY(bool allowEmptyReplies READ allowsEmptyReplies WRITE setAllowEmptyReplies NOTIFY allowEmptyRepliesChanged REVISION 2)
 
 public:
 	//! Defines the different possible error types
@@ -110,7 +110,7 @@ public Q_SLOTS:
 	//! @writeAcFn{RestReply::autoDelete}
 	void setAutoDelete(bool autoDelete);
 	//! @writeAcFn{RestReply::allowEmptyReplies}
-	void setAllowEmptyReplies(bool allowEmptyReplies);
+	Q_REVISION(2) void setAllowEmptyReplies(bool allowEmptyReplies);
 
 Q_SIGNALS:
 	//! Is emitted when the request completed, i.e. succeeded or failed
@@ -137,7 +137,7 @@ Q_SIGNALS:
 	//! @notifyAcFn{RestReply::autoDelete}
 	void autoDeleteChanged(bool autoDelete, QPrivateSignal);
 	//! @notifyAcFn{RestReply::allowEmptyReplies}
-	void allowEmptyRepliesChanged(bool allowEmptyReplies, QPrivateSignal);
+	Q_REVISION(2) void allowEmptyRepliesChanged(bool allowEmptyReplies, QPrivateSignal);
 
 protected:
 	//! @private

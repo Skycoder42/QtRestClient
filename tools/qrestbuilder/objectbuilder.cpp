@@ -48,7 +48,7 @@ void ObjectBuilder::generateApiObject()
 		writeEnums();
 	header << "\tQ_INVOKABLE explicit " << data.name << "(QObject *parent = nullptr);\n";
 	writeAggregateConstructorDeclaration();
-	header << "\t~User() override;\n\n";
+	header << "\t~" << data.name << "() override;\n\n";
 	writeReadDeclarations();
 	if(data.generateEquals.value_or(false))
 		writeEqualsDeclaration();
@@ -57,8 +57,16 @@ void ObjectBuilder::generateApiObject()
 	writeResetDeclarations();
 
 	header << "\nQ_SIGNALS:\n";
-	for(const auto &prop : qAsConst(data.properties))
-		header << "\tvoid " << prop.key << "Changed(const " << prop.metaType.value_or(prop.type) << " &" << prop.key << ");\n";
+	for(const auto &propVar : qAsConst(data.properties)) {
+		if (nonstd::holds_alternative<RestBuilderXmlReader::Property>(propVar)) {
+			const auto &prop = std::get<RestBuilderXmlReader::Property>(propVar);
+			header << "\tvoid " << prop.key << "Changed(const " << prop.metaType.value_or(prop.type) << " &" << prop.key << ");\n";
+		} else {
+			const auto &prop = std::get<RestBuilderXmlReader::UserProperty>(propVar);
+			if (prop.notify && prop.notify->declare)
+				header << "\tvoid " << prop.notify->name << "(const " << prop.metaType.value_or(prop.type) << " &" << prop.key << ");\n";
+		}
+	}
 	header << "\nprivate:\n"
 		   << "\tQScopedPointer<" << data.name << "Private> d;\n"
 		   << "};\n\n";
@@ -154,6 +162,30 @@ QString ObjectBuilder::setter(const QString &name)
 	return QStringLiteral("set") + name.mid(0, 1).toUpper() + name.mid(1);
 }
 
+const RestBuilderXmlReader::TypedVariableAttribs &ObjectBuilder::propertyBasics(const nonstd::variant<RestBuilderXmlReader::Property, RestBuilderXmlReader::UserProperty> &prop) const
+{
+	if (nonstd::holds_alternative<RestBuilderXmlReader::Property>(prop))
+		return std::get<RestBuilderXmlReader::Property>(prop);
+	else
+		return std::get<RestBuilderXmlReader::UserProperty>(prop);
+}
+
+const RestBuilderXmlReader::PropertyAttribs &ObjectBuilder::propertyAttribs(const nonstd::variant<RestBuilderXmlReader::Property, RestBuilderXmlReader::UserProperty> &prop) const
+{
+	if (nonstd::holds_alternative<RestBuilderXmlReader::Property>(prop))
+		return std::get<RestBuilderXmlReader::Property>(prop);
+	else
+		return std::get<RestBuilderXmlReader::UserProperty>(prop);
+}
+
+ObjectBuilder::SudoProperty ObjectBuilder::sudoProperty(const nonstd::variant<RestBuilderXmlReader::Property, RestBuilderXmlReader::UserProperty> &prop) const
+{
+	return {
+		propertyBasics(prop),
+		propertyAttribs(prop)
+	};
+}
+
 void ObjectBuilder::writeEnums()
 {
 	for(const auto &eElem : qAsConst(data.enums)) {
@@ -193,25 +225,44 @@ void ObjectBuilder::writeFlagOperators()
 
 void ObjectBuilder::writeProperties()
 {
-	for(const auto &prop : qAsConst(data.properties)) {
-		header << "\tQ_PROPERTY(" << prop.metaType.value_or(prop.type) << " " << prop.key
-			   << " READ " << prop.key
-			   << " WRITE " << setter(prop.key);
-		if(prop.generateReset)
-			header << " RESET re" << setter(prop.key);
-		if(isObject)
-			header << " NOTIFY " << prop.key << "Changed";
-		if (prop.revision)
-			header << " REVISION " << *prop.revision;
-		if (prop.designable)
-			header << " DESIGNABLE " << boolValue(*prop.designable);
-		if (prop.scriptable)
-			header << " SCRIPTABLE " << boolValue(*prop.scriptable);
-		if (prop.stored)
-			header << " STORED " << boolValue(*prop.stored);
-		if (prop.user)
-			header << " USER " << boolValue(*prop.user);
-		if (prop.final)
+	for(const auto &propVar : qAsConst(data.properties)) {
+		const RestBuilderXmlReader::PropertyAttribs *attribs;
+		if (nonstd::holds_alternative<RestBuilderXmlReader::Property>(propVar)) {
+			const auto &prop = std::get<RestBuilderXmlReader::Property>(propVar);
+			header << "\tQ_PROPERTY(" << prop.metaType.value_or(prop.type) << " " << prop.key
+				   << " READ " << prop.key
+				   << " WRITE " << setter(prop.key);
+			if(prop.generateReset)
+				header << " RESET re" << setter(prop.key);
+			if(isObject)
+				header << " NOTIFY " << prop.key << "Changed";
+			attribs = &prop;
+		} else {
+			const auto &prop = std::get<RestBuilderXmlReader::UserProperty>(propVar);
+			header << "\tQ_PROPERTY(" << prop.metaType.value_or(prop.type) << " " << prop.key
+				   << " READ " << prop.read.name;
+			if (prop.write)
+				header << " WRITE " << prop.write->name;
+			if (prop.reset)
+				header << " RESET " << prop.reset->name;
+			if (prop.notify)
+				header << " NOTIFY " << prop.notify->name;
+			if (!prop.write && !prop.reset && !prop.notify)
+				header << " CONSTANT";
+			attribs = &prop;
+		}
+
+		if (attribs->revision)
+			header << " REVISION " << *attribs->revision;
+		if (attribs->designable)
+			header << " DESIGNABLE " << boolValue(*attribs->designable);
+		if (attribs->scriptable)
+			header << " SCRIPTABLE " << boolValue(*attribs->scriptable);
+		if (attribs->stored)
+			header << " STORED " << boolValue(*attribs->stored);
+		if (attribs->user)
+			header << " USER " << boolValue(*attribs->user);
+		if (attribs->final)
 			header << " FINAL";
 		header << ")\n";
 	}
@@ -224,20 +275,31 @@ void ObjectBuilder::writeAggregateConstructorDeclaration()
 	offsetSpaces %= 4;
 	header << "\t" << data.name << "(";
 	auto isFirst = true;
-	for (const auto &prop : qAsConst(data.properties)) {
+	for (const auto &propVar : qAsConst(data.properties)) {
+		const auto &propBase = propertyBasics(propVar);
 		if (isFirst) {
 			isFirst = false;
-			header << prop.type << " " << prop.key;
+			header << propBase.type << " " << propBase.key;
 		} else {
 			header << ",\n"
 				   << QByteArray(offsetTabs, '\t')
 				   << QByteArray(offsetSpaces, ' ')
-				   << prop.type << " " << prop.key;
+				   << propBase.type << " " << propBase.key;
 			if (data.aggregateDefaults) {
-				if (prop.defaultValue.isEmpty())
-					header << " = {}";
-				else
-					header << " = " << writeParamDefault(prop);
+				if (nonstd::holds_alternative<RestBuilderXmlReader::Property>(propVar)) {
+					const auto &prop = std::get<RestBuilderXmlReader::Property>(propVar);
+					if (prop.defaultValue.isEmpty())
+						header << " = {}";
+					else
+						header << " = " << writeParamDefault(prop);
+				} else {
+					const auto &prop = std::get<RestBuilderXmlReader::UserProperty>(propVar);
+					if (prop.defaultValue)
+						header << " = " << writeExpression(*prop.defaultValue, true);
+					else
+						header << " = {}";
+				}
+
 			}
 		}
 	}
@@ -254,40 +316,82 @@ void ObjectBuilder::writeAggregateConstructorDeclaration()
 
 void ObjectBuilder::writeReadDeclarations()
 {
-	for(const auto &prop : qAsConst(data.properties))
-		header << "\t" << prop.metaType.value_or(prop.type) << " " << prop.key << "() const;\n";
+	for(const auto &propVar : qAsConst(data.properties)) {
+		if (nonstd::holds_alternative<RestBuilderXmlReader::Property>(propVar)) {
+			const auto &prop = std::get<RestBuilderXmlReader::Property>(propVar);
+			header << "\t" << prop.metaType.value_or(prop.type) << " " << prop.key << "() const;\n";
+		} else {
+			const auto &prop = std::get<RestBuilderXmlReader::UserProperty>(propVar);
+			if (!prop.read.definition.isEmpty()) {
+				header << "\t";
+				if (prop.read.invokable)
+					header << "Q_INVOKABLE ";
+				if (prop.read.isVirtual)
+					header << "virtual ";
+				header << prop.metaType.value_or(prop.type) << " " << prop.read.name << "() const;\n";
+			}
+		}
+	}
 	if(data.simpleHref)
 		header << "\n\tQUrl extensionHref() const override;\n";
 }
 
 void ObjectBuilder::writeWriteDeclarations()
 {
-	for(const auto &prop : qAsConst(data.properties))
-		header << "\tvoid " << setter(prop.key) << "(" << prop.metaType.value_or(prop.type) << " " << prop.key << ");\n";
+	for(const auto &propVar : qAsConst(data.properties)) {
+		if (nonstd::holds_alternative<RestBuilderXmlReader::Property>(propVar)) {
+			const auto &prop = std::get<RestBuilderXmlReader::Property>(propVar);
+			header << "\tvoid " << setter(prop.key) << "(" << prop.metaType.value_or(prop.type) << " " << prop.key << ");\n";
+		} else {
+			const auto &prop = std::get<RestBuilderXmlReader::UserProperty>(propVar);
+			if (prop.write && !prop.write->definition.isEmpty()) {
+				header << "\t";
+				if (prop.write->isVirtual)
+					header << "virtual ";
+				header << "void " << prop.write->name << "(" << prop.metaType.value_or(prop.type) << " " << prop.write->parameter << ");\n";
+			}
+		}
+	}
 }
 
 void ObjectBuilder::writeResetDeclarations()
 {
 	auto once = true;
-	for(const auto &prop : qAsConst(data.properties)) {
-		if(!prop.generateReset)
-			continue;
-		if(once) {
-			once = false;
-			header << '\n';
+	for(const auto &propVar : qAsConst(data.properties)) {
+		if (nonstd::holds_alternative<RestBuilderXmlReader::Property>(propVar)) {
+			const auto &prop = std::get<RestBuilderXmlReader::Property>(propVar);
+			if(!prop.generateReset)
+				continue;
+			if(once) {
+				once = false;
+				header << '\n';
+			}
+			header << "\tvoid re" << setter(prop.key) << "();\n";
+		} else {
+			const auto &prop = std::get<RestBuilderXmlReader::UserProperty>(propVar);
+			if (prop.reset && !prop.reset->definition.isEmpty()) {
+				if(once) {
+					once = false;
+					header << '\n';
+				}
+
+				header << "\t";
+				if (prop.reset->isVirtual)
+					header << "virtual ";
+				header << "void " << prop.reset->name << "();\n";
+			}
 		}
-		header << "\tvoid re" << setter(prop.key) << "();\n";
 	}
 }
 
 void ObjectBuilder::writeEqualsDeclaration()
 {
-	if(isObject) {
+	if(isObject)
 		header << "\n\tQ_INVOKABLE bool equals(const " << data.name << " *other) const;\n";
-	} else {
+	else {
 		header << "\n\tbool operator==(const " << data.name << " &other) const;\n";
 		header << "\tbool operator!=(const " << data.name << " &other) const;\n";
-}
+	}
 }
 
 void ObjectBuilder::writeQHashDeclaration(bool asFriend)
@@ -319,7 +423,8 @@ void ObjectBuilder::writeAggregateConstructorDefinition()
 {
 	auto isFirst = true;
 	source << data.name << "::" << data.name << "(";
-	for (const auto &prop : qAsConst(data.properties)) {
+	for (const auto &propVar : qAsConst(data.properties)) {
+		const auto &prop = propertyBasics(propVar);
 		if (isFirst)
 			isFirst = false;
 		else
@@ -340,7 +445,8 @@ void ObjectBuilder::writeAggregateConstructorDefinition()
 		source << "\td{new " << data.name << "Data{QSharedData{}";
 	}
 
-	for (const auto &prop : qAsConst(data.properties)) {
+	for (const auto &propVar : qAsConst(data.properties)) {
+		const auto &prop = propertyBasics(propVar);
 		if (isFirst)
 			isFirst = false;
 		else
@@ -354,12 +460,24 @@ void ObjectBuilder::writeAggregateConstructorDefinition()
 
 void ObjectBuilder::writeReadDefinitions()
 {
-	for(const auto &prop : qAsConst(data.properties)) {
-		source << "\n" << prop.type << " " << data.name << "::" << prop.key << "() const\n"
-			   << "{\n"
-			   << "\treturn d->" << prop.key << ";\n"
-			   << "}\n";
+	for(const auto &propVar : qAsConst(data.properties)) {
+		if (nonstd::holds_alternative<RestBuilderXmlReader::Property>(propVar)) {
+			const auto &prop = std::get<RestBuilderXmlReader::Property>(propVar);
+			source << "\n" << prop.type << " " << data.name << "::" << prop.key << "() const\n"
+				   << "{\n"
+				   << "\treturn d->" << prop.key << ";\n"
+				   << "}\n";
+		} else {
+			const auto &prop = std::get<RestBuilderXmlReader::UserProperty>(propVar);
+			if (!prop.read.definition.isEmpty()) {
+				source << "\n" << prop.type << " " << data.name << "::" << prop.read.name << "() const\n"
+					   << "{\n\t"
+					   << prop.read.definition.trimmed()
+					   << "\n}\n";
+			}
+		}
 	}
+
 	if(data.simpleHref) {
 		source << "\nQUrl " << data.name << "::extensionHref() const\n"
 			   << "{\n"
@@ -370,35 +488,57 @@ void ObjectBuilder::writeReadDefinitions()
 
 void ObjectBuilder::writeWriteDefinitions()
 {
-	for(const auto &prop : qAsConst(data.properties)) {
-		source << "\nvoid " << data.name << "::" << setter(prop.key) << "(" << prop.type << " " << prop.key << ")\n"
-			   << "{\n";
-		if(data.testEquality) {
-			source << "\tif(d->" << prop.key << " == " << prop.key << ")\n"
-				   << "\t\treturn;\n\n";
+	for(const auto &propVar : qAsConst(data.properties)) {
+		if (nonstd::holds_alternative<RestBuilderXmlReader::Property>(propVar)) {
+			const auto &prop = std::get<RestBuilderXmlReader::Property>(propVar);
+			source << "\nvoid " << data.name << "::" << setter(prop.key) << "(" << prop.type << " " << prop.key << ")\n"
+				   << "{\n";
+			if(data.testEquality) {
+				source << "\tif(d->" << prop.key << " == " << prop.key << ")\n"
+					   << "\t\treturn;\n\n";
+			}
+			source << "\td->" << prop.key << " = std::move(" << prop.key <<");\n";
+			if(isObject)
+				source << "\temit " << prop.key << "Changed(d->" << prop.key << ");\n";
+			source << "}\n";
+		} else {
+			const auto &prop = std::get<RestBuilderXmlReader::UserProperty>(propVar);
+			if (prop.write && !prop.write->definition.isEmpty()) {
+				source << "\nvoid " << data.name << "::" << prop.write->name << "(" << prop.type << " " << prop.write->parameter << ")\n"
+					   << "{\n\t"
+					   << prop.write->definition.trimmed()
+					   << "\n}\n";
+			}
 		}
-		source << "\td->" << prop.key << " = std::move(" << prop.key <<");\n";
-		if(isObject)
-			source << "\temit " << prop.key << "Changed(d->" << prop.key << ");\n";
-		source << "}\n";
 	}
 }
 
 void ObjectBuilder::writeResetDefinitions()
 {
-	for(const auto &prop : qAsConst(data.properties)) {
-		if(!prop.generateReset)
-			continue;
+	for(const auto &propVar : qAsConst(data.properties)) {
+		if (nonstd::holds_alternative<RestBuilderXmlReader::Property>(propVar)) {
+			const auto &prop = std::get<RestBuilderXmlReader::Property>(propVar);
+			if(!prop.generateReset)
+				continue;
 
-		source << "\nvoid " << data.name << "::re" << setter(prop.key) << "()\n"
-			   << "{\n"
-			   << "\t" << setter(prop.key) << "(";
-		if(prop.defaultValue.isEmpty())
-			source << prop.type << "{}";
-		else
-			source << writeParamDefault(prop);
-		source << ");\n"
-			   << "}\n";
+			source << "\nvoid " << data.name << "::re" << setter(prop.key) << "()\n"
+				   << "{\n"
+				   << "\t" << setter(prop.key) << "(";
+			if(prop.defaultValue.isEmpty())
+				source << prop.type << "{}";
+			else
+				source << writeParamDefault(prop);
+			source << ");\n"
+				   << "}\n";
+		} else {
+			const auto &prop = std::get<RestBuilderXmlReader::UserProperty>(propVar);
+			if (prop.reset && !prop.reset->definition.isEmpty()) {
+				source << "\nvoid " << data.name << "::" << prop.reset->name << "()\n"
+					   << "{\n\t"
+					   << prop.reset->definition.trimmed()
+					   << "\n}\n";
+			}
+		}
 	}
 }
 
@@ -412,8 +552,10 @@ void ObjectBuilder::writeEqualsDefinition()
 		source << "\nbool " << data.name << "::" << "operator==(const " << data.name << " &other) const\n";
 	source << "{\n"
 		   << "\treturn true";
-	for(const auto &prop : qAsConst(data.properties))
+	for(const auto &propVar : qAsConst(data.properties)) {
+		const auto &prop = propertyBasics(propVar);
 		source << "\n\t\t&& d->" << prop.key << " == other" << otherPrefix << prop.key;
+	}
 	source << ";\n"
 		   << "}\n";
 
@@ -422,8 +564,10 @@ void ObjectBuilder::writeEqualsDefinition()
 		source << "\nbool " << data.name << "::" << "operator!=(const " << data.name << " &other) const\n"
 			   << "{\n"
 			   << "\treturn false";
-		for(const auto &prop : qAsConst(data.properties))
+		for(const auto &propVar : qAsConst(data.properties)) {
+			const auto &prop = propertyBasics(propVar);
 			source << "\n\t\t|| d->" << prop.key << " != other" << otherPrefix << prop.key;
+		}
 		source << ";\n"
 			   << "}\n";
 	}
@@ -449,8 +593,10 @@ void ObjectBuilder::writeQHashDefinition()
 		   << "{\n"
 		   << "\tauto n = 0u;\n"
 		   << "\treturn seed_rot(seed, n)";
-	for(const auto &prop : qAsConst(data.properties))
+	for(const auto &propVar : qAsConst(data.properties)) {
+		const auto &prop = propertyBasics(propVar);
 		source << "\n\t\t^ dynHash(data.d->" << prop.key << ", seed_rot(seed, n))";
+	}
 	source << ";\n}\n";
 }
 
@@ -484,11 +630,20 @@ void ObjectBuilder::writeDataClass()
 
 void ObjectBuilder::writeMemberDefinitions()
 {
-	for(const auto &prop : qAsConst(data.properties)) {
-		source << "\t" << prop.type << " " << prop.key << " {";
-		if(!prop.defaultValue.isEmpty())
-			source << writeParamDefault(prop);
-		source << "};\n";
+	for(const auto &propVar : qAsConst(data.properties)) {
+		if (nonstd::holds_alternative<RestBuilderXmlReader::Property>(propVar)) {
+			const auto &prop = std::get<RestBuilderXmlReader::Property>(propVar);
+			source << "\t" << prop.type << " " << prop.key << " {";
+			if(!prop.defaultValue.isEmpty())
+				source << writeParamDefault(prop);
+			source << "};\n";
+		} else {
+			const auto &prop = std::get<RestBuilderXmlReader::UserProperty>(propVar);
+			source << "\t" << prop.type << " " << prop.member.value_or(prop.key) << " {";
+			if(prop.defaultValue)
+				source << writeExpression(*prop.defaultValue, true);
+			source << "};\n";
+		}
 	}
 }
 

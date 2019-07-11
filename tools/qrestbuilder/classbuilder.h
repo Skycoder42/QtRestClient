@@ -27,7 +27,6 @@ private:
 	void writeClassBeginDefinition();
 	void writeClassMainDefinition();
 
-	QString writeExpression(const RestBuilderXmlReader::Expression &expression, bool asString);
 	QString writeMethodParams(const RestBuilderXmlReader::Method &method, bool withDefaults);
 
 	void writeFactoryDeclaration();

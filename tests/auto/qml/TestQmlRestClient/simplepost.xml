@@ -4,7 +4,7 @@
 			base="QtRestClient::Simple&lt;Post&gt;"
 			simpleHref="href"
 			namespace="TestSpace"
-			qmlUri="de.skycoder42.qtrestclient.test 2.1">
+			qmlUri="de.skycoder42.qtrestclient.test 2.2">
 	<Include>QtRestClient/Simple</Include>
 	<Include local="true">post.h</Include>
 

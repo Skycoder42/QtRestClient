@@ -4,7 +4,7 @@
 			registerConverters="true"
 			testEquality="false"
 			generateEquals="true"
-			qmlUri="de.skycoder42.qtrestclient.test 2.1">
+			qmlUri="de.skycoder42.qtrestclient.test 2.2">
 	<Enum name="GenderType">
 		<Key name="Male"/>
 		<Key name="Female"/>

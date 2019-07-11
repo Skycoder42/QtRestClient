@@ -3,7 +3,7 @@
 			export="TEST_EXPORT"
 			generateReset="false"
 			namespace="TestSpace"
-			qmlUri="de.skycoder42.qtrestclient.test 2.1">
+			qmlUri="de.skycoder42.qtrestclient.test 2.2">
 	<Include>QVersionNumber</Include>
 	<Include local="true">user.h</Include>
 	<Include local="true">testmacro.h</Include>

@@ -5,7 +5,7 @@
 		 autoCreate="true"
 		 except="User*"
 		 globalName="localhost"
-		 qmlUri="de.skycoder42.qtrestclient.test 2.1">
+		 qmlUri="de.skycoder42.qtrestclient.test 2.2">
 	<Include local="true">user.h</Include>
 	<Include local="true">api_posts.h</Include>
 	<Include local="true">testmacro.h</Include>

@@ -27,6 +27,7 @@ protected:
 	void writeIncludes(const QList<RestBuilderXmlReader::Include> &includes = {});
 	QString writeParamDefault(const RestBuilderXmlReader::BaseParam &param);
 	QString writeParamArg(const RestBuilderXmlReader::BaseParam &param, bool withDefault);
+	QString writeExpression(const RestBuilderXmlReader::Expression &expression, bool asString);
 
 	QString fileName;
 	QTextStream header;

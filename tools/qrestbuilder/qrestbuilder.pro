@@ -40,7 +40,7 @@ INCLUDEPATH +=  \
 
 load(qt_tool)
 
-QDEP_DEPENDS += Skycoder42/QXmlCodeGen@1.4.3
+QDEP_DEPENDS += Skycoder42/QXmlCodeGen@1.4.4
 
 win32 {
 	QMAKE_TARGET_PRODUCT = "Qt Rest API Builder"

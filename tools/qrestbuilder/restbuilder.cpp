@@ -102,6 +102,16 @@ QString RestBuilder::writeParamArg(const RestBuilderXmlReader::BaseParam &param,
 	return res;
 }
 
+QString RestBuilder::writeExpression(const RestBuilderXmlReader::Expression &expression, bool asString)
+{
+	if(expression.expr)
+		return expression.value;
+	else if(asString)
+		return QStringLiteral("QStringLiteral(\"") + expression.value + QStringLiteral("\")");
+	else
+		return QLatin1Char('"') + expression.value + QLatin1Char('"');
+}
+
 void RestBuilder::writeIncGuardBegin()
 {
 	QString guard = fileName.toUpper() + QStringLiteral("_H");

@@ -10,6 +10,11 @@ public:
 	ObjectBuilder(RestBuilderXmlReader::RestGadget restGadget);
 
 private:
+	struct SudoProperty {
+		const RestBuilderXmlReader::TypedVariableAttribs &basic;
+		const RestBuilderXmlReader::PropertyAttribs &attribs;
+	};
+
 	bool isObject;
 	RestBuilderXmlReader::RestContent data;
 
@@ -19,6 +24,9 @@ private:
 	void generateApiGadget();
 
 	QString setter(const QString &name);
+	const RestBuilderXmlReader::TypedVariableAttribs &propertyBasics(const nonstd::variant<RestBuilderXmlReader::Property, RestBuilderXmlReader::UserProperty> &prop) const;
+	const RestBuilderXmlReader::PropertyAttribs &propertyAttribs(const nonstd::variant<RestBuilderXmlReader::Property, RestBuilderXmlReader::UserProperty> &prop) const;
+	SudoProperty sudoProperty(const nonstd::variant<RestBuilderXmlReader::Property, RestBuilderXmlReader::UserProperty> &prop) const;
 
 	void writeEnums();
 	void writeFlagOperators();
