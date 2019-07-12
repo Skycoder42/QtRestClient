@@ -324,7 +324,7 @@ void PagingModelPrivate::processPaging(IPaging *paging)
 	}
 #else
 	for (const auto jData : paging->items())
-		data.append(jData);
+		data.append(QVariant::fromValue<QJsonValue>(jData));
 #endif
 
 	if (data.size() < paging->total() && paging->hasNext())
@@ -333,8 +333,10 @@ void PagingModelPrivate::processPaging(IPaging *paging)
 		nextUrl = std::nullopt;
 	q->endInsertRows();
 
+#ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
 	if (fetchFailed)
 		emit q->fetchError({});
+#endif
 }
 
 void PagingModelPrivate::processError(const QString &message, int code, RestReply::ErrorType errorType)

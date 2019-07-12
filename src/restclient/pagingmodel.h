@@ -168,7 +168,6 @@ inline void PagingModel::initialize(GenericRestReply<Paging<DataClassType>, Erro
 template <typename T>
 inline T PagingModel::object(const QModelIndex &index) const
 {
-	static_assert(MetaComponent<T>::value, "T must inherit QObject or have Q_GADGET!");
 	Q_ASSERT_X(qMetaTypeId<T>() == typeId(), Q_FUNC_INFO, "object must be used with the stores typeId");
 	return object(index).value<T>();
 }
