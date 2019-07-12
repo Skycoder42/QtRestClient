@@ -35,7 +35,7 @@ void PagingModel::initialize(int typeId, RestReply *reply, PagingModel::Fetcher 
 	d->data.clear();
 	d->generateRoleNames();
 	endResetModel();
-	reply->onSucceeded(this, std::bind(&PagingModelPrivate::processReply, d.data(), sph::_1, sph::_2));
+	reply->onSucceeded(this, static_cast<std::function<void(int, QJsonObject)>>(std::bind(&PagingModelPrivate::processReply, d.data(), sph::_1, sph::_2)));
 	reply->onAllErrors(this, std::bind(&PagingModelPrivate::processError, d.data(), sph::_1, sph::_2, sph::_3));
 }
 
@@ -250,7 +250,7 @@ void PagingModelPrivate::requestNext()
 	auto reply = fetcher->fetch(*nextUrl);
 	if (reply) {
 		nextUrl = std::nullopt;
-		reply->onSucceeded(q, std::bind(&PagingModelPrivate::processReply, this, sph::_1, sph::_2));
+		reply->onSucceeded(q, static_cast<std::function<void(int, QJsonObject)>>(std::bind(&PagingModelPrivate::processReply, this, sph::_1, sph::_2)));
 		reply->onAllErrors(q, std::bind(&PagingModelPrivate::processError, this, sph::_1, sph::_2, sph::_3));
 	} else
 		emit q->fetchError({});
