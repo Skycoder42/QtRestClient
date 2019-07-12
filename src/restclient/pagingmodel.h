@@ -40,18 +40,18 @@ public:
 	~PagingModel() override;
 
 	// direct init methods
-	void initialize(int typeId, const QUrl &initialUrl, Fetcher *fetcher);
-	void initialize(int typeId, const QUrl &initialUrl, RestClass *restClass);
+	void initialize(const QUrl &initialUrl, Fetcher *fetcher, int typeId = QMetaType::QJsonValue);
+	void initialize(const QUrl &initialUrl, RestClass *restClass, int typeId = QMetaType::QJsonValue);
 	template <typename T>
 	inline void initialize(const QUrl &initialUrl, Fetcher *fetcher);
 	template <typename T>
 	inline void initialize(const QUrl &initialUrl, RestClass *restClass);
 
 	// init methods from data
-	void initialize(int typeId, RestReply *reply, Fetcher *fetcher);
-	void initialize(int typeId, RestReply *reply, RestClass *restClass);
-	void initialize(int typeId, IPaging *paging, Fetcher *fetcher);
-	void initialize(int typeId, IPaging *paging, RestClass *restClass);
+	void initialize(RestReply *reply, Fetcher *fetcher, int typeId = QMetaType::QJsonValue);
+	void initialize(RestReply *reply, RestClass *restClass, int typeId = QMetaType::QJsonValue);
+	void initialize(IPaging *paging, Fetcher *fetcher, int typeId = QMetaType::QJsonValue);
+	void initialize(IPaging *paging, RestClass *restClass, int typeId = QMetaType::QJsonValue);
 #ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
 	template <typename T>
 	inline void initialize(const Paging<T> &paging, Fetcher *fetcher);
@@ -130,38 +130,38 @@ private:
 template<typename T>
 inline void PagingModel::initialize(const QUrl &initialUrl, Fetcher *fetcher)
 {
-	initialize(qMetaTypeId<T>(), initialUrl, fetcher);
+	initialize(initialUrl, fetcher, qMetaTypeId<T>());
 }
 
 template<typename T>
 inline void PagingModel::initialize(const QUrl &initialUrl, RestClass *restClass)
 {
-	initialize(qMetaTypeId<T>(), initialUrl, restClass);
+	initialize(initialUrl, restClass, qMetaTypeId<T>());
 }
 
 #ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
 template<typename T>
 inline void PagingModel::initialize(const Paging<T> &paging, Fetcher *fetcher)
 {
-	initialize(qMetaTypeId<T>(), paging.iPaging(), fetcher);
+	initialize(paging.iPaging(), fetcher, qMetaTypeId<T>());
 }
 
 template<typename T>
 inline void PagingModel::initialize(const Paging<T> &paging, RestClass *restClass)
 {
-	initialize(qMetaTypeId<T>(), paging.iPaging(), restClass);
+	initialize(paging.iPaging(), restClass, qMetaTypeId<T>());
 }
 
 template<typename DataClassType, typename ErrorClassType>
 inline void PagingModel::initialize(GenericRestReply<Paging<DataClassType>, ErrorClassType> *reply, Fetcher *fetcher)
 {
-	initialize(qMetaTypeId<DataClassType>(), reply, fetcher);
+	initialize(reply, fetcher, qMetaTypeId<DataClassType>());
 }
 
 template<typename DataClassType, typename ErrorClassType>
 inline void PagingModel::initialize(GenericRestReply<Paging<DataClassType>, ErrorClassType> *reply, RestClass *restClass)
 {
-	initialize(qMetaTypeId<DataClassType>(), reply, restClass);
+	initialize(reply, restClass, qMetaTypeId<DataClassType>());
 }
 #endif
 

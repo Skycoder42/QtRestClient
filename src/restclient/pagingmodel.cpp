@@ -10,7 +10,7 @@ PagingModel::PagingModel(QObject *parent) :
 
 PagingModel::~PagingModel() = default;
 
-void PagingModel::initialize(int typeId, const QUrl &initialUrl, Fetcher *fetcher)
+void PagingModel::initialize(const QUrl &initialUrl, Fetcher *fetcher, int typeId)
 {
 	beginResetModel();
 	d->typeId = typeId;
@@ -22,12 +22,12 @@ void PagingModel::initialize(int typeId, const QUrl &initialUrl, Fetcher *fetche
 	d->requestNext();
 }
 
-void PagingModel::initialize(int typeId, const QUrl &initialUrl, RestClass *restClass)
+void PagingModel::initialize(const QUrl &initialUrl, RestClass *restClass, int typeId)
 {
-	initialize(typeId, initialUrl, new RestClassFetcher{restClass});
+	initialize(initialUrl, new RestClassFetcher{restClass}, typeId);
 }
 
-void PagingModel::initialize(int typeId, RestReply *reply, PagingModel::Fetcher *fetcher)
+void PagingModel::initialize(RestReply *reply, PagingModel::Fetcher *fetcher, int typeId)
 {
 	beginResetModel();
 	d->typeId = typeId;
@@ -39,12 +39,12 @@ void PagingModel::initialize(int typeId, RestReply *reply, PagingModel::Fetcher 
 	reply->onAllErrors(this, std::bind(&PagingModelPrivate::processError, d.data(), sph::_1, sph::_2, sph::_3));
 }
 
-void PagingModel::initialize(int typeId, RestReply *reply, RestClass *restClass)
+void PagingModel::initialize(RestReply *reply, RestClass *restClass, int typeId)
 {
-	initialize(typeId, reply, new RestClassFetcher{restClass});
+	initialize(reply, new RestClassFetcher{restClass}, typeId);
 }
 
-void PagingModel::initialize(int typeId, IPaging *paging, PagingModel::Fetcher *fetcher)
+void PagingModel::initialize(IPaging *paging, PagingModel::Fetcher *fetcher, int typeId)
 {
 	beginResetModel();
 	d->typeId = typeId;
@@ -55,9 +55,9 @@ void PagingModel::initialize(int typeId, IPaging *paging, PagingModel::Fetcher *
 	d->processPaging(paging);
 }
 
-void PagingModel::initialize(int typeId, IPaging *paging, RestClass *restClass)
+void PagingModel::initialize(IPaging *paging, RestClass *restClass, int typeId)
 {
-	initialize(typeId, paging, new RestClassFetcher{restClass});
+	initialize(paging, new RestClassFetcher{restClass}, typeId);
 }
 
 int PagingModel::typeId() const
@@ -120,35 +120,48 @@ QVariant PagingModel::data(const QModelIndex &index, int role) const
 {
 	Q_ASSERT(checkIndex(index, CheckIndexOption::ParentIsInvalid | CheckIndexOption::IndexIsValid));
 
-	// find the property name
-	const auto metaObject = QMetaType::metaObjectForType(d->typeId);
+	// get the role name
 	QByteArray pName;
 	if (!d->columns.isEmpty()) {
 		const auto &subRoles = d->roleMapping[index.column()];
 		pName = subRoles.value(role);
 	}
 
-	if (pName.isEmpty()) {
-		if(role == Qt::DisplayRole)
-			pName = metaObject->userProperty().name();
+	if (pName.isEmpty() && role != Qt::DisplayRole)
+		pName = d->roleNames.value(role);
+
+	// get the actual data
+#ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
+	if (d->typeId == QMetaType::QJsonValue) {
+#endif
+		// handle special case: json value (only mode available without the serializer)
+		const auto value = d->data.at(index.row()).toJsonValue();
+		if (pName.isEmpty() && role == Qt::DisplayRole)
+			return value.toVariant();
 		else
-			pName = d->roleNames.value(role);
+			return value.toObject().value(QString::fromUtf8(pName)).toVariant();
+#ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
+	} else {
+		// find the property name
+		if (pName.isEmpty() && role == Qt::DisplayRole)
+			return d->data.at(index.row());
+
+		// obtain the meta property
+		const auto metaObject = QMetaType::metaObjectForType(d->typeId);
+		if (!metaObject)
+			return {};
+		const auto pIndex = metaObject->indexOfProperty(pName.constData());
+		if(pIndex == -1)
+			return {};
+		const auto prop = metaObject->property(pIndex);
+
+		// read the value
+		if (metaObject->inherits(&QObject::staticMetaObject))
+			return prop.read(d->data.at(index.row()).value<QObject*>());
+		else
+			return prop.readOnGadget(d->data.at(index.row()).data());
 	}
-
-	if (pName.isEmpty())
-		return {};
-
-	// obtain the meta property
-	const auto pIndex = metaObject->indexOfProperty(pName.constData());
-	if(pIndex == -1)
-		return {};
-	const auto prop = metaObject->property(pIndex);
-
-	// read the value
-	if (metaObject->inherits(&QObject::staticMetaObject))
-		return prop.read(d->data.at(index.row()).value<QObject*>());
-	else
-		return prop.readOnGadget(d->data.at(index.row()).data());
+#endif
 }
 
 QVariant PagingModel::object(const QModelIndex &index) const
@@ -237,11 +250,13 @@ PagingModelPrivate::PagingModelPrivate(PagingModel *q_ptr) :
 
 void PagingModelPrivate::generateRoleNames()
 {
-	roleNames.clear();
+	roleNames = {{Qt::UserRole, "modelData"}};
 	const auto metaObject = QMetaType::metaObjectForType(typeId);
-	int roleIndex = Qt::UserRole;
-	for(auto i = 0; i < metaObject->propertyCount(); ++i)
-		roleNames.insert(roleIndex++, metaObject->property(i).name());
+	if (metaObject) {
+		int roleIndex = Qt::UserRole + 1;
+		for(auto i = 0; i < metaObject->propertyCount(); ++i)
+			roleNames.insert(roleIndex++, metaObject->property(i).name());
+	}
 }
 
 void PagingModelPrivate::requestNext()
@@ -295,6 +310,7 @@ void PagingModelPrivate::processPaging(IPaging *paging)
 	}
 
 	q->beginInsertRows({}, data.size(), data.size() + paging->items().size() - 1);
+#ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
 	const auto serializer = fetcher->client()->serializer();
 	auto fetchFailed = false;
 	for (const auto jData : paging->items()) {
@@ -306,6 +322,10 @@ void PagingModelPrivate::processPaging(IPaging *paging)
 			fetchFailed = true;
 		}
 	}
+#else
+	for (const auto jData : paging->items())
+		data.append(jData);
+#endif
 
 	if (data.size() < paging->total() && paging->hasNext())
 		nextUrl = paging->next();
