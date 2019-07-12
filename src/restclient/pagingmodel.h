@@ -26,6 +26,8 @@ class Q_RESTCLIENT_EXPORT PagingModel : public QAbstractTableModel
 	Q_PROPERTY(int typeId READ typeId NOTIFY typeIdChanged)
 
 public:
+	static constexpr int ModelDataRole = Qt::UserRole;
+
 	class Q_RESTCLIENT_EXPORT Fetcher
 	{
 		Q_DISABLE_COPY(Fetcher)
@@ -67,7 +69,7 @@ public:
 	int typeId() const;
 
 	//! @inherit{QAbstractTableModel::headerData}
-	QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
+	QVariant headerData(int section, Qt::Orientation orientation = Qt::Horizontal, int role = Qt::DisplayRole) const override;
 	//! @inherit{QAbstractTableModel::rowCount}
 	int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 	//! @inherit{QAbstractTableModel::columnCount}

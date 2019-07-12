@@ -18,8 +18,7 @@ void PagingModel::initialize(const QUrl &initialUrl, Fetcher *fetcher, int typeI
 	d->nextUrl = initialUrl;
 	d->data.clear();
 	d->generateRoleNames();
-	endResetModel();
-	d->requestNext();
+	endResetModel();  // automatically calls fetchMore
 }
 
 void PagingModel::initialize(const QUrl &initialUrl, RestClass *restClass, int typeId)
@@ -120,6 +119,10 @@ QVariant PagingModel::data(const QModelIndex &index, int role) const
 {
 	Q_ASSERT(checkIndex(index, CheckIndexOption::ParentIsInvalid | CheckIndexOption::IndexIsValid));
 
+	// handle model data
+	if (role == ModelDataRole)
+		return d->data.at(index.row());
+
 	// get the role name
 	QByteArray pName;
 	if (!d->columns.isEmpty()) {
@@ -136,20 +139,30 @@ QVariant PagingModel::data(const QModelIndex &index, int role) const
 #endif
 		// handle special case: json value (only mode available without the serializer)
 		const auto value = d->data.at(index.row()).toJsonValue();
-		if (pName.isEmpty() && role == Qt::DisplayRole)
-			return value.toVariant();
-		else
+		if (pName.isEmpty() && role == Qt::DisplayRole) {
+			if (value.isObject())
+				return QStringLiteral("QJsonObject <%L1>").arg(index.row());
+			else
+				return value.toVariant();
+		} else
 			return value.toObject().value(QString::fromUtf8(pName)).toVariant();
 #ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
 	} else {
-		// find the property name
-		if (pName.isEmpty() && role == Qt::DisplayRole)
-			return d->data.at(index.row());
-
-		// obtain the meta property
+		// get the meta object
 		const auto metaObject = QMetaType::metaObjectForType(d->typeId);
 		if (!metaObject)
 			return {};
+
+		// find the property name
+		if (pName.isEmpty() && role == Qt::DisplayRole) {
+			const auto userProp = metaObject->userProperty();
+			if (userProp.isValid())
+				pName = userProp.name();
+			else
+				return QStringLiteral("%1 <%L2>").arg(QString::fromUtf8(metaObject->className()), index.row());
+		}
+
+		// obtain the meta property
 		const auto pIndex = metaObject->indexOfProperty(pName.constData());
 		if(pIndex == -1)
 			return {};
@@ -250,12 +263,12 @@ PagingModelPrivate::PagingModelPrivate(PagingModel *q_ptr) :
 
 void PagingModelPrivate::generateRoleNames()
 {
-	roleNames = {{Qt::UserRole, "modelData"}};
+	roleNames = {{PagingModel::ModelDataRole, "modelData"}};
 	const auto metaObject = QMetaType::metaObjectForType(typeId);
 	if (metaObject) {
-		int roleIndex = Qt::UserRole + 1;
+		auto roleIndex = PagingModel::ModelDataRole;
 		for(auto i = 0; i < metaObject->propertyCount(); ++i)
-			roleNames.insert(roleIndex++, metaObject->property(i).name());
+			roleNames.insert(++roleIndex, metaObject->property(i).name());
 	}
 }
 
