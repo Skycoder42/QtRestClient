@@ -7,7 +7,91 @@ import QtQuick.tooling 1.2
 // 'qmlplugindump -nonrelocatable de.skycoder42.RestClient 2.2'
 
 Module {
-    dependencies: ["QtQml 2.2"]
+    dependencies: ["QtQml 2.13", "QtQml.Models 2.13"]
+    Component { name: "QAbstractTableModel"; prototype: "QAbstractItemModel" }
+    Component {
+        name: "QtRestClient::PagingModel"
+        prototype: "QAbstractTableModel"
+        exports: ["de.skycoder42.RestClient/PagingModel 2.2"]
+        exportMetaObjectRevisions: [0]
+        Property { name: "typeId"; type: "int"; isReadonly: true }
+        Signal { name: "fetchError" }
+        Signal {
+            name: "typeIdChanged"
+            Parameter { name: "typeId"; type: "int" }
+        }
+        Method {
+            name: "initialize"
+            Parameter { name: "initialUrl"; type: "QUrl" }
+            Parameter { name: "fetcher"; type: "QtRestClient::PagingModelFetcher"; isPointer: true }
+            Parameter { name: "typeId"; type: "int" }
+        }
+        Method {
+            name: "initialize"
+            Parameter { name: "initialUrl"; type: "QUrl" }
+            Parameter { name: "fetcher"; type: "QtRestClient::PagingModelFetcher"; isPointer: true }
+        }
+        Method {
+            name: "initialize"
+            Parameter { name: "initialUrl"; type: "QUrl" }
+            Parameter { name: "restClass"; type: "QtRestClient::RestClass"; isPointer: true }
+            Parameter { name: "typeId"; type: "int" }
+        }
+        Method {
+            name: "initialize"
+            Parameter { name: "initialUrl"; type: "QUrl" }
+            Parameter { name: "restClass"; type: "QtRestClient::RestClass"; isPointer: true }
+        }
+        Method {
+            name: "initialize"
+            Parameter { name: "reply"; type: "QtRestClient::RestReply"; isPointer: true }
+            Parameter { name: "fetcher"; type: "QtRestClient::PagingModelFetcher"; isPointer: true }
+            Parameter { name: "typeId"; type: "int" }
+        }
+        Method {
+            name: "initialize"
+            Parameter { name: "reply"; type: "QtRestClient::RestReply"; isPointer: true }
+            Parameter { name: "fetcher"; type: "QtRestClient::PagingModelFetcher"; isPointer: true }
+        }
+        Method {
+            name: "initialize"
+            Parameter { name: "reply"; type: "QtRestClient::RestReply"; isPointer: true }
+            Parameter { name: "restClass"; type: "QtRestClient::RestClass"; isPointer: true }
+            Parameter { name: "typeId"; type: "int" }
+        }
+        Method {
+            name: "initialize"
+            Parameter { name: "reply"; type: "QtRestClient::RestReply"; isPointer: true }
+            Parameter { name: "restClass"; type: "QtRestClient::RestClass"; isPointer: true }
+        }
+        Method {
+            name: "initialize"
+            Parameter { name: "paging"; type: "QtRestClient::IPaging"; isPointer: true }
+            Parameter { name: "fetcher"; type: "QtRestClient::PagingModelFetcher"; isPointer: true }
+            Parameter { name: "typeId"; type: "int" }
+        }
+        Method {
+            name: "initialize"
+            Parameter { name: "paging"; type: "QtRestClient::IPaging"; isPointer: true }
+            Parameter { name: "fetcher"; type: "QtRestClient::PagingModelFetcher"; isPointer: true }
+        }
+        Method {
+            name: "initialize"
+            Parameter { name: "paging"; type: "QtRestClient::IPaging"; isPointer: true }
+            Parameter { name: "restClass"; type: "QtRestClient::RestClass"; isPointer: true }
+            Parameter { name: "typeId"; type: "int" }
+        }
+        Method {
+            name: "initialize"
+            Parameter { name: "paging"; type: "QtRestClient::IPaging"; isPointer: true }
+            Parameter { name: "restClass"; type: "QtRestClient::RestClass"; isPointer: true }
+        }
+        Method {
+            name: "object"
+            type: "QVariant"
+            Parameter { name: "index"; type: "QModelIndex" }
+        }
+    }
     Component {
         name: "QtRestClient::QmlGenericRestReply"
         prototype: "QObject"

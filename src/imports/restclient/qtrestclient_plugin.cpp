@@ -3,6 +3,7 @@
 #include <QtQml>
 
 #include <QtRestClient/RestReply>
+#include <QtRestClient/PagingModel>
 
 #include "qmlrestclass.h"
 #include "qmlrestclient.h"
@@ -48,7 +49,9 @@ void QtRestClientDeclarativeModule::registerTypes(const char *uri)
 
 	//Version 2.1
 	qmlRegisterModule(uri, 2, 1);
-	qmlRegisterModule(uri, 2, 2);
+
+	//Version 2.2
+	qmlRegisterType<QtRestClient::PagingModel>(uri, 2, 2, "PagingModel");
 
 	// Check to make shure no module update is forgotten
 	static_assert(VERSION_MAJOR == 2 && VERSION_MINOR == 2, "QML module version needs to be updated");
