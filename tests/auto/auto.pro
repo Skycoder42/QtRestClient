@@ -2,8 +2,10 @@ TEMPLATE = subdirs
 
 SUBDIRS += cmake \
 	restclient \
-	qml
+	qml \
+	restclientauth
 
+restclientauth.depends += restclient
 qml.depends += restclient
 
 cmake.CONFIG += no_run-tests_target

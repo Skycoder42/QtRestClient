@@ -378,7 +378,7 @@ void RequestBuilderTest::testSending()
 	QFETCH(QNetworkReply::NetworkError, error);
 	QFETCH(QJsonObject, object);
 
-	auto builder = QtRestClient::RequestBuilder(url, nam);
+	QtRestClient::RequestBuilder builder(url, nam);
 	builder.setAttribute(QNetworkRequest::HTTP2AllowedAttribute, false);
 	if(!verb.isEmpty())
 		builder.setVerb(verb);

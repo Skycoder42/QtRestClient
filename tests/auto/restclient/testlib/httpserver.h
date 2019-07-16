@@ -22,6 +22,7 @@ private:
 
 	QByteArray _verb;
 	QByteArray _path;
+	QByteArray _token;
 
 	bool _hdrDone = false;
 	qint64 _len = 0;
@@ -40,6 +41,7 @@ public:
 	explicit HttpServer(quint16 port, QObject *parent = nullptr);
 
 	QUrl url(const QString &subPath) const;
+	QString generateToken();
 
 	void verifyRunning();
 	QJsonObject data() const;
@@ -58,6 +60,9 @@ private slots:
 	void connected();
 
 private:
+	friend class HttpConnection;
+
+	QByteArray _token;
 	QJsonObject _data;
 
 	QJsonValue applyDataImpl(bool isPut, QByteArrayList path, QJsonValue cData, const QJsonObject &data);

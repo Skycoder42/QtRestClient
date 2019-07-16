@@ -24,6 +24,14 @@ QUrl HttpServer::url(const QString &subPath) const
 				.arg(subPath));
 }
 
+QString HttpServer::generateToken()
+{
+	_token = QUuid::createUuid().toRfc4122().toBase64();
+	const auto strToken = QString::fromUtf8(_token);
+	_token = "Bearer " + _token;
+	return strToken;
+}
+
 void HttpServer::verifyRunning()
 {
 	QVERIFY(isListening());
@@ -39,7 +47,7 @@ QJsonValue HttpServer::obtainData(const QByteArrayList &path) const
 {
 	QJsonValue subValue = _data;
 
-	for (auto segment : path) {
+	for (const auto &segment : path) {
 		if(segment.isEmpty())
 			continue;
 
@@ -248,6 +256,8 @@ void HttpConnection::readyRead()
 				_len = nextLine.mid(16).toInt();
 			else if(nextLine.startsWith("Content-Type: "))
 				_contentType = nextLine.mid(14);
+			else if(nextLine.startsWith("Authorization: "))
+				_token = nextLine.mid(15);
 		}
 	}
 }
@@ -259,6 +269,12 @@ void HttpConnection::reply()
 
 	QByteArray doc;
 	try {
+		// verify token
+		if (!_server->_token.isEmpty()) {
+			if (_token != _server->_token)
+				throw QStringLiteral("Invalid Token: ").arg(QString::fromUtf8(_token));
+		}
+
 		//read content if required
 		if(_content.size() < _len) {
 			_content += _socket->readAll();
@@ -270,7 +286,7 @@ void HttpConnection::reply()
 				QJsonParseError e;
 				auto obj = QJsonDocument::fromJson(_content, &e).object();
 				if(e.error != QJsonParseError::NoError)
-					throw QString(QStringLiteral("Parser-Error: ") + e.errorString());
+					throw QStringLiteral("Parser-Error: %1").arg(e.errorString());
 				_server->applyData(_verb, segments, obj);
 			} else if(_contentType == "application/x-www-form-urlencoded") {
 				QUrlQuery query;
@@ -280,7 +296,7 @@ void HttpConnection::reply()
 					resObj.insert(param.first, param.second);
 				doc = QJsonDocument(resObj).toJson(QJsonDocument::Compact);
 			} else
-				throw QString(QStringLiteral("Unknown Content-Type: ") + QString::fromUtf8(_contentType));
+				throw QStringLiteral("Unknown Content-Type: ").arg(QString::fromUtf8(_contentType));
 		}
 
 		if(_contentType.isEmpty() || _contentType == "application/json") {
