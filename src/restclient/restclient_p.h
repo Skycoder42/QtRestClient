@@ -6,6 +6,7 @@
 #endif
 
 #include "restclient.h"
+#include "standardpaging_p.h"
 
 namespace QtRestClient {
 
@@ -23,18 +24,24 @@ public:
 	QUrlQuery query;
 	QHash<QNetworkRequest::Attribute, QVariant> attribs;
 #ifndef QT_NO_SSL
-	QSslConfiguration sslConfig;
+	QSslConfiguration sslConfig = QSslConfiguration::defaultConfiguration();
 #endif
 
-	QNetworkAccessManager *nam;
+	QNetworkAccessManager *nam = nullptr;
 #ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
-	QJsonSerializer *serializer;
+	QJsonSerializer *serializer = nullptr;
 #endif
-	QScopedPointer<PagingFactory> pagingFactory;
 
-	RestClass *rootClass;
+	QT_WARNING_PUSH
+	QT_WARNING_DISABLE_DEPRECATED
+	QScopedPointer<PagingFactory> pagingFactory {};
+	QT_WARNING_POP
 
-	RestClientPrivate(RestClient *q_ptr);
+	RestClass *rootClass = nullptr;
+
+	RestClientPrivate() = default;
+
+	void setupBuilder(RequestBuilder &builder) const;
 };
 
 }

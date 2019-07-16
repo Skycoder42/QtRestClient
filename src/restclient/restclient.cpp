@@ -1,7 +1,6 @@
 #include "restclient.h"
 #include "restclient_p.h"
 #include "restclass.h"
-#include "standardpaging_p.h"
 #include <QtCore/QBitArray>
 #include <QtCore/QCoreApplication>
 #include <QtCore/QRegularExpression>
@@ -9,16 +8,8 @@
 using namespace QtRestClient;
 
 RestClient::RestClient(QObject *parent) :
-	QObject(parent),
-	d(new RestClientPrivate(this))
-{
-#ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
-	d->serializer->setAllowDefaultNull(true);
-#endif
-#if QT_VERSION >= QT_VERSION_CHECK(5, 9, 0)
-	d->nam->setRedirectPolicy(QNetworkRequest::NoLessSafeRedirectPolicy);
-#endif
-}
+	RestClient{parent, new RestClientPrivate{}, false}
+{}
 
 RestClient::~RestClient() = default;
 
@@ -86,14 +77,9 @@ QSslConfiguration RestClient::sslConfiguration() const
 
 RequestBuilder RestClient::builder() const
 {
-	return RequestBuilder(d->baseUrl, d->nam)
-#ifndef QT_NO_SSL
-			.setSslConfig(d->sslConfig)
-#endif
-			.setVersion(d->apiVersion)
-			.addHeaders(d->headers)
-			.addParameters(d->query)
-			.setAttributes(d->attribs);
+	RequestBuilder builder{d->baseUrl, d->nam};
+	d->setupBuilder(builder);
+	return builder;
 }
 
 void RestClient::setManager(QNetworkAccessManager *manager)
@@ -223,21 +209,46 @@ void RestClient::removeRequestAttribute(QNetworkRequest::Attribute attribute)
 	emit requestAttributesChanged(d->attribs, {});
 }
 
+RestClient::RestClient(QObject *parent, RestClientPrivate *d_ptr, bool skipNam) :
+	QObject{parent},
+	d{d_ptr}
+{
+	if (!skipNam) {
+		d->nam = new QNetworkAccessManager{this};
+		d->nam->setRedirectPolicy(QNetworkRequest::NoLessSafeRedirectPolicy);
+	}
+#ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
+	d->serializer = new QJsonSerializer{this};
+	d->serializer->setAllowDefaultNull(true);
+#endif
+	d->pagingFactory.reset(new StandardPagingFactory{});
+	d->rootClass = new RestClass{this, {}, this};
+}
+
+RestClientPrivate *RestClient::d_ptr()
+{
+	return d.data();
+}
+
+const RestClientPrivate *RestClient::d_ptr() const
+{
+	return d.data();
+}
+
 // ------------- Private Implementation -------------
 
 QHash<QString, RestClient*> RestClientPrivate::globalApis;
 
-RestClientPrivate::RestClientPrivate(RestClient *q_ptr) :
+void RestClientPrivate::setupBuilder(RequestBuilder &builder) const
+{
+	builder.setVersion(apiVersion)
+			.setAttributes(attribs)
 #ifndef QT_NO_SSL
-	sslConfig{QSslConfiguration::defaultConfiguration()},
+			.setSslConfig(sslConfig)
 #endif
-	nam{new QNetworkAccessManager{q_ptr}},
-#ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
-	serializer{new QJsonSerializer{q_ptr}},
-#endif
-	pagingFactory{new StandardPagingFactory{}},
-	rootClass{new RestClass{q_ptr, {}, q_ptr}}
-{}
+			.addHeaders(headers)
+			.addParameters(query);
+}
 
 // ------------- Global header implementation -------------
 

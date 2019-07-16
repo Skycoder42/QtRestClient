@@ -1,9 +1,10 @@
 {
 	"title": "QtRestClient",
 	"description": "A library for generic JSON-based REST-APIs, with a mechanism to map JSON to Qt objects.",
-	"modules": [ "QtRestClient" ],
+	"modules": [ "QtRestClient", "QtRestClientAuth" ],
 	"dependencies": [
-		".skycoder42.jsonserializer"
+		".skycoder42.jsonserializer",
+		".qtnetworkauth"
 	],
 	"excludes": [],
 	"license": {

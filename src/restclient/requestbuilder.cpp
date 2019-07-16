@@ -21,6 +21,12 @@ RequestBuilder &RequestBuilder::operator=(RequestBuilder &&other) noexcept = def
 
 RequestBuilder::~RequestBuilder() = default;
 
+RequestBuilder &RequestBuilder::setNetworkAccessManager(QNetworkAccessManager *nam)
+{
+	d->nam = nam;
+	return *this;
+}
+
 RequestBuilder &RequestBuilder::setCredentials(QString user, QString password)
 {
 	d->user = std::move(user);
@@ -202,29 +208,31 @@ QUrl RequestBuilder::buildUrl() const
 
 QNetworkRequest RequestBuilder::build() const
 {
-	QNetworkRequest request(buildUrl());
-	for(auto it = d->headers.constBegin(); it != d->headers.constEnd(); it++)
-		request.setRawHeader(it.key(), it.value());
-	for(auto it = d->attributes.constBegin(); it != d->attributes.constEnd(); it++)
-		request.setAttribute(it.key(), it.value());
-#ifndef QT_NO_SSL
-	request.setSslConfiguration(d->sslConfig);
-#endif
+	QNetworkRequest request{buildUrl()};
+	d->prepareRequest(request);
 	return request;
 }
 
 QNetworkReply *RequestBuilder::send() const
 {
-	auto request = build();
-
+	QNetworkRequest request{buildUrl()};
 	QByteArray body;
-	if(!d->body.isEmpty())
-		body = d->body;
-	else if(d->headers.value(RequestBuilderPrivate::ContentType) == RequestBuilderPrivate::ContentTypeUrlEncoded &&
-			  !d->postQuery.isEmpty())
-		body = d->postQuery.query().toUtf8();
-
+	d->prepareRequest(request, &body);
 	return RestReplyPrivate::compatSend(d->nam, request, d->verb, body);
+}
+
+RequestBuilder::RequestBuilder(RequestBuilderPrivate *d_ptr) :
+	d{d_ptr}
+{}
+
+RequestBuilderPrivate *RequestBuilder::d_ptr()
+{
+	return d;
+}
+
+const RequestBuilderPrivate *RequestBuilder::d_ptr() const
+{
+	return d;
 }
 
 // ------------- Private Implementation -------------
@@ -246,3 +254,24 @@ RequestBuilderPrivate::RequestBuilderPrivate(const QUrl &baseUrl, QNetworkAccess
 #endif
 	verb{RestClass::GetVerb}
 {}
+
+void RequestBuilderPrivate::prepareRequest(QNetworkRequest &request, QByteArray *sBody) const
+{
+	// add headers etc.
+	for(auto it = headers.constBegin(); it != headers.constEnd(); it++)
+		request.setRawHeader(it.key(), it.value());
+	for(auto it = attributes.constBegin(); it != attributes.constEnd(); it++)
+		request.setAttribute(it.key(), it.value());
+#ifndef QT_NO_SSL
+	request.setSslConfiguration(sslConfig);
+#endif
+
+	// create the body
+	if (sBody) {
+		if(!body.isEmpty())
+			*sBody = body;
+		else if(headers.value(RequestBuilderPrivate::ContentType) == RequestBuilderPrivate::ContentTypeUrlEncoded &&
+				  !postQuery.isEmpty())
+			*sBody = postQuery.query().toUtf8();
+	}
+}

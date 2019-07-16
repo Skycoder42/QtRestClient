@@ -142,6 +142,14 @@ Q_SIGNALS:
 	void sslConfigurationChanged(QSslConfiguration sslConfiguration, QPrivateSignal);
 #endif
 
+protected:
+	//! @private
+	RestClient(QObject *parent, RestClientPrivate *d_ptr, bool skipNam);
+	//! @private
+	RestClientPrivate *d_ptr();
+	//! @private
+	const RestClientPrivate *d_ptr() const;
+
 private:
 	QScopedPointer<RestClientPrivate> d;
 };

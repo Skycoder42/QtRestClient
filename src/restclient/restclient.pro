@@ -62,7 +62,7 @@ else: gen_headers.files += \
 	$$absolute_path(RestReply, $$INC_PATH/include/$$MODULE_INCNAME)
 
 win32 {
-	QMAKE_TARGET_PRODUCT = "QtRestClient"
+	QMAKE_TARGET_PRODUCT = "$$TARGET"
 	QMAKE_TARGET_COMPANY = "Skycoder42"
 	QMAKE_TARGET_COPYRIGHT = "Felix Barz"
 } else:mac {

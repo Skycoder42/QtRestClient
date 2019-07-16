@@ -1,0 +1,16 @@
+#ifndef QTRESTCLIENTAUTH_GLOBAL_H
+#define QTRESTCLIENTAUTH_GLOBAL_H
+
+#include <QtCore/qglobal.h>
+
+#ifndef QT_STATIC
+#  if defined(QT_BUILD_RESTCLIENTAUTH_LIB)
+#    define Q_RESTCLIENTAUTH_EXPORT Q_DECL_EXPORT
+#  else
+#    define Q_RESTCLIENTAUTH_EXPORT Q_DECL_IMPORT
+#  endif
+#else
+#  define Q_RESTCLIENTAUTH_EXPORT
+#endif
+
+#endif // QTRESTCLIENTAUTH_GLOBAL_H

@@ -31,6 +31,8 @@ public:
 	RequestBuilder &operator=(RequestBuilder &&other) noexcept;
 	~RequestBuilder();
 
+	RequestBuilder &setNetworkAccessManager(QNetworkAccessManager *nam);
+
 	//! Sets the credentails of the URL
 	RequestBuilder &setCredentials(QString user, QString password = {});
 	//! Sets the version of the API
@@ -84,6 +86,14 @@ public:
 	QNetworkRequest build() const;
 	//! reates a network request and sends it with the builder settings
 	QNetworkReply *send() const;
+
+protected:
+	//! @private
+	RequestBuilder(RequestBuilderPrivate *d_ptr);
+	//! @private
+	RequestBuilderPrivate *d_ptr();
+	//! @private
+	const RequestBuilderPrivate *d_ptr() const;
 
 private:
 	QSharedDataPointer<RequestBuilderPrivate> d;

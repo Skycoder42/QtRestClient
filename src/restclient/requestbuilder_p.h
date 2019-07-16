@@ -33,6 +33,9 @@ struct Q_RESTCLIENT_EXPORT RequestBuilderPrivate : public QSharedData
 
 	RequestBuilderPrivate(const QUrl &baseUrl, QNetworkAccessManager *nam);
 	RequestBuilderPrivate(const RequestBuilderPrivate &other) = default;
+	virtual ~RequestBuilderPrivate() = default;
+
+	virtual void prepareRequest(QNetworkRequest &request, QByteArray *sBody = nullptr) const;
 };
 
 }

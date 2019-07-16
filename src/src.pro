@@ -1,10 +1,12 @@
 TEMPLATE = subdirs
 
 SUBDIRS += restclient \
-	imports
+	imports \
+	restclientauth
 
 restclient.CONFIG += no_lrelease_target
-imports.depends += restclient
+restclientauth.depends += restclient
+imports.depends += restclient restclientauth
 imports.CONFIG += no_lrelease_target
 
 prepareRecursiveTarget(lrelease)
