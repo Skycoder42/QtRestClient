@@ -11,7 +11,7 @@ env:
   global:
     - QDEP_CACHE_DIR=$HOME/.qdep-cache
     - QT_VER=5.13.0
-    - EXTRA_MODULES=.skycoder42.jsonserializer
+    - EXTRA_MODULES=".qtnetworkauth .skycoder42.jsonserializer"
     - DOCKER_IMAGE=common
     - MAKE_RUN_TESTS=true
     - TARGET_NAME=qtrestclient
