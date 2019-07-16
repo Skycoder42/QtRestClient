@@ -17,6 +17,9 @@ class QJsonSerializer;
 
 namespace QtRestClient {
 
+QT_WARNING_PUSH
+QT_WARNING_DISABLE_DEPRECATED
+
 class RestClass;
 class PagingFactory;
 
@@ -87,6 +90,7 @@ public Q_SLOTS:
 	//! Sets the json serializer to be used by all requests for this client
 	void setSerializer(QJsonSerializer *serializer);
 #endif
+
 	//! Sets the paging factory to be used by all paging requests for this client
 	void setPagingFactory(PagingFactory *factory);
 
@@ -141,6 +145,8 @@ Q_SIGNALS:
 private:
 	QScopedPointer<RestClientPrivate> d;
 };
+
+QT_WARNING_POP
 
 }
 

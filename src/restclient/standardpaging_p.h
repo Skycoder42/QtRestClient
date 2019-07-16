@@ -51,7 +51,7 @@ private:
 	void setJson(QJsonObject object);
 };
 
-class Q_RESTCLIENT_EXPORT StandardPagingFactory : public PagingFactory
+class Q_RESTCLIENT_EXPORT StandardPagingFactory : public IPagingFactory
 {
 public:
 #ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
