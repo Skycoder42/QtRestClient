@@ -88,8 +88,5 @@ int main(int argc, char *argv[])
 	} catch(RestBuilderXmlReader::Exception &e) {
 		qCritical() << e.what();
 		return EXIT_FAILURE;
-	} catch (const QString &str) {
-		qCritical() << qUtf8Printable(str);
-		return EXIT_FAILURE;
 	}
 }

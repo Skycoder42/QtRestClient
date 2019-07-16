@@ -35,7 +35,7 @@ void ClassBuilder::build()
 		if(!method.postParams)
 			method.postParams = method.verb == QStringLiteral("POST") && !method.body;
 		if(method.postParams.value() && method.body)
-			throw QStringLiteral("You cannot have post params AND a method body at the same time"); //TODO real execption
+			throw GeneralException("You cannot have post params AND a method body at the same time");
 	}
 
 	if(!isApi || !apiData.globalName)

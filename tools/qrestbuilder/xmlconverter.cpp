@@ -3,7 +3,7 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QVariant>
-#include <qrestbuilder.h>
+#include "restbuilder.h"
 
 void XmlConverter::convert(const QString &type, const QString &in, const QString &out)
 {
@@ -14,7 +14,7 @@ void XmlConverter::convert(const QString &type, const QString &in, const QString
 	QJsonParseError error;
 	auto doc = QJsonDocument::fromJson(inFile.readAll(), &error);
 	if(error.error != QJsonParseError::NoError)
-		throw QStringLiteral("%1: %2").arg(in, error.errorString());
+		throw RestBuilder::GeneralException((QStringLiteral("%1: %2")).arg(in, error.errorString()));
 	inFile.close();
 
 	QFile outFile(out);
@@ -30,7 +30,7 @@ void XmlConverter::convert(const QString &type, const QString &in, const QString
 	else if(type == QStringLiteral("class"))
 		writeClassXml(doc.object(), writer);
 	else
-		throw QStringLiteral("Invalid conversion input type: %1. Must be either \"object\" or \"class\"").arg(type);
+		throw RestBuilder::GeneralException(QStringLiteral("Invalid conversion input type: %1. Must be either \"object\" or \"class\"").arg(type));
 
 	if(writer.hasError())
 		throw RestBuilderXmlReader::FileException{outFile};
@@ -46,7 +46,7 @@ void XmlConverter::writeObjectXml(const QJsonObject &data, QXmlStreamWriter &wri
 	else if(data[QStringLiteral("$type")] == QStringLiteral("gadget"))
 		isObject = false;
 	else
-		throw QStringLiteral("Unknown type: %1").arg(data[QStringLiteral("$type")].toString());
+		throw RestBuilder::GeneralException(QStringLiteral("Unknown type: %1").arg(data[QStringLiteral("$type")].toString()));
 
 	if(isObject)
 		writer.writeStartElement(QStringLiteral("RestObject"));
@@ -112,7 +112,7 @@ void XmlConverter::writeClassXml(const QJsonObject &data, QXmlStreamWriter &writ
 	else if(data[QStringLiteral("type")] == QStringLiteral("class"))
 		isApi = false;
 	else
-		throw QStringLiteral("Unknown type: %1").arg(data[QStringLiteral("type")].toString());
+		throw RestBuilder::GeneralException(QStringLiteral("Unknown type: %1").arg(data[QStringLiteral("type")].toString()));
 
 	if(isApi)
 		writer.writeStartElement(QStringLiteral("RestApi"));

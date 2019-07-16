@@ -12,6 +12,20 @@
 class RestBuilder
 {
 public:
+	class GeneralException : public RestBuilderXmlReader::Exception
+	{
+	public:
+		GeneralException(QString message);
+		GeneralException(const QByteArray &message);
+		GeneralException(const char *message);
+
+	protected:
+		QString createQWhat() const override;
+
+	private:
+		QString _msg;
+	};
+
 	virtual ~RestBuilder();
 
 	void build(const QString &in, const QString &hOut, const QString &cppOut);

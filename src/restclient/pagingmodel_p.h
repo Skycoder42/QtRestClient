@@ -9,7 +9,7 @@
 
 namespace QtRestClient {
 
-class PagingModelPrivate
+class Q_RESTCLIENT_EXPORT PagingModelPrivate
 {
 	Q_DISABLE_COPY(PagingModelPrivate)
 

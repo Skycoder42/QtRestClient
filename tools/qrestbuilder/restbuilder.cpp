@@ -124,3 +124,22 @@ void RestBuilder::writeIncGuardEnd()
 	QString guard = fileName.toUpper() + QStringLiteral("_H");
 	header << "#endif //" << guard << '\n';
 }
+
+
+
+RestBuilder::GeneralException::GeneralException(QString message) :
+	_msg{std::move(message)}
+{}
+
+RestBuilder::GeneralException::GeneralException(const QByteArray &message) :
+	GeneralException{QString::fromUtf8(message)}
+{}
+
+RestBuilder::GeneralException::GeneralException(const char *message) :
+	GeneralException{QString::fromUtf8(message)}
+{}
+
+QString RestBuilder::GeneralException::createQWhat() const
+{
+	return _msg;
+}

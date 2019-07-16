@@ -1,61 +1,11 @@
 #include "requestbuilder.h"
+#include "requestbuilder_p.h"
 #include "restreply_p.h"
 #include "restclass.h"
 
 #include <QtCore/QBuffer>
 #include <QtCore/QJsonDocument>
 using namespace QtRestClient;
-
-namespace QtRestClient {
-
-//TODO move in own header
-struct RequestBuilderPrivate : public QSharedData
-{
-	static const QByteArray ContentType;
-	static const QByteArray ContentTypeJson;
-	static const QByteArray ContentTypeUrlEncoded;
-
-	QNetworkAccessManager *nam;
-
-	QUrl base;
-	QVersionNumber version;
-	QString user;
-	QString pass;
-	QStringList path;
-	bool trailingSlash = false;
-	QUrlQuery query;
-	QString fragment;
-	HeaderHash headers;
-	QHash<QNetworkRequest::Attribute, QVariant> attributes;
-#ifndef QT_NO_SSL
-	QSslConfiguration sslConfig;
-#endif
-	QByteArray body;
-	QByteArray verb;
-	QUrlQuery postQuery;
-
-	inline RequestBuilderPrivate(const QUrl &baseUrl = QUrl(), QNetworkAccessManager *nam = nullptr) :
-		QSharedData{},
-		nam{nam},
-		base{baseUrl},
-		user{baseUrl.userName()},
-		pass{baseUrl.password()},
-		query{baseUrl.query()},
-		fragment{baseUrl.fragment()},
-#ifndef QT_NO_SSL
-		sslConfig{QSslConfiguration::defaultConfiguration()},
-#endif
-		verb{RestClass::GetVerb}
-	{}
-
-	inline RequestBuilderPrivate(const RequestBuilderPrivate &other) = default;
-};
-
-const QByteArray RequestBuilderPrivate::ContentType = "Content-Type";
-const QByteArray RequestBuilderPrivate::ContentTypeJson = "application/json";
-const QByteArray RequestBuilderPrivate::ContentTypeUrlEncoded = "application/x-www-form-urlencoded";
-
-}
 
 RequestBuilder::RequestBuilder(const QUrl &baseUrl, QNetworkAccessManager *nam) :
 	d{new RequestBuilderPrivate{baseUrl, nam}}
@@ -276,3 +226,23 @@ QNetworkReply *RequestBuilder::send() const
 
 	return RestReplyPrivate::compatSend(d->nam, request, d->verb, body);
 }
+
+// ------------- Private Implementation -------------
+
+const QByteArray RequestBuilderPrivate::ContentType = "Content-Type";
+const QByteArray RequestBuilderPrivate::ContentTypeJson = "application/json";
+const QByteArray RequestBuilderPrivate::ContentTypeUrlEncoded = "application/x-www-form-urlencoded";
+
+RequestBuilderPrivate::RequestBuilderPrivate(const QUrl &baseUrl, QNetworkAccessManager *nam) :
+	QSharedData{},
+	nam{nam},
+	base{baseUrl},
+	user{baseUrl.userName()},
+	pass{baseUrl.password()},
+	query{baseUrl.query()},
+	fragment{baseUrl.fragment()},
+#ifndef QT_NO_SSL
+	sslConfig{QSslConfiguration::defaultConfiguration()},
+#endif
+	verb{RestClass::GetVerb}
+{}

@@ -14,6 +14,7 @@ MODULE_CONFIG += qrestbuilder
 HEADERS += \
 	pagingmodel.h \
 	pagingmodel_p.h \
+	requestbuilder_p.h \
 	restclass_p.h \
 	restclient_p.h \
 	restreply_p.h \
