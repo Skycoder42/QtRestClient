@@ -239,6 +239,8 @@ const RestClientPrivate *RestClient::d_ptr() const
 
 QHash<QString, RestClient*> RestClientPrivate::globalApis;
 
+RestClientPrivate::RestClientPrivate() = default;
+
 void RestClientPrivate::setupBuilder(RequestBuilder &builder) const
 {
 	builder.setVersion(apiVersion)

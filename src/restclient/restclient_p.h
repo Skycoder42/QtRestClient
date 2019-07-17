@@ -39,7 +39,7 @@ public:
 
 	RestClass *rootClass = nullptr;
 
-	RestClientPrivate() = default;
+	RestClientPrivate();
 
 	void setupBuilder(RequestBuilder &builder) const;
 };
