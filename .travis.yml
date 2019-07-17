@@ -25,6 +25,7 @@ matrix:
         - BUILD_EXAMPLES=true
     - os: linux
       env:
+        - EXTRA_MODULES=.qtnetworkauth
         - DOCKER_IMAGE=base
         - PLATFORM=gcc_64
         - QMAKE_FLAGS="CONFIG+=no_json_serializer"
@@ -51,7 +52,7 @@ matrix:
         - PLATFORM=clang_64
     - os: osx
       env:
-        - EXTRA_MODULES=
+        - EXTRA_MODULES=.qtnetworkauth
         - PLATFORM=clang_64
         - QMAKE_FLAGS="CONFIG+=no_json_serializer"
         - NO_TESTS=true
