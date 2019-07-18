@@ -41,7 +41,6 @@ public:
 	virtual QJsonObject originalJson() const = 0;
 };
 
-//! An interface for a factory to create paging objects
 class Q_RESTCLIENT_EXPORT Q_DECL_DEPRECATED_X("Use QtRestClient::IPagingFactory instead") PagingFactory
 {
 	Q_DISABLE_COPY(PagingFactory)
@@ -60,6 +59,7 @@ public:
 
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
+//! An interface for a factory to create paging objects
 class Q_RESTCLIENT_EXPORT IPagingFactory : public PagingFactory {};
 QT_WARNING_POP
 

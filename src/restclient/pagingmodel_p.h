@@ -19,7 +19,7 @@ public:
 	PagingModel *q;
 
 	int typeId = QMetaType::UnknownType;
-	QScopedPointer<PagingModelFetcher> fetcher {};
+	QScopedPointer<IPagingModelFetcher> fetcher {};
 	std::optional<QUrl> nextUrl;
 	QVariantList data;
 

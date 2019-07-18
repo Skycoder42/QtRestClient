@@ -932,21 +932,25 @@ EXCLUDE_SYMBOLS        = QtRestClient::MetaComponent \
 						 QtRestClientDeclarativeModule \
 						 \
 						 QAbstractAspect \
-						 QAbstractXmlReceiver \
-						 QBasicAtomicInteger \
-						 QBasicAtomicPointer \
 						 QComponent \
 						 QEntity \
-						 QFutureWatcherBase \
 						 QGeometry \
 						 QGeometryRenderer \
 						 QMaterial \
 						 QNode \
 						 QNodeCreatedChangeBase \
 						 QPaintEngineEx \
-						 QQmlExtensionInterface \
+						 QQuickImageProviderWithOptions \
+						 QQuickShaderEffectMesh \
+						 QSGInternalImageNode \
+						 QSGInternalRectangleNode \
+						 QSGLayer \
+						 QSGNodeVisitorEx \
+						 QSGPainterNode \
+						 QSGSpriteNode \
 						 QTechniqueFilter \
-						 QBasicMutex
+						 QTextToSpeechProcessor \
+						 Q_RESTCLIENT_EXCEPTION_BASE_CLASS
 
 # The EXAMPLE_PATH tag can be used to specify one or more files or directories
 # that contain example code fragments that are included (see the \include

@@ -10,7 +10,7 @@ PagingModel::PagingModel(QObject *parent) :
 
 PagingModel::~PagingModel() = default;
 
-void PagingModel::initialize(const QUrl &initialUrl, PagingModelFetcher *fetcher, int typeId)
+void PagingModel::initialize(const QUrl &initialUrl, IPagingModelFetcher *fetcher, int typeId)
 {
 	beginResetModel();
 	d->typeId = typeId;
@@ -26,7 +26,7 @@ void PagingModel::initialize(const QUrl &initialUrl, RestClass *restClass, int t
 	initialize(initialUrl, new RestClassFetcher{restClass}, typeId);
 }
 
-void PagingModel::initialize(RestReply *reply, PagingModelFetcher *fetcher, int typeId)
+void PagingModel::initialize(RestReply *reply, IPagingModelFetcher *fetcher, int typeId)
 {
 	beginResetModel();
 	d->typeId = typeId;
@@ -43,7 +43,7 @@ void PagingModel::initialize(RestReply *reply, RestClass *restClass, int typeId)
 	initialize(reply, new RestClassFetcher{restClass}, typeId);
 }
 
-void PagingModel::initialize(IPaging *paging, PagingModelFetcher *fetcher, int typeId)
+void PagingModel::initialize(IPaging *paging, IPagingModelFetcher *fetcher, int typeId)
 {
 	beginResetModel();
 	d->typeId = typeId;
@@ -235,9 +235,9 @@ void PagingModel::clearColumns()
 
 
 
-PagingModelFetcher::PagingModelFetcher() = default;
+IPagingModelFetcher::IPagingModelFetcher() = default;
 
-PagingModelFetcher::~PagingModelFetcher() = default;
+IPagingModelFetcher::~IPagingModelFetcher() = default;
 
 
 

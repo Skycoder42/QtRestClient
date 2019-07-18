@@ -10,21 +10,22 @@
 
 #if !defined(QT_NO_EXCEPTIONS) && QT_CONFIG(future)
 #include <QtCore/QException>
-#define Q_EXCEPTION_BASE_CLASS QException
-#define Q_EXCEPTION_BASE_OR override
+#define Q_RESTCLIENT_EXCEPTION_BASE_CLASS QException
+#define Q_RESTCLIENT_EXCEPTION_BASE_OR override
 #else
 #include <exception>
-#define Q_EXCEPTION_BASE_CLASS std::exception
-#define Q_EXCEPTION_BASE_OR
+#define Q_RESTCLIENT_EXCEPTION_BASE_CLASS std::exception
+#define Q_RESTCLIENT_EXCEPTION_BASE_OR
 #endif
 
 namespace QtRestClient {
 
 //! An exception that is throw on errors when awaiting a RestReply
-class Q_RESTCLIENT_EXPORT AwaitedException : public Q_EXCEPTION_BASE_CLASS
+class Q_RESTCLIENT_EXPORT AwaitedException : public Q_RESTCLIENT_EXCEPTION_BASE_CLASS
 {
 public:
-	using Base = Q_EXCEPTION_BASE_CLASS;
+	//! The exception base class of an AwaitedException. Can either be QException (if defined) or std::exception otherwise
+	using Base = Q_RESTCLIENT_EXCEPTION_BASE_CLASS;
 
 	//! Constructor, takes an error code, type and additional data
 	AwaitedException(int code, RestReply::ErrorType type, QVariant data);
@@ -51,9 +52,9 @@ public:
 	const char *what() const noexcept override;
 
 	//! @inherit{QException::raise}
-	virtual Q_NORETURN void raise() const Q_EXCEPTION_BASE_OR;
+	virtual Q_NORETURN void raise() const Q_RESTCLIENT_EXCEPTION_BASE_OR;
 	//! @inherit{QException::clone}
-	virtual Base *clone() const Q_EXCEPTION_BASE_OR;
+	virtual Base *clone() const Q_RESTCLIENT_EXCEPTION_BASE_OR;
 
 protected:
 	//! @private

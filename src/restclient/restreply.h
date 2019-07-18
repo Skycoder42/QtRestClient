@@ -21,6 +21,7 @@ class Q_RESTCLIENT_EXPORT RestReply : public QObject
 
 	//! Speciefies, whether the reply should be automatically deleted
 	Q_PROPERTY(bool autoDelete READ autoDelete WRITE setAutoDelete NOTIFY autoDeleteChanged)
+	//! Speciefies, whether empty rest replies are allowed
 	Q_PROPERTY(bool allowEmptyReplies READ allowsEmptyReplies WRITE setAllowEmptyReplies NOTIFY allowEmptyRepliesChanged REVISION 2)
 
 public:
@@ -47,7 +48,9 @@ public:
 	RestReply *onSucceeded(const std::function<void(int, QJsonArray)> &handler);
 	//! @copydoc onSucceeded(QObject *, const std::function<void(int, QJsonObject)>&)
 	RestReply *onSucceeded(QObject *scope, const std::function<void(int, QJsonArray)> &handler);
+	//! @copybrief onSucceeded(const std::function<void(int, QJsonObject)>&)
 	RestReply *onSucceeded(const std::function<void(int)> &handler);
+	//! @copybrief onSucceeded(const std::function<void(int)>&)
 	RestReply *onSucceeded(QObject *scope, const std::function<void(int)> &handler);
 	//! Set a handler to be called if the request failed
 	RestReply *onFailed(const std::function<void(int, QJsonObject)> &handler);
@@ -57,7 +60,9 @@ public:
 	RestReply *onFailed(const std::function<void(int, QJsonArray)> &handler);
 	//! @copydoc onFailed(QObject *, const std::function<void(int, QJsonObject)>&)
 	RestReply *onFailed(QObject *scope, const std::function<void(int, QJsonArray)> &handler);
+	//! @copybrief onFailed(const std::function<void(int, QJsonObject)>&)
 	RestReply *onFailed(const std::function<void(int)> &handler);
+	//! @copybrief onFailed(const std::function<void(int)>&)
 	RestReply *onFailed(QObject *scope, const std::function<void(int)> &handler);
 	//! Set a handler to be called when the request was completed, regardless of success or failure
 	RestReply *onCompleted(const std::function<void(int)> &handler);

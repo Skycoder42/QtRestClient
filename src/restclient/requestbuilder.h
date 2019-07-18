@@ -31,6 +31,7 @@ public:
 	RequestBuilder &operator=(RequestBuilder &&other) noexcept;
 	~RequestBuilder();
 
+	//! Sets the network access manager to be used for send()
 	RequestBuilder &setNetworkAccessManager(QNetworkAccessManager *nam);
 
 	//! Sets the credentails of the URL

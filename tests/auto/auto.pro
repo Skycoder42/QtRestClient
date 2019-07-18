@@ -2,11 +2,14 @@ TEMPLATE = subdirs
 
 SUBDIRS += cmake \
 	restclient \
-	qml \
-	restclientauth
+	qml
 
-restclientauth.depends += restclient
 qml.depends += restclient
+
+!wasm {
+	SUBDIRS += restclientauth
+	restclientauth.depends += restclient
+}
 
 cmake.CONFIG += no_run-tests_target
 prepareRecursiveTarget(run-tests)

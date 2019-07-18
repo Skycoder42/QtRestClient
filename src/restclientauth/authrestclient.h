@@ -9,15 +9,19 @@
 namespace QtRestClient {
 
 class AuthRestClientPrivate;
+//! An extension of the RestClient that uses a AuthRequestBuilder to create authenticated requests
 class Q_RESTCLIENTAUTH_EXPORT AuthRestClient : public RestClient
 {
 	Q_OBJECT
 
 public:
+	//! Constructor with the OAuth instance to use for authenticating requests
 	explicit AuthRestClient(QAbstractOAuth *oAuth, QObject *parent = nullptr);
 
+	//! Returns the used OAuth instance
 	QAbstractOAuth *oAuth() const;
 
+	//! Returns the same as builder(), but as AuthRequestBuilder instance
 	AuthRequestBuilder authBuilder() const;
 	RequestBuilder builder() const override;
 

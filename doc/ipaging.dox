@@ -60,7 +60,7 @@ as well.
 */
 
 /*!
-@fn QtRestClient::PagingFactory::createPaging
+@fn QtRestClient::IPagingFactory::createPaging
 
 @param serializer A json serializer, if you want to use it for deserialization
 @param data The paging json object to be loaded into a IPaging interface

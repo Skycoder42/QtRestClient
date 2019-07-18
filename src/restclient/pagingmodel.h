@@ -17,50 +17,67 @@
 
 namespace QtRestClient {
 
-class Q_RESTCLIENT_EXPORT PagingModelFetcher
+//! Interface for a component that fetches entries for the PagingModel
+class Q_RESTCLIENT_EXPORT IPagingModelFetcher
 {
-	Q_DISABLE_COPY(PagingModelFetcher)
+	Q_DISABLE_COPY(IPagingModelFetcher)
 public:
-	PagingModelFetcher();
-	virtual ~PagingModelFetcher();
+	IPagingModelFetcher();
+	virtual ~IPagingModelFetcher();
+	//! Returns the RestClient associated with this fetcher
 	virtual RestClient *client() const = 0;
+	//! Send a HTTP request to the given URL to obtain data for the model
 	virtual RestReply *fetch(const QUrl &url) const = 0;
 };
 
 class PagingModelPrivate;
+//! A Qt item model that fills itself from a Paging object obtained via the network
 class Q_RESTCLIENT_EXPORT PagingModel : public QAbstractTableModel
 {
 	Q_OBJECT
 
-	//! Holds the type the model loads data for
+	//! Holds the type the model fetches data for
 	Q_PROPERTY(int typeId READ typeId NOTIFY typeIdChanged)
 
 public:
+	//! The Qt item role of the full REST-Object as was used to populate the model
 	static constexpr int ModelDataRole = Qt::UserRole;
 
+	//! Default constructor
 	explicit PagingModel(QObject *parent = nullptr);
 	~PagingModel() override;
 
-	// direct init methods
-	Q_INVOKABLE void initialize(const QUrl &initialUrl, QtRestClient::PagingModelFetcher *fetcher, int typeId = QMetaType::QJsonValue);
+	//! @copybrief PagingModel::initialize(const QUrl &, IPagingModelFetcher *)
+	Q_INVOKABLE void initialize(const QUrl &initialUrl, QtRestClient::IPagingModelFetcher *fetcher, int typeId = QMetaType::QJsonValue);
+	//! @copybrief PagingModel::initialize(const QUrl &, RestClass *)
 	Q_INVOKABLE void initialize(const QUrl &initialUrl, QtRestClient::RestClass *restClass, int typeId = QMetaType::QJsonValue);
+	//! Initialize the model using a type, a initial URL and a fetcher to use to send requests
 	template <typename T>
-	inline void initialize(const QUrl &initialUrl, PagingModelFetcher *fetcher);
+	inline void initialize(const QUrl &initialUrl, IPagingModelFetcher *fetcher);
+	//! @copybrief PagingModel::initialize(const QUrl &, IPagingModelFetcher *)
 	template <typename T>
 	inline void initialize(const QUrl &initialUrl, RestClass *restClass);
 
 	// init methods from data
-	Q_INVOKABLE void initialize(QtRestClient::RestReply *reply, QtRestClient::PagingModelFetcher *fetcher, int typeId = QMetaType::QJsonValue);
+	//! @copybrief PagingModel::initialize(const Paging<T> &, IPagingModelFetcher *)
+	Q_INVOKABLE void initialize(QtRestClient::RestReply *reply, QtRestClient::IPagingModelFetcher *fetcher, int typeId = QMetaType::QJsonValue);
+	//! @copybrief PagingModel::initialize(const Paging<T> &, RestClass *)
 	Q_INVOKABLE void initialize(QtRestClient::RestReply *reply, QtRestClient::RestClass *restClass, int typeId = QMetaType::QJsonValue);
-	Q_INVOKABLE void initialize(QtRestClient::IPaging *paging, QtRestClient::PagingModelFetcher *fetcher, int typeId = QMetaType::QJsonValue);
+	//! @copybrief PagingModel::initialize(GenericRestReply<Paging<DataClassType>, ErrorClassType> *, IPagingModelFetcher *)
+	Q_INVOKABLE void initialize(QtRestClient::IPaging *paging, QtRestClient::IPagingModelFetcher *fetcher, int typeId = QMetaType::QJsonValue);
+	//! @copybrief PagingModel::initialize(GenericRestReply<Paging<DataClassType>, ErrorClassType> *, RestClass *)
 	Q_INVOKABLE void initialize(QtRestClient::IPaging *paging, QtRestClient::RestClass *restClass, int typeId = QMetaType::QJsonValue);
 #ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
+	//! Initialize the model from a paging object and a fetcher to use to send requests
 	template <typename T>
-	inline void initialize(const Paging<T> &paging, PagingModelFetcher *fetcher);
+	inline void initialize(const Paging<T> &paging, IPagingModelFetcher *fetcher);
+	//! @copybrief PagingModel::initialize(const Paging<T> &, IPagingModelFetcher *)
 	template <typename T>
 	inline void initialize(const Paging<T> &paging, RestClass *restClass);
+	//! Initialize the model from a rest reply and a fetcher to use to send requests
 	template <typename DataClassType, typename ErrorClassType = QObject*>
-	inline void initialize(GenericRestReply<Paging<DataClassType>, ErrorClassType> *reply, PagingModelFetcher *fetcher);
+	inline void initialize(GenericRestReply<Paging<DataClassType>, ErrorClassType> *reply, IPagingModelFetcher *fetcher);
+	//! @copybrief PagingModel::initialize(GenericRestReply<Paging<DataClassType>, ErrorClassType> *, IPagingModelFetcher *)
 	template <typename DataClassType, typename ErrorClassType = QObject*>
 	inline void initialize(GenericRestReply<Paging<DataClassType>, ErrorClassType> *reply, RestClass *restClass);
 #endif
@@ -106,6 +123,7 @@ public:
 	void clearColumns();
 
 Q_SIGNALS:
+	//! Gets emitted if the model fails to obtain data via the network
 	void fetchError(QPrivateSignal);
 
 	//! @notifyAcFn{PagingModel::typeId}
@@ -116,9 +134,11 @@ private:
 	QScopedPointer<PagingModelPrivate> d;
 };
 
-class Q_RESTCLIENT_EXPORT RestClassFetcher : public PagingModelFetcher
+//! A default implementation for a IPagingModelFetcher, using a RestClass to send the requests
+class Q_RESTCLIENT_EXPORT RestClassFetcher : public IPagingModelFetcher
 {
 public:
+	//! Default constructor
 	RestClassFetcher(RestClass *restClass);
 	RestClient *client() const override;
 	RestReply *fetch(const QUrl &url) const override;
@@ -130,7 +150,7 @@ private:
 // ------------- Generic implementation -------------
 
 template<typename T>
-inline void PagingModel::initialize(const QUrl &initialUrl, PagingModelFetcher *fetcher)
+inline void PagingModel::initialize(const QUrl &initialUrl, IPagingModelFetcher *fetcher)
 {
 	initialize(initialUrl, fetcher, qMetaTypeId<T>());
 }
@@ -143,7 +163,7 @@ inline void PagingModel::initialize(const QUrl &initialUrl, RestClass *restClass
 
 #ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
 template<typename T>
-inline void PagingModel::initialize(const Paging<T> &paging, PagingModelFetcher *fetcher)
+inline void PagingModel::initialize(const Paging<T> &paging, IPagingModelFetcher *fetcher)
 {
 	initialize(paging.iPaging(), fetcher, qMetaTypeId<T>());
 }
@@ -155,7 +175,7 @@ inline void PagingModel::initialize(const Paging<T> &paging, RestClass *restClas
 }
 
 template<typename DataClassType, typename ErrorClassType>
-inline void PagingModel::initialize(GenericRestReply<Paging<DataClassType>, ErrorClassType> *reply, PagingModelFetcher *fetcher)
+inline void PagingModel::initialize(GenericRestReply<Paging<DataClassType>, ErrorClassType> *reply, IPagingModelFetcher *fetcher)
 {
 	initialize(reply, fetcher, qMetaTypeId<DataClassType>());
 }
@@ -176,6 +196,6 @@ inline T PagingModel::object(const QModelIndex &index) const
 
 }
 
-Q_DECLARE_METATYPE(QtRestClient::PagingModelFetcher*)
+Q_DECLARE_METATYPE(QtRestClient::IPagingModelFetcher*)
 
 #endif // QTRESTCLIENT_PAGINGMODEL_H

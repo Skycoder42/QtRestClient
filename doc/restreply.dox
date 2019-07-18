@@ -33,6 +33,24 @@ of the handlers after returning to the event loop once.
 */
 
 /*!
+@property QtRestClient::RestReply::allowEmptyReplies
+
+@default{`false`}
+
+By default, only rest replies that have the NO_CONTENT(204) HTTP status code set are allowed
+to have an empty body. For all other status codes, the request will fail if the body is not
+a valid JSON object or array. By setting this property to true, such replies are treated as
+valid and behave as if that status code was set.
+
+@accessors{
+	@readAc{allowsEmptyReplies()}
+	@writeAc{setAllowEmptyReplies()}
+	@notifyAc{allowEmptyRepliesChanged()}
+	@revisionAc{2}
+}
+*/
+
+/*!
 @fn QtRestClient::RestReply::onSucceeded(const std::function<void(int, QJsonObject)>&)
 
 @param handler The function to be called on success
@@ -52,6 +70,24 @@ The handlers arguments are:
 */
 
 /*!
+@fn QtRestClient::RestReply::onSucceeded(const std::function<void(int)>&)
+
+@param handler The function to be called on success
+@returns A reference to this reply
+
+The handlers arguments are:
+- The HTTP-Status code (int)
+
+@sa RestReply::onFailed, RestReply::onCompleted, GenericRestReply::onSucceeded
+*/
+
+/*!
+@fn QtRestClient::RestReply::onSucceeded(QObject*, const std::function<void(int)>&)
+@param scope (optional) A scope to limit the callback to
+@copydetails RestReply::onSucceeded(const std::function<void(int)>&)
+*/
+
+/*!
 @fn QtRestClient::RestReply::onFailed(const std::function<void(int, QJsonObject)>&)
 
 @param handler The function to be called on failure
@@ -68,6 +104,24 @@ The handlers arguments are:
 @fn QtRestClient::RestReply::onFailed(QObject*, const std::function<void(int, QJsonObject)>&)
 @param scope (optional) A scope to limit the callback to
 @copydetails RestReply::onFailed(const std::function<void(int, QJsonObject)>&)
+*/
+
+/*!
+@fn QtRestClient::RestReply::onFailed(const std::function<void(int)>&)
+
+@param handler The function to be called on failure
+@returns A reference to this reply
+
+The handlers arguments are:
+- The HTTP-Status code (int)
+
+@sa RestReply::onAllErrors, RestReply::onSucceeded, RestReply::onCompleted, GenericRestReply::onFailed
+*/
+
+/*!
+@fn QtRestClient::RestReply::onFailed(QObject*, const std::function<void(int)>&)
+@param scope (optional) A scope to limit the callback to
+@copydetails RestReply::onFailed(const std::function<void(int)>&)
 */
 
 /*!

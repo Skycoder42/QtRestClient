@@ -1,0 +1,299 @@
+/*!
+@class QtRestClient::PagingModel
+
+This class can be used to provide a generic item model that uses a paging REST-API to fetch
+the data to be displayed to the user.
+
+To use the model, you have to initialize() it once with a URL, a Paging object or a rest reply
+that returns a paging object. This works for both, the generic and non generic (JSON) replies.
+The model uses the prpperties of the object that is managed by the paging object to generate
+roles that can be used in the UI.
+
+The be able to acually fetch the data from a remote HTTP-server, the model needs a so called
+"fetcher", i.e. an instance of a QtRestClient::IPagingModelFetcher. Internally, this interface
+is used to create HTTP-requests and fetch more data for the model.
+
+A default implementation for such a fetcher is available as the
+QtRestClient::RestClassFetcher. It uses a QtRestClient::RestClass to send GET-requests.
+
+## Example
+
+Assuming your data class looks like this:
+@code{.cpp}
+class Person
+{
+	Q_GADGET
+	Q_PROPERTY(QString name MEMBER name)
+	Q_PROPERTY(int age MEMBER age)
+	//...
+};
+@endcode
+
+You can instanciate a model for this data as follows:
+@code{.cpp}
+QtRestClient::RestClass *rClass = ...;
+auto model = new QtRestClient::PagingModel(this);
+model->initialize<Person>("https://api.example.org/pagings?offset=0&limit=10", rClass);
+@endcode
+
+Alternatively, you can pass a `Paging<Person>` or a `GenericRestReply<Paging<Person>>` as
+first parameter and initialize the model from that data. In this example, the standard
+RestClassFetcher was used, which can be created automatically by passing the RestClass
+directly as second parameter.
+
+One additional feature of the model is, that it can also serve as model for table/tree views
+by delegating properties to multiple columns. This way you can use the model from QML by using
+the property names, and from widgets by delegating the properties to extra columns. For the
+above sample, the following code will result in a model with 2 columns, presenting the name
+and age properties as the Qt::DisplayRole of each column:
+
+@code{.cpp}
+// setup first
+auto model = new QtRestClient::PagingModel(this);
+model->initialize<Person>(...);
+// add the column config:
+auto col0 = model->addColumn("Name");
+model->addRole(col0, Qt::DisplayRole, "name");
+// or as shortcut for the above:
+model->addColumn("Age", "age");
+@endcode
+
+@sa QtRestClient::IPagingModelFetcher, QtRestClient::RestClassFetcher,
+QtRestClient::RestClass, QtRestClient::IPaging, QtRestClient::Paging,
+QtRestClient::RestReply, QtRestClient::GenericRestReply, PagingModel::initialize
+*/
+
+/*!
+@property QtRestClient::PagingModel::typeId
+
+@default{`QMetaType::UnknownType`}
+
+This type can only be changed be (re)initializing the model using one of the initialize()
+methods. After that was done, it can be used to retrieve the type id of the data that is
+beeing presented by the model.
+
+@accessors{
+	@readAc{typeId()}
+	@notifyAc{typeIdChanged()}
+}
+
+@sa PagingModel::initialize
+*/
+
+/*!
+@fn QtRestClient::PagingModel::initialize(const QUrl &, IPagingModelFetcher *)
+
+@tparam T The type of data to be presented by the model
+@param initialUrl The URL to use to fetch the first paging object of the model
+@param fetcher The IPagingModelFetcher to use to fetch the paging data from the remote server
+
+The model will first clear itself and then send the initialUrl as request using the fetcher
+to populate the model. After that, the information returned by the paging of the reply is
+used to continue to fill the model.
+
+@sa PagingModel::typeId
+*/
+
+/*!
+@fn QtRestClient::PagingModel::initialize(const QUrl &, RestClass *)
+
+@tparam T The type of data to be presented by the model
+@param initialUrl The URL to use to fetch the first paging object of the model
+@param restClass The RestClass to use to fetch the paging data from the remote server
+
+The model will first clear itself and then send the initialUrl as request using the fetcher
+to populate the model. After that, the information returned by the paging of the reply is
+used to continue to fill the model.
+
+@sa PagingModel::typeId
+*/
+
+/*!
+@fn QtRestClient::PagingModel::initialize(const QUrl &, IPagingModelFetcher *, int)
+
+@param initialUrl The URL to use to fetch the first paging object of the model
+@param fetcher The IPagingModelFetcher to use to fetch the paging data from the remote server
+@param typeId The type of data to be presented by the model
+
+The model will first clear itself and then send the initialUrl as request using the fetcher
+to populate the model. After that, the information returned by the paging of the reply is
+used to continue to fill the model.
+
+@sa PagingModel::typeId
+*/
+
+/*!
+@fn QtRestClient::PagingModel::initialize(const QUrl &, RestClass *, int)
+
+@param initialUrl The URL to use to fetch the first paging object of the model
+@param restClass The RestClass to use to fetch the paging data from the remote server
+@param typeId The type of data to be presented by the model
+
+The model will first clear itself and then send the initialUrl as request using the fetcher
+to populate the model. After that, the information returned by the paging of the reply is
+used to continue to fill the model.
+
+@sa PagingModel::typeId
+*/
+
+/*!
+@fn QtRestClient::PagingModel::initialize(const Paging<T> &, IPagingModelFetcher *)
+
+@tparam T The type of data to be presented by the model
+@param paging The paging object to initialize the model from
+@param fetcher The IPagingModelFetcher to use to fetch the paging data from the remote server
+
+The model will first clear itself and then fill itself from the data that the paging
+provides. After that, the information returned by the paging of the reply is used
+to continue to fill the model.
+
+@sa PagingModel::typeId, QtRestClient::Paging
+*/
+
+/*!
+@fn QtRestClient::PagingModel::initialize(const Paging<T> &, RestClass *)
+
+@tparam T The type of data to be presented by the model
+@param paging The paging object to initialize the model from
+@param restClass The RestClass to use to fetch the paging data from the remote server
+
+The model will first clear itself and then fill itself from the data that the paging
+provides. After that, the information returned by the paging of the reply is used
+to continue to fill the model.
+
+@sa PagingModel::typeId, QtRestClient::Paging
+*/
+
+/*!
+@fn QtRestClient::PagingModel::initialize(IPaging *, IPagingModelFetcher *, int)
+
+@param paging The paging object to initialize the model from
+@param fetcher The IPagingModelFetcher to use to fetch the paging data from the remote server
+@param typeId The type of data to be presented by the model
+
+The model will first clear itself and then fill itself from the data that the paging
+provides. After that, the information returned by the paging of the reply is used
+to continue to fill the model.
+
+@sa PagingModel::typeId, QtRestClient::IPaging
+*/
+
+/*!
+@fn QtRestClient::PagingModel::initialize(IPaging *, RestClass *, int)
+
+@param paging The paging object to initialize the model from
+@param restClass The RestClass to use to fetch the paging data from the remote server
+@param typeId The type of data to be presented by the model
+
+The model will first clear itself and then fill itself from the data that the paging
+provides. After that, the information returned by the paging of the reply is used
+to continue to fill the model.
+
+@sa PagingModel::typeId, QtRestClient::IPaging
+*/
+
+/*!
+@fn QtRestClient::PagingModel::initialize(GenericRestReply<Paging<DataClassType>, ErrorClassType> *, IPagingModelFetcher *)
+
+@tparam DataClassType The type of data to be presented by the model
+@tparam ErrorClassType The ErrorClassType as needed by the GenericRestReply
+@param reply A rest reply returning a paging object to intialize the model from
+@param fetcher The IPagingModelFetcher to use to fetch the paging data from the remote server
+
+The model will first clear itself and then wait (asynchronously) for the reply to finish. Once
+that happend, it will fill itself with the data from that reply. After that, the information
+returned by the paging of the reply is used to continue to fill the model.
+
+@sa PagingModel::typeId, QtRestClient::GenericRestReply
+*/
+
+/*!
+@fn QtRestClient::PagingModel::initialize(GenericRestReply<Paging<DataClassType>, ErrorClassType> *, RestClass *)
+
+@tparam DataClassType The type of data to be presented by the model
+@tparam ErrorClassType The ErrorClassType as needed by the GenericRestReply
+@param reply A rest reply returning a paging object to intialize the model from
+@param restClass The RestClass to use to fetch the paging data from the remote server
+
+The model will first clear itself and then wait (asynchronously) for the reply to finish. Once
+that happend, it will fill itself with the data from that reply. After that, the information
+returned by the paging of the reply is used to continue to fill the model.
+
+@sa PagingModel::typeId, QtRestClient::GenericRestReply
+*/
+
+/*!
+@fn QtRestClient::PagingModel::initialize(RestReply *, IPagingModelFetcher *, int)
+
+@param reply A rest reply returning a paging object to intialize the model from
+@param fetcher The IPagingModelFetcher to use to fetch the paging data from the remote server
+@param typeId The type of data to be presented by the model
+
+The model will first clear itself and then wait (asynchronously) for the reply to finish. Once
+that happend, it will fill itself with the data from that reply. After that, the information
+returned by the paging of the reply is used to continue to fill the model.
+
+@sa PagingModel::typeId, QtRestClient::RestReply
+*/
+
+/*!
+@fn QtRestClient::PagingModel::initialize(RestReply *, RestClass *, int)
+
+@param reply A rest reply returning a paging object to intialize the model from
+@param restClass The RestClass to use to fetch the paging data from the remote server
+@param typeId The type of data to be presented by the model
+
+The model will first clear itself and then wait (asynchronously) for the reply to finish. Once
+that happend, it will fill itself with the data from that reply. After that, the information
+returned by the paging of the reply is used to continue to fill the model.
+
+@sa PagingModel::typeId, QtRestClient::RestReply
+*/
+
+
+/*!
+@fn QVariant QtRestClient::PagingModel::addColumn(const QString &)
+
+@param text The display name of the column header
+@returns The index of the newly created column
+
+The method add a column to the model that can be used to present propeties from the underlying
+data as specific roles.
+
+@attention If no custom columns have been added yet, the model with have a single column with
+the typeId class name as title. By calling this method the first time, this default column will
+be **replaced** by whatever column you specify. All subsequent columns are simply added as new
+columns.
+
+@sa PagingModel::typeId, PagingModel::addRole, PagingModel::clearColumns
+*/
+
+/*!
+@fn QVariant QtRestClient::PagingModel::addColumn(const QString &, const char *)
+
+@param text The display name of the column header
+@param propertyName The name of the property to presented as the display role of that column
+@returns The index of the newly created column
+
+This method is basically a shortcut for:
+
+@code{.cpp}
+auto column = model->addColumn(text);
+model->addRole(column, Qt::DisplayRole, propertyName);
+@endcode
+
+@sa PagingModel::typeId, PagingModel::addRole, PagingModel::clearColumns
+*/
+
+/*!
+@fn QVariant QtRestClient::PagingModel::addRole
+
+@param column The existing column to add the role to
+@param role The role that should be added to the column
+@param propertyName The name of the property to presented as the give role of that column
+
+This method adds a new role to an existing column. The new role will simply the the value of the
+given property of the object in each row. It's basically a delegate to the properties role.
+
+@sa PagingModel::typeId, PagingModel::addColumn, PagingModel::clearColumns
+*/
