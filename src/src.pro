@@ -1,15 +1,14 @@
 TEMPLATE = subdirs
 
 SUBDIRS += restclient \
-	imports \
-	restclientauth
+	imports
 
-restclient.CONFIG += no_lrelease_target
-restclientauth.depends += restclient
-imports.depends += restclient restclientauth
-imports.CONFIG += no_lrelease_target
+imports.depends += restclient
 
-prepareRecursiveTarget(lrelease)
-QMAKE_EXTRA_TARGETS += lrelease
+!wasm {
+	SUBDIRS += restclientauth
+	restclientauth.depends += restclient
+	imports.depends += restclientauth
+}
 
 QMAKE_EXTRA_TARGETS += run-tests
