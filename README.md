@@ -102,7 +102,7 @@ auto restClass = QtRestClient::createApiClass("jsonplaceholder", "posts", this);
 
 Finally, we send the get-request and log the reply:
 ```cpp
-restClass->get<Post>("42")->onSucceeded([](RestReply *reply, int statusCode, Post data) { //calls: GET https://jsonplaceholder.typicode.com/posts/42
+restClass->get<Post>("42")->onSucceeded([](int statusCode, Post data) {  //calls: GET https://jsonplaceholder.typicode.com/posts/42
 	//do whatever you want with the data
 	qDebug() << data.id
 			 << data.userId
