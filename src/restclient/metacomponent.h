@@ -4,13 +4,13 @@
 #include "QtRestClient/qtrestclient_global.h"
 
 #include <QtCore/qobject.h>
-#include <QtJsonSerializer/qjsonserializer_helpertypes.h>
+#include <QtJsonSerializer/qtjsonserializer_helpertypes.h>
 
 namespace QtRestClient {
 
 //! @private
 template <typename T>
-using EnableGadgetType = typename std::enable_if<_qjsonserializer_helpertypes::gadget_helper<T>::value>::type;
+using EnableGadgetType = typename std::enable_if<QtJsonSerializer::__private::gadget_helper<T>::value>::type;
 //! @private
 template <typename T>
 using EnableObjectType = typename std::enable_if<std::is_base_of<QObject, T>::value>::type;

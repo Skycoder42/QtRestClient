@@ -12,7 +12,9 @@
 #include <QtNetwork/qnetworkrequest.h>
 
 #ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
-class QJsonSerializer;
+namespace QtJsonSerializer {
+class JsonSerializer;
+}
 #endif
 
 namespace QtRestClient {
@@ -60,7 +62,7 @@ public:
 	QNetworkAccessManager *manager() const;
 #ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
 	//! Returns the json serializer used by the restclient
-	QJsonSerializer *serializer() const;
+	QtJsonSerializer::JsonSerializer *serializer() const;
 #endif
 	//! Returns the paging factory used by the restclient
 	PagingFactory *pagingFactory() const;
@@ -88,7 +90,7 @@ public Q_SLOTS:
 	void setManager(QNetworkAccessManager *manager);
 #ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
 	//! Sets the json serializer to be used by all requests for this client
-	void setSerializer(QJsonSerializer *serializer);
+	void setSerializer(QtJsonSerializer::JsonSerializer *serializer);
 #endif
 
 	//! Sets the paging factory to be used by all paging requests for this client

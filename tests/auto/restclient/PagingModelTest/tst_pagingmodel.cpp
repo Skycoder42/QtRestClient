@@ -1,8 +1,8 @@
 #include "testlib.h"
 
 #include <jphpost.h>
-
 using namespace QtRestClient;
+using namespace QtJsonSerializer;
 
 class PagingModelTest : public QObject
 {
@@ -26,7 +26,7 @@ private:
 
 void PagingModelTest::initTestCase()
 {
-	QJsonSerializer::registerListConverters<JphPost*>();
+	JsonSerializer::registerListConverters<JphPost*>();
 	server = new HttpServer(this);
 	server->verifyRunning();
 	server->setAdvancedData();

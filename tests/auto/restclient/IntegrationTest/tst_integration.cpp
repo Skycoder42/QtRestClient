@@ -1,7 +1,7 @@
 #include "jphuser.h"
 #include "testlib.h"
-
 using namespace QtRestClient;
+using namespace QtJsonSerializer;
 
 class IntegrationTest : public QObject
 {
@@ -23,7 +23,7 @@ private:
 
 void IntegrationTest::initTestCase()
 {
-	QJsonSerializer::registerListConverters<JphPost*>();
+	JsonSerializer::registerListConverters<JphPost*>();
 	server = new HttpServer(this);
 	server->verifyRunning();
 	server->setAdvancedData();

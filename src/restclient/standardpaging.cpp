@@ -1,11 +1,14 @@
 #include <limits>
 
 #ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
-#include <QtJsonSerializer/QJsonSerializer>
+#include <QtJsonSerializer/JsonSerializer>
 #endif
 
 #include "standardpaging_p.h"
 using namespace QtRestClient;
+#ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
+using namespace QtJsonSerializer;
+#endif
 
 namespace QtRestClient {
 
@@ -115,12 +118,12 @@ void StandardPaging::setJson(QJsonObject object)
 // ------------- Factory Implementation -------------
 
 #ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
-IPaging *StandardPagingFactory::createPaging(QJsonSerializer *serializer, const QJsonObject &data) const
+IPaging *StandardPagingFactory::createPaging(JsonSerializer *serializer, const QJsonObject &data) const
 {
 	//validate data and next only -> only ones required
 	if(!validateUrl(data[QStringLiteral("next")]) ||
 	   !data[QStringLiteral("items")].isArray())
-		throw QJsonDeserializationException("Given JSON is not a default paging object!");
+		throw DeserializationException("Given JSON is not a default paging object!");
 	auto paging = new StandardPaging{serializer->deserialize<StandardPaging>(data)};
 	paging->setJson(data);
 	return paging;

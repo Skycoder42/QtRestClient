@@ -6,6 +6,9 @@
 #include <QtCore/QRegularExpression>
 #include <QtCore/QUuid>
 using namespace QtRestClient;
+#ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
+using namespace QtJsonSerializer;
+#endif
 
 RestClient::RestClient(QObject *parent) :
 	RestClient{parent, new RestClientPrivate{}, false}
@@ -29,7 +32,7 @@ QNetworkAccessManager *RestClient::manager() const
 }
 
 #ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
-QJsonSerializer *RestClient::serializer() const
+JsonSerializer *RestClient::serializer() const
 {
 	return d->serializer;
 }
@@ -90,7 +93,7 @@ void RestClient::setManager(QNetworkAccessManager *manager)
 }
 
 #ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
-void RestClient::setSerializer(QJsonSerializer *serializer)
+void RestClient::setSerializer(JsonSerializer *serializer)
 {
 	d->serializer->deleteLater();
 	d->serializer = serializer;
@@ -218,7 +221,7 @@ RestClient::RestClient(QObject *parent, RestClientPrivate *d_ptr, bool skipNam) 
 		d->nam->setRedirectPolicy(QNetworkRequest::NoLessSafeRedirectPolicy);
 	}
 #ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
-	d->serializer = new QJsonSerializer{this};
+	d->serializer = new JsonSerializer{this};
 	d->serializer->setAllowDefaultNull(true);
 #endif
 	d->pagingFactory.reset(new StandardPagingFactory{});

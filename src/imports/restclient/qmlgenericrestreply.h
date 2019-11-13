@@ -4,7 +4,7 @@
 #include <QtCore/QObject>
 #include <QtQml/QJSValue>
 #include <QtQml/QJSEngine>
-#include <QtJsonSerializer/QJsonSerializer>
+#include <QtJsonSerializer/JsonSerializer>
 #include <QtRestClient/RestReply>
 
 #ifdef DOXYGEN_RUN
@@ -57,7 +57,7 @@ class QmlGenericRestReply : public QObject
 
 public:
 	//! @private
-	Q_INVOKABLE QmlGenericRestReply(QJsonSerializer *serializer,
+	Q_INVOKABLE QmlGenericRestReply(QtJsonSerializer::JsonSerializer *serializer,
 									QJSEngine *engine,
 									int returnType,
 									int errorType,
@@ -109,7 +109,7 @@ public Q_SLOTS:
 	void addErrorHandler(const QJSValue &errorHandler);
 
 private:
-	QJsonSerializer *_serializer;
+	QtJsonSerializer::JsonSerializer *_serializer;
 	QJSEngine *_engine;
 	int _returnType;
 	int _errorType;

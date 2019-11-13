@@ -219,7 +219,7 @@ void GenericRestReplyAwaitable<DataClassType, ErrorClassType>::prepare(const std
 		errorResult.reset(new exceptionType{code, RestReply::FailureError, std::move(data)});
 		resume();
 	});
-	reply->onSerializeException([this, resume](const QJsonSerializerException &data) {
+	reply->onSerializeException([this, resume](const QtJsonSerializer::Exception &data) {
 		errorResult.reset(new exceptionType{0, RestReply::DeserializationError, QString::fromUtf8(data.what())});
 		resume();
 	});
@@ -272,7 +272,7 @@ void GenericRestReplyAwaitable<void, ErrorClassType>::prepare(const std::functio
 		errorResult.reset(new exceptionType{code, RestReply::FailureError, std::move(data)});
 		resume();
 	});
-	reply->onSerializeException([this, resume](const QJsonSerializerException &data) {
+	reply->onSerializeException([this, resume](const QtJsonSerializer::Exception &data) {
 		errorResult.reset(new exceptionType{0, RestReply::DeserializationError, QString::fromUtf8(data.what())});
 		resume();
 	});

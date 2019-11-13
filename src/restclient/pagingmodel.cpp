@@ -1,6 +1,9 @@
 #include "pagingmodel.h"
 #include "pagingmodel_p.h"
 using namespace QtRestClient;
+#ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
+using namespace QtJsonSerializer;
+#endif
 namespace sph = std::placeholders;
 
 PagingModel::PagingModel(QObject *parent) :
@@ -290,7 +293,7 @@ void PagingModelPrivate::processReply(int, const QJsonObject &jsonData)
 #ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
 	try {
 		paging = fetcher->client()->pagingFactory()->createPaging(fetcher->client()->serializer(), jsonData);
-	} catch (QJsonSerializerException &e) {
+	} catch (Exception &e) {
 		qCritical() << "Failed to parse received paging object with error:"
 				   << e.what();
 		emit q->fetchError({});
@@ -329,7 +332,7 @@ void PagingModelPrivate::processPaging(IPaging *paging)
 	for (const auto jData : paging->items()) {
 		try {
 			data.append(serializer->deserialize(jData, typeId, q));  // TODO care about memory leak
-		} catch (QJsonDeserializationException &e) {
+		} catch (DeserializationException &e) {
 			qCritical() << "Failed to deserialize paging element with error:"
 						<< e.what();
 			fetchFailed = true;

@@ -9,7 +9,9 @@
 #include <QtCore/qvariant.h>
 
 #ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
-class QJsonSerializer;
+namespace QtJsonSerializer {
+class JsonSerializer;
+}
 #endif
 
 namespace QtRestClient {
@@ -51,7 +53,7 @@ public:
 
 	//! Creates a new paging object of the given data
 #ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
-	virtual IPaging *createPaging(QJsonSerializer *serializer, const QJsonObject &data) const = 0;
+	virtual IPaging *createPaging(QtJsonSerializer::JsonSerializer *serializer, const QJsonObject &data) const = 0;
 #else
 	virtual IPaging *createPaging(const QJsonObject &data) const = 0;
 #endif

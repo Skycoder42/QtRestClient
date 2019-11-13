@@ -8,7 +8,7 @@
 #include "QtRestClient/restreply.h"
 #include "QtRestClient/metacomponent.h"
 
-#include <QtJsonSerializer/qjsonserializerexception.h>
+#include <QtJsonSerializer/exception.h>
 #include <QtCore/qshareddata.h>
 #include <functional>
 
@@ -92,7 +92,7 @@ public:
 	void iterate(const std::function<bool(T, int)> &iterator,
 				 const std::function<void(int, EO)> &failureHandler,
 				 const std::function<void(QString, int, RestReply::ErrorType)> &errorHandler = {},
-				 const std::function<void(QJsonSerializerException &)> &exceptionHandler = {},
+				 const std::function<void(QtJsonSerializer::Exception &)> &exceptionHandler = {},
 				 int to = -1,
 				 int from = 0) const;
 	//! @copybrief Paging::iterate(const std::function<bool(T, int)> &, const std::function<void(int, EO)> &, const std::function<void(QString, int, RestReply::ErrorType)> &, const std::function<void(QJsonSerializerException &)> &, int, int) const
@@ -101,7 +101,7 @@ public:
 				 const std::function<bool(T, int)> &iterator,
 				 const std::function<void(int, EO)> &failureHandler,
 				 const std::function<void(QString, int, RestReply::ErrorType)> &errorHandler = {},
-				 const std::function<void(QJsonSerializerException &)> &exceptionHandler = {},
+				 const std::function<void(QtJsonSerializer::Exception &)> &exceptionHandler = {},
 				 int to = -1,
 				 int from = 0) const;
 

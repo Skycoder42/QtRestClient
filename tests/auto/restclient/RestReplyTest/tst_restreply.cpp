@@ -2,6 +2,7 @@
 #include "testlib.h"
 
 #include <jphpost.h>
+using namespace QtJsonSerializer;
 
 class RestReplyTest : public QObject
 {
@@ -44,8 +45,8 @@ private:
 
 void RestReplyTest::initTestCase()
 {
-	QJsonSerializer::registerListConverters<JphPost*>();
-	QJsonSerializer::registerListConverters<SimpleJphPost*>();
+	JsonSerializer::registerListConverters<JphPost*>();
+	JsonSerializer::registerListConverters<SimpleJphPost*>();
 	server = new HttpServer(this);
 	server->verifyRunning();
 	server->setAdvancedData();

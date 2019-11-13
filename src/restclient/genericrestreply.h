@@ -7,7 +7,7 @@
 #include "QtRestClient/paging_fwd.h"
 #include "QtRestClient/metacomponent.h"
 
-#include <QtJsonSerializer/qjsonserializer.h>
+#include <QtJsonSerializer/jsonserializer.h>
 #include <type_traits>
 
 namespace QtRestClient {
@@ -36,7 +36,7 @@ public:
 	//! @copybrief GenericRestReply::onFailed(const std::function<void(int, ErrorClassType)>&)
 	GenericRestReply<DataClassType, ErrorClassType> *onFailed(QObject *scope, const std::function<void(int, ErrorClassType)> &handler);
 	//! Set a handler to be called on deserialization exceptions
-	GenericRestReply<DataClassType, ErrorClassType> *onSerializeException(std::function<void(QJsonSerializerException&)>handler);
+	GenericRestReply<DataClassType, ErrorClassType> *onSerializeException(std::function<void(QtJsonSerializer::Exception&)>handler);
 	//! @copybrief RestReply::onAllErrors(const std::function<void(QString, int, ErrorType)>&, const std::function<QString(QJsonObject, int)>&)
 	GenericRestReply<DataClassType, ErrorClassType> *onAllErrors(const std::function<void(QString, int, ErrorType)> &handler,
 																 const std::function<QString(ErrorClassType, int)> &failureTransformer = {});
@@ -62,7 +62,7 @@ public:
 
 private:
 	RestClient *client;
-	std::function<void(QJsonSerializerException &)> exceptionHandler;
+	std::function<void(QtJsonSerializer::Exception &)> exceptionHandler;
 };
 
 //! @note This class is a simple specialization for replies withput a result. It behaves the same as a normal GenericRestReply, however,
@@ -87,7 +87,7 @@ public:
 	//! @copydoc GenericRestReply::onFailed(QObject*, const std::function<void(int, ErrorClassType)>&)
 	GenericRestReply<void, ErrorClassType> *onFailed(QObject *scope, const std::function<void(int, ErrorClassType)> &handler);
 	//! @copydoc GenericRestReply::onSerializeException
-	GenericRestReply<void, ErrorClassType> *onSerializeException(std::function<void(QJsonSerializerException&)>handler);
+	GenericRestReply<void, ErrorClassType> *onSerializeException(std::function<void(QtJsonSerializer::Exception&)>handler);
 	//! @copydoc GenericRestReply::onAllErrors(const std::function<void(QString, int, ErrorType)>&, const std::function<QString(ErrorClassType, int)>&)
 	GenericRestReply<void, ErrorClassType> *onAllErrors(const std::function<void(QString, int, ErrorType)> &handler,
 														const std::function<QString(ErrorClassType, int)> &failureTransformer = {});
@@ -113,7 +113,7 @@ public:
 
 private:
 	RestClient *client;
-	std::function<void(QJsonSerializerException &)> exceptionHandler;
+	std::function<void(QtJsonSerializer::Exception &)> exceptionHandler;
 };
 
 //! @note This class is a simple specialization for list types. It behaves the same as a normal GenericRestReply, however,
@@ -140,7 +140,7 @@ public:
 	//! @copydoc GenericRestReply::onFailed(QObject*, const std::function<void(int, ErrorClassType)>&)
 	GenericRestReply<QList<DataClassType>, ErrorClassType> *onFailed(QObject *scope, const std::function<void(int, ErrorClassType)> &handler);
 	//! @copydoc GenericRestReply::onSerializeException
-	GenericRestReply<QList<DataClassType>, ErrorClassType> *onSerializeException(std::function<void(QJsonSerializerException&)>handler);
+	GenericRestReply<QList<DataClassType>, ErrorClassType> *onSerializeException(std::function<void(QtJsonSerializer::Exception&)>handler);
 	//! @copydoc GenericRestReply::onAllErrors(const std::function<void(QString, int, ErrorType)>&, const std::function<QString(ErrorClassType, int)>&)
 	GenericRestReply<QList<DataClassType>, ErrorClassType> *onAllErrors(const std::function<void(QString, int, ErrorType)> &handler,
 																		const std::function<QString(ErrorClassType, int)> &failureTransformer = {});
@@ -166,7 +166,7 @@ public:
 
 private:
 	RestClient *client;
-	std::function<void(QJsonSerializerException &)> exceptionHandler;
+	std::function<void(QtJsonSerializer::Exception &)> exceptionHandler;
 };
 
 //! @note This class is a simple specialization for paging types. It behaves the same as a normal GenericRestReply, however,
@@ -194,7 +194,7 @@ public:
 	//! @copydoc GenericRestReply::onFailed(QObject*, const std::function<void(int, ErrorClassType)>&)
 	GenericRestReply<Paging<DataClassType>, ErrorClassType> *onFailed(QObject *scope, const std::function<void(int, ErrorClassType)> &handler);
 	//! @copydoc GenericRestReply::onSerializeException
-	GenericRestReply<Paging<DataClassType>, ErrorClassType> *onSerializeException(std::function<void(QJsonSerializerException&)>handler);
+	GenericRestReply<Paging<DataClassType>, ErrorClassType> *onSerializeException(std::function<void(QtJsonSerializer::Exception&)>handler);
 	//! @copydoc GenericRestReply::onAllErrors(const std::function<void(QString, int, ErrorType)>&, const std::function<QString(ErrorClassType, int)>&)
 	GenericRestReply<Paging<DataClassType>, ErrorClassType> *onAllErrors(const std::function<void(QString, int, ErrorType)> &handler,
 																		 const std::function<QString(ErrorClassType, int)> &failureTransformer = {});
@@ -227,7 +227,7 @@ private:
 	RestClient *client;
 	std::function<void(int, ErrorClassType)> failureHandler;
 	std::function<void(QString, int, ErrorType)> errorHandler;
-	std::function<void(QJsonSerializerException &)> exceptionHandler;
+	std::function<void(QtJsonSerializer::Exception &)> exceptionHandler;
 };
 
 } //end namespace, because of include!
@@ -260,9 +260,9 @@ GenericRestReply<DataClassType, ErrorClassType> *GenericRestReply<DataClassType,
 	connect(this, &RestReply::succeeded, scope, [=](int code, const QJsonValue &value){
 		try {
 			if(!value.isObject())
-				throw QJsonDeserializationException("Expected JSON object but got " + jsonTypeName(value.type()));
+				throw QtJsonSerializer::DeserializationException("Expected JSON object but got " + jsonTypeName(value.type()));
 			handler(code, client->serializer()->deserialize<DataClassType>(value.toObject()));
-		} catch(QJsonSerializerException &e) {
+		} catch(QtJsonSerializer::Exception &e) {
 			if(exceptionHandler)
 				exceptionHandler(e);
 		}
@@ -284,9 +284,9 @@ GenericRestReply<DataClassType, ErrorClassType> *GenericRestReply<DataClassType,
 	connect(this, &RestReply::failed, scope, [=](int code, const QJsonValue &value){
 		try {
 			if(!value.isObject())
-				throw QJsonDeserializationException("Expected JSON object but got " + jsonTypeName(value.type()));
+				throw QtJsonSerializer::DeserializationException("Expected JSON object but got " + jsonTypeName(value.type()));
 			handler(code, client->serializer()->deserialize<ErrorClassType>(value.toObject()));
-		} catch(QJsonSerializerException &e) {
+		} catch(QtJsonSerializer::Exception &e) {
 			if(exceptionHandler)
 				exceptionHandler(e);
 		}
@@ -295,7 +295,7 @@ GenericRestReply<DataClassType, ErrorClassType> *GenericRestReply<DataClassType,
 }
 
 template<typename DataClassType, typename ErrorClassType>
-GenericRestReply<DataClassType, ErrorClassType> *GenericRestReply<DataClassType, ErrorClassType>::onSerializeException(std::function<void(QJsonSerializerException&)>handler)
+GenericRestReply<DataClassType, ErrorClassType> *GenericRestReply<DataClassType, ErrorClassType>::onSerializeException(std::function<void(QtJsonSerializer::Exception&)>handler)
 {
 	exceptionHandler = std::move(handler);
 	return this;
@@ -318,7 +318,7 @@ GenericRestReply<DataClassType, ErrorClassType> *GenericRestReply<DataClassType,
 		MetaComponent<ErrorClassType>::deleteLater(obj);
 	});
 	this->onError(scope, handler);
-	this->onSerializeException([handler](QJsonSerializerException exception){
+	this->onSerializeException([handler](QtJsonSerializer::Exception exception){
 		handler(QString::fromUtf8(exception.what()), 0, DeserializationError);
 	});
 	return this;
@@ -401,9 +401,9 @@ GenericRestReply<void, ErrorClassType> *GenericRestReply<void, ErrorClassType>::
 	connect(this, &RestReply::failed, scope, [=](int code, const QJsonValue &value){
 		try {
 			if(!value.isObject())
-				throw QJsonDeserializationException("Expected JSON object but got " + jsonTypeName(value.type()));
+				throw QtJsonSerializer::DeserializationException("Expected JSON object but got " + jsonTypeName(value.type()));
 			handler(code, client->serializer()->deserialize<ErrorClassType>(value.toObject()));
-		} catch(QJsonSerializerException &e) {
+		} catch(QtJsonSerializer::Exception &e) {
 			if(exceptionHandler)
 				exceptionHandler(e);
 		}
@@ -412,7 +412,7 @@ GenericRestReply<void, ErrorClassType> *GenericRestReply<void, ErrorClassType>::
 }
 
 template<typename ErrorClassType>
-GenericRestReply<void, ErrorClassType> *GenericRestReply<void, ErrorClassType>::onSerializeException(std::function<void(QJsonSerializerException&)>handler)
+GenericRestReply<void, ErrorClassType> *GenericRestReply<void, ErrorClassType>::onSerializeException(std::function<void(QtJsonSerializer::Exception&)>handler)
 {
 	exceptionHandler = std::move(handler);
 	return this;
@@ -435,7 +435,7 @@ GenericRestReply<void, ErrorClassType> *GenericRestReply<void, ErrorClassType>::
 		MetaComponent<ErrorClassType>::deleteLater(obj);
 	});
 	this->onError(scope, handler);
-	this->onSerializeException([handler](QJsonSerializerException exception){
+	this->onSerializeException([handler](QtJsonSerializer::Exception exception){
 		handler(QString::fromUtf8(exception.what()), 0, DeserializationError);
 	});
 	return this;
@@ -499,9 +499,9 @@ GenericRestReply<QList<DataClassType>, ErrorClassType> *GenericRestReply<QList<D
 	connect(this, &RestReply::succeeded, scope, [=](int code, const QJsonValue &value){
 		try {
 			if(!value.isArray())
-				throw QJsonDeserializationException("Expected JSON array but got " + jsonTypeName(value.type()));
+				throw QtJsonSerializer::DeserializationException("Expected JSON array but got " + jsonTypeName(value.type()));
 			handler(code, client->serializer()->deserialize<QList<DataClassType>>(value.toArray()));
-		} catch(QJsonSerializerException &e) {
+		} catch(QtJsonSerializer::Exception &e) {
 			if(exceptionHandler)
 				exceptionHandler(e);
 		}
@@ -523,9 +523,9 @@ GenericRestReply<QList<DataClassType>, ErrorClassType> *GenericRestReply<QList<D
 	connect(this, &RestReply::failed, scope, [=](int code, const QJsonValue &value){
 		try {
 			if(!value.isObject())
-				throw QJsonDeserializationException("Expected JSON object but got " + jsonTypeName(value.type()));
+				throw QtJsonSerializer::DeserializationException("Expected JSON object but got " + jsonTypeName(value.type()));
 			handler(code, client->serializer()->deserialize<ErrorClassType>(value.toObject()));
-		} catch(QJsonSerializerException &e) {
+		} catch(QtJsonSerializer::Exception &e) {
 			if(exceptionHandler)
 				exceptionHandler(e);
 		}
@@ -534,7 +534,7 @@ GenericRestReply<QList<DataClassType>, ErrorClassType> *GenericRestReply<QList<D
 }
 
 template<typename DataClassType, typename ErrorClassType>
-GenericRestReply<QList<DataClassType>, ErrorClassType> *GenericRestReply<QList<DataClassType>, ErrorClassType>::onSerializeException(std::function<void(QJsonSerializerException&)>handler)
+GenericRestReply<QList<DataClassType>, ErrorClassType> *GenericRestReply<QList<DataClassType>, ErrorClassType>::onSerializeException(std::function<void(QtJsonSerializer::Exception&)>handler)
 {
 	exceptionHandler = std::move(handler);
 	return this;
@@ -557,7 +557,7 @@ GenericRestReply<QList<DataClassType>, ErrorClassType> *GenericRestReply<QList<D
 		MetaComponent<ErrorClassType>::deleteLater(obj);
 	});
 	this->onError(scope, handler);
-	this->onSerializeException([handler](QJsonSerializerException exception){
+	this->onSerializeException([handler](QtJsonSerializer::Exception exception){
 		handler(QString::fromUtf8(exception.what()), 0, DeserializationError);
 	});
 	return this;
@@ -621,11 +621,11 @@ GenericRestReply<Paging<DataClassType>, ErrorClassType> *GenericRestReply<Paging
 	connect(this, &RestReply::succeeded, scope, [=](int code, const QJsonValue &value){
 		try {
 			if(!value.isObject())
-				throw QJsonDeserializationException("Expected JSON object but got " + jsonTypeName(value.type()));
+				throw QtJsonSerializer::DeserializationException("Expected JSON object but got " + jsonTypeName(value.type()));
 			auto iPaging = client->pagingFactory()->createPaging(client->serializer(), value.toObject());
 			auto data = client->serializer()->deserialize<QList<DataClassType>>(iPaging->items());
 			handler(code, Paging<DataClassType>(iPaging, data, client));
-		} catch(QJsonSerializerException &e) {
+		} catch(QtJsonSerializer::Exception &e) {
 			if(exceptionHandler)
 				exceptionHandler(e);
 		}
@@ -648,9 +648,9 @@ GenericRestReply<Paging<DataClassType>, ErrorClassType> *GenericRestReply<Paging
 	connect(this, &RestReply::failed, scope, [=](int code, const QJsonValue &value){
 		try {
 			if(!value.isObject())
-				throw QJsonDeserializationException("Expected JSON object but got " + jsonTypeName(value.type()));
+				throw QtJsonSerializer::DeserializationException("Expected JSON object but got " + jsonTypeName(value.type()));
 			handler(code, client->serializer()->deserialize<ErrorClassType>(value.toObject()));
-		} catch(QJsonSerializerException &e) {
+		} catch(QtJsonSerializer::Exception &e) {
 			if(exceptionHandler)
 				exceptionHandler(e);
 		}
@@ -659,7 +659,7 @@ GenericRestReply<Paging<DataClassType>, ErrorClassType> *GenericRestReply<Paging
 }
 
 template<typename DataClassType, typename ErrorClassType>
-GenericRestReply<Paging<DataClassType>, ErrorClassType> *GenericRestReply<Paging<DataClassType>, ErrorClassType>::onSerializeException(std::function<void(QJsonSerializerException&)>handler)
+GenericRestReply<Paging<DataClassType>, ErrorClassType> *GenericRestReply<Paging<DataClassType>, ErrorClassType>::onSerializeException(std::function<void(QtJsonSerializer::Exception&)>handler)
 {
 	exceptionHandler = std::move(handler);
 	return this;
@@ -682,7 +682,7 @@ GenericRestReply<Paging<DataClassType>, ErrorClassType> *GenericRestReply<Paging
 		MetaComponent<ErrorClassType>::deleteLater(obj);
 	});
 	this->onError(scope, handler);
-	this->onSerializeException([handler](QJsonSerializerException exception){
+	this->onSerializeException([handler](QtJsonSerializer::Exception exception){
 		handler(QString::fromUtf8(exception.what()), 0, DeserializationError);
 	});
 	return this;

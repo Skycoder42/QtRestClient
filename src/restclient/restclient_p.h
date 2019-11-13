@@ -2,7 +2,7 @@
 #define QTRESTCLIENT_QRESTCLIENT_P_H
 
 #ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
-#include <QtJsonSerializer/QJsonSerializer>
+#include <QtJsonSerializer/JsonSerializer>
 #endif
 
 #include "restclient.h"
@@ -29,7 +29,7 @@ public:
 
 	QNetworkAccessManager *nam = nullptr;
 #ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
-	QJsonSerializer *serializer = nullptr;
+	QtJsonSerializer::JsonSerializer *serializer = nullptr;
 #endif
 
 	QT_WARNING_PUSH

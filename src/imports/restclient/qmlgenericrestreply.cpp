@@ -1,8 +1,9 @@
 #include "qmlgenericrestreply.h"
 #include <QDebug>
 #include <QRegularExpression>
+using namespace QtJsonSerializer;
 
-QtRestClient::QmlGenericRestReply::QmlGenericRestReply(QJsonSerializer *serializer, QJSEngine *engine, int returnType, int errorType, QtRestClient::RestReply *reply) :
+QtRestClient::QmlGenericRestReply::QmlGenericRestReply(JsonSerializer *serializer, QJSEngine *engine, int returnType, int errorType, QtRestClient::RestReply *reply) :
 	QObject(reply),
 	_serializer(serializer),
 	_engine(engine),
@@ -42,7 +43,7 @@ void QtRestClient::QmlGenericRestReply::addSucceededHandler(const QJSValue &succ
 	if(!checkOk(succeededHandler))
 		return;
 
-	QPointer<QJsonSerializer> serializer{_serializer};
+	QPointer<JsonSerializer> serializer{_serializer};
 	QPointer<QJSEngine> engine{_engine};
 	QPointer<RestReply> reply{_reply};
 	auto type = _returnType;
@@ -78,7 +79,7 @@ void QtRestClient::QmlGenericRestReply::addFailedHandler(const QJSValue &failedH
 	if(!checkOk(failedHandler))
 		return;
 
-	QPointer<QJsonSerializer> serializer{_serializer};
+	QPointer<JsonSerializer> serializer{_serializer};
 	QPointer<QJSEngine> engine{_engine};
 	QPointer<RestReply> reply{_reply};
 	auto type = _errorType;

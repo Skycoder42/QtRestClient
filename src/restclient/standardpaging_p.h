@@ -55,7 +55,7 @@ class Q_RESTCLIENT_EXPORT StandardPagingFactory : public IPagingFactory
 {
 public:
 #ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
-	IPaging *createPaging(QJsonSerializer *serializer, const QJsonObject &data) const override;
+	IPaging *createPaging(QtJsonSerializer::JsonSerializer *serializer, const QJsonObject &data) const override;
 #else
 	IPaging *createPaging(const QJsonObject &data) const override;
 #endif

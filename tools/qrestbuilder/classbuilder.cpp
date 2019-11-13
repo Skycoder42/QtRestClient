@@ -541,7 +541,7 @@ void ClassBuilder::writeQmlDefinitions()
 			   << "\tif(!reply)\n"
 			   << "\t\treturn nullptr;\n"
 			   << "\treturn reinterpret_cast<QtRestClient::QmlGenericRestReply*>(QMetaType::metaObjectForType(QMetaType::type(\"QtRestClient::QmlGenericRestReply*\"))\n"
-			   << "\t\t->newInstance(Q_ARG(QJsonSerializer*, _d->restClient()->serializer()),\n"
+			   << "\t\t->newInstance(Q_ARG(QtJsonSerializer::JsonSerializer*, _d->restClient()->serializer()),\n"
 			   << "\t\t\tQ_ARG(QJSEngine*, reinterpret_cast<QJSEngine*>(_engine)),\n"
 			   << "\t\t\tQ_ARG(int, QMetaType::type(\"" << method.returns << "\")),\n"
 			   << "\t\t\tQ_ARG(int, QMetaType::type(\"" << method.except.value() << "\")),\n"
