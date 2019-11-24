@@ -113,7 +113,7 @@ jobs:
         with:
           version: ${{matrix.version}}
           platform: ${{matrix.platform}}
-          packages: .qtnetworkauth,.skycoder42.jsonserializer
+          packages: qtnetworkauth,skycoder42.jsonserializer
           install-args: --addRepository https://install.skycoder42.de/qtmodules/${{matrix.repository}} --verbose
           cachedir: qt/${{matrix.version}}/${{matrix.platform}}
       - name: qmake
@@ -262,7 +262,7 @@ jobs:
         with:
           version: ${{matrix.version}}
           platform: ${{matrix.platform}}
-          packages: .qtnetworkauth
+          packages: qtnetworkauth
           install-args: --verbose
           cachedir: qt/${{matrix.version}}/${{matrix.platform}}
       - name: qmake

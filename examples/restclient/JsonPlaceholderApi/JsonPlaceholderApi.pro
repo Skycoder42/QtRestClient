@@ -16,4 +16,4 @@ REST_API_FILES += post.xml \
 	api_posts.xml
 
 target.path = $$[QT_INSTALL_EXAMPLES]/restclient/$$TARGET
-INSTALLS += target
+!install_ok: INSTALLS += target
