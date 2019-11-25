@@ -96,7 +96,7 @@ jobs:
         with:
           version: ${{matrix.emsdk}}
           actions-cache-folder: emsdk-cache
-      - uses: ilammy/msvc-dev-cmd@v1
+      - uses: Skycoder42/msvc-dev-cmd@master
         if: contains(matrix.platform, 'msvc')
         with:
           arch: ${{matrix.vcarch}}
@@ -245,7 +245,7 @@ jobs:
         with:
           version: ${{matrix.emsdk}}
           actions-cache-folder: emsdk-cache
-      - uses: ilammy/msvc-dev-cmd@v1
+      - uses: Skycoder42/msvc-dev-cmd@master
         if: contains(matrix.platform, 'msvc')
         with:
           arch: ${{matrix.vcarch}}

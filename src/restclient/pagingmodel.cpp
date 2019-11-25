@@ -1,6 +1,7 @@
 #include "pagingmodel.h"
 #include "pagingmodel_p.h"
 #include <QtCore/QMetaProperty>
+#include <QtCore/QDebug>
 using namespace QtRestClient;
 #ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
 using namespace QtJsonSerializer;

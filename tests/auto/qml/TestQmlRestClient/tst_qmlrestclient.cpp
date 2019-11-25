@@ -25,16 +25,12 @@ class Setup : public QObject
 public slots:
 	void qmlEngineAvailable(QQmlEngine *engine)
 	{
-		qDebug() << "######" << engine->importPathList();
 		engine->rootContext()->setContextProperty("testPort", _server->serverPort());
 	}
 };
 
 static void initImportPath()
 {
-	qputenv("QML_IMPORT_TRACE", "1");
-	qDebug() << "######" << qEnvironmentVariable("QML2_IMPORT_PATH");
-
 	//start the http server
 	_server = new HttpServer(qApp);
 	_server->verifyRunning();
