@@ -5,6 +5,7 @@
 
 #include <QtCore/QBuffer>
 #include <QtCore/QJsonDocument>
+#include <QtCore/QDebug>
 using namespace QtRestClient;
 
 RequestBuilder::RequestBuilder(const QUrl &baseUrl, QNetworkAccessManager *nam) :

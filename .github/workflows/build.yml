@@ -117,7 +117,7 @@ jobs:
           install-args: --addRepository https://install.skycoder42.de/qtmodules/${{matrix.repository}} --verbose
           cachedir: qt/${{matrix.version}}/${{matrix.platform}}
       - name: build qthttpserver
-        if: steps.cache-qt.outputs.cache-hit != 'true'
+        #if: steps.cache-qt.outputs.cache-hit != 'true'
         run: |
           qmake
           ${{steps.qt.outputs.make}} qmake_all
