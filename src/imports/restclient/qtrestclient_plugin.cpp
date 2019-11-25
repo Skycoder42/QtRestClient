@@ -35,24 +35,19 @@ void QtRestClientDeclarativeModule::registerTypes(const char *uri)
 #endif
 	qRegisterMetaType<QtRestClient::QmlPaging>();
 
-	//Version 2.0
-	qmlRegisterUncreatableType<QtRestClient::RestReply>(uri, 2, 0, "RestReply", QStringLiteral("RestReplies can only be returned from restclass methods"));
+	//Version 3.0
+	qmlRegisterUncreatableType<QtRestClient::RestReply>(uri, 3, 0, "RestReply", QStringLiteral("RestReplies can only be returned from restclass methods"));
 #ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
-	qmlRegisterUncreatableType<QtRestClient::QmlGenericRestReply>(uri, 2, 0, "GenericRestReply", QStringLiteral("GenericRestReplies can only be returned from generated restclass methods"));
+	qmlRegisterUncreatableType<QtRestClient::QmlGenericRestReply>(uri, 3, 0, "GenericRestReply", QStringLiteral("GenericRestReplies can only be returned from generated restclass methods"));
 #endif
-	qmlRegisterUncreatableType<QtRestClient::QmlPaging>(uri, 2, 0, "Paging", QStringLiteral("Pagings can only be returned from the QtRestClient singleton"));
+	qmlRegisterUncreatableType<QtRestClient::QmlPaging>(uri, 3, 0, "Paging", QStringLiteral("Pagings can only be returned from the QtRestClient singleton"));
 
-	qmlRegisterType<QtRestClient::QmlRestClient>(uri, 2, 0, "RestClient");
-	qmlRegisterType<QtRestClient::QmlRestClass>(uri, 2, 0, "RestClass");
+	qmlRegisterType<QtRestClient::QmlRestClient>(uri, 3, 0, "RestClient");
+	qmlRegisterType<QtRestClient::QmlRestClass>(uri, 3, 0, "RestClass");
+	qmlRegisterType<QtRestClient::PagingModel>(uri, 3, 2, "PagingModel");
 
-	qmlRegisterSingletonType<QtRestClient::QmlRestClientGlobal>(uri, 2, 0, "QtRestClient", create_qtrestclient);
-
-	//Version 2.1
-	qmlRegisterModule(uri, 2, 1);
-
-	//Version 2.2
-	qmlRegisterType<QtRestClient::PagingModel>(uri, 2, 2, "PagingModel");
+	qmlRegisterSingletonType<QtRestClient::QmlRestClientGlobal>(uri, 3, 0, "QtRestClient", create_qtrestclient);
 
 	// Check to make shure no module update is forgotten
-	static_assert(VERSION_MAJOR == 2 && VERSION_MINOR == 2, "QML module version needs to be updated");
+	static_assert(VERSION_MAJOR == 3 && VERSION_MINOR == 0, "QML module version needs to be updated");
 }

@@ -5,12 +5,12 @@
 		 autoCreate="true"
 		 except="User*"
 		 globalName="localhost"
-		 qmlUri="de.skycoder42.qtrestclient.test 2.2">
+		 qmlUri="de.skycoder42.qtrestclient.test 3.0">
 	<Include local="true">user.h</Include>
 	<Include local="true">api_posts.h</Include>
 	<Include local="true">testmacro.h</Include>
 
-	<BaseUrl apiVersion="1.0" expr="true">QStringLiteral("http://localhost:%1").arg(TEST_PORT)</BaseUrl>
+	<BaseUrl apiVersion="1.0" expr="true">QStringLiteral("http://localhost:%1").arg(TestSvr::getPort())</BaseUrl>
 	<Parameter key="limit" expr="true">QString::number(LIMIT)</Parameter>
 	<Header key="Secret" expr="true">APP_SECRET</Header>
 

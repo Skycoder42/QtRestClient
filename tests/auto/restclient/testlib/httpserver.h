@@ -40,6 +40,7 @@ public:
 	explicit HttpServer(QObject *parent = nullptr);
 	explicit HttpServer(quint16 port, QObject *parent = nullptr);
 
+	quint16 port() const;
 	QUrl url(const QString &subPath) const;
 	QString generateToken();
 

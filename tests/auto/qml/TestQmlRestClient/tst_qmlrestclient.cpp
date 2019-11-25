@@ -4,30 +4,43 @@
 #include <QtQuickTest/quicktest.h>
 #include "testlib.h"
 
+namespace {
+
+QPointer<HttpServer> _server;
+
+}
+
+namespace TestSvr {
+
+quint16 getPort() {
+	return _server->serverPort();
+}
+
+}
+
 class Setup : public QObject
 {
 	Q_OBJECT
 
-public:
-	Setup() {}
-
 public slots:
 	void qmlEngineAvailable(QQmlEngine *engine)
 	{
-		engine->rootContext()->setContextProperty("testPort", TEST_PORT);
+		qDebug() << "######" << engine->importPathList();
+		engine->rootContext()->setContextProperty("testPort", _server->serverPort());
 	}
 };
 
 static void initImportPath()
 {
-	qputenv("QML2_IMPORT_PATH", QML_PATH);
+	qputenv("QML_IMPORT_TRACE", "1");
+	qDebug() << "######" << qEnvironmentVariable("QML2_IMPORT_PATH");
 
 	//start the http server
-	auto server = new HttpServer(TEST_PORT, qApp);
-	server->verifyRunning();
-	server->setAdvancedData();
+	_server = new HttpServer(qApp);
+	_server->verifyRunning();
+	_server->setAdvancedData();
 
-	auto root = server->data();
+	auto root = _server->data();
 	QJsonObject vRoot;
 	QJsonArray posts;
 	for(auto i = 0; i < 100; i++) {
@@ -43,7 +56,7 @@ static void initImportPath()
 	}
 	vRoot[QStringLiteral("posts")] = posts;
 	root[QStringLiteral("v1")] = vRoot;
-	server->setData(root);
+	_server->setData(root);
 }
 Q_COREAPP_STARTUP_FUNCTION(initImportPath)
 

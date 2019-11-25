@@ -53,19 +53,19 @@ jobs:
           - platform: msvc2017
             os: windows-2016
             repository: windows_x86
-            vcarch: x64_x86
+            vcarch: x86
           - platform: winrt_x64_msvc2017
             os: windows-2016
             repository: windows_x86
-            vcarch: x64
+            vcarch: x86_x64
           - platform: winrt_x86_msvc2017
             os: windows-2016
             repository: windows_x86
-            vcarch: x64_x86
+            vcarch: x86
           - platform: winrt_armv7_msvc2017
             os: windows-2016
             repository: windows_x86
-            vcarch: x64_arm
+            vcarch: x86_arm
           - platform: mingw73_64
             os: windows-latest
             repository: windows_x86
@@ -125,7 +125,7 @@ jobs:
           ${{steps.qt.outputs.make}}
           ${{steps.qt.outputs.make}} INSTALL_ROOT="${{steps.qt.outputs.installdir}}" install
       - name: make tests
-        if: steps.qt.outputs.tests == 'true' && !contains(matrix.platform, 'mingw')
+        if: steps.qt.outputs.tests == 'true'
         run: |
           ${{steps.qt.outputs.make}} all
           ${{steps.qt.outputs.make}} ${{steps.qt.outputs.testflags}} run-tests
