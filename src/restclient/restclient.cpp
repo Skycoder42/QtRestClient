@@ -38,13 +38,10 @@ JsonSerializer *RestClient::serializer() const
 }
 #endif
 
-QT_WARNING_PUSH
-QT_WARNING_DISABLE_DEPRECATED
-PagingFactory *RestClient::pagingFactory() const
+IPagingFactory *RestClient::pagingFactory() const
 {
 	return d->pagingFactory.data();
 }
-QT_WARNING_POP
 
 QUrl RestClient::baseUrl() const
 {
@@ -101,13 +98,10 @@ void RestClient::setSerializer(JsonSerializer *serializer)
 }
 #endif
 
-QT_WARNING_PUSH
-QT_WARNING_DISABLE_DEPRECATED
-void RestClient::setPagingFactory(PagingFactory *factory)
+void RestClient::setPagingFactory(IPagingFactory *factory)
 {
 	d->pagingFactory.reset(factory);
 }
-QT_WARNING_POP
 
 void RestClient::setBaseUrl(QUrl baseUrl)
 {

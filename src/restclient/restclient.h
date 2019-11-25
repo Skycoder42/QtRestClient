@@ -19,11 +19,8 @@ class JsonSerializer;
 
 namespace QtRestClient {
 
-QT_WARNING_PUSH
-QT_WARNING_DISABLE_DEPRECATED
-
 class RestClass;
-class PagingFactory;
+class IPagingFactory;
 
 class RestClientPrivate;
 //! A class to define access to an API, with general settings
@@ -65,7 +62,7 @@ public:
 	QtJsonSerializer::JsonSerializer *serializer() const;
 #endif
 	//! Returns the paging factory used by the restclient
-	PagingFactory *pagingFactory() const;
+	IPagingFactory *pagingFactory() const;
 
 	//! @readAcFn{RestClient::baseUrl}
 	QUrl baseUrl() const;
@@ -94,7 +91,7 @@ public Q_SLOTS:
 #endif
 
 	//! Sets the paging factory to be used by all paging requests for this client
-	void setPagingFactory(PagingFactory *factory);
+	void setPagingFactory(IPagingFactory *factory);
 
 	//! @writeAcFn{RestClient::baseUrl}
 	void setBaseUrl(QUrl baseUrl);
@@ -155,8 +152,6 @@ protected:
 private:
 	QScopedPointer<RestClientPrivate> d;
 };
-
-QT_WARNING_POP
 
 }
 

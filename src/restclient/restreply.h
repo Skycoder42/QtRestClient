@@ -131,7 +131,7 @@ Q_SIGNALS:
 	void networkError(QNetworkReply::NetworkError error);
 #ifndef QT_NO_SSL
 	//! Forwards QNetworkReply::sslErrors
-	void sslErrors(const QList<QSslError> &errors, bool &ignoreErrors); //MAJOR make pointer, not ref
+	void sslErrors(const QList<QSslError> &errors, bool &ignoreErrors);
 #endif
 
 	//! Forwards QNetworkReply::downloadProgress

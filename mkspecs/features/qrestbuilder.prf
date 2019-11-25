@@ -11,26 +11,6 @@ debug_and_release {
 QRESTBUILDER_DIR = $$QRESTBUILDER_DIR$$SUFFIX
 
 {
-QRB_DEPRECATED_ECHO="echo ${QMAKE_FILE_IN}': Using REST_API_CLASSES/REST_API_OBJECTS has been deprecated! Please convert your definitions to XML using qrestbuilder --convert <type> --in <json> --impl <xml> and add the newly generated definitions to your project as REST_API_FILES' 1>&2"
-
-qrestbuilder_cc.name = QRESTBUILDER class ${QMAKE_FILE_IN}.h
-qrestbuilder_cc.input = REST_API_CLASSES
-qrestbuilder_cc.variable_out = REST_API_FILES
-qrestbuilder_cc.commands = $$QRB_DEPRECATED_ECHO && $$QMAKE_QRESTBUILDER --convert class --in ${QMAKE_FILE_IN} --impl ${QMAKE_FILE_OUT}
-qrestbuilder_cc.output = $$QRESTBUILDER_DIR/${QMAKE_FILE_BASE}.xml
-qrestbuilder_cc.CONFIG += target_predeps
-qrestbuilder_cc.depends += $$QMAKE_QRESTBUILDER_EXE
-QMAKE_EXTRA_COMPILERS += qrestbuilder_cc
-
-qrestbuilder_co.name = QRESTBUILDER object ${QMAKE_FILE_IN}.h
-qrestbuilder_co.input = REST_API_OBJECTS
-qrestbuilder_co.variable_out = REST_API_FILES
-qrestbuilder_co.commands = $$QRB_DEPRECATED_ECHO && $$QMAKE_QRESTBUILDER --convert object --in ${QMAKE_FILE_IN} --impl ${QMAKE_FILE_OUT}
-qrestbuilder_co.output = $$QRESTBUILDER_DIR/${QMAKE_FILE_BASE}.xml
-qrestbuilder_co.CONFIG += target_predeps
-qrestbuilder_co.depends += $$QMAKE_QRESTBUILDER_EXE
-QMAKE_EXTRA_COMPILERS += qrestbuilder_co
-
 qrestbuilder_c.name = QRESTBUILDER ${QMAKE_FILE_IN}.h
 qrestbuilder_c.input = REST_API_FILES
 qrestbuilder_c.variable_out = QRESTBUILDER_HEADERS

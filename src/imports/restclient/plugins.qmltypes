@@ -482,7 +482,7 @@ Module {
         }
         Method {
             name: "setPagingFactory"
-            Parameter { name: "factory"; type: "PagingFactory"; isPointer: true }
+            Parameter { name: "factory"; type: "IPagingFactory"; isPointer: true }
         }
         Method {
             name: "setBaseUrl"

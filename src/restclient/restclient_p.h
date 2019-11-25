@@ -32,10 +32,7 @@ public:
 	QtJsonSerializer::JsonSerializer *serializer = nullptr;
 #endif
 
-	QT_WARNING_PUSH
-	QT_WARNING_DISABLE_DEPRECATED
-	QScopedPointer<PagingFactory> pagingFactory {};
-	QT_WARNING_POP
+	QScopedPointer<IPagingFactory> pagingFactory {};
 
 	RestClass *rootClass = nullptr;
 
