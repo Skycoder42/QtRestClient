@@ -31,10 +31,10 @@ private:
 void RestAwaitablesTest::initTestCase()
 {
 	server = new HttpServer{this};
-	server->verifyRunning();
+	QVERIFY(server->setupRoutes());
 	server->setDefaultData();
 	client = Testlib::createClient(this);
-	client->setBaseUrl(QStringLiteral("http://localhost:%1").arg(server->serverPort()));
+	client->setBaseUrl(server->url());
 	nam = client->manager();
 }
 
@@ -55,7 +55,7 @@ void RestAwaitablesTest::testRestReplyAwait_data()
 	QTest::addColumn<int>("code");
 	QTest::addColumn<RestReply::ErrorType>("type");
 
-	QTest::newRow("get") << server->url("posts/1")
+	QTest::newRow("get") << server->url("/posts/1")
 						 << true
 						 << QJsonObject {
 									{QStringLiteral("userId"), 1},
@@ -66,9 +66,9 @@ void RestAwaitablesTest::testRestReplyAwait_data()
 						 << 200
 						 << RestReply::NetworkError;
 
-	QTest::newRow("notFound") << server->url("posts/baum")
+	QTest::newRow("notFound") << server->url("/posts/baum")
 							  << false
-							  << QJsonObject{{QStringLiteral("message"), QStringLiteral("path not found")}}
+							  << QJsonObject{}
 							  << 404
 							  << RestReply::FailureError;
 
@@ -129,13 +129,13 @@ void RestAwaitablesTest::testGenericRestReplyAwait_data()
 	QTest::addColumn<int>("code");
 	QTest::addColumn<RestReply::ErrorType>("type");
 
-	QTest::newRow("get") << server->url("posts/1")
+	QTest::newRow("get") << server->url("/posts/1")
 						 << true
 						 << JphPost::createDefault(this)
 						 << 200
 						 << RestReply::NetworkError;
 
-	QTest::newRow("notFound") << server->url("posts/baum")
+	QTest::newRow("notFound") << server->url("/posts/34234")
 							  << false
 							  << static_cast<JphPost*>(nullptr)
 							  << 404
@@ -198,12 +198,12 @@ void RestAwaitablesTest::testGenericVoidRestReplyAwait_data()
 	QTest::addColumn<int>("code");
 	QTest::addColumn<RestReply::ErrorType>("type");
 
-	QTest::newRow("get") << server->url("posts/1")
+	QTest::newRow("get") << server->url("/posts/1")
 						 << true
 						 << 200
 						 << RestReply::NetworkError;
 
-	QTest::newRow("notFound") << server->url("posts/baum")
+	QTest::newRow("notFound") << server->url("/posts/34234")
 							  << false
 							  << 404
 							  << RestReply::FailureError;

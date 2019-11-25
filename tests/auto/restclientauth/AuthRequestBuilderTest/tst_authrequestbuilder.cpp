@@ -20,7 +20,7 @@ private:
 void AuthRequestBuilderTest::initTestCase()
 {
 	server = new HttpServer(this);
-	server->verifyRunning();
+	QVERIFY(server->setupRoutes());
 	server->setDefaultData();
 	oAuth = new QOAuth2AuthorizationCodeFlow{new QNetworkAccessManager{this}, this};
 	oAuth->setToken(server->generateToken());
@@ -48,7 +48,7 @@ void AuthRequestBuilderTest::testSending_data()
 	object["id"] = 1;
 	object["title"] = "Title1";
 	object["body"] = "Body1";
-	QTest::newRow("testDefaultGet") << server->url("posts/1")
+	QTest::newRow("testDefaultGet") << server->url("/posts/1")
 									<< QJsonObject()
 									<< QByteArray()
 									<< 200
@@ -57,14 +57,14 @@ void AuthRequestBuilderTest::testSending_data()
 
 	object["title"] = "baum";
 	object["body"] = 42;
-	QTest::newRow("testPut") << server->url("posts/1")
+	QTest::newRow("testPut") << server->url("/posts/1")
 							 << object
 							 << QByteArray("PUT")
 							 << 200
 							 << QNetworkReply::NoError
 							 << object;
 
-	QTest::newRow("testError") << server->url("posts/baum")
+	QTest::newRow("testError") << server->url("/posts/baum")
 							   << QJsonObject()
 							   << QByteArray("GET")
 							   << 404

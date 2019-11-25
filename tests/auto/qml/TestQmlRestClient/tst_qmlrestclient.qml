@@ -102,10 +102,10 @@ Item {
 		function test_post() {
 			waiter.ok = false;
 			var params = {
-				id: "1",
-				userId: "42",
+				body: "baum",
+				id: 100,
 				title: "baum",
-				body: "baum"
+				userId: "42"
 			};
 			var reply = postClass.post(undefined, params);
 			reply.succeeded.connect(function(code, data){

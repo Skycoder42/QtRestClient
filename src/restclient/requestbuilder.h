@@ -3,14 +3,16 @@
 
 #include "QtRestClient/qtrestclient_global.h"
 
+#include <QtCore/qcborvalue.h>
 #include <QtCore/qjsonarray.h>
 #include <QtCore/qjsonobject.h>
-#include <QtNetwork/qnetworkreply.h>
-#include <QtNetwork/qnetworkrequest.h>
 #include <QtCore/qurl.h>
 #include <QtCore/qurlquery.h>
 #include <QtCore/qversionnumber.h>
 #include <QtCore/qshareddata.h>
+
+#include <QtNetwork/qnetworkreply.h>
+#include <QtNetwork/qnetworkrequest.h>
 
 namespace QtRestClient {
 
@@ -69,6 +71,8 @@ public:
 
 	//! Sets the content of the generated network request
 	RequestBuilder &setBody(QByteArray body, const QByteArray &contentType);
+	//! @copybrief RequestBuilder::setBody(QByteArray, const QByteArray &)
+	RequestBuilder &setBody(QCborValue body);
 	//! @copybrief RequestBuilder::setBody(QByteArray, const QByteArray &)
 	RequestBuilder &setBody(const QJsonObject &body);
 	//! @copydoc RequestBuilder::setBody(const QJsonObject &)

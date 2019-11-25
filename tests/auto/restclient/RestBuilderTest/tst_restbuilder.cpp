@@ -25,25 +25,22 @@ private:
 void RestBuilderTest::initTestCase()
 {
 	server = new HttpServer(45715, this);
-	server->verifyRunning();
+	QVERIFY(server->setupRoutes());
 
-	QJsonObject root;
-	QJsonObject vRoot;
-	QJsonArray posts;
+	QCborMap vRoot;
+	QCborMap posts;
 	for(auto i = 0; i < 100; i++) {
-		posts.append(QJsonObject {
-						 {QStringLiteral("id"), i},
-						 {QStringLiteral("user"), QJsonObject {
-							  {QStringLiteral("id"), qCeil(i/2.0)},
-							  {QStringLiteral("name"), QStringLiteral("user%1").arg(qCeil(i/2.0))},
-						  }},
-						 {QStringLiteral("title"), QStringLiteral("Title%1").arg(i)},
-						 {QStringLiteral("body"), QStringLiteral("Body%1").arg(i)}
-					 });
+		posts[i] = QCborMap {
+			{QStringLiteral("id"), i},
+			{QStringLiteral("user"), QCborMap {
+				{QStringLiteral("id"), qCeil(i/2.0)},
+				{QStringLiteral("name"), QStringLiteral("user%1").arg(qCeil(i/2.0))},
+			}},
+			{QStringLiteral("title"), QStringLiteral("Title%1").arg(i)},
+			{QStringLiteral("body"), QStringLiteral("Body%1").arg(i)}
+		};
 	}
-	vRoot[QStringLiteral("posts")] = posts;
-	root[QStringLiteral("v1")] = vRoot;
-	server->setData(root);
+	server->setSubData(QStringLiteral("posts"), posts);
 
 	qRegisterMetaType<QtRestClient::RestReply::ErrorType>();
 }
@@ -117,12 +114,12 @@ void RestBuilderTest::testCustomCompiledApiPosts()
 
 	bool called = false;
 	auto reply = api->posts()->listPosts();
-	reply->onSucceeded([&](int code, QList<Post> posts){
+	reply->onSucceeded([&](int code, const QList<Post> &posts){
 		called = true;
 		QCOMPARE(code, 200);
 		QCOMPARE(posts.size(), 100);
 	});
-	reply->onAllErrors([&](QString error, int, QtRestClient::RestReply::ErrorType){
+	reply->onAllErrors([&](const QString &error, int, QtRestClient::RestReply::ErrorType){
 		called = true;
 		QFAIL(qUtf8Printable(error));
 	});
@@ -133,7 +130,7 @@ void RestBuilderTest::testCustomCompiledApiPosts()
 
 	called = false;
 	auto reply2 = api->posts()->post(42);
-	reply2->onSucceeded([&](int code, Post post){
+	reply2->onSucceeded([&](int code, const Post &post){
 		called = true;
 		QCOMPARE(code, 200);
 		QCOMPARE(post.id(), 42);
@@ -141,7 +138,7 @@ void RestBuilderTest::testCustomCompiledApiPosts()
 		QCOMPARE(post.user()->id(), 42/2);
 		post.user()->deleteLater();
 	});
-	reply2->onAllErrors([&](QString error, int, QtRestClient::RestReply::ErrorType){
+	reply2->onAllErrors([&](const QString &error, int, QtRestClient::RestReply::ErrorType){
 		called = true;
 		QFAIL(qUtf8Printable(error));
 	});
@@ -158,7 +155,7 @@ void RestBuilderTest::testCustomCompiledApiPosts()
 		return QString();
 	});
 	auto reply3 = api->posts()->post(4242);
-	reply3->onSucceeded([&](int, Post){
+	reply3->onSucceeded([&](int, const Post &){
 		called = true;
 		QFAIL("Expected to fail!");
 	});

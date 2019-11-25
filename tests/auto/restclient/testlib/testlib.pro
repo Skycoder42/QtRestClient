@@ -1,6 +1,6 @@
 TEMPLATE = lib
 
-QT += testlib restclient
+QT += testlib restclient httpserver restclient-private
 QT -= gui
 
 CONFIG += static

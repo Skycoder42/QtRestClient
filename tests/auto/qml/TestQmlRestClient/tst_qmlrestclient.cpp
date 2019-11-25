@@ -12,8 +12,8 @@ QPointer<HttpServer> _server;
 
 namespace TestSvr {
 
-quint16 getPort() {
-	return _server->serverPort();
+QUrl getUrl() {
+	return _server->url();
 }
 
 }
@@ -25,7 +25,7 @@ class Setup : public QObject
 public slots:
 	void qmlEngineAvailable(QQmlEngine *engine)
 	{
-		engine->rootContext()->setContextProperty("testPort", _server->serverPort());
+		engine->rootContext()->setContextProperty("testPort", _server->port());
 	}
 };
 
@@ -33,26 +33,24 @@ static void initImportPath()
 {
 	//start the http server
 	_server = new HttpServer(qApp);
-	_server->verifyRunning();
+	QVERIFY(_server->setupRoutes());
 	_server->setAdvancedData();
 
-	auto root = _server->data();
-	QJsonObject vRoot;
-	QJsonArray posts;
+	QCborMap vRoot;
+	QCborMap posts;
 	for(auto i = 0; i < 100; i++) {
-		posts.append(QJsonObject {
-						 {QStringLiteral("id"), i},
-						 {QStringLiteral("user"), QJsonObject {
-							  {QStringLiteral("id"), qCeil(i/2.0)},
-							  {QStringLiteral("name"), QStringLiteral("user%1").arg(qCeil(i/2.0))},
-						  }},
-						 {QStringLiteral("title"), QStringLiteral("Title%1").arg(i)},
-						 {QStringLiteral("body"), QStringLiteral("Body%1").arg(i)}
-					 });
+		posts[i] = QCborMap {
+			{QStringLiteral("id"), i},
+			{QStringLiteral("user"), QCborMap {
+				{QStringLiteral("id"), qCeil(i/2.0)},
+				{QStringLiteral("name"), QStringLiteral("user%1").arg(qCeil(i/2.0))},
+			}},
+			{QStringLiteral("title"), QStringLiteral("Title%1").arg(i)},
+			{QStringLiteral("body"), QStringLiteral("Body%1").arg(i)}
+		};
 	}
 	vRoot[QStringLiteral("posts")] = posts;
-	root[QStringLiteral("v1")] = vRoot;
-	_server->setData(root);
+	_server->setSubData(QStringLiteral("v1"), vRoot);
 }
 Q_COREAPP_STARTUP_FUNCTION(initImportPath)
 

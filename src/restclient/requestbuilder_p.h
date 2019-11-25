@@ -9,6 +9,7 @@ namespace QtRestClient {
 struct Q_RESTCLIENT_EXPORT RequestBuilderPrivate : public QSharedData
 {
 	static const QByteArray ContentType;
+	static const QByteArray ContentTypeCbor;
 	static const QByteArray ContentTypeJson;
 	static const QByteArray ContentTypeUrlEncoded;
 

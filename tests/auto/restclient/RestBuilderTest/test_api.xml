@@ -9,7 +9,7 @@
 	<Include local="true">api_posts.h</Include>
 	<Include local="true">testmacro.h</Include>
 
-	<BaseUrl apiVersion="1.0">http://localhost:45715</BaseUrl>
+	<BaseUrl>http://localhost:45715</BaseUrl>
 	<Parameter key="limit" expr="true">QString::number(LIMIT)</Parameter>
 	<Header key="Secret" expr="true">APP_SECRET</Header>
 

@@ -1,27 +1,97 @@
 #include "httpserver.h"
 
+#include <QtCore/QCborArray>
 #include <QJsonDocument>
 #include <QTcpSocket>
 #include <QtTest>
+#include <QtHttpServer>
+
+#include <QtRestClient/private/requestbuilder_p.h>
+
+namespace {
+
+class HttpError : public std::exception
+{
+public:
+	HttpError(QHttpServerResponse::StatusCode code = QHttpServerResponse::StatusCode::BadRequest) :
+		  _code{code}
+	{}
+	HttpError(const QString &message, QHttpServerResponse::StatusCode code = QHttpServerResponse::StatusCode::BadRequest) :
+		  _code{code},
+		  _message{message}
+	{}
+	HttpError(const QByteArray &message, QHttpServerResponse::StatusCode code = QHttpServerResponse::StatusCode::BadRequest) :
+		  HttpError{QString::fromUtf8(message), code}
+	{}
+	HttpError(const char *message, QHttpServerResponse::StatusCode code = QHttpServerResponse::StatusCode::BadRequest) :
+		  HttpError{QByteArray{message}, code}
+	{}
+
+	int code() const {
+		return static_cast<int>(_code);
+	}
+
+	const char *what() const noexcept override {
+		if (_what.isEmpty())
+			_what = QStringLiteral("[%1]: %2").arg(code()).arg(_message).toUtf8();
+		return _what.constData();
+	}
+
+	QHttpServerResponse response(bool asJson) noexcept {
+		if (asJson) {
+			return QHttpServerResponse {
+				QtRestClient::RequestBuilderPrivate::ContentTypeJson,
+				QJsonDocument{QJsonObject{{QStringLiteral("message"), _message}}}.toJson(QJsonDocument::Compact),
+				_code
+			};
+		} else {
+			return QHttpServerResponse {
+				QtRestClient::RequestBuilderPrivate::ContentTypeCbor,
+				QCborValue{QCborMap{{QStringLiteral("message"), _message}}}.toCbor(),
+				_code
+			};
+		}
+	}
+
+private:
+	QHttpServerResponse::StatusCode _code;
+	QString _message;
+
+	mutable QByteArray _what;
+};
+
+}
 
 HttpServer::HttpServer(QObject *parent) :
-	HttpServer(0, parent)
+	  HttpServer(0, parent)
 {}
 
 HttpServer::HttpServer(quint16 port, QObject *parent) :
-	QTcpServer(parent)
+	  QObject{parent},
+	  _server{new QHttpServer{this}}
 {
-	connect(this, &HttpServer::newConnection,
-			this, &HttpServer::connected);
+	_port = _server->listen(QHostAddress::LocalHost, port);
+}
 
-	listen(QHostAddress::LocalHost, port);
+quint16 HttpServer::port() const
+{
+	return static_cast<quint16>(_port);
+}
+
+QUrl HttpServer::url() const
+{
+	QUrl url;
+	url.setScheme(QStringLiteral("http"));
+	url.setHost(QStringLiteral("localhost"));
+	url.setPort(port());
+	return url;
 }
 
 QUrl HttpServer::url(const QString &subPath) const
 {
-	return QUrl(QStringLiteral("http://localhost:%1/%2")
-				.arg(serverPort())
-				.arg(subPath));
+	auto rUrl = url();
+	rUrl.setPath(subPath);
+	return rUrl;
 }
 
 QString HttpServer::generateToken()
@@ -32,77 +102,121 @@ QString HttpServer::generateToken()
 	return strToken;
 }
 
-void HttpServer::verifyRunning()
+bool HttpServer::setupRoutes()
 {
-	QVERIFY(isListening());
-	QCOMPARE(serverError(), QAbstractSocket::UnknownSocketError);
+	auto ok = false;
+	[&]() {
+		QVERIFY(_port > 0);
+		QVERIFY(_server->route(QStringLiteral("/<arg>"), [this](const QString &type, const QHttpServerRequest &request) -> QHttpServerResponse {
+			auto asJson = true;
+			try {
+				if (!_data.contains(type))
+					throw HttpError{QHttpServerResponse::StatusCode::NotFound};
+				asJson = checkAccept(request);
+
+				switch (request.method()) {
+				case QHttpServerRequest::Method::Get: {
+					const auto query = request.query();
+					const auto offset = query.hasQueryItem(QStringLiteral("offset")) ?
+																					 request.query().queryItemValue(QStringLiteral("offset")).toInt() :
+																					 0;
+					const auto limit = query.hasQueryItem(QStringLiteral("limit")) ?
+																				   request.query().queryItemValue(QStringLiteral("limit")).toInt() :
+																				   -1;
+
+					QCborArray out;
+					for (const auto elem : _data[type].toMap()) {
+						const auto id = elem.first.toInteger();
+						if (id >= offset && (limit == -1 || id < limit))
+							out.append(elem.second);
+					}
+
+					return reply(asJson, out);
+				}
+				case QHttpServerRequest::Method::Post: {
+					auto data = extract(request, true);
+					auto tMap = _data[type].toMap();
+					const auto tId = (tMap.end() - 1).key().toInteger() + 1;
+					Q_ASSERT(!tMap.contains(tId));
+					data[QStringLiteral("id")] = tId;
+					tMap.insert(tId, data);
+					_data[type] = tMap;
+					return reply(asJson, data);
+				}
+				default:
+					throw HttpError{QHttpServerResponse::StatusCode::MethodNotAllowed};
+				}
+			} catch (HttpError &e) {
+				qWarning() << e.what();
+				return e.response(asJson);
+			}
+		}));
+		QVERIFY(_server->route(QStringLiteral("/<arg>/<arg>"), [this](const QString &type, int index, const QHttpServerRequest &request) -> QHttpServerResponse {
+			auto asJson = true;
+			try {
+				if (!_data.contains(type))
+					throw HttpError{QHttpServerResponse::StatusCode::NotFound};
+				asJson = checkAccept(request);
+				auto tMap = _data[type].toMap();
+
+				switch (request.method()) {
+				case QHttpServerRequest::Method::Get:
+					if (!tMap.contains(index))
+						throw HttpError{QHttpServerResponse::StatusCode::NotFound};
+					return reply(asJson, tMap[index]);
+				case QHttpServerRequest::Method::Put: {
+					auto data = extract(request, false);
+					data[QStringLiteral("id")] = index;
+					tMap.insert(index, data);
+					_data[type] = tMap;
+					return reply(asJson, data);
+				}
+				case QHttpServerRequest::Method::Delete:
+					if (!tMap.contains(index))
+						throw HttpError{QHttpServerResponse::StatusCode::NotFound};
+					tMap.remove(index);
+					_data[type] = tMap;
+					return QHttpServerResponse::StatusCode::Ok;
+				default:
+					throw HttpError{QHttpServerResponse::StatusCode::MethodNotAllowed};
+				}
+			} catch (HttpError &e) {
+				qWarning() << e.what();
+				return e.response(asJson);
+			}
+		}));
+		ok = true;
+	}();
+	return ok;
 }
 
-QJsonObject HttpServer::data() const
+QCborMap HttpServer::data() const
 {
 	return _data;
 }
 
-QJsonValue HttpServer::obtainData(const QByteArrayList &path) const
+void HttpServer::setData(QCborMap data)
 {
-	QJsonValue subValue = _data;
-
-	for (const auto &segment : path) {
-		if(segment.isEmpty())
-			continue;
-
-		if(subValue.isObject()) {
-			auto subObj = subValue.toObject();
-			if(!subObj.contains(QString::fromUtf8(segment)))
-				throw QStringLiteral("path not found");
-			else
-				subValue = subObj.value(QString::fromUtf8(segment));
-		} else if(subValue.isArray()) {
-			auto subArray = subValue.toArray();
-			auto ok = false;
-			auto index = segment.toInt(&ok);
-			if(ok && index >= 0 && index < subArray.size())
-				subValue = subArray.at(index);
-			else
-				throw QStringLiteral("path not found");
-		} else
-			throw QStringLiteral("path not found");
-	}
-
-	return subValue;
+	_data = std::move(data);
 }
 
-void HttpServer::applyData(const QByteArray &verb, QByteArrayList path, const QJsonObject &data)
+void HttpServer::setSubData(const QString &key, QCborMap data)
 {
-	if(verb == "PUT")
-		_data = applyDataImpl(true, path, _data, data).toObject();
-	else if(verb == "POST")
-		_data = applyDataImpl(false, path, _data, data).toObject();
-	else if(verb == "DELETE")
-		_data = applyDataImpl(true, path, _data, {}).toObject();
-}
-
-void HttpServer::setData(QJsonObject data)
-{
-	if (_data == data)
-		return;
-
-	_data = data;
-	emit dataChanged(_data);
+	_data[key] = std::move(data);
 }
 
 void HttpServer::setDefaultData()
 {
-	QJsonObject root;
+	QCborMap root;
 
-	QJsonArray posts;
+	QCborMap posts;
 	for(auto i = 0; i < 100; i++) {
-		posts.append(QJsonObject {
-						 {QStringLiteral("id"), i},
-						 {QStringLiteral("userId"), qCeil(i/2.0)},
-						 {QStringLiteral("title"), QStringLiteral("Title%1").arg(i)},
-						 {QStringLiteral("body"), QStringLiteral("Body%1").arg(i)}
-					 });
+		posts[i] = QCborMap {
+			{QStringLiteral("id"), i},
+			{QStringLiteral("userId"), qCeil(i/2.0)},
+			{QStringLiteral("title"), QStringLiteral("Title%1").arg(i)},
+			{QStringLiteral("body"), QStringLiteral("Body%1").arg(i)}
+		};
 	}
 	root[QStringLiteral("posts")] = posts;
 
@@ -111,64 +225,66 @@ void HttpServer::setDefaultData()
 
 void HttpServer::setAdvancedData()
 {
-	QJsonObject root;
+	QCborMap root;
 
-	QJsonArray posts;
-	QJsonArray pages;
-	QJsonArray postlets;
-	QJsonArray pagelets;
-
+	QCborMap posts;
+	QCborMap postlets;
 	for(auto i = 0; i < 100; i++) {
 		//posts
-		posts.append(QJsonObject {
-						 {QStringLiteral("id"), i},
-						 {QStringLiteral("userId"), qCeil(i/2.0)},
-						 {QStringLiteral("title"), QStringLiteral("Title%1").arg(i)},
-						 {QStringLiteral("body"), QStringLiteral("Body%1").arg(i)}
-					 });
+		posts[i] = QCborMap {
+			{QStringLiteral("id"), i},
+			{QStringLiteral("userId"), qCeil(i/2.0)},
+			{QStringLiteral("title"), QStringLiteral("Title%1").arg(i)},
+			{QStringLiteral("body"), QStringLiteral("Body%1").arg(i)}
+		};
 		//postlets
-		postlets.append(QJsonObject {
-						 {QStringLiteral("id"), i},
-						 {QStringLiteral("title"), QStringLiteral("Title%1").arg(i)},
-						 {QStringLiteral("href"), QStringLiteral("/posts/%1").arg(i)}
-					 });
+		postlets[i] = QCborMap {
+			{QStringLiteral("id"), i},
+			{QStringLiteral("title"), QStringLiteral("Title%1").arg(i)},
+			{QStringLiteral("href"), QStringLiteral("/posts/%1").arg(i)}
+		};
 	}
 	root[QStringLiteral("posts")] = posts;
 	root[QStringLiteral("postlets")] = postlets;
 
+	QCborMap pages;
+	QCborMap pagelets;
 	for(auto i = 0; i < 10; i++) {
 		//pages
-		QJsonObject page {
+		QCborMap page {
 			{QStringLiteral("id"), i},
 			{QStringLiteral("total"), 100},
 			{QStringLiteral("offset"), i*10},
 			{QStringLiteral("next"), i < 9 ?
-								QStringLiteral("/pages/%1").arg(i + 1) :
-								QJsonValue(QJsonValue::Null)},
+				QStringLiteral("/pages/%1").arg(i + 1) :
+				QCborValue{QCborValue::Null}
+			},
 			{QStringLiteral("previous"), i > 0 ?
-								QStringLiteral("/pages/%1").arg(i - 1) :
-								QJsonValue(QJsonValue::Null)},
+				QStringLiteral("/pages/%1").arg(i - 1) :
+				QCborValue{QCborValue::Null}
+			},
 		};
 
-		QJsonArray pageItems;
-		for(auto j = 0; j < 10; j++)
+		QCborArray pageItems;
+		for (auto j = 0; j < 10; j++)
 			pageItems.append(posts[(i*10) + j]);
 		page[QStringLiteral("items")] = pageItems;
-		pages.append(page);
+		pages[i] = page;
 
 		//pagelets
-		QJsonObject pagelet {
+		QCborMap pagelet {
 			{QStringLiteral("id"), i},
 			{QStringLiteral("next"), i < 9 ?
-								QStringLiteral("/pagelets/%1").arg(i + 1) :
-								QJsonValue(QJsonValue::Null)},
+				QStringLiteral("/pagelets/%1").arg(i + 1) :
+				QCborValue{QCborValue::Null}
+			},
 		};
 
-		QJsonArray pageletItems;
-		for(auto j = 0; j < 10; j++)
+		QCborArray pageletItems;
+		for (auto j = 0; j < 10; j++)
 			pageletItems.append(postlets[(i*10) + j]);
 		pagelet[QStringLiteral("items")] = pageletItems;
-		pagelets.append(pagelet);
+		pagelets[i] = pagelet;
 	}
 	root[QStringLiteral("pages")] = pages;
 	root[QStringLiteral("pagelets")] = pagelets;
@@ -176,153 +292,66 @@ void HttpServer::setAdvancedData()
 	setData(root);
 }
 
-void HttpServer::connected()
+bool HttpServer::checkAccept(const QHttpServerRequest &request)
 {
-	while(hasPendingConnections())
-		new HttpConnection(nextPendingConnection(), this);
+	if (!_token.isEmpty()) {
+		const auto cToken = request.headers().value(QStringLiteral("Authorization")).toByteArray();
+		if (cToken != _token)
+			throw HttpError{QHttpServerResponse::StatusCode::Unauthorized};
+	}
+
+	const auto accept = request.headers().value(QStringLiteral("Accept"), QtRestClient::RequestBuilderPrivate::ContentTypeJson);
+	if (accept == QtRestClient::RequestBuilderPrivate::ContentTypeJson)
+		return true;
+	else if (accept == QtRestClient::RequestBuilderPrivate::ContentTypeCbor)
+		return false;
+	else
+		throw HttpError{accept.toByteArray(), QHttpServerResponse::StatusCode::NotAcceptable};
 }
 
-QJsonValue HttpServer::applyDataImpl(bool isPut, QByteArrayList path, QJsonValue cData, const QJsonObject &data)
+QCborMap HttpServer::extract(const QHttpServerRequest &request, bool allowPost)
 {
-	while(!path.isEmpty() && path.first().isEmpty())
-		path.removeFirst();
-	if(path.isEmpty())
-		return data.isEmpty() ? QJsonValue(QJsonValue::Undefined) : data;
-
-	auto segment = QString::fromUtf8(path.takeFirst());
-	if(cData.isObject()) {
-		auto obj = cData.toObject();
-		auto newData = applyDataImpl(isPut, path, obj[segment], data);
-		if(newData.isUndefined())
-			obj.remove(segment);
-		else
-			obj[segment] = newData;
-		return obj;
-	} else if(cData.isArray()) {
-		auto array = cData.toArray();
-
-		auto ok = false;
-		auto index = segment.toInt(&ok);
-		if(index < 0)
-			throw QStringLiteral("invalid path index");
-		while(array.size() <= index)
-			array.append(QJsonValue::Null);
-
-		auto newData = applyDataImpl(isPut, path, array[index], data);
-		if(newData.isUndefined())
-			array.removeAt(index);
-		else
-			array[index] = newData;
-		return array;
+	const auto cType = request.headers()[QStringLiteral("Content-Type")].toByteArray();
+	if (cType == QtRestClient::RequestBuilderPrivate::ContentTypeCbor) {
+		QCborParserError error;
+		const auto cbor = QCborValue::fromCbor(request.body(), &error);
+		if (error.error != QCborError::NoError)
+			throw HttpError{error.errorString()};
+		if (cbor.type() == QCborValue::Map)
+			throw HttpError{"Unexpected cbor type - must be a map"};
+		return cbor.toMap();
+	} else if (cType == QtRestClient::RequestBuilderPrivate::ContentTypeJson) {
+		QJsonParseError error;
+		const auto json = QJsonDocument::fromJson(request.body(), &error);
+		if (error.error != QJsonParseError::NoError)
+			throw HttpError{error.errorString()};
+		if (!json.isObject())
+			throw HttpError{"Unexpected json type - must be an object"};
+		return QCborMap::fromJsonObject(json.object());
+	} else if (allowPost && cType == QtRestClient::RequestBuilderPrivate::ContentTypeUrlEncoded) {
+		QUrlQuery query {QString::fromUtf8(request.body())};
+		QCborMap map;
+		for(const auto &param : query.queryItems(QUrl::FullyDecoded))
+			map.insert(param.first, param.second);
+		return map;
 	} else
-		throw QStringLiteral("path not found");
+		throw HttpError{cType, QHttpServerResponse::StatusCode::UnsupportedMediaType};
 }
 
-
-
-HttpConnection::HttpConnection(QTcpSocket *socket, HttpServer *parent) :
-	QObject(parent),
-	_server(parent),
-	_socket(socket)
+QHttpServerResponse HttpServer::reply(bool asJson, const QCborValue &value)
 {
-	_socket->setParent(this);
-
-	connect(socket, &QTcpSocket::readyRead,
-			this, &HttpConnection::readyRead);
-	connect(socket, &QTcpSocket::disconnected,
-			this, &HttpConnection::deleteLater);
-}
-
-void HttpConnection::readyRead()
-{
-	qint64 bytes = 0;
-	while((bytes = _socket->bytesAvailable()) >= 2) {
-		if(_hdrDone)
-			reply();
-		else {
-			auto nextLine = _socket->readLine(bytes).simplified();
-			if(nextLine.isEmpty()) {
-				_hdrDone = true;
-				reply();
-			} else if(_verb.isEmpty()) {
-				auto line = nextLine.split(' ');
-				if(line.size() < 2)
-					_socket->disconnectFromHost();
-				else {
-					_verb = line[0];
-					_path = line[1];
-				}
-			} else if(nextLine.startsWith("Content-Length: "))
-				_len = nextLine.mid(16).toInt();
-			else if(nextLine.startsWith("Content-Type: "))
-				_contentType = nextLine.mid(14);
-			else if(nextLine.startsWith("Authorization: "))
-				_token = nextLine.mid(15);
-		}
+	if (asJson) {
+		const auto jValue = value.toJsonValue();
+		if (jValue.isObject())
+			return jValue.toObject();
+		else if (jValue.isArray())
+			return jValue.toArray();
+		else
+			throw HttpError{QHttpServerResponse::StatusCode::InternalServerError};
+	} else {
+		return QHttpServerResponse {
+			QtRestClient::RequestBuilderPrivate::ContentTypeCbor,
+			QCborValue{value}.toCbor()
+		};
 	}
-}
-
-void HttpConnection::reply()
-{
-	auto superPath = _path.split('?');
-	auto segments = superPath.first().split('/');
-
-	QByteArray doc;
-	try {
-		// verify token
-		if (!_server->_token.isEmpty()) {
-			if (_token != _server->_token)
-				throw QStringLiteral("Invalid Token: ").arg(QString::fromUtf8(_token));
-		}
-
-		//read content if required
-		if(_content.size() < _len) {
-			_content += _socket->readAll();
-			if(_len - _content.trimmed().size() > 0)
-				return;
-			_content = _content.trimmed();
-
-			if(_contentType == "application/json") {
-				QJsonParseError e;
-				auto obj = QJsonDocument::fromJson(_content, &e).object();
-				if(e.error != QJsonParseError::NoError)
-					throw QStringLiteral("Parser-Error: %1").arg(e.errorString());
-				_server->applyData(_verb, segments, obj);
-			} else if(_contentType == "application/x-www-form-urlencoded") {
-				QUrlQuery query;
-				query.setQuery(QString::fromUtf8(_content));
-				QJsonObject resObj;
-				for(const auto &param : query.queryItems(QUrl::FullyDecoded))
-					resObj.insert(param.first, param.second);
-				doc = QJsonDocument(resObj).toJson(QJsonDocument::Compact);
-			} else
-				throw QStringLiteral("Unknown Content-Type: ").arg(QString::fromUtf8(_contentType));
-		}
-
-		if(_contentType.isEmpty() || _contentType == "application/json") {
-			QJsonValue subValue = _server->obtainData(segments);
-			if(subValue.isObject())
-				doc = QJsonDocument(subValue.toObject()).toJson(QJsonDocument::Compact);
-			else
-				doc = QJsonDocument(subValue.toArray()).toJson(QJsonDocument::Compact);
-		}
-
-		qDebug().noquote() << "OK[" << _verb <<  _path << "]:" << _content;
-		_socket->write("HTTP/1.1 200 OK\r\n");
-	} catch(QString &e) {
-		qWarning().noquote() << "SERVER-Error[" << _verb <<  _path << "]:" << e;
-
-		QJsonObject error;
-		error[QStringLiteral("message")] = e;
-		doc = QJsonDocument(error).toJson(QJsonDocument::Compact);
-
-		_socket->write("HTTP/1.1 404 Not Found\r\n");
-	}
-
-	_socket->write("Content-Length: " + QByteArray::number(doc.size()) + "\r\n");
-	_socket->write("Content-Type: application/json\r\n");
-	_socket->write("Connection: Closed\r\n");
-	_socket->write("\r\n");
-	_socket->write(doc + "\r\n");
-	_socket->flush();
 }

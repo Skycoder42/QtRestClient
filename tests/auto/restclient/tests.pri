@@ -1,4 +1,4 @@
-QT += core network restclient
+QT += core network restclient httpserver
 
 isEmpty(LIB_PWD): LIB_PWD = $$OUT_PWD/../testlib
 

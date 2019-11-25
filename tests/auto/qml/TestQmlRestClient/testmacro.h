@@ -2,13 +2,14 @@
 #define TESTMACRO_H
 
 #include <QtGlobal>
+#include <QUrl>
 
 #define TEST_EXPORT
 #define LIMIT 100
 #define APP_SECRET "baum42"
 
 namespace TestSvr {
-quint16 getPort();
+QUrl getUrl();
 }
 
 #endif // TESTMACRO_H

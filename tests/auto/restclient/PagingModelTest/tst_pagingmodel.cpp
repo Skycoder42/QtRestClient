@@ -28,10 +28,10 @@ void PagingModelTest::initTestCase()
 {
 	JsonSerializer::registerListConverters<JphPost*>();
 	server = new HttpServer(this);
-	server->verifyRunning();
+	QVERIFY(server->setupRoutes());
 	server->setAdvancedData();
 	client = Testlib::createClient(this);
-	client->setBaseUrl(QStringLiteral("http://localhost:%1").arg(server->serverPort()));
+	client->setBaseUrl(server->url());
 	model = new PagingModel{this};
 
 	// create tester

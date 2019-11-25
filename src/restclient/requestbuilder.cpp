@@ -146,6 +146,14 @@ RequestBuilder &RequestBuilder::setBody(QByteArray body, const QByteArray &conte
 	return *this;
 }
 
+RequestBuilder &RequestBuilder::setBody(QCborValue body)
+{
+	d->body = body.toCbor();
+	d->postQuery.clear();
+	d->headers.insert(RequestBuilderPrivate::ContentType, RequestBuilderPrivate::ContentTypeCbor);
+	return *this;
+}
+
 RequestBuilder &RequestBuilder::setBody(const QJsonObject &body)
 {
 	d->body = QJsonDocument(body).toJson(QJsonDocument::Compact);
@@ -239,6 +247,7 @@ const RequestBuilderPrivate *RequestBuilder::d_ptr() const
 // ------------- Private Implementation -------------
 
 const QByteArray RequestBuilderPrivate::ContentType = "Content-Type";
+const QByteArray RequestBuilderPrivate::ContentTypeCbor = "application/cbor";
 const QByteArray RequestBuilderPrivate::ContentTypeJson = "application/json";
 const QByteArray RequestBuilderPrivate::ContentTypeUrlEncoded = "application/x-www-form-urlencoded";
 
