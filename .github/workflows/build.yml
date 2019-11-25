@@ -104,7 +104,7 @@ jobs:
           uwp: ${{contains(matrix.platform, 'winrt')}}
       - name: actions/cache qt
         uses: actions/cache@v1
-        id: cache
+        id: cache-qt
         with:
           path: qt/${{matrix.version}}/${{matrix.platform}}
           key: qt-${{matrix.version}}-${{matrix.platform}}-json
@@ -116,6 +116,14 @@ jobs:
           packages: qtnetworkauth,skycoder42.jsonserializer
           install-args: --addRepository https://install.skycoder42.de/qtmodules/${{matrix.repository}} --verbose
           cachedir: qt/${{matrix.version}}/${{matrix.platform}}
+      - name: build qthttpserver
+        if: steps.cache-qt.outputs.cache-hit != 'true'
+        run: |
+          qmake
+          ${{steps.qt.outputs.make}} qmake_all
+          ${{steps.qt.outputs.make}}
+          ${{steps.qt.outputs.make}} install
+        working-directory: src/3rdparty/qthttpserver
       - name: qmake
         run: |
           qmake CONFIG+=install_ok QT_PLATFORM=${{matrix.platform}}
@@ -253,7 +261,7 @@ jobs:
           uwp: ${{contains(matrix.platform, 'winrt')}}
       - name: actions/cache qt
         uses: actions/cache@v1
-        id: cache
+        id: cache-qt
         with:
           path: qt/${{matrix.version}}/${{matrix.platform}}
           key: qt-${{matrix.version}}-${{matrix.platform}}-no-json
@@ -265,6 +273,14 @@ jobs:
           packages: qtnetworkauth
           install-args: --verbose
           cachedir: qt/${{matrix.version}}/${{matrix.platform}}
+      - name: build qthttpserver
+        if: steps.cache-qt.outputs.cache-hit != 'true'
+        run: |
+          qmake
+          ${{steps.qt.outputs.make}} qmake_all
+          ${{steps.qt.outputs.make}}
+          ${{steps.qt.outputs.make}} install
+        working-directory: src/3rdparty/qthttpserver
       - name: qmake
         run: |
           qmake CONFIG+=install_ok CONFIG+=no_json_serializer QT_PLATFORM=${{matrix.platform}}
