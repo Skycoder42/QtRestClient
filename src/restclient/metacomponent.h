@@ -34,11 +34,14 @@ class MetaComponent<T*, EnableObjectType<T>> : public std::true_type
 {
 public:
 	static inline void deleteLater(T *obj) {
-		obj->deleteLater();
+		if (obj)
+			obj->deleteLater();
 	}
 	static inline void deleteAllLater(const QList<T*> &list) {
-		for(T *obj : list)
-			obj->deleteLater();
+		for (T *obj : list) {
+			if (obj)
+				obj->deleteLater();
+		}
 	}
 };
 

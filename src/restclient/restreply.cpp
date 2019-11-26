@@ -314,31 +314,31 @@ void RestReplyPrivate::replyFinished()
 		jValue = QJsonValue::Null;  // set to NULL to indicate and empty body
 	else {
 		auto jDoc = QJsonDocument::fromJson(readData, &jError);
-		if(jDoc.isObject())
+		if (jDoc.isObject())
 			jValue = jDoc.object();
 		else if(jDoc.isArray())
 			jValue = jDoc.array();
 	}
 
 	//check "http errors", because they can have data, but only if json is valid
-	if(jError.error == QJsonParseError::NoError && status >= 300)//first: status code error + valid json
+	if (jError.error == QJsonParseError::NoError && status >= 300)  // first: status code error + valid json
 		emit q->failed(status, jValue, {});
-	else if(networkReply->error() != QNetworkReply::NoError)//next: check normal network errors
+	else if (networkReply->error() != QNetworkReply::NoError)  // next: check normal network errors
 		emit q->error(networkReply->errorString(), networkReply->error(), RestReply::NetworkError, {});
-	else if(jError.error != QJsonParseError::NoError) //next: json errors
+	else if (jError.error != QJsonParseError::NoError)  // next: json errors
 		emit q->error(jError.errorString(), jError.error, RestReply::JsonParseError, {});
-	else {//no errors, completed!
+	else {  // no errors, completed!
 		emit q->succeeded(status, jValue, {});
 		retryDelay = -1;
 	}
 
-	if(retryDelay == 0) {
+	if (retryDelay == 0) {
 		retryDelay = -1;
 		retryReply();
-	} else if(retryDelay > 0) {
+	} else if (retryDelay > 0) {
 		QTimer::singleShot(retryDelay, Qt::PreciseTimer, this, &RestReplyPrivate::retryReply);
 		retryDelay = -1;
-	} else if(autoDelete)
+	} else if (autoDelete)
 		q->deleteLater();
 }
 

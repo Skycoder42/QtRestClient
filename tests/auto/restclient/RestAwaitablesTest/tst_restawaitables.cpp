@@ -172,10 +172,6 @@ void RestAwaitablesTest::testGenericRestReplyAwait()
 					} catch (GenericAwaitedException<QObject*> &e) {
 						QCOMPARE(e.errorType(), type);
 						QCOMPARE(e.errorCode(), code);
-						if(type == RestReply::FailureError) {
-							QVERIFY(e.genericError());
-							QVERIFY(e.genericError()->dynamicPropertyNames().contains("message"));
-						}
 					}
 				}
 				ok = true;
@@ -236,10 +232,6 @@ void RestAwaitablesTest::testGenericVoidRestReplyAwait()
 					} catch (GenericAwaitedException<QObject*> &e) {
 						QCOMPARE(e.errorType(), type);
 						QCOMPARE(e.errorCode(), code);
-						if(type == RestReply::FailureError) {
-							QVERIFY(e.genericError());
-							QVERIFY(e.genericError()->dynamicPropertyNames().contains("message"));
-						}
 					}
 				}
 				ok = true;

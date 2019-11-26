@@ -16,12 +16,12 @@ public:
 	HttpError(QHttpServerResponse::StatusCode code = QHttpServerResponse::StatusCode::BadRequest) :
 		  _code{code}
 	{}
-	HttpError(const QString &message, QHttpServerResponse::StatusCode code = QHttpServerResponse::StatusCode::BadRequest) :
+	HttpError(QByteArray message, QHttpServerResponse::StatusCode code = QHttpServerResponse::StatusCode::BadRequest) :
 		  _code{code},
-		  _message{message}
+		  _message{std::move(message)}
 	{}
-	HttpError(const QByteArray &message, QHttpServerResponse::StatusCode code = QHttpServerResponse::StatusCode::BadRequest) :
-		  HttpError{QString::fromUtf8(message), code}
+	HttpError(const QString &message, QHttpServerResponse::StatusCode code = QHttpServerResponse::StatusCode::BadRequest) :
+		  HttpError{message.toUtf8(), code}
 	{}
 	HttpError(const char *message, QHttpServerResponse::StatusCode code = QHttpServerResponse::StatusCode::BadRequest) :
 		  HttpError{QByteArray{message}, code}
@@ -33,29 +33,21 @@ public:
 
 	const char *what() const noexcept override {
 		if (_what.isEmpty())
-			_what = QStringLiteral("[%1]: %2").arg(code()).arg(_message).toUtf8();
+			_what = "[" + QByteArray::number(static_cast<int>(_code)) + "]: " + (_message.isEmpty() ? "<No message>" : _message);
 		return _what.constData();
 	}
 
-	QHttpServerResponse response(bool asJson) noexcept {
-		if (asJson) {
-			return QHttpServerResponse {
-				QtRestClient::RequestBuilderPrivate::ContentTypeJson,
-				QJsonDocument{QJsonObject{{QStringLiteral("message"), _message}}}.toJson(QJsonDocument::Compact),
-				_code
-			};
-		} else {
-			return QHttpServerResponse {
-				QtRestClient::RequestBuilderPrivate::ContentTypeCbor,
-				QCborValue{QCborMap{{QStringLiteral("message"), _message}}}.toCbor(),
-				_code
-			};
-		}
+	QHttpServerResponse response() noexcept {
+		return QHttpServerResponse {
+			"text/plain",
+			_message,
+			_code
+		};
 	}
 
 private:
 	QHttpServerResponse::StatusCode _code;
-	QString _message;
+	QByteArray _message;
 
 	mutable QByteArray _what;
 };
@@ -108,11 +100,10 @@ bool HttpServer::setupRoutes()
 	[&]() {
 		QVERIFY(_port > 0);
 		QVERIFY(_server->route(QStringLiteral("/<arg>"), [this](const QString &type, const QHttpServerRequest &request) -> QHttpServerResponse {
-			auto asJson = true;
 			try {
 				if (!_data.contains(type))
 					throw HttpError{QHttpServerResponse::StatusCode::NotFound};
-				asJson = checkAccept(request);
+				const auto asJson = checkAccept(request);
 
 				switch (request.method()) {
 				case QHttpServerRequest::Method::Get: {
@@ -148,15 +139,14 @@ bool HttpServer::setupRoutes()
 				}
 			} catch (HttpError &e) {
 				qWarning() << e.what();
-				return e.response(asJson);
+				return e.response();
 			}
 		}));
 		QVERIFY(_server->route(QStringLiteral("/<arg>/<arg>"), [this](const QString &type, int index, const QHttpServerRequest &request) -> QHttpServerResponse {
-			auto asJson = true;
 			try {
 				if (!_data.contains(type))
 					throw HttpError{QHttpServerResponse::StatusCode::NotFound};
-				asJson = checkAccept(request);
+				const auto asJson = checkAccept(request);
 				auto tMap = _data[type].toMap();
 
 				switch (request.method()) {
@@ -182,7 +172,7 @@ bool HttpServer::setupRoutes()
 				}
 			} catch (HttpError &e) {
 				qWarning() << e.what();
-				return e.response(asJson);
+				return e.response();
 			}
 		}));
 		ok = true;

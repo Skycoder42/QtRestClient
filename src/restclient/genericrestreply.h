@@ -255,15 +255,15 @@ GenericRestReply<DataClassType, ErrorClassType> *GenericRestReply<DataClassType,
 template<typename DataClassType, typename ErrorClassType>
 GenericRestReply<DataClassType, ErrorClassType> *GenericRestReply<DataClassType, ErrorClassType>::onSucceeded(QObject *scope, const std::function<void (int, DataClassType)> &handler)
 {
-	if(!handler)
+	if (!handler)
 		return this;
 	connect(this, &RestReply::succeeded, scope, [=](int code, const QJsonValue &value){
 		try {
-			if(!value.isObject())
+			if (!value.isObject())
 				throw QtJsonSerializer::DeserializationException("Expected JSON object but got " + jsonTypeName(value.type()));
 			handler(code, client->serializer()->deserialize<DataClassType>(value.toObject()));
-		} catch(QtJsonSerializer::Exception &e) {
-			if(exceptionHandler)
+		} catch (QtJsonSerializer::Exception &e) {
+			if (exceptionHandler)
 				exceptionHandler(e);
 		}
 	});
@@ -283,11 +283,14 @@ GenericRestReply<DataClassType, ErrorClassType> *GenericRestReply<DataClassType,
 		return this;
 	connect(this, &RestReply::failed, scope, [=](int code, const QJsonValue &value){
 		try {
-			if(!value.isObject())
+			if (value.isNull())
+				handler(code, {});
+			else if (value.isObject())
+				handler(code, client->serializer()->deserialize<ErrorClassType>(value.toObject()));
+			else
 				throw QtJsonSerializer::DeserializationException("Expected JSON object but got " + jsonTypeName(value.type()));
-			handler(code, client->serializer()->deserialize<ErrorClassType>(value.toObject()));
 		} catch(QtJsonSerializer::Exception &e) {
-			if(exceptionHandler)
+			if (exceptionHandler)
 				exceptionHandler(e);
 		}
 	});
@@ -396,14 +399,17 @@ GenericRestReply<void, ErrorClassType> *GenericRestReply<void, ErrorClassType>::
 template<typename ErrorClassType>
 GenericRestReply<void, ErrorClassType> *GenericRestReply<void, ErrorClassType>::onFailed(QObject *scope, const std::function<void (int, ErrorClassType)> &handler)
 {
-	if(!handler)
+	if (!handler)
 		return this;
 	connect(this, &RestReply::failed, scope, [=](int code, const QJsonValue &value){
 		try {
-			if(!value.isObject())
+			if (value.isNull())
+				handler(code, {});
+			else if (value.isObject())
+				handler(code, client->serializer()->deserialize<ErrorClassType>(value.toObject()));
+			else
 				throw QtJsonSerializer::DeserializationException("Expected JSON object but got " + jsonTypeName(value.type()));
-			handler(code, client->serializer()->deserialize<ErrorClassType>(value.toObject()));
-		} catch(QtJsonSerializer::Exception &e) {
+		} catch (QtJsonSerializer::Exception &e) {
 			if(exceptionHandler)
 				exceptionHandler(e);
 		}
@@ -518,15 +524,18 @@ GenericRestReply<QList<DataClassType>, ErrorClassType> *GenericRestReply<QList<D
 template<typename DataClassType, typename ErrorClassType>
 GenericRestReply<QList<DataClassType>, ErrorClassType> *GenericRestReply<QList<DataClassType>, ErrorClassType>::onFailed(QObject *scope, const std::function<void (int, ErrorClassType)> &handler)
 {
-	if(!handler)
+	if (!handler)
 		return this;
 	connect(this, &RestReply::failed, scope, [=](int code, const QJsonValue &value){
 		try {
-			if(!value.isObject())
+			if (value.isNull())
+				handler(code, {});
+			else if (value.isObject())
+				handler(code, client->serializer()->deserialize<ErrorClassType>(value.toObject()));
+			else
 				throw QtJsonSerializer::DeserializationException("Expected JSON object but got " + jsonTypeName(value.type()));
-			handler(code, client->serializer()->deserialize<ErrorClassType>(value.toObject()));
-		} catch(QtJsonSerializer::Exception &e) {
-			if(exceptionHandler)
+		} catch (QtJsonSerializer::Exception &e) {
+			if (exceptionHandler)
 				exceptionHandler(e);
 		}
 	});
@@ -643,15 +652,18 @@ template<typename DataClassType, typename ErrorClassType>
 GenericRestReply<Paging<DataClassType>, ErrorClassType> *GenericRestReply<Paging<DataClassType>, ErrorClassType>::onFailed(QObject *scope, const std::function<void (int, ErrorClassType)> &handler)
 {
 	failureHandler = handler;
-	if(!handler)
+	if (!handler)
 		return this;
 	connect(this, &RestReply::failed, scope, [=](int code, const QJsonValue &value){
 		try {
-			if(!value.isObject())
+			if (value.isNull())
+				handler(code, {});
+			else if (value.isObject())
+				handler(code, client->serializer()->deserialize<ErrorClassType>(value.toObject()));
+			else
 				throw QtJsonSerializer::DeserializationException("Expected JSON object but got " + jsonTypeName(value.type()));
-			handler(code, client->serializer()->deserialize<ErrorClassType>(value.toObject()));
-		} catch(QtJsonSerializer::Exception &e) {
-			if(exceptionHandler)
+		} catch (QtJsonSerializer::Exception &e) {
+			if (exceptionHandler)
 				exceptionHandler(e);
 		}
 	});
