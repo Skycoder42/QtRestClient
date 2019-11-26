@@ -1,10 +1,13 @@
 #include "restclient.h"
 #include "restclient_p.h"
 #include "restclass.h"
+#include "requestbuilder_p.h"
 #include <QtCore/QBitArray>
 #include <QtCore/QCoreApplication>
 #include <QtCore/QRegularExpression>
 #include <QtCore/QUuid>
+#include <QtJsonSerializer/JsonSerializer>
+#include <QtJsonSerializer/CborSerializer>
 using namespace QtRestClient;
 #ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
 using namespace QtJsonSerializer;
@@ -241,12 +244,23 @@ RestClientPrivate::RestClientPrivate() = default;
 void RestClientPrivate::setupBuilder(RequestBuilder &builder) const
 {
 	builder.setVersion(apiVersion)
-			.setAttributes(attribs)
+		.setAttributes(attribs)
 #ifndef QT_NO_SSL
-			.setSslConfig(sslConfig)
+		.setSslConfig(sslConfig)
 #endif
-			.addHeaders(headers)
-			.addParameters(query);
+		.addHeaders(headers)
+		.addParameters(query);
+
+	if (acceptType)
+		builder.setAccept(*acceptType);
+#ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
+	else {
+		if (qobject_cast<CborSerializer*>(serializer))
+			builder.setAccept(RequestBuilderPrivate::ContentTypeCbor);
+		else if (qobject_cast<JsonSerializer*>(serializer))
+			builder.setAccept(RequestBuilderPrivate::ContentTypeJson);
+	}
+#endif
 }
 
 // ------------- Global header implementation -------------

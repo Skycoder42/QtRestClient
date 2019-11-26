@@ -8,6 +8,8 @@
 #include "restclient.h"
 #include "standardpaging_p.h"
 
+#include <optional>
+
 namespace QtRestClient {
 
 class Q_RESTCLIENT_EXPORT RestClientPrivate
@@ -31,6 +33,7 @@ public:
 #ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
 	QtJsonSerializer::JsonSerializer *serializer = nullptr;
 #endif
+	std::optional<QByteArray> acceptType = std::nullopt;
 
 	QScopedPointer<IPagingFactory> pagingFactory {};
 

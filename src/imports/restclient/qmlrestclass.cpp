@@ -169,16 +169,16 @@ RestReply *QmlRestClass::callImpl2(const QByteArray &verb, bool forcePost, const
 
 	if(body.isObject()) {
 		if(!path.isEmpty())
-			return _class->callJson(verb, path, body.toObject(), params, headers);
+			return _class->callRaw(verb, path, body.toObject(), params, headers);
 		else
-			return _class->callJson(verb, body.toObject(), params, headers);
+			return _class->callRaw(verb, body.toObject(), params, headers);
 	} else if(body.isArray()) {
 		if(!path.isEmpty())
-			return _class->callJson(verb, path, body.toArray(), params, headers);
+			return _class->callRaw(verb, path, body.toArray(), params, headers);
 		else
-			return _class->callJson(verb, body.toArray(), params, headers);
+			return _class->callRaw(verb, body.toArray(), params, headers);
 	} else if(!path.isEmpty())
-		return _class->callJson(verb, path, params, headers, asPostParams);
+		return _class->callRaw(verb, path, params, headers, asPostParams);
 	else
-		return _class->callJson(verb, params, headers, asPostParams);
+		return _class->callRaw(verb, params, headers, asPostParams);
 }

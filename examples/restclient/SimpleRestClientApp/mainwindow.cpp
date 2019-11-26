@@ -84,19 +84,19 @@ void MainWindow::on_pushButton_clicked()
 		ui->replyJsonEdit->clear();
 		return;
 	} else if(body.isObject()) {
-		reply = client->rootClass()->callJson(ui->verbComboBox->currentText().toUtf8(),
+		reply = client->rootClass()->callRaw(ui->verbComboBox->currentText().toUtf8(),
 											  QUrl(ui->urlLineEdit->text()),
 											  body.object(),
 											  params,
 											  headers);
 	} else if(body.isArray()) {
-		reply = client->rootClass()->callJson(ui->verbComboBox->currentText().toUtf8(),
+		reply = client->rootClass()->callRaw(ui->verbComboBox->currentText().toUtf8(),
 											  QUrl(ui->urlLineEdit->text()),
 											  body.array(),
 											  params,
 											  headers);
 	} else {
-		reply = client->rootClass()->callJson(ui->verbComboBox->currentText().toUtf8(),
+		reply = client->rootClass()->callRaw(ui->verbComboBox->currentText().toUtf8(),
 											  QUrl(ui->urlLineEdit->text()),
 											  params,
 											  headers);

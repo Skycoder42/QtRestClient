@@ -32,47 +32,47 @@ RestClass *RestClass::subClass(const QString &path, QObject *parent)
 	return new RestClass(d->client, nPath, parent);
 }
 
-RestReply *RestClass::callJson(const QByteArray &verb, const QString &methodPath, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody) const
+RestReply *RestClass::callRaw(const QByteArray &verb, const QString &methodPath, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody) const
 {
 	return new RestReply(create(verb, methodPath, parameters, headers, paramsAsBody), nullptr);
 }
 
-RestReply *RestClass::callJson(const QByteArray &verb, const QString &methodPath, const QJsonObject &body, const QVariantHash &parameters, const HeaderHash &headers) const
+RestReply *RestClass::callRaw(const QByteArray &verb, const QString &methodPath, const QCborValue &body, const QVariantHash &parameters, const HeaderHash &headers) const
 {
 	return new RestReply(create(verb, methodPath, body, parameters, headers), nullptr);
 }
 
-RestReply *RestClass::callJson(const QByteArray &verb, const QString &methodPath, const QJsonArray &body, const QVariantHash &parameters, const HeaderHash &headers) const
+RestReply *RestClass::callRaw(const QByteArray &verb, const QString &methodPath, const QJsonValue &body, const QVariantHash &parameters, const HeaderHash &headers) const
 {
 	return new RestReply(create(verb, methodPath, body, parameters, headers), nullptr);
 }
 
-RestReply *RestClass::callJson(const QByteArray &verb, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody) const
+RestReply *RestClass::callRaw(const QByteArray &verb, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody) const
 {
 	return new RestReply(create(verb, parameters, headers, paramsAsBody), nullptr);
 }
 
-RestReply *RestClass::callJson(const QByteArray &verb, const QJsonObject &body, const QVariantHash &parameters, const HeaderHash &headers) const
+RestReply *RestClass::callRaw(const QByteArray &verb, const QCborValue &body, const QVariantHash &parameters, const HeaderHash &headers) const
 {
 	return new RestReply(create(verb, body, parameters, headers), nullptr);
 }
 
-RestReply *RestClass::callJson(const QByteArray &verb, const QJsonArray &body, const QVariantHash &parameters, const HeaderHash &headers) const
+RestReply *RestClass::callRaw(const QByteArray &verb, const QJsonValue &body, const QVariantHash &parameters, const HeaderHash &headers) const
 {
 	return new RestReply(create(verb, body, parameters, headers), nullptr);
 }
 
-RestReply *RestClass::callJson(const QByteArray &verb, const QUrl &relativeUrl, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody) const
+RestReply *RestClass::callRaw(const QByteArray &verb, const QUrl &relativeUrl, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody) const
 {
 	return new RestReply(create(verb, relativeUrl, parameters, headers, paramsAsBody), nullptr);
 }
 
-RestReply *RestClass::callJson(const QByteArray &verb, const QUrl &relativeUrl, const QJsonObject &body, const QVariantHash &parameters, const HeaderHash &headers) const
+RestReply *RestClass::callRaw(const QByteArray &verb, const QUrl &relativeUrl, const QCborValue &body, const QVariantHash &parameters, const HeaderHash &headers) const
 {
 	return new RestReply(create(verb, relativeUrl, body, parameters, headers), nullptr);
 }
 
-RestReply *RestClass::callJson(const QByteArray &verb, const QUrl &relativeUrl, const QJsonArray &body, const QVariantHash &parameters, const HeaderHash &headers) const
+RestReply *RestClass::callRaw(const QByteArray &verb, const QUrl &relativeUrl, const QJsonValue &body, const QVariantHash &parameters, const HeaderHash &headers) const
 {
 	return new RestReply(create(verb, relativeUrl, body, parameters, headers), nullptr);
 }
@@ -88,32 +88,32 @@ QNetworkReply *RestClass::create(const QByteArray &verb, const QString &methodPa
 	return (paramsAsBody ?
 				builder().addPostParameters(RestClassPrivate::hashToQuery(parameters)) :
 				builder().addParameters(RestClassPrivate::hashToQuery(parameters)))
-			.addPath(methodPath)
-			.addHeaders(headers)
-			.setVerb(verb)
-			.send();
+		.addPath(methodPath)
+		.addHeaders(headers)
+		.setVerb(verb)
+		.send();
 }
 
-QNetworkReply *RestClass::create(const QByteArray &verb, const QString &methodPath, const QJsonObject &body, const QVariantHash &parameters, const HeaderHash &headers) const
+QNetworkReply *RestClass::create(const QByteArray &verb, const QString &methodPath, const QCborValue &body, const QVariantHash &parameters, const HeaderHash &headers) const
 {
 	return builder()
-			.addPath(methodPath)
-			.addParameters(RestClassPrivate::hashToQuery(parameters))
-			.addHeaders(headers)
-			.setBody(body)
-			.setVerb(verb)
-			.send();
+		.addPath(methodPath)
+		.addParameters(RestClassPrivate::hashToQuery(parameters))
+		.addHeaders(headers)
+		.setBody(body, false)
+		.setVerb(verb)
+		.send();
 }
 
-QNetworkReply *RestClass::create(const QByteArray &verb, const QString &methodPath, const QJsonArray &body, const QVariantHash &parameters, const HeaderHash &headers) const
+QNetworkReply *RestClass::create(const QByteArray &verb, const QString &methodPath, const QJsonValue &body, const QVariantHash &parameters, const HeaderHash &headers) const
 {
 	return builder()
-			.addPath(methodPath)
-			.addParameters(RestClassPrivate::hashToQuery(parameters))
-			.addHeaders(headers)
-			.setBody(body)
-			.setVerb(verb)
-			.send();
+		.addPath(methodPath)
+		.addParameters(RestClassPrivate::hashToQuery(parameters))
+		.addHeaders(headers)
+		.setBody(body, false)
+		.setVerb(verb)
+		.send();
 }
 
 QNetworkReply *RestClass::create(const QByteArray &verb, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody) const
@@ -121,29 +121,29 @@ QNetworkReply *RestClass::create(const QByteArray &verb, const QVariantHash &par
 	return (paramsAsBody ?
 				builder().addPostParameters(RestClassPrivate::hashToQuery(parameters)) :
 				builder().addParameters(RestClassPrivate::hashToQuery(parameters)))
-			.addHeaders(headers)
-			.setVerb(verb)
-			.send();
+		.addHeaders(headers)
+		.setVerb(verb)
+		.send();
 }
 
-QNetworkReply *RestClass::create(const QByteArray &verb, const QJsonObject &body, const QVariantHash &parameters, const HeaderHash &headers) const
+QNetworkReply *RestClass::create(const QByteArray &verb, const QCborValue &body, const QVariantHash &parameters, const HeaderHash &headers) const
 {
 	return builder()
-			.addParameters(RestClassPrivate::hashToQuery(parameters))
-			.addHeaders(headers)
-			.setBody(body)
-			.setVerb(verb)
-			.send();
+		.addParameters(RestClassPrivate::hashToQuery(parameters))
+		.addHeaders(headers)
+		.setBody(body, false)
+		.setVerb(verb)
+		.send();
 }
 
-QNetworkReply *RestClass::create(const QByteArray &verb, const QJsonArray &body, const QVariantHash &parameters, const HeaderHash &headers) const
+QNetworkReply *RestClass::create(const QByteArray &verb, const QJsonValue &body, const QVariantHash &parameters, const HeaderHash &headers) const
 {
 	return builder()
-			.addParameters(RestClassPrivate::hashToQuery(parameters))
-			.addHeaders(headers)
-			.setBody(body)
-			.setVerb(verb)
-			.send();
+		.addParameters(RestClassPrivate::hashToQuery(parameters))
+		.addHeaders(headers)
+		.setBody(body, false)
+		.setVerb(verb)
+		.send();
 }
 
 QNetworkReply *RestClass::create(const QByteArray &verb, const QUrl &relativeUrl, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody) const
@@ -151,32 +151,32 @@ QNetworkReply *RestClass::create(const QByteArray &verb, const QUrl &relativeUrl
 	return (paramsAsBody ?
 				builder().addPostParameters(RestClassPrivate::hashToQuery(parameters)) :
 				builder().addParameters(RestClassPrivate::hashToQuery(parameters)))
-			.updateFromRelativeUrl(relativeUrl, true)
-			.addHeaders(headers)
-			.setVerb(verb)
-			.send();
+		.updateFromRelativeUrl(relativeUrl, true)
+		.addHeaders(headers)
+		.setVerb(verb)
+		.send();
 }
 
-QNetworkReply *RestClass::create(const QByteArray &verb, const QUrl &relativeUrl, const QJsonObject &body, const QVariantHash &parameters, const HeaderHash &headers) const
+QNetworkReply *RestClass::create(const QByteArray &verb, const QUrl &relativeUrl, const QCborValue &body, const QVariantHash &parameters, const HeaderHash &headers) const
 {
 	return builder()
-			.updateFromRelativeUrl(relativeUrl, true)
-			.addParameters(RestClassPrivate::hashToQuery(parameters))
-			.addHeaders(headers)
-			.setBody(body)
-			.setVerb(verb)
-			.send();
+		.updateFromRelativeUrl(relativeUrl, true)
+		.addParameters(RestClassPrivate::hashToQuery(parameters))
+		.addHeaders(headers)
+		.setBody(body, false)
+		.setVerb(verb)
+		.send();
 }
 
-QNetworkReply *RestClass::create(const QByteArray &verb, const QUrl &relativeUrl, const QJsonArray &body, const QVariantHash &parameters, const HeaderHash &headers) const
+QNetworkReply *RestClass::create(const QByteArray &verb, const QUrl &relativeUrl, const QJsonValue &body, const QVariantHash &parameters, const HeaderHash &headers) const
 {
 	return builder()
-			.updateFromRelativeUrl(relativeUrl, true)
-			.addParameters(RestClassPrivate::hashToQuery(parameters))
-			.addHeaders(headers)
-			.setBody(body)
-			.setVerb(verb)
-			.send();
+		.updateFromRelativeUrl(relativeUrl, true)
+		.addParameters(RestClassPrivate::hashToQuery(parameters))
+		.addHeaders(headers)
+		.setBody(body, false)
+		.setVerb(verb)
+		.send();
 }
 
 // ------------- Private Implementation -------------

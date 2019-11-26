@@ -257,7 +257,7 @@ RestClient *RestClassFetcher::client() const
 
 RestReply *RestClassFetcher::fetch(const QUrl &url) const
 {
-	return _restClass ? _restClass->callJson(RestClass::GetVerb, url) : nullptr;
+	return _restClass ? _restClass->callRaw(RestClass::GetVerb, url) : nullptr;
 }
 
 // ------------- Private Implementation -------------

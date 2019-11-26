@@ -158,19 +158,20 @@ RequestBuilder &RequestBuilder::setBody(QCborValue body, bool setAccept)
 	return *this;
 }
 
-RequestBuilder &RequestBuilder::setBody(const QJsonObject &body, bool setAccept)
+RequestBuilder &RequestBuilder::setBody(const QJsonValue &body, bool setAccept)
 {
-	d->body = QJsonDocument(body).toJson(QJsonDocument::Compact);
-	d->postQuery.clear();
-	d->headers.insert(RequestBuilderPrivate::ContentType, RequestBuilderPrivate::ContentTypeJson);
-	if (setAccept)
-		d->headers.insert(RequestBuilderPrivate::Accept, RequestBuilderPrivate::ContentTypeJson);
-	return *this;
-}
-
-RequestBuilder &RequestBuilder::setBody(const QJsonArray &body, bool setAccept)
-{
-	d->body = QJsonDocument(body).toJson(QJsonDocument::Compact);
+	switch (body.type()) {
+	case QJsonValue::Array:
+		d->body = QJsonDocument{body.toArray()}.toJson(QJsonDocument::Compact);
+		break;
+	case QJsonValue::Object:
+		d->body = QJsonDocument{body.toObject()}.toJson(QJsonDocument::Compact);
+		break;
+	default:
+		d->body = QJsonDocument{QJsonArray{body}}.toJson(QJsonDocument::Compact);
+		d->body = d->body.mid(1, d->body.size() - 2);
+		break;
+	}
 	d->postQuery.clear();
 	d->headers.insert(RequestBuilderPrivate::ContentType, RequestBuilderPrivate::ContentTypeJson);
 	if (setAccept)
@@ -187,6 +188,7 @@ RequestBuilder &RequestBuilder::setVerb(QByteArray verb)
 RequestBuilder &RequestBuilder::setAccept(const QByteArray &mimeType)
 {
 	d->headers.insert(RequestBuilderPrivate::Accept, mimeType);
+	return *this;
 }
 
 RequestBuilder &RequestBuilder::addPostParameter(const QString &name, const QString &value)

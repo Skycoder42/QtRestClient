@@ -51,7 +51,7 @@ void IntegrationTest::testJsonChain()
 
 	bool called = false;
 
-	auto reply = postClass->callJson(RestClass::PutVerb, "1", object);
+	auto reply = postClass->callRaw(RestClass::PutVerb, "1", object);
 	reply->onSucceeded([&](int code, QJsonObject data){
 		called = true;
 		QCOMPARE(code, 200);

@@ -74,9 +74,7 @@ public:
 	//! @copybrief RequestBuilder::setBody(QByteArray, const QByteArray &)
 	RequestBuilder &setBody(QCborValue body, bool setAccept = true);
 	//! @copybrief RequestBuilder::setBody(QByteArray, const QByteArray &)
-	RequestBuilder &setBody(const QJsonObject &body, bool setAccept = true);
-	//! @copydoc RequestBuilder::setBody(const QJsonObject &)
-	RequestBuilder &setBody(const QJsonArray &body, bool setAccept = true);
+	RequestBuilder &setBody(const QJsonValue &body, bool setAccept = true);
 	//! Sets the HTTP-Verb to be used by the generated network request
 	RequestBuilder &setVerb(QByteArray verb);
 	RequestBuilder &setAccept(const QByteArray &mimeType);
