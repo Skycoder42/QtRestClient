@@ -49,23 +49,18 @@ jobs:
           - platform: msvc2017_64
             os: windows-2016
             repository: windows_x86
-            vcarch: x64
           - platform: msvc2017
             os: windows-2016
             repository: windows_x86
-            vcarch: x86
           - platform: winrt_x64_msvc2017
             os: windows-2016
             repository: windows_x86
-            vcarch: x64_x86
           - platform: winrt_x86_msvc2017
             os: windows-2016
             repository: windows_x86
-            vcarch: x64_x86
           - platform: winrt_armv7_msvc2017
             os: windows-2016
             repository: windows_x86
-            vcarch: x64_x86
           - platform: mingw73_64
             os: windows-latest
             repository: windows_x86
@@ -96,12 +91,6 @@ jobs:
         with:
           version: ${{matrix.emsdk}}
           actions-cache-folder: emsdk-cache
-      - name: msvc host tools
-        uses: ilammy/msvc-dev-cmd@v1
-        if: contains(matrix.platform, 'msvc')
-        with:
-          arch: ${{matrix.vcarch}}
-          #toolset: 14.16
       - name: actions/cache qt
         uses: actions/cache@v1
         id: cache-qt
@@ -214,19 +203,14 @@ jobs:
             emsdk: sdk-1.38.27-64bit
           - platform: msvc2017_64
             os: windows-2016
-            vcarch: x64
           - platform: msvc2017
             os: windows-2016
-            vcarch: x64_x86
           - platform: winrt_x64_msvc2017
             os: windows-2016
-            vcarch: x64
           - platform: winrt_x86_msvc2017
             os: windows-2016
-            vcarch: x64_x86
           - platform: winrt_armv7_msvc2017
             os: windows-2016
-            vcarch: x64_arm
           - platform: mingw73_64
             os: windows-latest
           - platform: mingw73_32
@@ -253,12 +237,6 @@ jobs:
         with:
           version: ${{matrix.emsdk}}
           actions-cache-folder: emsdk-cache
-      - uses: Skycoder42/msvc-dev-cmd@master
-        if: contains(matrix.platform, 'msvc')
-        with:
-          arch: ${{matrix.vcarch}}
-          #toolset: 14.16
-          uwp: ${{contains(matrix.platform, 'winrt')}}
       - name: actions/cache qt
         uses: actions/cache@v1
         id: cache-qt
