@@ -4,6 +4,9 @@ class RequestBuilderTest : public QObject
 {
 	Q_OBJECT
 
+public:
+	using BodyType = std::variant<QJsonObject, QCborMap>;
+
 private Q_SLOTS:
 	void initTestCase();
 	void cleanupTestCase();
@@ -22,6 +25,8 @@ private:
 	HttpServer *server;
 	QNetworkAccessManager *nam;
 };
+
+Q_DECLARE_METATYPE(RequestBuilderTest::BodyType)
 
 void RequestBuilderTest::initTestCase()
 {
@@ -334,56 +339,83 @@ void RequestBuilderTest::testBuildingRelative()
 void RequestBuilderTest::testSending_data()
 {
 	QTest::addColumn<QUrl>("url");
-	QTest::addColumn<QJsonObject>("body");
+	QTest::addColumn<BodyType>("body");
 	QTest::addColumn<QByteArray>("verb");
 	QTest::addColumn<int>("status");
 	QTest::addColumn<QNetworkReply::NetworkError>("error");
-	QTest::addColumn<QJsonObject>("object");
+	QTest::addColumn<BodyType>("object");
 
-	QJsonObject object;
-	object["userId"] = 1;
-	object["id"] = 1;
-	object["title"] = "Title1";
-	object["body"] = "Body1";
-	QTest::newRow("testDefaultGet") << server->url("/posts/1")
-									<< QJsonObject()
-									<< QByteArray()
-									<< 200
-									<< QNetworkReply::NoError
-									<< object;
+	QCborMap map;
+	map[QStringLiteral("id")] = 1;
+	map[QStringLiteral("userId")] = 1;
+	map[QStringLiteral("title")] = QStringLiteral("Title1");
+	map[QStringLiteral("body")] = QStringLiteral("Body1");
+	QTest::newRow("testDefaultGet.json") << server->url("/posts/1")
+										 << BodyType{QJsonObject{}}
+										 << QByteArray()
+										 << 200
+										 << QNetworkReply::NoError
+										 << BodyType{map.toJsonObject()};
+	QTest::newRow("testDefaultGet.cbor") << server->url("/posts/1")
+										 << BodyType{QCborMap{}}
+										 << QByteArray()
+										 << 200
+										 << QNetworkReply::NoError
+										 << BodyType{map};
 
-	object["title"] = "baum";
-	object["body"] = 42;
-	QTest::newRow("testPut") << server->url("/posts/1")
-							 << object
-							 << QByteArray("PUT")
-							 << 200
-							 << QNetworkReply::NoError
-							 << object;
+	map[QStringLiteral("title")] = QStringLiteral("baum");
+	map.remove(QStringLiteral("body")); // workaround for QTBUG-80342
+	map[QStringLiteral("body")] = 42;
+	QTest::newRow("testPut.json") << server->url("/posts/1")
+								  << BodyType{map.toJsonObject()}
+								  << QByteArray("PUT")
+								  << 200
+								  << QNetworkReply::NoError
+								  << BodyType{map.toJsonObject()};
+	QTest::newRow("testPut.cbor") << server->url("/posts/1")
+								  << BodyType{map}
+								  << QByteArray("PUT")
+								  << 200
+								  << QNetworkReply::NoError
+								  << BodyType{map};
 
-	QTest::newRow("testError") << server->url("/posts/baum")
-							   << QJsonObject()
-							   << QByteArray("GET")
-							   << 404
-							   << QNetworkReply::ContentNotFoundError
-							   << QJsonObject();
+	QTest::newRow("testError.json") << server->url("/posts/baum")
+									<< BodyType{QJsonObject{}}
+									<< QByteArray("GET")
+									<< 404
+									<< QNetworkReply::ContentNotFoundError
+									<< BodyType{QJsonObject{}};
+	QTest::newRow("testError.cbor") << server->url("/posts/baum")
+									<< BodyType{QCborMap{}}
+									<< QByteArray("GET")
+									<< 404
+									<< QNetworkReply::ContentNotFoundError
+									<< BodyType{QCborMap{}};
 }
 
 void RequestBuilderTest::testSending()
 {
 	QFETCH(QUrl, url);
-	QFETCH(QJsonObject, body);
+	QFETCH(BodyType, body);
 	QFETCH(QByteArray, verb);
 	QFETCH(int, status);
 	QFETCH(QNetworkReply::NetworkError, error);
-	QFETCH(QJsonObject, object);
+	QFETCH(BodyType, object);
 
 	QtRestClient::RequestBuilder builder(url, nam);
 	builder.setAttribute(QNetworkRequest::HTTP2AllowedAttribute, false);
-	if(!verb.isEmpty())
+	if (!verb.isEmpty())
 		builder.setVerb(verb);
-	if(!body.isEmpty())
-		builder.setBody(body);
+	std::visit([&](auto vBody){
+		if (!vBody.isEmpty())
+			builder.setBody(vBody);
+		else {
+			if constexpr (std::is_same_v<std::decay_t<decltype(vBody)>, QJsonObject>)
+				builder.setAccept("application/json");
+			if constexpr (std::is_same_v<std::decay_t<decltype(vBody)>, QCborMap>)
+				builder.setAccept("application/cbor");
+		}
+	}, body);
 
 	auto reply = builder.send();
 	QSignalSpy replySpy(reply, &QNetworkReply::finished);
@@ -393,10 +425,17 @@ void RequestBuilderTest::testSending()
 	QCOMPARE(reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt(), status);
 
 	if(error == QNetworkReply::NoError) {
-		QJsonParseError e;
-		auto repData = QJsonDocument::fromJson(reply->readAll(), &e).object();
-		QCOMPARE(e.error, QJsonParseError::NoError);
-		QCOMPARE(repData, object);
+		if (std::holds_alternative<QJsonObject>(object)) {
+			QJsonParseError e;
+			auto repData = QJsonDocument::fromJson(reply->readAll(), &e).object();
+			QCOMPARE(e.error, QJsonParseError::NoError);
+			QCOMPARE(repData, std::get<QJsonObject>(object));
+		} else {
+			QCborParserError e;
+			auto repData = QCborValue::fromCbor(reply->readAll(), &e).toMap();
+			QCOMPARE(e.error, QCborError::NoError);
+			QCOMPARE(repData, std::get<QCborMap>(object));
+		}
 	}
 
 	reply->deleteLater();

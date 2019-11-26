@@ -12,6 +12,7 @@ struct Q_RESTCLIENT_EXPORT RequestBuilderPrivate : public QSharedData
 	static const QByteArray ContentTypeCbor;
 	static const QByteArray ContentTypeJson;
 	static const QByteArray ContentTypeUrlEncoded;
+	static const QByteArray Accept;
 
 	QNetworkAccessManager *nam;
 

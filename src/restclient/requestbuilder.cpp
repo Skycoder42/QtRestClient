@@ -138,35 +138,43 @@ RequestBuilder &RequestBuilder::setSslConfig(QSslConfiguration sslConfig)
 }
 #endif
 
-RequestBuilder &RequestBuilder::setBody(QByteArray body, const QByteArray &contentType)
+RequestBuilder &RequestBuilder::setBody(QByteArray body, const QByteArray &contentType, bool setAccept)
 {
 	d->body = std::move(body);
 	d->postQuery.clear();
 	d->headers.insert(RequestBuilderPrivate::ContentType, contentType);
+	if (setAccept)
+		d->headers.insert(RequestBuilderPrivate::Accept, contentType);
 	return *this;
 }
 
-RequestBuilder &RequestBuilder::setBody(QCborValue body)
+RequestBuilder &RequestBuilder::setBody(QCborValue body, bool setAccept)
 {
 	d->body = body.toCbor();
 	d->postQuery.clear();
 	d->headers.insert(RequestBuilderPrivate::ContentType, RequestBuilderPrivate::ContentTypeCbor);
+	if (setAccept)
+		d->headers.insert(RequestBuilderPrivate::Accept, RequestBuilderPrivate::ContentTypeCbor);
 	return *this;
 }
 
-RequestBuilder &RequestBuilder::setBody(const QJsonObject &body)
+RequestBuilder &RequestBuilder::setBody(const QJsonObject &body, bool setAccept)
 {
 	d->body = QJsonDocument(body).toJson(QJsonDocument::Compact);
 	d->postQuery.clear();
 	d->headers.insert(RequestBuilderPrivate::ContentType, RequestBuilderPrivate::ContentTypeJson);
+	if (setAccept)
+		d->headers.insert(RequestBuilderPrivate::Accept, RequestBuilderPrivate::ContentTypeJson);
 	return *this;
 }
 
-RequestBuilder &RequestBuilder::setBody(const QJsonArray &body)
+RequestBuilder &RequestBuilder::setBody(const QJsonArray &body, bool setAccept)
 {
 	d->body = QJsonDocument(body).toJson(QJsonDocument::Compact);
 	d->postQuery.clear();
 	d->headers.insert(RequestBuilderPrivate::ContentType, RequestBuilderPrivate::ContentTypeJson);
+	if (setAccept)
+		d->headers.insert(RequestBuilderPrivate::Accept, RequestBuilderPrivate::ContentTypeJson);
 	return *this;
 }
 
@@ -174,6 +182,11 @@ RequestBuilder &RequestBuilder::setVerb(QByteArray verb)
 {
 	d->verb = std::move(verb);
 	return *this;
+}
+
+RequestBuilder &RequestBuilder::setAccept(const QByteArray &mimeType)
+{
+	d->headers.insert(RequestBuilderPrivate::Accept, mimeType);
 }
 
 RequestBuilder &RequestBuilder::addPostParameter(const QString &name, const QString &value)
@@ -250,6 +263,7 @@ const QByteArray RequestBuilderPrivate::ContentType = "Content-Type";
 const QByteArray RequestBuilderPrivate::ContentTypeCbor = "application/cbor";
 const QByteArray RequestBuilderPrivate::ContentTypeJson = "application/json";
 const QByteArray RequestBuilderPrivate::ContentTypeUrlEncoded = "application/x-www-form-urlencoded";
+const QByteArray RequestBuilderPrivate::Accept = "Accept";
 
 RequestBuilderPrivate::RequestBuilderPrivate(const QUrl &baseUrl, QNetworkAccessManager *nam) :
 	QSharedData{},

@@ -323,7 +323,7 @@ QCborMap HttpServer::extract(const QHttpServerRequest &request, bool allowPost)
 		const auto cbor = QCborValue::fromCbor(request.body(), &error);
 		if (error.error != QCborError::NoError)
 			throw HttpError{error.errorString()};
-		if (cbor.type() == QCborValue::Map)
+		if (!cbor.isMap())
 			throw HttpError{"Unexpected cbor type - must be a map"};
 		return cbor.toMap();
 	} else if (cType == QtRestClient::RequestBuilderPrivate::ContentTypeJson) {
