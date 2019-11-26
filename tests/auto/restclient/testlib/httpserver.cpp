@@ -99,6 +99,22 @@ bool HttpServer::setupRoutes()
 	auto ok = false;
 	[&]() {
 		QVERIFY(_port > 0);
+		QVERIFY(_server->route(QStringLiteral("/void/<arg>"), [](const QString &noContent, const QHttpServerRequest &request) -> QHttpServerResponse {
+			try {
+				switch (request.method()) {
+				case QHttpServerRequest::Method::Get:
+					if (QVariant{noContent}.toBool())
+						return QHttpServerResponse::StatusCode::NoContent;
+					else
+						return QHttpServerResponse::StatusCode::Ok;
+				default:
+					throw HttpError{QHttpServerResponse::StatusCode::MethodNotAllowed};
+				}
+			} catch (HttpError &e) {
+				qWarning() << e.what();
+				return e.response();
+			}
+		}));
 		QVERIFY(_server->route(QStringLiteral("/<arg>"), [this](const QString &type, const QHttpServerRequest &request) -> QHttpServerResponse {
 			try {
 				if (!_data.contains(type))

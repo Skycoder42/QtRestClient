@@ -236,20 +236,23 @@ void RestReplyTest::testGenericVoidReplyWrapping_data()
 	QTest::addColumn<int>("status");
 	QTest::addColumn<bool>("except");
 
-	QTest::newRow("get") << server->url("/posts/1")
-						 << true
-						 << 200
-						 << false;
+	QTest::newRow("get.value") << server->url("/posts/1")
+							   << true
+							   << 200
+							   << false;
+	QTest::newRow("get.empty.ok") << server->url("/void/false")
+								  << true
+								  << 200
+								  << false;
+	QTest::newRow("get.empty.noContent") << server->url("/void/true")
+										 << true
+										 << 204
+										 << false;
 
 	QTest::newRow("notFound") << server->url("/posts/3434")
 							  << false
 							  << 404
 							  << false;
-
-	QTest::newRow("noSerExcept") << server->url("/posts")
-							   << true
-							   << 200
-							   << false;
 }
 
 void RestReplyTest::testGenericVoidReplyWrapping()
