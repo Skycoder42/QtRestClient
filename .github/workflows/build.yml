@@ -96,7 +96,7 @@ jobs:
         id: cache-qt
         with:
           path: qt/${{matrix.version}}/${{matrix.platform}}
-          key: qt-${{matrix.version}}-${{matrix.platform}}-json
+          key: qt-${{matrix.version}}-${{matrix.platform}}-http-json
       - uses: Skycoder42/action-setup-qt@master
         id: qt
         with:
@@ -106,7 +106,7 @@ jobs:
           install-args: --addRepository https://install.skycoder42.de/qtmodules/${{matrix.repository}} --verbose
           cachedir: qt/${{matrix.version}}/${{matrix.platform}}
       - name: build qthttpserver
-        #if: steps.cache-qt.outputs.cache-hit != 'true'
+        if: steps.cache-qt.outputs.cache-hit != 'true'
         run: |
           qmake
           ${{steps.qt.outputs.make}} qmake_all
@@ -242,7 +242,7 @@ jobs:
         id: cache-qt
         with:
           path: qt/${{matrix.version}}/${{matrix.platform}}
-          key: qt-${{matrix.version}}-${{matrix.platform}}-no-json
+          key: qt-${{matrix.version}}-${{matrix.platform}}-http-no-json
       - uses: Skycoder42/action-setup-qt@master
         id: qt
         with:
@@ -252,7 +252,7 @@ jobs:
           install-args: --verbose
           cachedir: qt/${{matrix.version}}/${{matrix.platform}}
       - name: build qthttpserver
-        #if: steps.cache-qt.outputs.cache-hit != 'true'
+        if: steps.cache-qt.outputs.cache-hit != 'true'
         run: |
           qmake
           ${{steps.qt.outputs.make}} qmake_all
