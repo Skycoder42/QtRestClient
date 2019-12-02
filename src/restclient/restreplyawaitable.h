@@ -361,28 +361,10 @@ QString GenericAwaitedException<ErrorClassType>::errorString(const std::function
 
 // await method implementations
 
-template<typename DataClassType, typename ErrorClassType>
-GenericRestReplyAwaitable<DataClassType, ErrorClassType> GenericRestReply<DataClassType, ErrorClassType>::awaitable()
+template<typename TInstance, typename DataClassType, typename ErrorClassType>
+GenericRestReplyAwaitable<DataClassType, ErrorClassType> GenericRestReplyBase<TInstance, DataClassType, ErrorClassType>::awaitable()
 {
 	return GenericRestReplyAwaitable<DataClassType, ErrorClassType>{this};
-}
-
-template<typename ErrorClassType>
-GenericRestReplyAwaitable<void, ErrorClassType> GenericRestReply<void, ErrorClassType>::awaitable()
-{
-	return GenericRestReplyAwaitable<void, ErrorClassType>{this};
-}
-
-template<typename DataClassType, typename ErrorClassType>
-GenericRestReplyAwaitable<QList<DataClassType>, ErrorClassType> GenericRestReply<QList<DataClassType>, ErrorClassType>::awaitable()
-{
-	return GenericRestReplyAwaitable<QList<DataClassType>, ErrorClassType>{this};
-}
-
-template<typename DataClassType, typename ErrorClassType>
-GenericRestReplyAwaitable<Paging<DataClassType>, ErrorClassType> GenericRestReply<Paging<DataClassType>, ErrorClassType>::awaitable()
-{
-	return GenericRestReplyAwaitable<Paging<DataClassType>, ErrorClassType>{this};
 }
 #endif
 
