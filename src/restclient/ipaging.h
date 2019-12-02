@@ -4,7 +4,9 @@
 #include "QtRestClient/qtrestclient_global.h"
 
 #include <QtCore/qjsonarray.h>
-#include <QtCore/qjsonobject.h>
+#include <QtCore/qjsonvalue.h>
+#include <QtCore/qcborvalue.h>
+#include <QtCore/qcborarray.h>
 #include <QtCore/qurl.h>
 #include <QtCore/qvariant.h>
 
@@ -23,12 +25,12 @@ public:
 	virtual ~IPaging();
 
 	//! Returns the items of this paging object, i.e. it's data
-	virtual QJsonArray items() const = 0;
+	virtual std::variant<QCborArray, QJsonArray> items() const = 0;
 
 	//! Returns the total number of objects there are
-	virtual int total() const;
+	virtual qint64 total() const;
 	//! Returns the offset this paging begins at
-	virtual int offset() const;
+	virtual qint64 offset() const;
 	//! Returns true, if there is a next paging object
 	virtual bool hasNext() const = 0;
 	//! Returns the link to the next paging object
@@ -40,7 +42,27 @@ public:
 	//! Returns a hash containing all properties of the original JSON
 	virtual QVariantMap properties() const = 0;
 	//! Returns the original JSON element parsed
-	virtual QJsonObject originalJson() const = 0;
+	virtual std::variant<QCborValue, QJsonValue> originalData() const = 0;
+};
+
+class Q_RESTCLIENT_EXPORT ICborPaging : public IPaging  // clazy:exclude=copyable-polymorphic
+{
+public:
+	virtual QCborArray cborItems() const = 0;
+	virtual QCborValue originalCbor() const = 0;
+
+	std::variant<QCborArray, QJsonArray> items() const final;
+	std::variant<QCborValue, QJsonValue> originalData() const final;
+};
+
+class Q_RESTCLIENT_EXPORT IJsonPaging : public IPaging  // clazy:exclude=copyable-polymorphic
+{
+public:
+	virtual QJsonArray jsonItems() const = 0;
+	virtual QJsonValue originalJson() const = 0;
+
+	std::variant<QCborArray, QJsonArray> items() const final;
+	std::variant<QCborValue, QJsonValue> originalData() const final;
 };
 
 class Q_RESTCLIENT_EXPORT IPagingFactory
@@ -53,9 +75,9 @@ public:
 
 	//! Creates a new paging object of the given data
 #ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
-	virtual IPaging *createPaging(QtJsonSerializer::JsonSerializer *serializer, const QJsonObject &data) const = 0;
+	virtual IPaging *createPaging(QtJsonSerializer::JsonSerializer *serializer, const std::variant<QCborValue, QJsonValue> &data) const = 0;
 #else
-	virtual IPaging *createPaging(const QJsonObject &data) const = 0;
+	virtual IPaging *createPaging(const std::variant<QCborValue, QJsonValue> &data) const = 0;
 #endif
 };
 

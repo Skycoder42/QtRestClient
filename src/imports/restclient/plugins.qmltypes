@@ -547,7 +547,7 @@ Module {
             name: "ErrorType"
             values: {
                 "NetworkError": 0,
-                "JsonParseError": 1,
+                "ParseError": 1,
                 "FailureError": 2,
                 "DeserializationError": 3
             }
@@ -557,17 +557,17 @@ Module {
         Signal {
             name: "completed"
             Parameter { name: "httpStatus"; type: "int" }
-            Parameter { name: "reply"; type: "QJsonValue" }
+            Parameter { name: "reply"; type: "DataType" }
         }
         Signal {
             name: "succeeded"
             Parameter { name: "httpStatus"; type: "int" }
-            Parameter { name: "reply"; type: "QJsonValue" }
+            Parameter { name: "reply"; type: "DataType" }
         }
         Signal {
             name: "failed"
             Parameter { name: "httpStatus"; type: "int" }
-            Parameter { name: "reason"; type: "QJsonValue" }
+            Parameter { name: "reason"; type: "DataType" }
         }
         Signal {
             name: "error"

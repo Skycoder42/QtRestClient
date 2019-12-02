@@ -23,18 +23,28 @@ RestReplyAwaitable::~RestReplyAwaitable() = default;
 
 void RestReplyAwaitable::prepare(std::function<void ()> resume)
 {
-	QObject::connect(d->reply, &RestReply::succeeded, d->reply, [this, resume](int, QJsonValue value) {
+	d->reply->onSucceeded(d->reply, [this, xResume = std::move(resume)](RestReply::DataType data){
 		d->errorResult.reset();
-		d->successResult = std::move(value);
-		resume();
+		d->successResult = std::move(data);
+		xResume();
 	});
-	QObject::connect(d->reply, &RestReply::failed, d->reply, [this, resume](int code, const QJsonValue &value) {
-		d->errorResult.reset(new AwaitedException{code, RestReply::FailureError, QVariant::fromValue(value)});
-		resume();
+	d->reply->onFailed(d->reply, [this, xResume = std::move(resume)](int code, const RestReply::DataType &data){
+		d->errorResult.reset(new AwaitedException{
+			code,
+			RestReply::FailureError,
+			std::visit(__private::overload {
+						   [](std::nullopt_t) {
+							   return QVariant{};
+						   },
+						   [](auto vData) {
+							   return QVariant::fromValue(vData);
+						   }
+					   }, data)});
+		xResume();
 	});
-	QObject::connect(d->reply, &RestReply::error, d->reply, [this, resume](const QString &errorString, int code, RestReply::ErrorType type) {
+	d->reply->onError([this, xResume = std::move(resume)](const QString &errorString, int code, RestReply::ErrorType type) {
 		d->errorResult.reset(new AwaitedException{code, type, errorString});
-		resume();
+		xResume();
 	});
 }
 

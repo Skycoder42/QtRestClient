@@ -265,6 +265,8 @@ void RestClientPrivate::setupBuilder(RequestBuilder &builder) const
 
 // ------------- Global header implementation -------------
 
+Q_LOGGING_CATEGORY(QtRestClient::logGlobal, "qt.restclient");
+
 /*!
 @param name The name to identify the API with. Use to obtain a reference to the API later on
 @param client The RestClient to be registered

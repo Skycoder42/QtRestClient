@@ -11,7 +11,7 @@ class RestReplyAwaitablePrivate
 public:
 	QPointer<RestReply> reply;
 
-	QJsonValue successResult;
+	RestReply::DataType successResult = std::nullopt;
 	QScopedPointer<AwaitedException> errorResult;
 
 	RestReplyAwaitablePrivate(RestReply *reply);

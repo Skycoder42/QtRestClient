@@ -5,6 +5,7 @@
 #endif
 
 #include "standardpaging_p.h"
+#include "metacomponent.h"
 using namespace QtRestClient;
 #ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
 using namespace QtJsonSerializer;
@@ -15,19 +16,19 @@ namespace QtRestClient {
 class StandardPagingPrivate
 {
 public:
-	int total = std::numeric_limits<int>::max();
-	int offset = -1;
+	qint64 total = std::numeric_limits<qint64>::max();
+	qint64 offset = -1;
 	QUrl prev;
 	QUrl next;
-	QJsonArray items;
-	QJsonObject json;
+	std::variant<QCborArray, QJsonArray> items;
+	std::variant<QCborValue, QJsonValue> data;
 };
 
 }
 
 StandardPaging::StandardPaging() :
-	IPaging(),
-	d(new StandardPagingPrivate())
+	  IPaging{},
+	  d{new StandardPagingPrivate{}}
 {}
 
 StandardPaging::StandardPaging(const StandardPaging &other) = default;
@@ -40,17 +41,17 @@ StandardPaging &StandardPaging::operator=(StandardPaging &&other) noexcept = def
 
 StandardPaging::~StandardPaging() = default;
 
-QJsonArray StandardPaging::items() const
+std::variant<QCborArray, QJsonArray> StandardPaging::items() const
 {
 	return d->items;
 }
 
-int StandardPaging::total() const
+qint64 StandardPaging::total() const
 {
 	return d->total;
 }
 
-int StandardPaging::offset() const
+qint64 StandardPaging::offset() const
 {
 	return d->offset;
 }
@@ -77,79 +78,69 @@ QUrl StandardPaging::previous() const
 
 QVariantMap StandardPaging::properties() const
 {
-	return QJsonValue(d->json).toVariant().toMap();
+	return std::visit([](auto data){
+			   return data.toVariant();
+		   }, d->data).toMap();
 }
 
-QJsonObject StandardPaging::originalJson() const
+ std::variant<QCborValue, QJsonValue> StandardPaging::originalData() const
 {
-	return d->json;
-}
-
-void StandardPaging::setItems(QJsonArray items)
-{
-	d->items = std::move(items);
-}
-
-void StandardPaging::setTotal(int total)
-{
-	d->total = total;
-}
-
-void StandardPaging::setOffset(int offset)
-{
-	d->offset = offset;
-}
-
-void StandardPaging::setNext(QUrl next)
-{
-	d->next = std::move(next);
-}
-
-void StandardPaging::setPrevious(QUrl previous)
-{
-	d->prev = std::move(previous);
-}
-
-void StandardPaging::setJson(QJsonObject object)
-{
-	d->json = std::move(object);
+	return d->data;
 }
 
 // ------------- Factory Implementation -------------
 
 #ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
-IPaging *StandardPagingFactory::createPaging(JsonSerializer *serializer, const QJsonObject &data) const
-{
-	//validate data and next only -> only ones required
-	if(!validateUrl(data[QStringLiteral("next")]) ||
-	   !data[QStringLiteral("items")].isArray())
-		throw DeserializationException("Given JSON is not a default paging object!");
-	auto paging = new StandardPaging{serializer->deserialize<StandardPaging>(data)};
-	paging->setJson(data);
-	return paging;
-}
+IPaging *StandardPagingFactory::createPaging(JsonSerializer *, const std::variant<QCborValue, QJsonValue> &data) const
 #else
-IPaging *StandardPagingFactory::createPaging(const QJsonObject &data) const
+IPaging *StandardPagingFactory::createPaging(const std::variant<QCborValue, QJsonValue> &data) const
+#endif
 {
 	auto paging = new StandardPaging{};
-	paging->setItems(data[QStringLiteral("items")].toArray());
-	paging->setTotal(data[QStringLiteral("total")].toInt());
-	paging->setOffset(data[QStringLiteral("offset")].toInt());
-	if(validateUrl(data[QStringLiteral("next")]))
-		paging->setNext(data[QLatin1String("next")].toString());
-	if(validateUrl(data[QStringLiteral("previous")]))
-		paging->setPrevious(data[QLatin1String("previous")].toString());
-	paging->setJson(data);
+	std::visit(__private::overload {
+				   [paging](const QCborValue &value) {
+					   const auto map = value.toMap();
+					   paging->d->items = map[QStringLiteral("items")].toArray();
+					   paging->d->total = map[QStringLiteral("total")].toInteger();
+					   paging->d->offset = map[QStringLiteral("offset")].toInteger();
+					   if (const auto url = extractUrl(map[QStringLiteral("next")]); url)
+						   paging->d->next = *url;
+					   if (const auto url = extractUrl(map[QStringLiteral("previous")]); url)
+						   paging->d->prev = *url;
+				   },
+				   [paging](const QJsonValue &value) {
+					   const auto obj = value.toObject();
+					   paging->d->items = obj[QStringLiteral("items")].toArray();
+					   paging->d->total = obj[QStringLiteral("total")].toInt();
+					   paging->d->offset = obj[QStringLiteral("offset")].toInt();
+					   if (const auto url = extractUrl(obj[QStringLiteral("next")]); url)
+						   paging->d->next = *url;
+					   if (const auto url = extractUrl(obj[QStringLiteral("previous")]); url)
+						   paging->d->prev = *url;
+				   }
+			   }, data);
+	paging->d->data = data;
 	return paging;
 }
-#endif
 
-bool StandardPagingFactory::validateUrl(const QJsonValue &value)
+std::optional<QUrl> StandardPagingFactory::extractUrl(const std::variant<QCborValue, QJsonValue> &value)
 {
-	if(value.isNull())
-		return true;
-	else if(value.isString())
-		return QUrl(value.toString()).isValid();
-	else
-		return false;
+	return std::visit(__private::overload {
+						  [](const QCborValue &data) -> std::optional<QUrl> {
+							  if (data.isUrl())
+								  return data.toUrl();
+							  else
+								  return std::nullopt;
+						  },
+						  [](const QJsonValue &data) -> std::optional<QUrl> {
+							  if (data.isString()) {
+								  QUrl url{data.toString()};
+								  if (url.isValid())
+									  return url;
+								  else
+									  return std::nullopt;
+							  } else
+								  return std::nullopt;
+						  }
+					  }, value);
 }

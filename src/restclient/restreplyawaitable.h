@@ -84,7 +84,7 @@ public:
 	~RestReplyAwaitable();
 
 	//! Type returned when awaiting this class
-	using type = QJsonValue;
+	using type = RestReply::DataType;
 	//! Exception type thrown in case of an error
 	using exceptionType = AwaitedException;
 	//! Prepare the awaitable for resumption

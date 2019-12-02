@@ -39,7 +39,7 @@ void PagingModel::initialize(RestReply *reply, IPagingModelFetcher *fetcher, int
 	d->data.clear();
 	d->generateRoleNames();
 	endResetModel();
-	reply->onSucceeded(this, static_cast<std::function<void(int, QJsonObject)>>(std::bind(&PagingModelPrivate::processReply, d.data(), sph::_1, sph::_2)));
+	reply->onSucceeded(this, std::bind(&PagingModelPrivate::processReply, d.data(), sph::_1, sph::_2));
 	reply->onAllErrors(this, std::bind(&PagingModelPrivate::processError, d.data(), sph::_1, sph::_2, sph::_3));
 }
 
@@ -314,7 +314,7 @@ void PagingModelPrivate::processPaging(IPaging *paging)
 {
 	if (paging->offset() < data.size()) {
 		qWarning() << "Pagings out of sync - dropping duplicate data";
-		data = data.mid(0, paging->offset());
+		data = data.mid(0, static_cast<int>(paging->offset()));
 	} else if (paging->offset() > data.size()) {
 		if (paging->hasPrevious()) {
 			qWarning() << "Pagings out of sync - trying for previous data";
@@ -327,34 +327,36 @@ void PagingModelPrivate::processPaging(IPaging *paging)
 		}
 	}
 
-	q->beginInsertRows({}, data.size(), data.size() + paging->items().size() - 1);
+	std::visit([&](const auto &items){
+		q->beginInsertRows({}, data.size(), data.size() + static_cast<int>(items.size()) - 1);
 #ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
-	const auto serializer = fetcher->client()->serializer();
-	auto fetchFailed = false;
-	for (const auto jData : paging->items()) {
-		try {
-			data.append(serializer->deserialize(jData, typeId, q));  // TODO care about memory leak
-		} catch (DeserializationException &e) {
-			qCritical() << "Failed to deserialize paging element with error:"
-						<< e.what();
-			fetchFailed = true;
+		const auto serializer = fetcher->client()->serializer();
+		auto fetchFailed = false;
+		for (const auto jData : items) {
+			try {
+				data.append(serializer->deserializeGeneric(jData, typeId, q));  // TODO care about memory leak
+			} catch (DeserializationException &e) {
+				qCritical() << "Failed to deserialize paging element with error:"
+							<< e.what();
+				fetchFailed = true;
+			}
 		}
-	}
 #else
-	for (const auto jData : paging->items())
-		data.append(QVariant::fromValue<QJsonValue>(jData));
+		for (const auto jData : paging->items())
+			data.append(QVariant::fromValue<QJsonValue>(jData));
 #endif
 
-	if (data.size() < paging->total() && paging->hasNext())
-		nextUrl = paging->next();
-	else
-		nextUrl = std::nullopt;
-	q->endInsertRows();
+		if (data.size() < paging->total() && paging->hasNext())
+			nextUrl = paging->next();
+		else
+			nextUrl = std::nullopt;
+		q->endInsertRows();
 
 #ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
-	if (fetchFailed)
-		emit q->fetchError({});
+		if (fetchFailed)
+			emit q->fetchError({});
 #endif
+	}, paging->items());
 }
 
 void PagingModelPrivate::processError(const QString &message, int code, RestReply::ErrorType errorType)

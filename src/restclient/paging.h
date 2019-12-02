@@ -151,10 +151,10 @@ void Paging<T>::iterate(const std::function<bool(T, int)> &iterator, const std::
 		return;
 
 	//calc total limit -> only if supports indexes
-	int max = INT_MAX;
-	if(d->iPaging->offset() >= 0) {
+	qint64 max = std::numeric_limits<qint64>::max();
+	if (d->iPaging->offset() >= 0) {
 		if(to >= 0)
-			max = qMin(to, d->iPaging->total());
+			max = std::min(static_cast<qint64>(to), d->iPaging->total());
 		else
 			max = d->iPaging->total();
 	}
@@ -179,10 +179,10 @@ void Paging<T>::iterate(QObject *scope, const std::function<bool(T, int)> &itera
 		return;
 
 	//calc total limit -> only if supports indexes
-	int max = INT_MAX;
+	qint64 max = std::numeric_limits<qint64>::max();
 	if(d->iPaging->offset() >= 0) {
 		if(to >= 0)
-			max = qMin(to, d->iPaging->total());
+			max = std::min(static_cast<qint64>(to), d->iPaging->total());
 		else
 			max = d->iPaging->total();
 	}
@@ -207,10 +207,10 @@ void Paging<T>::iterate(const std::function<bool(T, int)> &iterator, const std::
 		return;
 
 	//calc total limit -> only if supports indexes
-	int max = INT_MAX;
+	qint64 max = std::numeric_limits<qint64>::max();
 	if(d->iPaging->offset() >= 0) {
 		if(to >= 0)
-			max = qMin(to, d->iPaging->total());
+			max = std::min(static_cast<qint64>(to), d->iPaging->total());
 		else
 			max = d->iPaging->total();
 	}
@@ -237,10 +237,10 @@ void Paging<T>::iterate(QObject *scope, const std::function<bool(T, int)> &itera
 		return;
 
 	//calc total limit -> only if supports indexes
-	int max = INT_MAX;
+	qint64 max = std::numeric_limits<qint64>::max();
 	if(d->iPaging->offset() >= 0) {
 		if(to >= 0)
-			max = qMin(to, d->iPaging->total());
+			max = std::min(static_cast<qint64>(to), d->iPaging->total());
 		else
 			max = d->iPaging->total();
 	}

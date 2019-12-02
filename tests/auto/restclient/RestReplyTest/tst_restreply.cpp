@@ -37,6 +37,8 @@ private Q_SLOTS:
 	void testSimpleExtension();
 	void testSimplePagingIterate();
 
+	void testCallbackOverloads();
+
 private:
 	HttpServer *server;
 	QtRestClient::RestClient *client;
@@ -678,6 +680,139 @@ void RestReplyTest::testSimplePagingIterate()
 	QCOMPARE(count, 100);
 
 	QCoreApplication::processEvents();//to ensure all deleteLaters have been called!
+}
+
+void RestReplyTest::testCallbackOverloads()
+{
+	QNetworkRequest request(server->url("/posts/0"));
+	request.setRawHeader("Accept", "application/json");
+	request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
+
+	const QCborMap testData {
+		{QStringLiteral("id"), 0},
+		{QStringLiteral("userId"), 0},
+		{QStringLiteral("title"), QStringLiteral("Title0")},
+		{QStringLiteral("body"), QStringLiteral("Body0")},
+	};
+	const QCborValue testVal {testData};
+
+	auto reply = new QtRestClient::RestReply{nam->get(request)};
+	auto called = false;
+	reply->onSucceeded([&](){
+		called = true;
+	});
+	QTRY_VERIFY(called);
+
+	reply = new QtRestClient::RestReply{nam->get(request)};
+	called = false;
+	reply->onSucceeded([&](int code){
+		called = true;
+		QCOMPARE(code, 200);
+	});
+	QTRY_VERIFY(called);
+
+	reply = new QtRestClient::RestReply{nam->get(request)};
+	called = false;
+	reply->onSucceeded([&](const QJsonValue &value){
+		called = true;
+		QCOMPARE(value, testVal.toJsonValue());
+	});
+	QTRY_VERIFY(called);
+
+	reply = new QtRestClient::RestReply{nam->get(request)};
+	called = false;
+	reply->onSucceeded([&](const QJsonObject &value){
+		called = true;
+		QCOMPARE(value, testData.toJsonObject());
+	});
+	QTRY_VERIFY(called);
+
+	reply = new QtRestClient::RestReply{nam->get(request)};
+	called = false;
+	reply->onSucceeded([&](const QJsonArray &value){
+		called = true;
+		QCOMPARE(value, QJsonArray{});
+	});
+	QTRY_VERIFY(called);
+
+	reply = new QtRestClient::RestReply{nam->get(request)};
+	called = false;
+	reply->onSucceeded([&](int code, const QJsonValue &value){
+		called = true;
+		QCOMPARE(code, 200);
+		QCOMPARE(value, testVal.toJsonValue());
+	});
+	QTRY_VERIFY(called);
+
+	reply = new QtRestClient::RestReply{nam->get(request)};
+	called = false;
+	reply->onSucceeded([&](int code, const QJsonObject &value){
+		called = true;
+		QCOMPARE(code, 200);
+		QCOMPARE(value, testData.toJsonObject());
+	});
+	QTRY_VERIFY(called);
+
+	reply = new QtRestClient::RestReply{nam->get(request)};
+	called = false;
+	reply->onSucceeded([&](int code, const QJsonArray &value){
+		called = true;
+		QCOMPARE(code, 200);
+		QCOMPARE(value, QJsonArray{});
+	});
+	QTRY_VERIFY(called);
+
+	request.setRawHeader("Accept", "application/cbor");
+	reply = new QtRestClient::RestReply{nam->get(request)};
+	called = false;
+	reply->onSucceeded([&](const QCborValue &value){
+		called = true;
+		QCOMPARE(value, testVal);
+	});
+	QTRY_VERIFY(called);
+
+	reply = new QtRestClient::RestReply{nam->get(request)};
+	called = false;
+	reply->onSucceeded([&](const QCborMap &value){
+		called = true;
+		QCOMPARE(value, testData);
+	});
+	QTRY_VERIFY(called);
+
+	reply = new QtRestClient::RestReply{nam->get(request)};
+	called = false;
+	reply->onSucceeded([&](const QCborArray &value){
+		called = true;
+		QCOMPARE(value, QCborArray{});
+	});
+	QTRY_VERIFY(called);
+
+	reply = new QtRestClient::RestReply{nam->get(request)};
+	called = false;
+	reply->onSucceeded([&](int code, const QCborValue &value){
+		called = true;
+		QCOMPARE(code, 200);
+		QCOMPARE(value, testVal);
+	});
+	QTRY_VERIFY(called);
+
+	reply = new QtRestClient::RestReply{nam->get(request)};
+	called = false;
+	reply->onSucceeded([&](int code, const QCborMap &value){
+		called = true;
+		QCOMPARE(code, 200);
+		QCOMPARE(value, testData);
+	});
+	QTRY_VERIFY(called);
+
+	reply = new QtRestClient::RestReply{nam->get(request)};
+	called = false;
+	reply->onSucceeded([&](int code, const QCborArray &value){
+		called = true;
+		QCOMPARE(code, 200);
+		QCOMPARE(value, QCborArray{});
+	});
+	QTRY_VERIFY(called);
 }
 
 QTEST_MAIN(RestReplyTest)

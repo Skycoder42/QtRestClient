@@ -43,17 +43,19 @@ RestReply *QmlPaging::previous()
 
 QVariantList QmlPaging::items() const
 {
-	return _paging->items().toVariantList();
+	return std::visit([](const auto &items){
+		return items.toVariantList();
+	}, _paging->items());
 }
 
 int QmlPaging::total() const
 {
-	return _paging->total();
+	return static_cast<int>(_paging->total());
 }
 
 int QmlPaging::offset() const
 {
-	return _paging->offset();
+	return static_cast<int>(_paging->offset());
 }
 
 bool QmlPaging::hasNext() const
@@ -88,19 +90,19 @@ void QmlPaging::iterate(const QJSValue &iterator, int to, int from)
 
 void QmlPaging::iterate(const QJSValue &iterator, const QJSValue &failureHandler, const QJSValue &errorHandler, int to, int from)
 {
-	if(!iterator.isCallable()) {
+	if (!iterator.isCallable()) {
 		qWarning() << "iterator parameter must be a function";
 		return;
 	}
-	if(!failureHandler.isUndefined() && !failureHandler.isCallable()) {
+	if (!failureHandler.isUndefined() && !failureHandler.isCallable()) {
 		qWarning() << "failureHandler parameter must be a function or undefined";
 		return;
 	}
-	if(!errorHandler.isUndefined() && !errorHandler.isCallable()) {
+	if (!errorHandler.isUndefined() && !errorHandler.isCallable()) {
 		qWarning() << "errorHandler parameter must be a function or undefined";
 		return;
 	}
-	if(from < _paging->offset()) {
+	if (from < _paging->offset()) {
 		qWarning() << "from must be smaller then offset" << from << _paging->offset();
 		return;
 	}
@@ -109,30 +111,30 @@ void QmlPaging::iterate(const QJSValue &iterator, const QJSValue &failureHandler
 	if(index < 0)
 		return;
 
-	//calc total limit -> only if supports indexes
+	// calc total limit -> only if supports indexes
 	int max = INT_MAX;
-	if(_paging->offset() >= 0) {
+	if (_paging->offset() >= 0) {
 		if(to >= 0)
-			max = qMin(to, _paging->total());
+			max = std::min(to, static_cast<int>(_paging->total()));
 		else
-			max = _paging->total();
+			max = static_cast<int>(_paging->total());
 	}
 
-	//continue to the next one
-	if(index < max && _paging->hasNext()) {
+	// continue to the next one
+	if (index < max && _paging->hasNext()) {
 		QPointer<RestClient> client{_client};
 		QPointer<QJSEngine> engine{_engine};
 
 		auto reply = next()->onSucceeded([client, engine, iterator, failureHandler, errorHandler, to, index](int, const QJsonObject &data) {
-			if(!client || !engine)
+			if (!client || !engine)
 				return;
 			auto paging = create(client, engine, data);
 			paging.iterate(iterator, failureHandler, errorHandler, to, index);
 		});
 
-		if(failureHandler.isCallable()) {
+		if (failureHandler.isCallable()) {
 			reply->onFailed([engine, failureHandler](int code, const QJsonObject &data) {
-				if(!engine)
+				if (!engine)
 					return;
 				auto fn = failureHandler;
 				fn.call({
@@ -141,7 +143,7 @@ void QmlPaging::iterate(const QJSValue &iterator, const QJSValue &failureHandler
 						});
 			});
 		}
-		if(errorHandler.isCallable()) {
+		if (errorHandler.isCallable()) {
 			reply->onError([errorHandler](const QString &error, int code, RestReply::ErrorType type) {
 				auto fn = errorHandler;
 				fn.call({error, code, type});
@@ -152,39 +154,41 @@ void QmlPaging::iterate(const QJSValue &iterator, const QJSValue &failureHandler
 
 int QmlPaging::internalIterate(QJSValue iterator, int from, int to) const
 {
-	//handle all items in this paging
-	auto offset = _paging->offset();
-	auto count = _paging->items().size();
-	auto start = 0;
-	auto max = count;
-	if(offset >= 0) {// has indexes
-		//from
-		start = qMax(from, offset) - offset;
-		//to
-		if(to >= 0)
-			max = qMin(to, max + offset) - offset;
-	}
-
-	//iterate over used items
-	int i;
-	auto canceled = false;
-	for(i = start; i < max; i++) {
-		auto item = _paging->items().at(i).toVariant();
-		auto index = offset >= 0 ? i + offset : -1;
-		auto res = iterator.call({
-									 _engine->toScriptValue(item),
-									 index
-								 });
-		if(!res.toBool()) {
-			canceled = true;
-			break;
+	return std::visit([&](const auto &items) {
+		// handle all items in this paging
+		auto offset = _paging->offset();
+		auto count = static_cast<qint64>(items.size());
+		auto start = 0ll;
+		auto max = count;
+		if (offset >= 0) {// has indexes
+			// from
+			start = std::max(static_cast<qint64>(from), offset) - offset;
+			// to
+			if(to >= 0)
+				max = std::min(static_cast<qint64>(to), max + offset) - offset;
 		}
-	}
 
-	if(canceled)
-		return -1;
-	else if(offset >= 0)
-		return offset + i;
-	else
-		return 0;
+		// iterate over used items
+		qint64 i;
+		auto canceled = false;
+		for (i = start; i < max; i++) {
+			auto item = items[i].toVariant();
+			auto index = offset >= 0 ? i + offset : -1;
+			auto res = iterator.call({
+				_engine->toScriptValue(item),
+				static_cast<int>(index)
+			});
+			if (!res.toBool()) {
+				canceled = true;
+				break;
+			}
+		}
+
+		if (canceled)
+			return -1;
+		else if (offset >= 0)
+			return static_cast<int>(offset + i);
+		else
+			return 0;
+	}, _paging->items());
 }

@@ -102,7 +102,7 @@ void MainWindow::on_pushButton_clicked()
 											  headers);
 	}
 
-	connect(reply, &RestReply::succeeded, this, [=](int status, QJsonValue value){
+	reply->onSucceeded(this, [=](int status, QJsonValue value){
 		ui->codeLineEdit->setText(QString::number(status));
 		ui->networkErrorLineEdit->clear();
 		QJsonDocument doc;
@@ -113,7 +113,7 @@ void MainWindow::on_pushButton_clicked()
 		ui->replyJsonEdit->setPlainText(QString::fromUtf8(doc.toJson(QJsonDocument::Indented)));
 		QTimer::singleShot(2000, this, &MainWindow::zeroBars);
 	});
-	connect(reply, &RestReply::failed, this, [=](int status, QJsonValue value){
+	reply->onFailed(this, [=](int status, QJsonValue value){
 		ui->codeLineEdit->setText(QString::number(status));
 		ui->networkErrorLabel->setText(tr("Request failure:"));
 		ui->networkErrorLineEdit->setText(tr("Request Failed! See JSON for more details!"));
@@ -125,7 +125,7 @@ void MainWindow::on_pushButton_clicked()
 		ui->replyJsonEdit->setPlainText(QString::fromUtf8(doc.toJson(QJsonDocument::Indented)));
 		QTimer::singleShot(2000, this, &MainWindow::zeroBars);
 	});
-	connect(reply, &RestReply::error, this, [=](QString errorString, int code, RestReply::ErrorType type){
+	reply->onError(this, [=](QString errorString, int code, RestReply::ErrorType type){
 		ui->codeLineEdit->setText(QString::number(code));
 		ui->networkErrorLabel->setText(type == RestReply::NetworkError ? tr("Network error:") : tr("JSON parse error:"));
 		ui->networkErrorLineEdit->setText(errorString);

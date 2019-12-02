@@ -2,124 +2,20 @@
 #include "restreply_p.h"
 #include "restreplyawaitable.h"
 #include "restclass.h"
+#include "requestbuilder_p.h"
 
 #include <QtCore/QBuffer>
 #include <QtCore/QJsonDocument>
 #include <QtCore/QTimer>
+#include <QtCore/QCborStreamReader>
 
 using namespace QtRestClient;
-
 
 RestReply::RestReply(QNetworkReply *networkReply, QObject *parent) :
 	QObject{parent},
 	d{new RestReplyPrivate{networkReply, this}}
 {
 	d->connectReply(networkReply);
-}
-
-RestReply *RestReply::onSucceeded(const std::function<void (int, QJsonObject)> &handler)
-{
-	return onSucceeded(this, handler);
-}
-
-RestReply *RestReply::onSucceeded(QObject *scope, const std::function<void (int, QJsonObject)> &handler)
-{
-	if(!handler)
-		return this;
-	connect(this, &RestReply::succeeded, scope, [handler](int code, const QJsonValue &value){
-		handler(code, value.toObject());
-	});
-	return this;
-}
-
-RestReply *RestReply::onSucceeded(const std::function<void (int, QJsonArray)> &handler)
-{
-	return onSucceeded(this, handler);
-}
-
-RestReply *RestReply::onSucceeded(QObject *scope, const std::function<void (int, QJsonArray)> &handler)
-{
-	if(!handler)
-		return this;
-	connect(this, &RestReply::succeeded, scope, [handler](int code, const QJsonValue &value){
-		handler(code, value.toArray());
-	});
-	return this;
-}
-
-RestReply *RestReply::onSucceeded(const std::function<void (int)> &handler)
-{
-	return onSucceeded(this, handler);
-}
-
-RestReply *RestReply::onSucceeded(QObject *scope, const std::function<void (int)> &handler)
-{
-	if(!handler)
-		return this;
-	connect(this, &RestReply::succeeded, scope, [handler](int code, const QJsonValue &){
-		handler(code);
-	});
-	return this;
-}
-
-RestReply *RestReply::onFailed(const std::function<void (int, QJsonObject)> &handler)
-{
-	return onFailed(this, handler);
-}
-
-RestReply *RestReply::onFailed(QObject *scope, const std::function<void (int, QJsonObject)> &handler)
-{
-	if(!handler)
-		return this;
-	connect(this, &RestReply::failed, scope, [handler](int code, const QJsonValue &value){
-		handler(code, value.toObject());
-	});
-	return this;
-}
-
-RestReply *RestReply::onFailed(const std::function<void (int, QJsonArray)> &handler)
-{
-	return onFailed(this, handler);
-}
-
-RestReply *RestReply::onFailed(QObject *scope, const std::function<void (int, QJsonArray)> &handler)
-{
-	if(!handler)
-		return this;
-	connect(this, &RestReply::failed, scope, [handler](int code, const QJsonValue &value){
-		handler(code, value.toArray());
-	});
-	return this;
-}
-
-RestReply *RestReply::onFailed(const std::function<void (int)> &handler)
-{
-	return onFailed(this, handler);
-}
-
-RestReply *RestReply::onFailed(QObject *scope, const std::function<void (int)> &handler)
-{
-	if(!handler)
-		return this;
-	connect(this, &RestReply::failed, scope, [handler](int code, const QJsonValue &){
-		handler(code);
-	});
-	return this;
-}
-
-RestReply *RestReply::onCompleted(const std::function<void (int)> &handler)
-{
-	return onCompleted(this, handler);
-}
-
-RestReply *RestReply::onCompleted(QObject *scope, const std::function<void (int)> &handler)
-{
-	if(!handler)
-		return this;
-	connect(this, &RestReply::completed, scope, [handler](int code, const QJsonValue &){
-		handler(code);
-	});
-	return this;
 }
 
 RestReply *RestReply::onError(const std::function<void (QString, int, ErrorType)> &handler)
@@ -129,45 +25,23 @@ RestReply *RestReply::onError(const std::function<void (QString, int, ErrorType)
 
 RestReply *RestReply::onError(QObject *scope, const std::function<void (QString, int, RestReply::ErrorType)> &handler)
 {
-	if(!handler)
-		return this;
 	connect(this, &RestReply::error, scope, [handler](const QString &errorString, int error, ErrorType type){
 		handler(errorString, error, type);
 	});
 	return this;
 }
 
-RestReply *RestReply::onAllErrors(const std::function<void (QString, int, RestReply::ErrorType)> &handler, const std::function<QString (QJsonObject, int)> &failureTransformer)
+RestReply *RestReply::onAllErrors(const std::function<void (QString, int, RestReply::ErrorType)> &handler)
 {
-	return onAllErrors(this, handler, failureTransformer);
+	return onAllErrors(this, handler);
 }
 
-RestReply *RestReply::onAllErrors(QObject *scope, const std::function<void (QString, int, RestReply::ErrorType)> &handler, const std::function<QString (QJsonObject, int)> &failureTransformer)
+RestReply *RestReply::onAllErrors(QObject *scope, const std::function<void (QString, int, RestReply::ErrorType)> &handler)
 {
-	this->onFailed(scope, [handler, failureTransformer](int code, const QJsonObject &obj){
-		if(failureTransformer)
-			handler(failureTransformer(obj, code), code, FailureError);
-		else
-			handler(QString(), code, FailureError);
+	this->onFailed(scope, [handler](int code){
+		handler(QString{}, code, FailureError);
 	});
-	this->onError(handler);
-	return this;
-}
-
-RestReply *RestReply::onAllErrors(const std::function<void (QString, int, RestReply::ErrorType)> &handler, const std::function<QString (QJsonArray, int)> &failureTransformer)
-{
-	return onAllErrors(this, handler, failureTransformer);
-}
-
-RestReply *RestReply::onAllErrors(QObject *scope, const std::function<void (QString, int, RestReply::ErrorType)> &handler, const std::function<QString (QJsonArray, int)> &failureTransformer)
-{
-	this->onFailed(scope, [handler, failureTransformer](int code, const QJsonArray &array){
-		if(failureTransformer)
-			handler(failureTransformer(array, code), code, FailureError);
-		else
-			handler(QString(), code, FailureError);
-	});
-	this->onError(handler);
+	this->onError(scope, handler);
 	return this;
 }
 
@@ -304,31 +178,53 @@ void RestReplyPrivate::replyFinished()
 {
 	retryDelay = -1;
 	const auto status = networkReply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+	const auto contentType = networkReply->header(QNetworkRequest::ContentTypeHeader).toByteArray();
+	const auto contentLength = networkReply->header(QNetworkRequest::ContentLengthHeader).toInt();
 
-	//read json first to allow data for certain network fails
-	auto readData = networkReply->readAll();
-	QJsonValue jValue;
-	QJsonParseError jError {0, QJsonParseError::NoError};
-	// always allow empty replies for NO_CONTENT, errors and if explicitly allowed
-	if (readData.isEmpty() && (status == 204 || status >= 300 || allowEmptyReplies))  // 204 = NO_CONTENT
-		jValue = QJsonValue::Null;  // set to NULL to indicate and empty body
-	else {
-		auto jDoc = QJsonDocument::fromJson(readData, &jError);
-		if (jDoc.isObject())
-			jValue = jDoc.object();
-		else if(jDoc.isArray())
-			jValue = jDoc.array();
-	}
+	DataType data{std::nullopt};
+	std::optional<std::pair<int, QString>> parseError = std::nullopt;
+	if (contentLength == 0 && (status == 204 || status >= 300 || allowEmptyReplies)) {  // 204 = NO_CONTENT
+		// ok
+	} else if (contentType == RequestBuilderPrivate::ContentTypeCbor) {
+		QCborStreamReader reader{networkReply};
+		data = QCborValue::fromCbor(reader);
+		if (const auto error = reader.lastError(); error.c != QCborError::NoError)
+			parseError = std::make_pair(error.c, error.toString());
+	} else if (contentType == RequestBuilderPrivate::ContentTypeJson) {
+		const auto readData = networkReply->readAll();
+		QJsonParseError error;
+		auto jDoc = QJsonDocument::fromJson(readData, &error);
+		if (error.error != QJsonParseError::NoError) {
+			parseError = std::make_pair(error.error, error.errorString());
+			if (error.error == QJsonParseError::IllegalValue) {
+				// try to read again as array, to get valid non obj/arr data
+				error = QJsonParseError {};  // clear error
+				jDoc = QJsonDocument::fromJson("[" + readData + "]", &error);  // read wrapped as array
+				if (error.error == QJsonParseError::NoError) {
+					parseError.reset();
+					data = jDoc.array().first();
+				}
+			}
+		} else if (jDoc.isObject())
+			data = QJsonValue{jDoc.object()};
+		else if (jDoc.isArray())
+			data = QJsonValue{jDoc.array()};
+		else if (jDoc.isNull())
+			data = QJsonValue{QJsonValue::Null};
+		else
+			Q_UNREACHABLE();
+	} else
+		parseError = std::make_pair(-1, QStringLiteral("Unsupported content type: %1").arg(QString::fromUtf8(contentType)));
 
 	//check "http errors", because they can have data, but only if json is valid
-	if (jError.error == QJsonParseError::NoError && status >= 300)  // first: status code error + valid json
-		emit q->failed(status, jValue, {});
+	if (!parseError && status >= 300)  // first: status code error + valid data
+		emit q->failed(status, data, {});
 	else if (networkReply->error() != QNetworkReply::NoError)  // next: check normal network errors
 		emit q->error(networkReply->errorString(), networkReply->error(), RestReply::NetworkError, {});
-	else if (jError.error != QJsonParseError::NoError)  // next: json errors
-		emit q->error(jError.errorString(), jError.error, RestReply::JsonParseError, {});
+	else if (parseError)  // next: parsing errors
+		emit q->error(parseError->second, parseError->first, RestReply::ParseError, {});
 	else {  // no errors, completed!
-		emit q->succeeded(status, jValue, {});
+		emit q->succeeded(status, data, {});
 		retryDelay = -1;
 	}
 

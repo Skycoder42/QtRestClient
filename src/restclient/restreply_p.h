@@ -12,6 +12,8 @@ class Q_RESTCLIENT_EXPORT RestReplyPrivate : public QObject
 	Q_OBJECT
 
 public:
+	using DataType = RestReply::DataType;
+
 	static const QByteArray PropertyBuffer;
 
 	static QNetworkReply *compatSend(QNetworkAccessManager *nam, const QNetworkRequest &request, const QByteArray &verb, const QByteArray &body);

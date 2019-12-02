@@ -6,6 +6,7 @@
 #include <QtCore/qstring.h>
 #include <QtCore/qobject.h>
 #include <QtCore/qbytearray.h>
+#include <QtCore/qloggingcategory.h>
 
 #ifndef QT_STATIC
 #  if defined(QT_BUILD_RESTCLIENT_LIB)
@@ -36,6 +37,8 @@ Q_RESTCLIENT_EXPORT RestClient *apiClient(const QString &name);
 Q_RESTCLIENT_EXPORT RestClass *apiRootClass(const QString &name);
 //! Creates a new API class based on the client for the given API name
 Q_RESTCLIENT_EXPORT RestClass *createApiClass(const QString &name, const QString &path, QObject *parent = nullptr);
+
+Q_RESTCLIENT_EXPORT Q_DECLARE_LOGGING_CATEGORY(logGlobal)
 }
 
 #endif // QTRESTCLIENT_GLOBAL_H

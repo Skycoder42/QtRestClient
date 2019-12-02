@@ -94,7 +94,7 @@ void RestAwaitablesTest::testRestReplyAwait()
 			bool ok = false;
 			[&](){
 				if(succeed) {
-					auto data = await(reply->awaitable());
+					auto data = std::get<QJsonValue>(await(reply->awaitable()));  // TODO clean
 					QVERIFY(data.isObject());
 					QCOMPARE(data.toObject(), result);
 				} else {
