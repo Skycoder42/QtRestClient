@@ -19,9 +19,11 @@ class JsonSerializer;
 namespace QtRestClient {
 
 //! Interface to parse generic paging objects and operate on them
-class Q_RESTCLIENT_EXPORT IPaging  // clazy:exclude=copyable-polymorphic
+class Q_RESTCLIENT_EXPORT IPaging
 {
+	Q_DISABLE_COPY(IPaging)
 public:
+	IPaging();
 	virtual ~IPaging();
 
 	//! Returns the items of this paging object, i.e. it's data
@@ -45,7 +47,7 @@ public:
 	virtual std::variant<QCborValue, QJsonValue> originalData() const = 0;
 };
 
-class Q_RESTCLIENT_EXPORT ICborPaging : public IPaging  // clazy:exclude=copyable-polymorphic
+class Q_RESTCLIENT_EXPORT ICborPaging : public IPaging
 {
 public:
 	virtual QCborArray cborItems() const = 0;
@@ -55,7 +57,7 @@ public:
 	std::variant<QCborValue, QJsonValue> originalData() const final;
 };
 
-class Q_RESTCLIENT_EXPORT IJsonPaging : public IPaging  // clazy:exclude=copyable-polymorphic
+class Q_RESTCLIENT_EXPORT IJsonPaging : public IPaging
 {
 public:
 	virtual QJsonArray jsonItems() const = 0;

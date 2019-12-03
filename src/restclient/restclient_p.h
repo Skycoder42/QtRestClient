@@ -2,7 +2,7 @@
 #define QTRESTCLIENT_QRESTCLIENT_P_H
 
 #ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
-#include <QtJsonSerializer/JsonSerializer>
+#include <QtJsonSerializer/SerializerBase>
 #endif
 
 #include "restclient.h"
@@ -10,14 +10,16 @@
 
 #include <optional>
 
+#include <QtCore/private/qobject_p.h>
+
 namespace QtRestClient {
 
-class Q_RESTCLIENT_EXPORT RestClientPrivate
+class Q_RESTCLIENT_EXPORT RestClientPrivate : public QObjectPrivate
 {
-	Q_DISABLE_COPY(RestClientPrivate)
-	friend class RestClient;
-
+	Q_DECLARE_PUBLIC(RestClient)
 public:
+	using DataMode = RestClient::DataMode;
+
 	static QHash<QString, RestClient*> globalApis;
 
 	QUrl baseUrl;
@@ -31,17 +33,14 @@ public:
 
 	QNetworkAccessManager *nam = nullptr;
 #ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
-	QtJsonSerializer::JsonSerializer *serializer = nullptr;
+	QtJsonSerializer::SerializerBase *serializer = nullptr;
+#else
+	DataMode dataMode = DataMode::Json;
 #endif
-	std::optional<QByteArray> acceptType = std::nullopt;
 
 	QScopedPointer<IPagingFactory> pagingFactory {};
 
 	RestClass *rootClass = nullptr;
-
-	RestClientPrivate();
-
-	void setupBuilder(RequestBuilder &builder) const;
 };
 
 }

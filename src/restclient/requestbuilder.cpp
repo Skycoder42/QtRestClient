@@ -28,6 +28,12 @@ RequestBuilder &RequestBuilder::setNetworkAccessManager(QNetworkAccessManager *n
 	return *this;
 }
 
+RequestBuilder &RequestBuilder::setExtender(RequestBuilder::IExtender *extender)
+{
+	d->extender.reset(extender);
+	return *this;
+}
+
 RequestBuilder &RequestBuilder::setCredentials(QString user, QString password)
 {
 	d->user = std::move(user);
@@ -49,7 +55,7 @@ RequestBuilder &RequestBuilder::addHeader(const QByteArray &name, const QByteArr
 
 RequestBuilder &RequestBuilder::addHeaders(const HeaderHash &headers)
 {
-	for(auto it = headers.constBegin(); it != headers.constEnd(); it++)
+	for (auto it = headers.constBegin(); it != headers.constEnd(); it++)
 		d->headers.insert(it.key(), it.value());
 	return *this;
 }
@@ -58,7 +64,7 @@ RequestBuilder &RequestBuilder::updateFromRelativeUrl(const QUrl &url, bool merg
 {
 	auto cUrl = buildUrl();
 	d->base = cUrl.resolved(url);
-	if(d->base.host() != cUrl.host()) {
+	if (d->base.host() != cUrl.host()) {
 		qWarning() << "URL host changed from"
 				   << cUrl.host()
 				   << "to"
@@ -69,13 +75,13 @@ RequestBuilder &RequestBuilder::updateFromRelativeUrl(const QUrl &url, bool merg
 	d->user.clear();
 	d->pass.clear();
 	d->path.clear();
-	if(mergeQuery) {
+	if (mergeQuery) {
 		QUrlQuery query(url.query());
 		for(const auto &item : query.queryItems(QUrl::FullyDecoded)) // clazy:exclude=range-loop
 			d->query.addQueryItem(item.first, item.second);
 	} else
 		d->query = QUrlQuery(url.query());
-	if(!keepFragment)
+	if (!keepFragment)
 		d->fragment.clear();
 	return *this;
 }
@@ -88,7 +94,7 @@ RequestBuilder &RequestBuilder::addParameter(const QString &name, const QString 
 
 RequestBuilder &RequestBuilder::addParameters(const QUrlQuery &parameters)
 {
-	for(const auto &param : parameters.queryItems(QUrl::FullyDecoded)) // clazy:exclude=range-loop
+	for (const auto &param : parameters.queryItems(QUrl::FullyDecoded)) // clazy:exclude=range-loop
 		d->query.addQueryItem(param.first, param.second);
 	return *this;
 }
@@ -125,7 +131,7 @@ RequestBuilder &RequestBuilder::setAttribute(QNetworkRequest::Attribute attribut
 
 RequestBuilder &RequestBuilder::setAttributes(const QHash<QNetworkRequest::Attribute, QVariant> &attributes)
 {
-	for(auto it = attributes.constBegin(); it != attributes.constEnd(); it++)
+	for (auto it = attributes.constBegin(); it != attributes.constEnd(); it++)
 		d->attributes.insert(it.key(), it.value());
 	return *this;
 }
@@ -201,7 +207,7 @@ RequestBuilder &RequestBuilder::addPostParameter(const QString &name, const QStr
 
 RequestBuilder &RequestBuilder::addPostParameters(const QUrlQuery &parameters)
 {
-	for(const auto &param : parameters.queryItems(QUrl::FullyDecoded)) // clazy:exclude=range-loop
+	for (const auto &param : parameters.queryItems(QUrl::FullyDecoded)) // clazy:exclude=range-loop
 		d->postQuery.addQueryItem(param.first, param.second);
 	d->body.clear();
 	d->headers.insert(RequestBuilderPrivate::ContentType, RequestBuilderPrivate::ContentTypeUrlEncoded);
@@ -213,19 +219,22 @@ QUrl RequestBuilder::buildUrl() const
 	auto url = d->base;
 
 	auto pathList = url.path().split(QLatin1Char('/'), QString::SkipEmptyParts);
-	if(!d->version.isNull())
+	if (!d->version.isNull())
 		pathList.append(QLatin1Char('v') + d->version.normalized().toString());
 	pathList.append(d->path);
 	url.setPath(QLatin1Char('/') + pathList.join(QLatin1Char('/')) + (d->trailingSlash ? QStringLiteral("/") : QString()));
 
-	if(!d->user.isNull())
+	if (!d->user.isNull())
 		url.setUserName(d->user);
-	if(!d->pass.isNull())
+	if (!d->pass.isNull())
 		url.setPassword(d->pass);
-	if(!d->query.isEmpty())
+	if (!d->query.isEmpty())
 		url.setQuery(d->query);
-	if(!d->fragment.isNull())
+	if (!d->fragment.isNull())
 		url.setFragment(d->fragment);
+
+	if (d->extender)
+		d->extender->extendUrl(url);
 
 	return url;
 }
@@ -233,30 +242,30 @@ QUrl RequestBuilder::buildUrl() const
 QNetworkRequest RequestBuilder::build() const
 {
 	QNetworkRequest request{buildUrl()};
-	d->prepareRequest(request);
+
+	QByteArray bBody;
+	QByteArray *pBody = nullptr;
+	if (d->extender && d->extender->requiresBody())
+		pBody = &bBody;
+
+	d->prepareRequest(request, pBody);
+	if (d->extender) {
+		auto eVerb = d->verb;
+		d->extender->extendRequest(request, eVerb, pBody);
+	}
+
 	return request;
 }
 
 QNetworkReply *RequestBuilder::send() const
 {
 	QNetworkRequest request{buildUrl()};
+	auto verb = d->verb;
 	QByteArray body;
 	d->prepareRequest(request, &body);
-	return RestReplyPrivate::compatSend(d->nam, request, d->verb, body);
-}
-
-RequestBuilder::RequestBuilder(RequestBuilderPrivate *d_ptr) :
-	d{d_ptr}
-{}
-
-RequestBuilderPrivate *RequestBuilder::d_ptr()
-{
-	return d;
-}
-
-const RequestBuilderPrivate *RequestBuilder::d_ptr() const
-{
-	return d;
+	if (d->extender)
+		d->extender->extendRequest(request, verb, &body);
+	return RestReplyPrivate::compatSend(d->nam, request, verb, body);
 }
 
 // ------------- Private Implementation -------------
@@ -284,9 +293,9 @@ RequestBuilderPrivate::RequestBuilderPrivate(const QUrl &baseUrl, QNetworkAccess
 void RequestBuilderPrivate::prepareRequest(QNetworkRequest &request, QByteArray *sBody) const
 {
 	// add headers etc.
-	for(auto it = headers.constBegin(); it != headers.constEnd(); it++)
+	for (auto it = headers.constBegin(); it != headers.constEnd(); it++)
 		request.setRawHeader(it.key(), it.value());
-	for(auto it = attributes.constBegin(); it != attributes.constEnd(); it++)
+	for (auto it = attributes.constBegin(); it != attributes.constEnd(); it++)
 		request.setAttribute(it.key(), it.value());
 #ifndef QT_NO_SSL
 	request.setSslConfiguration(sslConfig);
@@ -294,10 +303,23 @@ void RequestBuilderPrivate::prepareRequest(QNetworkRequest &request, QByteArray 
 
 	// create the body
 	if (sBody) {
-		if(!body.isEmpty())
+		if (!body.isEmpty())
 			*sBody = body;
-		else if(headers.value(RequestBuilderPrivate::ContentType) == RequestBuilderPrivate::ContentTypeUrlEncoded &&
-				  !postQuery.isEmpty())
+		else if (headers.value(RequestBuilderPrivate::ContentType) == RequestBuilderPrivate::ContentTypeUrlEncoded &&
+				 !postQuery.isEmpty())
 			*sBody = postQuery.query().toUtf8();
 	}
 }
+
+RequestBuilder::IExtender::IExtender() = default;
+
+RequestBuilder::IExtender::~IExtender() = default;
+
+void RequestBuilder::IExtender::extendUrl(QUrl &) const {}
+
+bool RequestBuilder::IExtender::requiresBody() const
+{
+	return false;
+}
+
+void RequestBuilder::IExtender::extendRequest(QNetworkRequest &, QByteArray &, QByteArray *) const {}

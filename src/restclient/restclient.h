@@ -13,7 +13,7 @@
 
 #ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
 namespace QtJsonSerializer {
-class JsonSerializer;
+class SerializerBase;
 }
 #endif
 
@@ -29,6 +29,7 @@ class Q_RESTCLIENT_EXPORT RestClient : public QObject
 	Q_OBJECT
 	friend class RestClientPrivate;
 
+	Q_PROPERTY(DataMode dataMode READ dataMode WRITE setDataMode NOTIFY dataModeChanged)
 	//! The base URL to be used for every request to that api
 	Q_PROPERTY(QUrl baseUrl READ baseUrl WRITE setBaseUrl NOTIFY baseUrlChanged)
 	//! The version number to be appended to the path
@@ -46,9 +47,18 @@ class Q_RESTCLIENT_EXPORT RestClient : public QObject
 #endif
 
 public:
+	enum class DataMode {
+		Cbor,
+		Json
+	};
+	Q_ENUM(DataMode)
+
 	//! Constructor
 	explicit RestClient(QObject *parent = nullptr);
-	~RestClient() override;
+	explicit RestClient(DataMode dataMode, QObject *parent = nullptr);
+#ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
+	explicit RestClient(QtJsonSerializer::SerializerBase *serializer, QObject *parent = nullptr);
+#endif
 
 	//! Creates a new rest class for the given path and parent
 	RestClass *createClass(const QString &path, QObject *parent = nullptr);
@@ -59,11 +69,13 @@ public:
 	QNetworkAccessManager *manager() const;
 #ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
 	//! Returns the json serializer used by the restclient
-	QtJsonSerializer::JsonSerializer *serializer() const;
+	QtJsonSerializer::SerializerBase *serializer() const;
 #endif
 	//! Returns the paging factory used by the restclient
 	IPagingFactory *pagingFactory() const;
 
+	//! @readAcFn{RestClient::dataMode}
+	DataMode dataMode() const;
 	//! @readAcFn{RestClient::baseUrl}
 	QUrl baseUrl() const;
 	//! @readAcFn{RestClient::apiVersion}
@@ -87,12 +99,14 @@ public Q_SLOTS:
 	void setManager(QNetworkAccessManager *manager);
 #ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
 	//! Sets the json serializer to be used by all requests for this client
-	void setSerializer(QtJsonSerializer::JsonSerializer *serializer);
+	void setSerializer(QtJsonSerializer::SerializerBase *serializer);
 #endif
 
 	//! Sets the paging factory to be used by all paging requests for this client
 	void setPagingFactory(IPagingFactory *factory);
 
+	//! @writeAcFn{RestClient::dataMode}
+	void setDataMode(DataMode dataMode);
 	//! @writeAcFn{RestClient::baseUrl}
 	void setBaseUrl(QUrl baseUrl);
 	//! @writeAcFn{RestClient::apiVersion}
@@ -126,6 +140,8 @@ public Q_SLOTS:
 	void removeRequestAttribute(QNetworkRequest::Attribute attribute);
 
 Q_SIGNALS:
+	//! @notifyAcFn{RestClient::dataMode}
+	void dataModeChanged(DataMode dataMode, QPrivateSignal);
 	//! @notifyAcFn{RestClient::baseUrl}
 	void baseUrlChanged(QUrl baseUrl, QPrivateSignal);
 	//! @notifyAcFn{RestClient::apiVersion}
@@ -143,14 +159,11 @@ Q_SIGNALS:
 
 protected:
 	//! @private
-	RestClient(QObject *parent, RestClientPrivate *d_ptr, bool skipNam);
-	//! @private
-	RestClientPrivate *d_ptr();
-	//! @private
-	const RestClientPrivate *d_ptr() const;
+	RestClient(RestClientPrivate &dd, QObject *parent = nullptr);
+	void setupNam();
 
 private:
-	QScopedPointer<RestClientPrivate> d;
+	Q_DECLARE_PRIVATE(RestClient)
 };
 
 }

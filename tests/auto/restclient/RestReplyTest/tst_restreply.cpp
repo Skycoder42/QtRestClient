@@ -110,10 +110,10 @@ void RestReplyTest::testReplyWrapping()
 		QCOMPARE(code, status);
 		QCOMPARE(data, result);
 	});
-	reply->onAllErrors([&](QString error, int code, QtRestClient::RestReply::ErrorType type){
+	reply->onAllErrors([&](QString error, int code, QtRestClient::RestReply::Error type){
 		called = true;
 		QVERIFY2(!succeed, qUtf8Printable(error));
-		QCOMPARE(type, QtRestClient::RestReply::FailureError);
+		QCOMPARE(type, QtRestClient::RestReply::Failure);
 		QCOMPARE(code, status);
 	});
 
@@ -130,9 +130,9 @@ void RestReplyTest::testReplyError()
 	bool called = false;
 
 	auto reply = new QtRestClient::RestReply(nam->get(request));
-	reply->onAllErrors([&](QString, int code, QtRestClient::RestReply::ErrorType type){
+	reply->onAllErrors([&](QString, int code, QtRestClient::RestReply::Error type){
 		called = true;
-		QCOMPARE(type, QtRestClient::RestReply::NetworkError);
+		QCOMPARE(type, QtRestClient::RestReply::Network);
 		QCOMPARE(code, (int)QNetworkReply::ContentNotFoundError);
 	});
 
@@ -149,9 +149,9 @@ void RestReplyTest::testReplyRetry()
 	auto retryCount = 0;
 
 	auto reply = new QtRestClient::RestReply(nam->get(request));
-	reply->onAllErrors([&](QString, int code, QtRestClient::RestReply::ErrorType type){
+	reply->onAllErrors([&](QString, int code, QtRestClient::RestReply::Error type){
 		retryCount++;
-		QCOMPARE(type, QtRestClient::RestReply::NetworkError);
+		QCOMPARE(type, QtRestClient::RestReply::Network);
 		QCOMPARE(code, (int)QNetworkReply::ContentNotFoundError);
 		if(retryCount < 3)
 			reply->retryAfter((retryCount - 1) * 1500);//first 0, the 1500
@@ -213,13 +213,13 @@ void RestReplyTest::testGenericReplyWrapping()
 		QVERIFY(JphPost::equals(data, result));
 		data->deleteLater();
 	});
-	reply->onAllErrors([&](QString error, int code, QtRestClient::RestReply::ErrorType type){
+	reply->onAllErrors([&](QString error, int code, QtRestClient::RestReply::Error type){
 		called = true;
 		QVERIFY2(!succeed, qUtf8Printable(error));
 		if(except)
-			QCOMPARE(type, QtRestClient::RestReply::DeserializationError);
+			QCOMPARE(type, QtRestClient::RestReply::Deserialization);
 		else {
-			QCOMPARE(type, QtRestClient::RestReply::FailureError);
+			QCOMPARE(type, QtRestClient::RestReply::Failure);
 			QCOMPARE(code, status);
 		}
 	});
@@ -276,13 +276,13 @@ void RestReplyTest::testGenericVoidReplyWrapping()
 		QVERIFY(!except);
 		QCOMPARE(code, status);
 	});
-	reply->onAllErrors([&](QString error, int code, QtRestClient::RestReply::ErrorType type){
+	reply->onAllErrors([&](QString error, int code, QtRestClient::RestReply::Error type){
 		called = true;
 		QVERIFY2(!succeed, qUtf8Printable(error));
 		if(except)
-			QCOMPARE(type, QtRestClient::RestReply::DeserializationError);
+			QCOMPARE(type, QtRestClient::RestReply::Deserialization);
 		else {
-			QCOMPARE(type, QtRestClient::RestReply::FailureError);
+			QCOMPARE(type, QtRestClient::RestReply::Failure);
 			QCOMPARE(code, status);
 		}
 	});
@@ -347,13 +347,13 @@ void RestReplyTest::testGenericListReplyWrapping()
 		QVERIFY(JphPost::equals(data.first(), firstResult));
 		qDeleteAll(data);
 	});
-	reply->onAllErrors([&](QString error, int code, QtRestClient::RestReply::ErrorType type){
+	reply->onAllErrors([&](QString error, int code, QtRestClient::RestReply::Error type){
 		called = true;
 		QVERIFY2(!succeed, qUtf8Printable(error));
 		if(except)
-			QCOMPARE(type, QtRestClient::RestReply::DeserializationError);
+			QCOMPARE(type, QtRestClient::RestReply::Deserialization);
 		else {
-			QCOMPARE(type, QtRestClient::RestReply::FailureError);
+			QCOMPARE(type, QtRestClient::RestReply::Failure);
 			QCOMPARE(code, status);
 		}
 	});
@@ -427,13 +427,13 @@ void RestReplyTest::testGenericPagingReplyWrapping()
 		QVERIFY(JphPost::equals(data.items().first(), firstResult));
 		data.deleteAllItems();
 	});
-	reply->onAllErrors([&](QString error, int code, QtRestClient::RestReply::ErrorType type){
+	reply->onAllErrors([&](QString error, int code, QtRestClient::RestReply::Error type){
 		called = true;
 		QVERIFY2(!succeed, qUtf8Printable(error));
 		if(except)
-			QCOMPARE(type, QtRestClient::RestReply::DeserializationError);
+			QCOMPARE(type, QtRestClient::RestReply::Deserialization);
 		else {
-			QCOMPARE(type, QtRestClient::RestReply::FailureError);
+			QCOMPARE(type, QtRestClient::RestReply::Failure);
 			QCOMPARE(code, status);
 		}
 	});
@@ -467,7 +467,7 @@ void RestReplyTest::testPagingNext()
 		data.deleteAllItems();
 		firstPaging = data;
 	});
-	reply->onAllErrors([&](QString error, int, QtRestClient::RestReply::ErrorType){
+	reply->onAllErrors([&](QString error, int, QtRestClient::RestReply::Error){
 		called = true;
 		QFAIL(qUtf8Printable(error));
 	});
@@ -489,7 +489,7 @@ void RestReplyTest::testPagingNext()
 		QCOMPARE(data.total(), 100);
 		data.deleteAllItems();
 	});
-	nextReply->onAllErrors([&](QString error, int, QtRestClient::RestReply::ErrorType){
+	nextReply->onAllErrors([&](QString error, int, QtRestClient::RestReply::Error){
 		called = true;
 		QFAIL(qUtf8Printable(error));
 	});
@@ -521,7 +521,7 @@ void RestReplyTest::testPagingPrevious()
 		data.deleteAllItems();
 		lastPaging = data;
 	});
-	reply->onAllErrors([&](QString error, int, QtRestClient::RestReply::ErrorType){
+	reply->onAllErrors([&](QString error, int, QtRestClient::RestReply::Error){
 		called = true;
 		QFAIL(qUtf8Printable(error));
 	});
@@ -543,7 +543,7 @@ void RestReplyTest::testPagingPrevious()
 		QCOMPARE(data.total(), 100);
 		data.deleteAllItems();
 	});
-	prevReply->onAllErrors([&](QString error, int, QtRestClient::RestReply::ErrorType){
+	prevReply->onAllErrors([&](QString error, int, QtRestClient::RestReply::Error){
 		called = true;
 		QFAIL(qUtf8Printable(error));
 	});
@@ -572,7 +572,7 @@ void RestReplyTest::testPagingIterate()
 		data->deleteLater();
 		return ok;
 	});
-	reply->onAllErrors([&](QString error, int, QtRestClient::RestReply::ErrorType){
+	reply->onAllErrors([&](QString error, int, QtRestClient::RestReply::Error){
 		count = 142;
 		QFAIL(qUtf8Printable(error));
 		emit test_unlock();
@@ -601,7 +601,7 @@ void RestReplyTest::testSimpleExtension()
 		QVERIFY(networkLoaded);
 		QVERIFY(full->equals(data));
 		emit test_unlock();
-	}, [&](QString error, int, QtRestClient::RestReply::ErrorType){
+	}, [&](QString error, int, QtRestClient::RestReply::Error){
 		called = true;
 		QFAIL(qUtf8Printable(error));
 		emit test_unlock();
@@ -618,7 +618,7 @@ void RestReplyTest::testSimpleExtension()
 		called = true;
 		QVERIFY(!networkLoaded);
 		QVERIFY(full->equals(data));
-	}, [&](QString error, int, QtRestClient::RestReply::ErrorType){
+	}, [&](QString error, int, QtRestClient::RestReply::Error){
 		called = true;
 		QFAIL(qUtf8Printable(error));
 	});
@@ -636,7 +636,7 @@ void RestReplyTest::testSimpleExtension()
 		QVERIFY(full->equals(data));
 		data->deleteLater();
 	});
-	reply->onAllErrors([&](QString error, int, QtRestClient::RestReply::ErrorType){
+	reply->onAllErrors([&](QString error, int, QtRestClient::RestReply::Error){
 		called = true;
 		QFAIL(qUtf8Printable(error));
 	});
@@ -669,7 +669,7 @@ void RestReplyTest::testSimplePagingIterate()
 		data->deleteLater();
 		return ok;
 	});
-	reply->onAllErrors([&](QString error, int, QtRestClient::RestReply::ErrorType){
+	reply->onAllErrors([&](QString error, int, QtRestClient::RestReply::Error){
 		count = 142;
 		QFAIL(qUtf8Printable(error));
 		emit test_unlock();

@@ -5,25 +5,16 @@
 #include "QtRestClient/ipaging.h"
 
 #include <optional>
+#include <limits>
 
-#include <QtCore/qsharedpointer.h>
+#include <QtCore/QSharedDataPointer>
 
 namespace QtRestClient {
 
-class StandardPagingPrivate;
 class Q_RESTCLIENT_EXPORT StandardPaging : public IPaging // clazy:exclude=copyable-polymorphic
 {
 	friend class StandardPagingFactory;
-
 public:
-	//! Creates a standard paging from a valid json object
-	StandardPaging();
-	StandardPaging(const StandardPaging &other);
-	StandardPaging(StandardPaging &&other) noexcept;
-	StandardPaging &operator=(const StandardPaging &other);
-	StandardPaging &operator=(StandardPaging &&other) noexcept;
-	~StandardPaging() override;
-
 	std::variant<QCborArray, QJsonArray> items() const override;
 	qint64 total() const override;
 	qint64 offset() const override;
@@ -35,7 +26,12 @@ public:
 	std::variant<QCborValue, QJsonValue> originalData() const override;
 
 private:
-	QSharedPointer<StandardPagingPrivate> d;
+	qint64 _total = std::numeric_limits<qint64>::max();
+	qint64 _offset = -1;
+	QUrl _prev;
+	QUrl _next;
+	std::variant<QCborArray, QJsonArray> _items;
+	std::variant<QCborValue, QJsonValue> _data;
 };
 
 class Q_RESTCLIENT_EXPORT StandardPagingFactory : public IPagingFactory

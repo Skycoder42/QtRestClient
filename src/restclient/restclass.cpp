@@ -11,74 +11,81 @@ const QByteArray RestClass::PatchVerb("PATCH");
 const QByteArray RestClass::HeadVerb("HEAD");
 
 RestClass::RestClass(RestClient *client, QStringList subPath, QObject *parent) :
-	QObject{parent},
-	d{new RestClassPrivate{client, std::move(subPath)}}
+	  RestClass{*new RestClassPrivate{}, parent}
 {
+	Q_D(RestClass);
+	d->client = client;
+	d->subPath = std::move(subPath);
 	connect(client, &RestClient::destroyed,
 			this, &RestClass::deleteLater);
 }
 
-RestClass::~RestClass() = default;
+RestClass::RestClass(RestClassPrivate &dd, QObject *parent) :
+	  QObject{dd, parent}
+{}
 
 RestClient *RestClass::client() const
 {
+	Q_D(const RestClass);
 	return d->client;
 }
 
-RestClass *RestClass::subClass(const QString &path, QObject *parent)
+RestClass *RestClass::subClass(const QString &path, QObject *parent) const
 {
+	Q_D(const RestClass);
 	auto nPath = d->subPath;
 	nPath.append(path.split(QLatin1Char('/'), QString::SkipEmptyParts));
-	return new RestClass(d->client, nPath, parent);
+	return new RestClass{d->client, std::move(nPath), parent};
 }
 
 RestReply *RestClass::callRaw(const QByteArray &verb, const QString &methodPath, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody) const
 {
-	return new RestReply(create(verb, methodPath, parameters, headers, paramsAsBody), nullptr);
+	return new RestReply{create(verb, methodPath, parameters, headers, paramsAsBody), nullptr};
 }
 
 RestReply *RestClass::callRaw(const QByteArray &verb, const QString &methodPath, const QCborValue &body, const QVariantHash &parameters, const HeaderHash &headers) const
 {
-	return new RestReply(create(verb, methodPath, body, parameters, headers), nullptr);
+	return new RestReply{create(verb, methodPath, body, parameters, headers), nullptr};
 }
 
 RestReply *RestClass::callRaw(const QByteArray &verb, const QString &methodPath, const QJsonValue &body, const QVariantHash &parameters, const HeaderHash &headers) const
 {
-	return new RestReply(create(verb, methodPath, body, parameters, headers), nullptr);
+	return new RestReply{create(verb, methodPath, body, parameters, headers), nullptr};
 }
 
 RestReply *RestClass::callRaw(const QByteArray &verb, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody) const
 {
-	return new RestReply(create(verb, parameters, headers, paramsAsBody), nullptr);
+	return new RestReply{create(verb, parameters, headers, paramsAsBody), nullptr};
 }
 
 RestReply *RestClass::callRaw(const QByteArray &verb, const QCborValue &body, const QVariantHash &parameters, const HeaderHash &headers) const
 {
-	return new RestReply(create(verb, body, parameters, headers), nullptr);
+	return new RestReply{create(verb, body, parameters, headers), nullptr};
 }
 
 RestReply *RestClass::callRaw(const QByteArray &verb, const QJsonValue &body, const QVariantHash &parameters, const HeaderHash &headers) const
 {
-	return new RestReply(create(verb, body, parameters, headers), nullptr);
+	return new RestReply{create(verb, body, parameters, headers), nullptr};
 }
 
 RestReply *RestClass::callRaw(const QByteArray &verb, const QUrl &relativeUrl, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody) const
 {
-	return new RestReply(create(verb, relativeUrl, parameters, headers, paramsAsBody), nullptr);
+	return new RestReply{create(verb, relativeUrl, parameters, headers, paramsAsBody), nullptr};
 }
 
 RestReply *RestClass::callRaw(const QByteArray &verb, const QUrl &relativeUrl, const QCborValue &body, const QVariantHash &parameters, const HeaderHash &headers) const
 {
-	return new RestReply(create(verb, relativeUrl, body, parameters, headers), nullptr);
+	return new RestReply{create(verb, relativeUrl, body, parameters, headers), nullptr};
 }
 
 RestReply *RestClass::callRaw(const QByteArray &verb, const QUrl &relativeUrl, const QJsonValue &body, const QVariantHash &parameters, const HeaderHash &headers) const
 {
-	return new RestReply(create(verb, relativeUrl, body, parameters, headers), nullptr);
+	return new RestReply{create(verb, relativeUrl, body, parameters, headers), nullptr};
 }
 
 RequestBuilder RestClass::builder() const
 {
+	Q_D(const RestClass);
 	return d->client->builder()
 			.addPath(d->subPath);
 }
@@ -184,12 +191,7 @@ QNetworkReply *RestClass::create(const QByteArray &verb, const QUrl &relativeUrl
 QUrlQuery RestClassPrivate::hashToQuery(const QVariantHash &hash)
 {
 	QUrlQuery query;
-	for(auto it = hash.constBegin(); it != hash.constEnd(); it++)
+	for (auto it = hash.constBegin(); it != hash.constEnd(); it++)
 		query.addQueryItem(it.key(), it.value().toString());
 	return query;
 }
-
-RestClassPrivate::RestClassPrivate(RestClient *client, QStringList subPath) :
-	client{client},
-	subPath{std::move(subPath)}
-{}

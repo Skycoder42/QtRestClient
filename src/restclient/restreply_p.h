@@ -5,14 +5,16 @@
 
 #include <QtCore/QPointer>
 
+#include <QtCore/private/qobject_p.h>
+
 namespace QtRestClient {
 
-class Q_RESTCLIENT_EXPORT RestReplyPrivate : public QObject
+class Q_RESTCLIENT_EXPORT RestReplyPrivate : public QObjectPrivate
 {
-	Q_OBJECT
-
+	Q_DECLARE_PUBLIC(RestReply)
 public:
 	using DataType = RestReply::DataType;
+	using Error = RestReply::Error;
 
 	static const QByteArray PropertyBuffer;
 
@@ -23,22 +25,13 @@ public:
 	bool allowEmptyReplies = false;
 	int retryDelay = -1;
 
-	RestReplyPrivate(QNetworkReply *networkReply, RestReply *q_ptr);
-	~RestReplyPrivate() override;
+	void connectReply();
 
-	void connectReply(QNetworkReply *reply);
-
-public Q_SLOTS:
-	void replyFinished();
+	void _q_replyFinished();
+	void _q_retryReply();
 #ifndef QT_NO_SSL
-	void handleSslErrors(const QList<QSslError> &errors);
+	void _q_handleSslErrors(const QList<QSslError> &errors);
 #endif
-
-private Q_SLOTS:
-	void retryReply();
-
-private:
-	RestReply *q;
 };
 
 }

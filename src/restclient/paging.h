@@ -142,7 +142,7 @@ void Paging<T>::iterate(QObject *scope, const std::function<bool (T, int)> &iter
 
 template<typename T>
 template<typename EO>
-void Paging<T>::iterate(const std::function<bool(T, int)> &iterator, const std::function<void(QString, int, RestReply::ErrorType)> &errorHandler, const std::function<QString (EO, int)> &failureTransformer, int to, int from) const
+void Paging<T>::iterate(const std::function<bool(T, int)> &iterator, const std::function<void(QString, int, RestReply::Error)> &errorHandler, const std::function<QString (EO, int)> &failureTransformer, int to, int from) const
 {
 	Q_ASSERT(from >= d->iPaging->offset());
 
@@ -170,7 +170,7 @@ void Paging<T>::iterate(const std::function<bool(T, int)> &iterator, const std::
 
 template<typename T>
 template<typename EO>
-void Paging<T>::iterate(QObject *scope, const std::function<bool(T, int)> &iterator, const std::function<void(QString, int, RestReply::ErrorType)> &errorHandler, const std::function<QString (EO, int)> &failureTransformer, int to, int from) const
+void Paging<T>::iterate(QObject *scope, const std::function<bool(T, int)> &iterator, const std::function<void(QString, int, RestReply::Error)> &errorHandler, const std::function<QString (EO, int)> &failureTransformer, int to, int from) const
 {
 	Q_ASSERT(from >= d->iPaging->offset());
 
@@ -198,7 +198,7 @@ void Paging<T>::iterate(QObject *scope, const std::function<bool(T, int)> &itera
 
 template<typename T>
 template<typename EO>
-void Paging<T>::iterate(const std::function<bool(T, int)> &iterator, const std::function<void(int, EO)> &failureHandler, const std::function<void(QString, int, RestReply::ErrorType)> &errorHandler, const std::function<void(QtJsonSerializer::Exception &)> &exceptionHandler, int to, int from) const
+void Paging<T>::iterate(const std::function<bool(T, int)> &iterator, const std::function<void(int, EO)> &failureHandler, const std::function<void(QString, int, RestReply::Error)> &errorHandler, const std::function<void(QtJsonSerializer::Exception &)> &exceptionHandler, int to, int from) const
 {
 	Q_ASSERT(from >= d->iPaging->offset());
 
@@ -228,7 +228,7 @@ void Paging<T>::iterate(const std::function<bool(T, int)> &iterator, const std::
 
 template<typename T>
 template<typename EO>
-void Paging<T>::iterate(QObject *scope, const std::function<bool(T, int)> &iterator, const std::function<void(int, EO)> &failureHandler, const std::function<void(QString, int, RestReply::ErrorType)> &errorHandler, const std::function<void(QtJsonSerializer::Exception &)> &exceptionHandler, int to, int from) const
+void Paging<T>::iterate(QObject *scope, const std::function<bool(T, int)> &iterator, const std::function<void(int, EO)> &failureHandler, const std::function<void(QString, int, RestReply::Error)> &errorHandler, const std::function<void(QtJsonSerializer::Exception &)> &exceptionHandler, int to, int from) const
 {
 	Q_ASSERT(from >= d->iPaging->offset());
 

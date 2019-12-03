@@ -57,7 +57,7 @@ void IntegrationTest::testJsonChain()
 		QCOMPARE(code, 200);
 		QCOMPARE(data, object);
 	});
-	reply->onAllErrors([&](QString error, int code, RestReply::ErrorType){
+	reply->onAllErrors([&](QString error, int code, RestReply::Error){
 		called = true;
 		QFAIL(qUtf8Printable(error.isEmpty() ? QString::number(code) : error));
 	});
@@ -85,7 +85,7 @@ void IntegrationTest::testQObjectChain()
 		QVERIFY(JphPost::equals(data, object));
 		data->deleteLater();
 	});
-	reply->onAllErrors([&](QString error, int code, RestReply::ErrorType){
+	reply->onAllErrors([&](QString error, int code, RestReply::Error){
 		called = true;
 		QFAIL(qUtf8Printable(error.isEmpty() ? QString::number(code) : error));
 	});
@@ -111,7 +111,7 @@ void IntegrationTest::testQObjectListChain()
 		QCOMPARE(data.size(), 100);
 		qDeleteAll(data);
 	});
-	reply->onAllErrors([&](QString error, int code, RestReply::ErrorType){
+	reply->onAllErrors([&](QString error, int code, RestReply::Error){
 		called = true;
 		QFAIL(qUtf8Printable(error.isEmpty() ? QString::number(code) : error));
 	});
@@ -140,7 +140,7 @@ void IntegrationTest::testQObjectPagingChain()
 		data->deleteLater();
 		return ok;
 	});
-	reply->onAllErrors([&](QString error, int code, RestReply::ErrorType){
+	reply->onAllErrors([&](QString error, int code, RestReply::Error){
 		count = 142;
 		QFAIL(qUtf8Printable(error.isEmpty() ? QString::number(code) : error));
 	});

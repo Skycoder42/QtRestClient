@@ -2,6 +2,8 @@
 #include <limits>
 using namespace QtRestClient;
 
+IPaging::IPaging() = default;
+
 IPaging::~IPaging() = default;
 
 qint64 IPaging::total() const

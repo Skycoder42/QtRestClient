@@ -1,6 +1,6 @@
 TARGET = QtRestClient
 
-QT = core network
+QT = core network core-private
 MODULE_CONFIG += qrestbuilder
 
 !no_json_serializer {

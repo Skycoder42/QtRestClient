@@ -5,8 +5,10 @@
 using namespace QtRestClient;
 
 RestReplyAwaitable::RestReplyAwaitable(RestReply *reply) :
-	d{new RestReplyAwaitablePrivate{reply}}
-{}
+	d{new RestReplyAwaitablePrivate{}}
+{
+	d->reply = reply;
+}
 
 RestReplyAwaitable::RestReplyAwaitable(RestReplyAwaitable &&other) noexcept
 {
@@ -21,30 +23,30 @@ RestReplyAwaitable &RestReplyAwaitable::operator=(RestReplyAwaitable &&other) no
 
 RestReplyAwaitable::~RestReplyAwaitable() = default;
 
-void RestReplyAwaitable::prepare(std::function<void ()> resume)
+void RestReplyAwaitable::prepare(const std::function<void()> &resume)
 {
-	d->reply->onSucceeded(d->reply, [this, xResume = std::move(resume)](RestReply::DataType data){
+	d->reply->onSucceeded(d->reply, [this, resume](RestReply::DataType data){
 		d->errorResult.reset();
 		d->successResult = std::move(data);
-		xResume();
+		resume();
 	});
-	d->reply->onFailed(d->reply, [this, xResume = std::move(resume)](int code, const RestReply::DataType &data){
-		d->errorResult.reset(new AwaitedException{
+	d->reply->onFailed(d->reply, [this, resume](int code, const RestReply::DataType &data){
+		d->errorResult.reset(new AwaitedException {
 			code,
-			RestReply::FailureError,
+			RestReply::Error::Failure,
 			std::visit(__private::overload {
 						   [](std::nullopt_t) {
 							   return QVariant{};
 						   },
 						   [](auto vData) {
-							   return QVariant::fromValue(vData);
+							   return vData.toVariant();
 						   }
 					   }, data)});
-		xResume();
+		resume();
 	});
-	d->reply->onError([this, xResume = std::move(resume)](const QString &errorString, int code, RestReply::ErrorType type) {
+	d->reply->onError([this, resume](const QString &errorString, int code, RestReply::Error type) {
 		d->errorResult.reset(new AwaitedException{code, type, errorString});
-		xResume();
+		resume();
 	});
 }
 
@@ -59,17 +61,10 @@ RestReplyAwaitable::type RestReplyAwaitable::result()
 
 
 
-AwaitedException::AwaitedException(int code, RestReply::ErrorType type, QVariant data) :
+AwaitedException::AwaitedException(int code, RestReply::Error type, QVariant data) :
 	_code{code},
 	_type{type},
 	_data{std::move(data)}
-{}
-
-AwaitedException::AwaitedException(const AwaitedException * const other) :
-	_code{other->_code},
-	_type{other->_type},
-	_data{other->_data},
-	_msg{other->_msg}
 {}
 
 int AwaitedException::errorCode() const
@@ -77,7 +72,7 @@ int AwaitedException::errorCode() const
 	return _code;
 }
 
-RestReply::ErrorType AwaitedException::errorType() const
+RestReply::Error AwaitedException::errorType() const
 {
 	return _type;
 }
@@ -87,14 +82,14 @@ QVariant AwaitedException::errorData() const
 	return _data;
 }
 
-QJsonObject AwaitedException::errorObject() const
+QVariantMap AwaitedException::errorObject() const
 {
-	return _data.toJsonObject();
+	return _data.toMap();
 }
 
-QJsonArray AwaitedException::errorArray() const
+QVariantList AwaitedException::errorArray() const
 {
-	return _data.toJsonArray();
+	return _data.toList();
 }
 
 QString AwaitedException::errorString() const
@@ -102,17 +97,17 @@ QString AwaitedException::errorString() const
 	return _data.toString();
 }
 
-QString AwaitedException::errorString(const std::function<QString (QJsonObject, int)> &failureTransformer) const
+QString AwaitedException::errorString(const std::function<QString (QVariantMap, int)> &failureTransformer) const
 {
-	if(_type == RestReply::FailureError)
+	if(_type == RestReply::Error::Failure)
 		return failureTransformer(errorObject(), _code);
 	else
 		return errorString();
 }
 
-QString AwaitedException::errorString(const std::function<QString (QJsonArray, int)> &failureTransformer) const
+QString AwaitedException::errorString(const std::function<QString (QVariantList, int)> &failureTransformer) const
 {
-	if(_type == RestReply::FailureError)
+	if(_type == RestReply::Error::Failure)
 		return failureTransformer(errorArray(), _code);
 	else
 		return errorString();
@@ -120,9 +115,9 @@ QString AwaitedException::errorString(const std::function<QString (QJsonArray, i
 
 const char *AwaitedException::what() const noexcept
 {
-	if(_msg.isEmpty()) {
-		auto mEnum = QMetaEnum::fromType<RestReply::ErrorType>();
-		_msg = QByteArray(mEnum.valueToKey(_type)) + ": " +
+	if (_msg.isEmpty()) {
+		auto mEnum = QMetaEnum::fromType<RestReply::Error>();
+		_msg = QByteArray(mEnum.valueToKey(static_cast<int>(_type))) + ": " +
 			   QByteArray::number(_code) + ", " +
 			   _data.toString().toUtf8();
 	}
@@ -134,13 +129,7 @@ void AwaitedException::raise() const
 	throw *this;
 }
 
-AwaitedException::Base *AwaitedException::clone() const
+ExceptionBase *AwaitedException::clone() const
 {
-	return new AwaitedException{this};
+	return new AwaitedException{*this};
 }
-
-// ------------- PRIVATE IMPLEMENTATION -------------
-
-RestReplyAwaitablePrivate::RestReplyAwaitablePrivate(RestReply *reply) :
-	reply{reply}
-{}

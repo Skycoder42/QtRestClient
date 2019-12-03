@@ -18,30 +18,30 @@ class QmlGenericRestReply; //needed for QML bindings
 class Q_RESTCLIENT_EXPORT RestReply : public QObject
 {
 	Q_OBJECT
-	friend class RestReplyPrivate;
 
 	//! Speciefies, whether the reply should be automatically deleted
 	Q_PROPERTY(bool autoDelete READ autoDelete WRITE setAutoDelete NOTIFY autoDeleteChanged)
 	//! Speciefies, whether empty rest replies are allowed
-	Q_PROPERTY(bool allowEmptyReplies READ allowsEmptyReplies WRITE setAllowEmptyReplies NOTIFY allowEmptyRepliesChanged REVISION 2)
+	Q_PROPERTY(bool allowEmptyReplies READ allowsEmptyReplies WRITE setAllowEmptyReplies NOTIFY allowEmptyRepliesChanged)
 
 public:
 	using DataType = __private::__binder::DataType;
 
 	//! Defines the different possible error types
-	enum ErrorType {
+	enum class Error {
 		//default error types
-		NetworkError,  //!< Indicates a network error, i.e. no internet
-		ParseError,  //!< Indicates that parsing the received JSON or CBOR data failed
-		FailureError,  //!< Indicates that the server sent a failure for the request
+		Network,  //!< Indicates a network error, i.e. no internet
+		Parser,  //!< Indicates that parsing the received JSON or CBOR data failed
+		Failure,  //!< Indicates that the server sent a failure for the request
 
 		//extended error types
-		DeserializationError  //!< Indicates that deserializing the received data to the target object failed. **Generic replies only!**
+		Deserialization  //!< Indicates that deserializing the received data to the target object failed. **Generic replies only!**
 	};
-	Q_ENUM(ErrorType)
+	Q_ENUM(Error)
 
 	//! Creates a new reply based on a network reply
 	RestReply(QNetworkReply *networkReply, QObject *parent = nullptr);
+	~RestReply() override;
 
 	// TODO add allowed signatures to doc
 
@@ -65,23 +65,23 @@ public:
 	RestReply *onCompleted(QObject *scope, TFn &&handler);
 
 	//! Set a handler to be called if a network error or json parse error occures
-	RestReply *onError(const std::function<void(QString, int, ErrorType)> &handler);
+	RestReply *onError(const std::function<void(QString, int, Error)> &handler);
 	//! @copybrief onError(const std::function<void(QString, int, ErrorType)>&)
-	RestReply *onError(QObject *scope, const std::function<void(QString, int, ErrorType)> &handler);
+	RestReply *onError(QObject *scope, const std::function<void(QString, int, Error)> &handler);
 
 	//! Set a handler to be called if the request did not succeed
-	RestReply *onAllErrors(const std::function<void(QString, int, ErrorType)> &handler);
+	RestReply *onAllErrors(const std::function<void(QString, int, Error)> &handler);
 	//! @copybrief onAllErrors(const std::function<void(QString, int, ErrorType)>&)
 	RestReply *onAllErrors(QObject *scope,
-						   const std::function<void(QString, int, ErrorType)> &handler);
+						   const std::function<void(QString, int, Error)> &handler);
 	//! @copydoc onAllErrors(const std::function<void(QString, int, ErrorType)>&)
 	template <typename TFn>
-	RestReply *onAllErrors(const std::function<void(QString, int, ErrorType)> &handler,
+	RestReply *onAllErrors(const std::function<void(QString, int, Error)> &handler,
 						   TFn &&failureTransformer);
 	//! @copydoc onAllErrors(QObject *, const std::function<void(QString, int, ErrorType)>&)
 	template <typename TFn>
 	RestReply *onAllErrors(QObject *scope,
-						   const std::function<void(QString, int, ErrorType)> &handler,
+						   const std::function<void(QString, int, Error)> &handler,
 						   TFn &&failureTransformer);
 
 	//! @writeAcFn{RestReply::autoDelete}
@@ -112,7 +112,7 @@ public Q_SLOTS:
 	//! @writeAcFn{RestReply::autoDelete}
 	void setAutoDelete(bool autoDelete);
 	//! @writeAcFn{RestReply::allowEmptyReplies}
-	Q_REVISION(2) void setAllowEmptyReplies(bool allowEmptyReplies);
+	void setAllowEmptyReplies(bool allowEmptyReplies);
 
 Q_SIGNALS:
 	//! Is emitted when the request completed, i.e. succeeded or failed
@@ -122,7 +122,7 @@ Q_SIGNALS:
 	//! Is emitted when the request failed
 	void failed(int httpStatus, const DataType &reason, QPrivateSignal);
 	//! Is emitted when a network or json parse error occured
-	void error(const QString &errorString, int error, ErrorType errorType, QPrivateSignal);
+	void error(const QString &errorString, int error, Error errorType, QPrivateSignal);
 
 	//! Forwards QNetworkReply::error(QNetworkReply::NetworkError)
 	void networkError(QNetworkReply::NetworkError error);
@@ -139,14 +139,22 @@ Q_SIGNALS:
 	//! @notifyAcFn{RestReply::autoDelete}
 	void autoDeleteChanged(bool autoDelete, QPrivateSignal);
 	//! @notifyAcFn{RestReply::allowEmptyReplies}
-	Q_REVISION(2) void allowEmptyRepliesChanged(bool allowEmptyReplies, QPrivateSignal);
+	void allowEmptyRepliesChanged(bool allowEmptyReplies, QPrivateSignal);
 
 protected:
+	//! @private
+	RestReply(RestReplyPrivate &dd, QObject *parent = nullptr);
 	//! @private
 	static QByteArray jsonTypeName(QJsonValue::Type type);
 
 private:
-	RestReplyPrivate *d;
+	Q_DECLARE_PRIVATE(RestReply)
+
+	Q_PRIVATE_SLOT(d_func(), void _q_replyFinished())
+	Q_PRIVATE_SLOT(d_func(), void _q_retryReply())
+#ifndef QT_NO_SSL
+	Q_PRIVATE_SLOT(d_func(), void _q_handleSslErrors(const QList<QSslError> &))
+#endif
 };
 
 template<typename TFn>
@@ -192,15 +200,15 @@ RestReply *RestReply::onCompleted(QObject *scope, TFn &&handler)
 }
 
 template<typename TFn>
-RestReply *RestReply::onAllErrors(const std::function<void (QString, int, RestReply::ErrorType)> &handler, TFn &&failureTransformer)
+RestReply *RestReply::onAllErrors(const std::function<void (QString, int, RestReply::Error)> &handler, TFn &&failureTransformer)
 {
 	return onAllErrors(this, handler, std::forward<TFn>(failureTransformer));
 }
 
 template<typename TFn>
-RestReply *RestReply::onAllErrors(QObject *scope, const std::function<void (QString, int, RestReply::ErrorType)> &handler, TFn &&failureTransformer)
+RestReply *RestReply::onAllErrors(QObject *scope, const std::function<void (QString, int, RestReply::Error)> &handler, TFn &&failureTransformer)
 {
-	this->onFailed(scope, __private::bindCallback(handler, std::forward<TFn>(failureTransformer), FailureError));
+	this->onFailed(scope, __private::bindCallback(handler, std::forward<TFn>(failureTransformer), Error::Failure));
 	this->onError(scope, handler);
 	return this;
 }

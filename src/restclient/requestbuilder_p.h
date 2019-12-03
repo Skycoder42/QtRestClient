@@ -4,6 +4,9 @@
 #include "requestbuilder.h"
 #include "restclass.h"
 
+#include <QtCore/QPointer>
+#include <QtCore/QSharedPointer>
+
 namespace QtRestClient {
 
 struct Q_RESTCLIENT_EXPORT RequestBuilderPrivate : public QSharedData
@@ -14,7 +17,11 @@ struct Q_RESTCLIENT_EXPORT RequestBuilderPrivate : public QSharedData
 	static const QByteArray ContentTypeUrlEncoded;
 	static const QByteArray Accept;
 
-	QNetworkAccessManager *nam;
+	RequestBuilderPrivate(const QUrl &baseUrl, QNetworkAccessManager *nam);
+	RequestBuilderPrivate(const RequestBuilderPrivate &other) = default;
+
+	QPointer<QNetworkAccessManager> nam;
+	QSharedPointer<RequestBuilder::IExtender> extender;
 
 	QUrl base;
 	QVersionNumber version;
@@ -33,11 +40,7 @@ struct Q_RESTCLIENT_EXPORT RequestBuilderPrivate : public QSharedData
 	QByteArray verb;
 	QUrlQuery postQuery;
 
-	RequestBuilderPrivate(const QUrl &baseUrl, QNetworkAccessManager *nam);
-	RequestBuilderPrivate(const RequestBuilderPrivate &other) = default;
-	virtual ~RequestBuilderPrivate() = default;
-
-	virtual void prepareRequest(QNetworkRequest &request, QByteArray *sBody = nullptr) const;
+	void prepareRequest(QNetworkRequest &request, QByteArray *sBody) const;
 };
 
 }

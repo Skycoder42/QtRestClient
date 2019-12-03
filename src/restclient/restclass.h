@@ -36,12 +36,10 @@ public:
 	//! A constant for the HTTP-HEAD verb
 	static const QByteArray HeadVerb;
 
-	~RestClass() override;
-
 	//! Returns the rest client this class operates with
 	RestClient *client() const;
 	//! Creates a new rest class based on this one for the given path and parent
-	RestClass *subClass(const QString &path, QObject *parent = nullptr);
+	RestClass *subClass(const QString &path, QObject *parent = nullptr) const;
 
 	//general calls (json or cbor based)
 	//! @{
@@ -204,9 +202,11 @@ public:
 protected:
 	//! @private
 	explicit RestClass(RestClient *client, QStringList subPath, QObject *parent);
+	//! @private
+	explicit RestClass(RestClassPrivate &dd, QObject *parent = nullptr);
 
 private:
-	QScopedPointer<RestClassPrivate> d;
+	Q_DECLARE_PRIVATE(RestClass)
 
 	QNetworkReply *create(const QByteArray &verb, const QString &methodPath, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody) const;
 	QNetworkReply *create(const QByteArray &verb, const QString &methodPath, const QCborValue &body, const QVariantHash &parameters, const HeaderHash &headers) const;

@@ -1,7 +1,7 @@
 #include "restreply.h"
 #include "restreply_p.h"
-#include "restreplyawaitable.h"
 #include "restclass.h"
+#include "restreplyawaitable.h"
 #include "requestbuilder_p.h"
 
 #include <QtCore/QBuffer>
@@ -12,34 +12,42 @@
 using namespace QtRestClient;
 
 RestReply::RestReply(QNetworkReply *networkReply, QObject *parent) :
-	QObject{parent},
-	d{new RestReplyPrivate{networkReply, this}}
+	  RestReply{*new RestReplyPrivate{}, parent}
 {
-	d->connectReply(networkReply);
+	Q_D(RestReply);
+	d->networkReply = networkReply;
+	d->connectReply();
 }
 
-RestReply *RestReply::onError(const std::function<void (QString, int, ErrorType)> &handler)
+RestReply::~RestReply()
+{
+	Q_D(RestReply);
+	if (d->networkReply)
+		d->networkReply->deleteLater();
+}
+
+RestReply *RestReply::onError(const std::function<void (QString, int, Error)> &handler)
 {
 	return onError(this, handler);
 }
 
-RestReply *RestReply::onError(QObject *scope, const std::function<void (QString, int, RestReply::ErrorType)> &handler)
+RestReply *RestReply::onError(QObject *scope, const std::function<void (QString, int, RestReply::Error)> &handler)
 {
-	connect(this, &RestReply::error, scope, [handler](const QString &errorString, int error, ErrorType type){
+	connect(this, &RestReply::error, scope, [handler](const QString &errorString, int error, Error type){
 		handler(errorString, error, type);
 	});
 	return this;
 }
 
-RestReply *RestReply::onAllErrors(const std::function<void (QString, int, RestReply::ErrorType)> &handler)
+RestReply *RestReply::onAllErrors(const std::function<void (QString, int, RestReply::Error)> &handler)
 {
 	return onAllErrors(this, handler);
 }
 
-RestReply *RestReply::onAllErrors(QObject *scope, const std::function<void (QString, int, RestReply::ErrorType)> &handler)
+RestReply *RestReply::onAllErrors(QObject *scope, const std::function<void (QString, int, RestReply::Error)> &handler)
 {
 	this->onFailed(scope, [handler](int code){
-		handler(QString{}, code, FailureError);
+		handler(QString{}, code, Error::Failure);
 	});
 	this->onError(scope, handler);
 	return this;
@@ -47,16 +55,19 @@ RestReply *RestReply::onAllErrors(QObject *scope, const std::function<void (QStr
 
 bool RestReply::autoDelete() const
 {
+	Q_D(const RestReply);
 	return d->autoDelete;
 }
 
 bool RestReply::allowsEmptyReplies() const
 {
+	Q_D(const RestReply);
 	return d->allowEmptyReplies;
 }
 
 QNetworkReply *RestReply::networkReply() const
 {
+	Q_D(const RestReply);
 	return d->networkReply.data();
 }
 
@@ -67,21 +78,25 @@ RestReplyAwaitable RestReply::awaitable()
 
 void RestReply::abort()
 {
+	Q_D(RestReply);
 	d->networkReply->abort();
 }
 
 void RestReply::retry()
 {
+	Q_D(RestReply);
 	d->retryDelay = 0;
 }
 
 void RestReply::retryAfter(int mSecs)
 {
+	Q_D(RestReply);
 	d->retryDelay = mSecs;
 }
 
 void RestReply::setAutoDelete(bool autoDelete)
 {
+	Q_D(RestReply);
 	if (d->autoDelete == autoDelete)
 		return;
 
@@ -91,12 +106,17 @@ void RestReply::setAutoDelete(bool autoDelete)
 
 void RestReply::setAllowEmptyReplies(bool allowEmptyReplies)
 {
+	Q_D(RestReply);
 	if (d->allowEmptyReplies == allowEmptyReplies)
 		return;
 
 	d->allowEmptyReplies = allowEmptyReplies;
 	emit allowEmptyRepliesChanged(d->allowEmptyReplies, {});
 }
+
+RestReply::RestReply(RestReplyPrivate &dd, QObject *parent) :
+	  QObject{dd, parent}
+{}
 
 QByteArray RestReply::jsonTypeName(QJsonValue::Type type)
 {
@@ -128,54 +148,44 @@ const QByteArray RestReplyPrivate::PropertyBuffer("__QtRestClient_RestReplyPriva
 QNetworkReply *RestReplyPrivate::compatSend(QNetworkAccessManager *nam, const QNetworkRequest &request, const QByteArray &verb, const QByteArray &body)
 {
 	QNetworkReply *reply = nullptr;
-	if(body.isEmpty())
+	if (body.isEmpty())
 		reply = nam->sendCustomRequest(request, verb);
 	else {
 		reply = nam->sendCustomRequest(request, verb, body);
-		if(reply)
+		if (reply)
 			reply->setProperty(PropertyBuffer, body);
 	}
 	return reply;
 }
 
-RestReplyPrivate::RestReplyPrivate(QNetworkReply *networkReply, RestReply *q_ptr) :
-	QObject(q_ptr),
-	networkReply(networkReply),
-	q(q_ptr)
-{}
-
-RestReplyPrivate::~RestReplyPrivate()
+void RestReplyPrivate::connectReply()
 {
-	if(networkReply)
-		networkReply->deleteLater();
-}
-
-void RestReplyPrivate::connectReply(QNetworkReply *reply)
-{
-	connect(reply, &QNetworkReply::finished,
-			this, &RestReplyPrivate::replyFinished);
+	Q_Q(RestReply);
+	connect(networkReply, &QNetworkReply::finished,
+			this, &RestReplyPrivate::_q_replyFinished);
 
 	//forward some signals
-	connect(reply, QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::error),
-			q, &RestReply::networkError);
+	QObject::connect(networkReply, QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::error),
+					 q, &RestReply::networkError);
 #ifndef QT_NO_SSL
-	connect(reply, &QNetworkReply::sslErrors,
-			this, &RestReplyPrivate::handleSslErrors);
+	connect(networkReply, &QNetworkReply::sslErrors,
+			this, &RestReplyPrivate::_q_handleSslErrors);
 #endif
-	connect(reply, &QNetworkReply::downloadProgress,
-			q, &RestReply::downloadProgress);
-	connect(reply, &QNetworkReply::uploadProgress,
-			q, &RestReply::uploadProgress);
+	QObject::connect(networkReply, &QNetworkReply::downloadProgress,
+					 q, &RestReply::downloadProgress);
+	QObject::connect(networkReply, &QNetworkReply::uploadProgress,
+					 q, &RestReply::uploadProgress);
 
 	//completed signal
-	connect(q, &RestReply::succeeded,
-			q, &RestReply::completed);
-	connect(q, &RestReply::failed,
-			q, &RestReply::completed);
+	QObject::connect(q, &RestReply::succeeded,
+					 q, &RestReply::completed);
+	QObject::connect(q, &RestReply::failed,
+					 q, &RestReply::completed);
 }
 
-void RestReplyPrivate::replyFinished()
+void RestReplyPrivate::_q_replyFinished()
 {
+	Q_Q(RestReply);
 	retryDelay = -1;
 	const auto status = networkReply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
 	const auto contentType = networkReply->header(QNetworkRequest::ContentTypeHeader).toByteArray();
@@ -220,9 +230,9 @@ void RestReplyPrivate::replyFinished()
 	if (!parseError && status >= 300)  // first: status code error + valid data
 		emit q->failed(status, data, {});
 	else if (networkReply->error() != QNetworkReply::NoError)  // next: check normal network errors
-		emit q->error(networkReply->errorString(), networkReply->error(), RestReply::NetworkError, {});
+		emit q->error(networkReply->errorString(), networkReply->error(), Error::Network, {});
 	else if (parseError)  // next: parsing errors
-		emit q->error(parseError->second, parseError->first, RestReply::ParseError, {});
+		emit q->error(parseError->second, parseError->first, Error::Parser, {});
 	else {  // no errors, completed!
 		emit q->succeeded(status, data, {});
 		retryDelay = -1;
@@ -230,17 +240,38 @@ void RestReplyPrivate::replyFinished()
 
 	if (retryDelay == 0) {
 		retryDelay = -1;
-		retryReply();
+		_q_retryReply();
 	} else if (retryDelay > 0) {
-		QTimer::singleShot(retryDelay, Qt::PreciseTimer, this, &RestReplyPrivate::retryReply);
 		retryDelay = -1;
+		auto sTimer = new QTimer{q};
+		sTimer->setSingleShot(true);
+		sTimer->setTimerType(Qt::PreciseTimer);
+		sTimer->setInterval(retryDelay);
+		connect(sTimer, &QTimer::timeout,
+				this, &RestReplyPrivate::_q_retryReply);
+		QObject::connect(sTimer, &QTimer::timeout,
+						 sTimer, &QTimer::deleteLater);
+		sTimer->start();
 	} else if (autoDelete)
 		q->deleteLater();
 }
 
-#ifndef QT_NO_SSL
-void RestReplyPrivate::handleSslErrors(const QList<QSslError> &errors)
+void RestReplyPrivate::_q_retryReply()
 {
+	auto nam = networkReply->manager();
+	auto request = networkReply->request();
+	auto verb = request.attribute(QNetworkRequest::CustomVerbAttribute, RestClass::GetVerb).toByteArray();
+	auto body = networkReply->property(PropertyBuffer).toByteArray();
+
+	networkReply->deleteLater();
+	networkReply = compatSend(nam, request, verb, body);
+	connectReply();
+}
+
+#ifndef QT_NO_SSL
+void RestReplyPrivate::_q_handleSslErrors(const QList<QSslError> &errors)
+{
+	Q_Q(RestReply);
 	bool ignore = false;
 	emit q->sslErrors(errors, ignore);
 	if (ignore)
@@ -248,14 +279,4 @@ void RestReplyPrivate::handleSslErrors(const QList<QSslError> &errors)
 }
 #endif
 
-void RestReplyPrivate::retryReply()
-{
-	auto nam = networkReply->manager();
-	auto request = networkReply->request();
-	auto verb = request.attribute(QNetworkRequest::CustomVerbAttribute, QByteArray{"GET"}).toByteArray();
-	auto body = networkReply->property(PropertyBuffer).toByteArray();
-
-	networkReply->deleteLater();
-	networkReply = compatSend(nam, request, verb, body);
-	connectReply(networkReply);
-}
+#include "moc_restreply.cpp"

@@ -16,27 +16,27 @@ QmlPaging QmlPaging::create(RestClient *client, QJSEngine *engine, const QJsonOb
 #else
 	auto iPaging = client->pagingFactory()->createPaging(obj);
 #endif
-	return {iPaging, client, engine};
+	return QmlPaging{iPaging, client, engine};
 }
 
 RestReply *QmlPaging::next()
 {
-	if(_paging->hasNext()) {
+	if (_paging->hasNext()) {
 		auto reply = _client->builder()
 				.updateFromRelativeUrl(_paging->next(), true)
 				.send();
-		return new RestReply(reply, _client);
+		return new RestReply{reply, _client};
 	} else
 		return nullptr;
 }
 
 RestReply *QmlPaging::previous()
 {
-	if(_paging->hasPrevious()) {
+	if (_paging->hasPrevious()) {
 		auto reply = _client->builder()
 				.updateFromRelativeUrl(_paging->previous(), true)
 				.send();
-		return new RestReply(reply, _client);
+		return new RestReply{reply, _client};
 	} else
 		return nullptr;
 }
@@ -90,6 +90,7 @@ void QmlPaging::iterate(const QJSValue &iterator, int to, int from)
 
 void QmlPaging::iterate(const QJSValue &iterator, const QJSValue &failureHandler, const QJSValue &errorHandler, int to, int from)
 {
+	// TODO check if still ok
 	if (!iterator.isCallable()) {
 		qWarning() << "iterator parameter must be a function";
 		return;
@@ -144,9 +145,9 @@ void QmlPaging::iterate(const QJSValue &iterator, const QJSValue &failureHandler
 			});
 		}
 		if (errorHandler.isCallable()) {
-			reply->onError([errorHandler](const QString &error, int code, RestReply::ErrorType type) {
+			reply->onError([errorHandler](const QString &error, int code, RestReply::Error type) {
 				auto fn = errorHandler;
-				fn.call({error, code, type});
+				fn.call({error, code, static_cast<int>(type)});
 			});
 		}
 	}
@@ -154,6 +155,7 @@ void QmlPaging::iterate(const QJSValue &iterator, const QJSValue &failureHandler
 
 int QmlPaging::internalIterate(QJSValue iterator, int from, int to) const
 {
+	// TODO check if still ok
 	return std::visit([&](const auto &items) {
 		// handle all items in this paging
 		auto offset = _paging->offset();

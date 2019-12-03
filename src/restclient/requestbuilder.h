@@ -21,6 +21,18 @@ struct RequestBuilderPrivate;
 class Q_RESTCLIENT_EXPORT RequestBuilder
 {
 public:
+	class Q_RESTCLIENT_EXPORT IExtender
+	{
+		Q_DISABLE_COPY(IExtender)
+	public:
+		IExtender();
+		virtual ~IExtender();
+
+		virtual void extendUrl(QUrl &url) const;
+		virtual bool requiresBody() const;
+		virtual void extendRequest(QNetworkRequest &request, QByteArray &verb, QByteArray *body) const;
+	};
+
 	//! Constructs a builder with the given base url
 	RequestBuilder(const QUrl &baseUrl, QNetworkAccessManager *nam = nullptr);
 	//! Copy constructor
@@ -35,6 +47,7 @@ public:
 
 	//! Sets the network access manager to be used for send()
 	RequestBuilder &setNetworkAccessManager(QNetworkAccessManager *nam);
+	RequestBuilder &setExtender(IExtender *extender);
 
 	//! Sets the credentails of the URL
 	RequestBuilder &setCredentials(QString user, QString password = {});
@@ -90,14 +103,6 @@ public:
 	QNetworkRequest build() const;
 	//! reates a network request and sends it with the builder settings
 	QNetworkReply *send() const;
-
-protected:
-	//! @private
-	RequestBuilder(RequestBuilderPrivate *d_ptr);
-	//! @private
-	RequestBuilderPrivate *d_ptr();
-	//! @private
-	const RequestBuilderPrivate *d_ptr() const;
 
 private:
 	QSharedDataPointer<RequestBuilderPrivate> d;

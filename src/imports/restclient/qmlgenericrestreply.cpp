@@ -115,7 +115,7 @@ void QtRestClient::QmlGenericRestReply::addErrorHandler(const QJSValue &errorHan
 	if(!checkOk(errorHandler))
 		return;
 
-	_reply->onError([errorHandler](const QString &error, int code, RestReply::ErrorType type){
+	_reply->onError([errorHandler](const QString &error, int code, RestReply::Error type){
 		auto fn = errorHandler;
 		fn.call({error, code, type});
 	});

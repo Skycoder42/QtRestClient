@@ -4,7 +4,6 @@ QT = core network networkauth restclient restclient-private
 
 HEADERS = \
 	authrequestbuilder.h \
-	authrequestbuilder_p.h \
 	authrestclient.h \
 	authrestclient_p.h \
 	qtrestclientauth_global.h

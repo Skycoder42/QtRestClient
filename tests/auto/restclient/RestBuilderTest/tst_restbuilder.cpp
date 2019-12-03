@@ -42,7 +42,7 @@ void RestBuilderTest::initTestCase()
 	}
 	server->setSubData(QStringLiteral("posts"), posts);
 
-	qRegisterMetaType<QtRestClient::RestReply::ErrorType>();
+	qRegisterMetaType<QtRestClient::RestReply::Error>();
 }
 
 void RestBuilderTest::cleanupTestCase()
@@ -119,7 +119,7 @@ void RestBuilderTest::testCustomCompiledApiPosts()
 		QCOMPARE(code, 200);
 		QCOMPARE(posts.size(), 100);
 	});
-	reply->onAllErrors([&](const QString &error, int, QtRestClient::RestReply::ErrorType){
+	reply->onAllErrors([&](const QString &error, int, QtRestClient::RestReply::Error){
 		called = true;
 		QFAIL(qUtf8Printable(error));
 	});
@@ -138,7 +138,7 @@ void RestBuilderTest::testCustomCompiledApiPosts()
 		QCOMPARE(post.user()->id(), 42/2);
 		post.user()->deleteLater();
 	});
-	reply2->onAllErrors([&](const QString &error, int, QtRestClient::RestReply::ErrorType){
+	reply2->onAllErrors([&](const QString &error, int, QtRestClient::RestReply::Error){
 		called = true;
 		QFAIL(qUtf8Printable(error));
 	});
@@ -162,7 +162,7 @@ void RestBuilderTest::testCustomCompiledApiPosts()
 	QSignalSpy deleteSpy3(reply3, &QtRestClient::RestReply::destroyed);
 
 	QVERIFY(errorSpy.wait());
-	QCOMPARE(errorSpy[0][2].toInt(), static_cast<int>(QtRestClient::RestReply::FailureError));
+	QCOMPARE(errorSpy[0][2].toInt(), static_cast<int>(QtRestClient::RestReply::Failure));
 	QCOMPARE(errorSpy[0][1].toInt(), 404);
 
 	QVERIFY(deleteSpy3.wait());

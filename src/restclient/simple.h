@@ -56,7 +56,7 @@ public:
 	template<typename ET = QObject*>
 	void extend(RestClient *client,
 				const std::function<void(T*, bool)> &extensionHandler,
-				const std::function<void(QString, int, RestReply::ErrorType)> &errorHandler = {},
+				const std::function<void(QString, int, RestReply::Error)> &errorHandler = {},
 				const std::function<QString(ET, int)> &failureTransformer = {});
 	//! @brief Extends the object by using a handler
 	//! @param client The rest client to be used to create the network request
@@ -74,7 +74,7 @@ public:
 	void extend(RestClient *client,
 				QObject *scope,
 				const std::function<void(T*, bool)> &extensionHandler,
-				const std::function<void(QString, int, RestReply::ErrorType)> &errorHandler = {},
+				const std::function<void(QString, int, RestReply::Error)> &errorHandler = {},
 				const std::function<QString(ET, int)> &failureTransformer = {});
 
 private:
@@ -123,7 +123,7 @@ public:
 	template<typename ET = QObject*>
 	void extend(RestClient *client,
 				const std::function<void(T, bool)> &extensionHandler,
-				const std::function<void(QString, int, RestReply::ErrorType)> &errorHandler = {},
+				const std::function<void(QString, int, RestReply::Error)> &errorHandler = {},
 				const std::function<QString(ET, int)> &failureTransformer = {});
 	//! @brief Extends the object by using a handler
 	//! @param client The rest client to be used to create the network request
@@ -141,7 +141,7 @@ public:
 	void extend(RestClient *client,
 				QObject *scope,
 				const std::function<void(T, bool)> &extensionHandler,
-				const std::function<void(QString, int, RestReply::ErrorType)> &errorHandler = {},
+				const std::function<void(QString, int, RestReply::Error)> &errorHandler = {},
 				const std::function<QString(ET, int)> &failureTransformer = {});
 
 private:
@@ -203,14 +203,14 @@ GenericRestReply<T*, ET> *Simple<T*, typename std::enable_if<std::is_base_of<QOb
 
 template<typename T>
 template<typename ET>
-void Simple<T*, typename std::enable_if<std::is_base_of<QObject, T>::value>::type>::extend(RestClient *client, const std::function<void (T *, bool)> &extensionHandler, const std::function<void (QString, int, RestReply::ErrorType)> &errorHandler, const std::function<QString (ET, int)> &failureTransformer)
+void Simple<T*, typename std::enable_if<std::is_base_of<QObject, T>::value>::type>::extend(RestClient *client, const std::function<void (T *, bool)> &extensionHandler, const std::function<void (QString, int, RestReply::Error)> &errorHandler, const std::function<QString (ET, int)> &failureTransformer)
 {
 	extend(client, const_cast<Simple<T*>*>(this), extensionHandler, errorHandler, failureTransformer);
 }
 
 template<typename T>
 template<typename ET>
-void Simple<T*, typename std::enable_if<std::is_base_of<QObject, T>::value>::type>::extend(RestClient *client, QObject *scope, const std::function<void (T *, bool)> &extensionHandler, const std::function<void (QString, int, RestReply::ErrorType)> &errorHandler, const std::function<QString (ET, int)> &failureTransformer)
+void Simple<T*, typename std::enable_if<std::is_base_of<QObject, T>::value>::type>::extend(RestClient *client, QObject *scope, const std::function<void (T *, bool)> &extensionHandler, const std::function<void (QString, int, RestReply::Error)> &errorHandler, const std::function<QString (ET, int)> &failureTransformer)
 {
 	if(ext())
 		extensionHandler(ext(), false);
@@ -283,7 +283,7 @@ GenericRestReply<T, ET> *Simple<T, typename std::enable_if<std::is_void<typename
 
 template<typename T>
 template<typename ET>
-void Simple<T, typename std::enable_if<std::is_void<typename T::QtGadgetHelper>::value>::type>::extend(RestClient *client, const std::function<void (T, bool)> &extensionHandler, const std::function<void (QString, int, RestReply::ErrorType)> &errorHandler, const std::function<QString (ET, int)> &failureTransformer)
+void Simple<T, typename std::enable_if<std::is_void<typename T::QtGadgetHelper>::value>::type>::extend(RestClient *client, const std::function<void (T, bool)> &extensionHandler, const std::function<void (QString, int, RestReply::Error)> &errorHandler, const std::function<QString (ET, int)> &failureTransformer)
 {
 	if(ext())
 		extensionHandler(*(ext().data()), false);
@@ -301,7 +301,7 @@ void Simple<T, typename std::enable_if<std::is_void<typename T::QtGadgetHelper>:
 
 template<typename T>
 template<typename ET>
-void Simple<T, typename std::enable_if<std::is_void<typename T::QtGadgetHelper>::value>::type>::extend(RestClient *client, QObject *scope, const std::function<void (T, bool)> &extensionHandler, const std::function<void (QString, int, RestReply::ErrorType)> &errorHandler, const std::function<QString (ET, int)> &failureTransformer)
+void Simple<T, typename std::enable_if<std::is_void<typename T::QtGadgetHelper>::value>::type>::extend(RestClient *client, QObject *scope, const std::function<void (T, bool)> &extensionHandler, const std::function<void (QString, int, RestReply::Error)> &errorHandler, const std::function<QString (ET, int)> &failureTransformer)
 {
 	if(ext())
 		extensionHandler(*(ext().data()), false);

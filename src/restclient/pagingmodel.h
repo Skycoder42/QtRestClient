@@ -45,29 +45,26 @@ public:
 
 	//! Default constructor
 	explicit PagingModel(QObject *parent = nullptr);
-	~PagingModel() override;
 
 	//! @copybrief PagingModel::initialize(const QUrl &, IPagingModelFetcher *)
-	Q_INVOKABLE void initialize(const QUrl &initialUrl, QtRestClient::IPagingModelFetcher *fetcher, int typeId = QMetaType::QJsonValue);
+	Q_INVOKABLE void initialize(const QUrl &initialUrl, QtRestClient::IPagingModelFetcher *fetcher, int typeId = QMetaType::UnknownType);
 	//! @copybrief PagingModel::initialize(const QUrl &, RestClass *)
-	Q_INVOKABLE void initialize(const QUrl &initialUrl, QtRestClient::RestClass *restClass, int typeId = QMetaType::QJsonValue);
+	Q_INVOKABLE void initialize(const QUrl &initialUrl, QtRestClient::RestClass *restClass, int typeId = QMetaType::UnknownType);
+	//! @copybrief PagingModel::initialize(const Paging<T> &, IPagingModelFetcher *)
+	Q_INVOKABLE void initialize(QtRestClient::RestReply *reply, QtRestClient::IPagingModelFetcher *fetcher, int typeId = QMetaType::UnknownType);
+	//! @copybrief PagingModel::initialize(const Paging<T> &, RestClass *)
+	Q_INVOKABLE void initialize(QtRestClient::RestReply *reply, QtRestClient::RestClass *restClass, int typeId = QMetaType::UnknownType);
+	//! @copybrief PagingModel::initialize(GenericRestReply<Paging<DataClassType>, ErrorClassType> *, IPagingModelFetcher *)
+	Q_INVOKABLE void initialize(QtRestClient::IPaging *paging, QtRestClient::IPagingModelFetcher *fetcher, int typeId = QMetaType::UnknownType);
+	//! @copybrief PagingModel::initialize(GenericRestReply<Paging<DataClassType>, ErrorClassType> *, RestClass *)
+	Q_INVOKABLE void initialize(QtRestClient::IPaging *paging, QtRestClient::RestClass *restClass, int typeId = QMetaType::UnknownType);
+#ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
 	//! Initialize the model using a type, a initial URL and a fetcher to use to send requests
 	template <typename T>
 	inline void initialize(const QUrl &initialUrl, IPagingModelFetcher *fetcher);
 	//! @copybrief PagingModel::initialize(const QUrl &, IPagingModelFetcher *)
 	template <typename T>
 	inline void initialize(const QUrl &initialUrl, RestClass *restClass);
-
-	// init methods from data
-	//! @copybrief PagingModel::initialize(const Paging<T> &, IPagingModelFetcher *)
-	Q_INVOKABLE void initialize(QtRestClient::RestReply *reply, QtRestClient::IPagingModelFetcher *fetcher, int typeId = QMetaType::QJsonValue);
-	//! @copybrief PagingModel::initialize(const Paging<T> &, RestClass *)
-	Q_INVOKABLE void initialize(QtRestClient::RestReply *reply, QtRestClient::RestClass *restClass, int typeId = QMetaType::QJsonValue);
-	//! @copybrief PagingModel::initialize(GenericRestReply<Paging<DataClassType>, ErrorClassType> *, IPagingModelFetcher *)
-	Q_INVOKABLE void initialize(QtRestClient::IPaging *paging, QtRestClient::IPagingModelFetcher *fetcher, int typeId = QMetaType::QJsonValue);
-	//! @copybrief PagingModel::initialize(GenericRestReply<Paging<DataClassType>, ErrorClassType> *, RestClass *)
-	Q_INVOKABLE void initialize(QtRestClient::IPaging *paging, QtRestClient::RestClass *restClass, int typeId = QMetaType::QJsonValue);
-#ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
 	//! Initialize the model from a paging object and a fetcher to use to send requests
 	template <typename T>
 	inline void initialize(const Paging<T> &paging, IPagingModelFetcher *fetcher);
@@ -129,9 +126,11 @@ Q_SIGNALS:
 	//! @notifyAcFn{PagingModel::typeId}
 	void typeIdChanged(int typeId, QPrivateSignal);
 
+protected:
+	explicit PagingModel(PagingModelPrivate &dd, QObject *parent = nullptr);
+
 private:
-	friend class PagingModelPrivate;
-	QScopedPointer<PagingModelPrivate> d;
+	Q_DECLARE_PRIVATE(PagingModel)
 };
 
 //! A default implementation for a IPagingModelFetcher, using a RestClass to send the requests
@@ -149,6 +148,7 @@ private:
 
 // ------------- Generic implementation -------------
 
+#ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
 template<typename T>
 inline void PagingModel::initialize(const QUrl &initialUrl, IPagingModelFetcher *fetcher)
 {
@@ -161,7 +161,6 @@ inline void PagingModel::initialize(const QUrl &initialUrl, RestClass *restClass
 	initialize(initialUrl, restClass, qMetaTypeId<T>());
 }
 
-#ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
 template<typename T>
 inline void PagingModel::initialize(const Paging<T> &paging, IPagingModelFetcher *fetcher)
 {
@@ -190,7 +189,7 @@ inline void PagingModel::initialize(GenericRestReply<Paging<DataClassType>, Erro
 template <typename T>
 inline T PagingModel::object(const QModelIndex &index) const
 {
-	Q_ASSERT_X(qMetaTypeId<T>() == typeId(), Q_FUNC_INFO, "object must be used with the stores typeId");
+	Q_ASSERT_X(typeId() == QMetaType::UnknownType || qMetaTypeId<T>() == typeId(), Q_FUNC_INFO, "object must be used with the stores typeId");
 	return object(index).value<T>();
 }
 

@@ -53,7 +53,7 @@ void RestAwaitablesTest::testRestReplyAwait_data()
 	QTest::addColumn<bool>("succeed");
 	QTest::addColumn<QJsonObject>("result");
 	QTest::addColumn<int>("code");
-	QTest::addColumn<RestReply::ErrorType>("type");
+	QTest::addColumn<RestReply::Error>("type");
 
 	QTest::newRow("get") << server->url("/posts/1")
 						 << true
@@ -64,19 +64,19 @@ void RestAwaitablesTest::testRestReplyAwait_data()
 									{QStringLiteral("body"), QStringLiteral("Body1")},
 								}
 						 << 200
-						 << RestReply::NetworkError;
+						 << RestReply::Network;
 
 	QTest::newRow("notFound") << server->url("/posts/baum")
 							  << false
 							  << QJsonObject{}
 							  << 404
-							  << RestReply::FailureError;
+							  << RestReply::Failure;
 
 	QTest::newRow("invalid") << QUrl{QStringLiteral("http://example.com/non/existant/api")}
 							 << false
 							 << QJsonObject()
 							 << 203
-							 << RestReply::NetworkError;
+							 << RestReply::Network;
 }
 
 void RestAwaitablesTest::testRestReplyAwait()
@@ -85,7 +85,7 @@ void RestAwaitablesTest::testRestReplyAwait()
 	QFETCH(bool, succeed);
 	QFETCH(QJsonObject, result);
 	QFETCH(int, code);
-	QFETCH(RestReply::ErrorType, type);
+	QFETCH(RestReply::Error, type);
 
 	QEventLoop loop;
 	auto res = createAndRun([&](){
@@ -127,25 +127,25 @@ void RestAwaitablesTest::testGenericRestReplyAwait_data()
 	QTest::addColumn<bool>("succeed");
 	QTest::addColumn<JphPost*>("result");
 	QTest::addColumn<int>("code");
-	QTest::addColumn<RestReply::ErrorType>("type");
+	QTest::addColumn<RestReply::Error>("type");
 
 	QTest::newRow("get") << server->url("/posts/1")
 						 << true
 						 << JphPost::createDefault(this)
 						 << 200
-						 << RestReply::NetworkError;
+						 << RestReply::Network;
 
 	QTest::newRow("notFound") << server->url("/posts/34234")
 							  << false
 							  << static_cast<JphPost*>(nullptr)
 							  << 404
-							  << RestReply::FailureError;
+							  << RestReply::Failure;
 
 	QTest::newRow("invalid") << QUrl{QStringLiteral("http://example.com/non/existant/api")}
 							 << false
 							 << static_cast<JphPost*>(nullptr)
 							 << 203
-							 << RestReply::NetworkError;
+							 << RestReply::Network;
 }
 
 void RestAwaitablesTest::testGenericRestReplyAwait()
@@ -154,7 +154,7 @@ void RestAwaitablesTest::testGenericRestReplyAwait()
 	QFETCH(bool, succeed);
 	QFETCH(JphPost*, result);
 	QFETCH(int, code);
-	QFETCH(RestReply::ErrorType, type);
+	QFETCH(RestReply::Error, type);
 
 	QEventLoop loop;
 	auto res = createAndRun([&](){
@@ -192,22 +192,22 @@ void RestAwaitablesTest::testGenericVoidRestReplyAwait_data()
 	QTest::addColumn<QUrl>("url");
 	QTest::addColumn<bool>("succeed");
 	QTest::addColumn<int>("code");
-	QTest::addColumn<RestReply::ErrorType>("type");
+	QTest::addColumn<RestReply::Error>("type");
 
 	QTest::newRow("get") << server->url("/posts/1")
 						 << true
 						 << 200
-						 << RestReply::NetworkError;
+						 << RestReply::Network;
 
 	QTest::newRow("notFound") << server->url("/posts/34234")
 							  << false
 							  << 404
-							  << RestReply::FailureError;
+							  << RestReply::Failure;
 
 	QTest::newRow("invalid") << QUrl{QStringLiteral("http://example.com/non/existant/api")}
 							 << false
 							 << 203
-							 << RestReply::NetworkError;
+							 << RestReply::Network;
 }
 
 void RestAwaitablesTest::testGenericVoidRestReplyAwait()
@@ -215,7 +215,7 @@ void RestAwaitablesTest::testGenericVoidRestReplyAwait()
 	QFETCH(QUrl, url);
 	QFETCH(bool, succeed);
 	QFETCH(int, code);
-	QFETCH(RestReply::ErrorType, type);
+	QFETCH(RestReply::Error, type);
 
 	QEventLoop loop;
 	auto res = createAndRun([&](){

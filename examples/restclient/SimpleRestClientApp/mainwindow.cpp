@@ -125,9 +125,9 @@ void MainWindow::on_pushButton_clicked()
 		ui->replyJsonEdit->setPlainText(QString::fromUtf8(doc.toJson(QJsonDocument::Indented)));
 		QTimer::singleShot(2000, this, &MainWindow::zeroBars);
 	});
-	reply->onError(this, [=](QString errorString, int code, RestReply::ErrorType type){
+	reply->onError(this, [=](QString errorString, int code, RestReply::Error type){
 		ui->codeLineEdit->setText(QString::number(code));
-		ui->networkErrorLabel->setText(type == RestReply::NetworkError ? tr("Network error:") : tr("JSON parse error:"));
+		ui->networkErrorLabel->setText(type == RestReply::Network ? tr("Network error:") : tr("JSON parse error:"));
 		ui->networkErrorLineEdit->setText(errorString);
 		ui->replyJsonEdit->clear();
 		QTimer::singleShot(2000, this, &MainWindow::zeroBars);

@@ -8,13 +8,14 @@ namespace QtRestClient {
 
 class RestReplyAwaitablePrivate
 {
+	Q_DISABLE_COPY(RestReplyAwaitablePrivate)
 public:
-	QPointer<RestReply> reply;
+	RestReplyAwaitablePrivate() = default;
+
+	QPointer<RestReply> reply{};
 
 	RestReply::DataType successResult = std::nullopt;
-	QScopedPointer<AwaitedException> errorResult;
-
-	RestReplyAwaitablePrivate(RestReply *reply);
+	QScopedPointer<AwaitedException> errorResult{};
 };
 
 }

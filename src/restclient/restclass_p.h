@@ -3,18 +3,18 @@
 
 #include "restclass.h"
 
+#include <QtCore/private/qobject_p.h>
+
 namespace QtRestClient {
 
-class Q_RESTCLIENT_EXPORT RestClassPrivate
+class Q_RESTCLIENT_EXPORT RestClassPrivate : public QObjectPrivate
 {
-	Q_DISABLE_COPY(RestClassPrivate)
+	Q_DECLARE_PUBLIC(RestClass)
 public:
 	RestClient *client;
 	QStringList subPath;
 
 	static QUrlQuery hashToQuery(const QVariantHash &hash);
-
-	RestClassPrivate(RestClient *client, QStringList subPath);
 };
 
 }

@@ -17,6 +17,10 @@ class Q_RESTCLIENTAUTH_EXPORT AuthRestClient : public RestClient
 public:
 	//! Constructor with the OAuth instance to use for authenticating requests
 	explicit AuthRestClient(QAbstractOAuth *oAuth, QObject *parent = nullptr);
+	explicit AuthRestClient(DataMode dataMode, QAbstractOAuth *oAuth, QObject *parent = nullptr);
+#ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
+	explicit AuthRestClient(QtJsonSerializer::SerializerBase *serializer, QAbstractOAuth *oAuth, QObject *parent = nullptr);
+#endif
 
 	//! Returns the used OAuth instance
 	QAbstractOAuth *oAuth() const;
@@ -27,11 +31,11 @@ public:
 
 protected:
 	//! @private
-	AuthRestClient(QObject *parent, AuthRestClientPrivate *d_ptr);
-	//! @private
-	AuthRestClientPrivate *d_ptr();
-	//! @private
-	const AuthRestClientPrivate *d_ptr() const;
+	AuthRestClient(AuthRestClientPrivate &dd, QObject *parent);
+	void setupOAuth(QAbstractOAuth *oAuth);
+
+private:
+	Q_DECLARE_PRIVATE(AuthRestClient)
 };
 
 }

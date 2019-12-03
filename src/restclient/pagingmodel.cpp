@@ -9,14 +9,12 @@ using namespace QtJsonSerializer;
 namespace sph = std::placeholders;
 
 PagingModel::PagingModel(QObject *parent) :
-	QAbstractTableModel{parent},
-	d{new PagingModelPrivate{this}}
+	  PagingModel{*new PagingModelPrivate{}, parent}
 {}
-
-PagingModel::~PagingModel() = default;
 
 void PagingModel::initialize(const QUrl &initialUrl, IPagingModelFetcher *fetcher, int typeId)
 {
+	Q_D(PagingModel);
 	beginResetModel();
 	d->typeId = typeId;
 	d->fetcher.reset(fetcher);
@@ -33,14 +31,15 @@ void PagingModel::initialize(const QUrl &initialUrl, RestClass *restClass, int t
 
 void PagingModel::initialize(RestReply *reply, IPagingModelFetcher *fetcher, int typeId)
 {
+	Q_D(PagingModel);
 	beginResetModel();
 	d->typeId = typeId;
 	d->fetcher.reset(fetcher);
 	d->data.clear();
 	d->generateRoleNames();
 	endResetModel();
-	reply->onSucceeded(this, std::bind(&PagingModelPrivate::processReply, d.data(), sph::_1, sph::_2));
-	reply->onAllErrors(this, std::bind(&PagingModelPrivate::processError, d.data(), sph::_1, sph::_2, sph::_3));
+	reply->onSucceeded(this, std::bind(&PagingModelPrivate::processReply, d, sph::_1, sph::_2));
+	reply->onAllErrors(this, std::bind(&PagingModelPrivate::processError, d, sph::_1, sph::_2, sph::_3));
 }
 
 void PagingModel::initialize(RestReply *reply, RestClass *restClass, int typeId)
@@ -50,6 +49,7 @@ void PagingModel::initialize(RestReply *reply, RestClass *restClass, int typeId)
 
 void PagingModel::initialize(IPaging *paging, IPagingModelFetcher *fetcher, int typeId)
 {
+	Q_D(PagingModel);
 	beginResetModel();
 	d->typeId = typeId;
 	d->fetcher.reset(fetcher);
@@ -66,21 +66,23 @@ void PagingModel::initialize(IPaging *paging, RestClass *restClass, int typeId)
 
 int PagingModel::typeId() const
 {
+	Q_D(const PagingModel);
 	return d->typeId;
 }
 
 QVariant PagingModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-	if(orientation != Qt::Horizontal || role != Qt::DisplayRole)
+	Q_D(const PagingModel);
+	if (orientation != Qt::Horizontal || role != Qt::DisplayRole)
 		return {};
 
-	if(d->columns.isEmpty()) {
+	if (d->columns.isEmpty()) {
 		if (section == 0) {
 			auto metaObject = QMetaType::metaObjectForType(d->typeId);
-			if(metaObject)
+			if (metaObject)
 				return QString::fromUtf8(metaObject->className());
 		}
-	} else if(section < d->columns.size())
+	} else if (section < d->columns.size())
 		return d->columns.value(section);
 
 	return {};
@@ -88,6 +90,7 @@ QVariant PagingModel::headerData(int section, Qt::Orientation orientation, int r
 
 int PagingModel::rowCount(const QModelIndex &parent) const
 {
+	Q_D(const PagingModel);
 	Q_ASSERT(checkIndex(parent, CheckIndexOption::DoNotUseParent));
 	if (parent.isValid())
 		return 0;
@@ -97,6 +100,7 @@ int PagingModel::rowCount(const QModelIndex &parent) const
 
 int PagingModel::columnCount(const QModelIndex &parent) const
 {
+	Q_D(const PagingModel);
 	Q_ASSERT(checkIndex(parent, CheckIndexOption::DoNotUseParent));
 	if (parent.isValid())
 		return 0;
@@ -106,6 +110,7 @@ int PagingModel::columnCount(const QModelIndex &parent) const
 
 bool PagingModel::canFetchMore(const QModelIndex &parent) const
 {
+	Q_D(const PagingModel);
 	Q_ASSERT(checkIndex(parent, CheckIndexOption::DoNotUseParent));
 	if (parent.isValid())
 		return false;
@@ -115,6 +120,7 @@ bool PagingModel::canFetchMore(const QModelIndex &parent) const
 
 void PagingModel::fetchMore(const QModelIndex &parent)
 {
+	Q_D(PagingModel);
 	if (!canFetchMore(parent))
 		return;
 	d->requestNext();
@@ -122,6 +128,7 @@ void PagingModel::fetchMore(const QModelIndex &parent)
 
 QVariant PagingModel::data(const QModelIndex &index, int role) const
 {
+	Q_D(const PagingModel);
 	Q_ASSERT(checkIndex(index, CheckIndexOption::ParentIsInvalid | CheckIndexOption::IndexIsValid));
 
 	// handle model data
@@ -136,21 +143,25 @@ QVariant PagingModel::data(const QModelIndex &index, int role) const
 	}
 
 	if (pName.isEmpty() && role != Qt::DisplayRole)
-		pName = d->roleNames.value(role);
+		pName = d->pagingRoleNames.value(role);
 
 	// get the actual data
 #ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
-	if (d->typeId == QMetaType::QJsonValue) {
+	if (d->typeId == QMetaType::UnknownType) {
 #endif
 		// handle special case: json value (only mode available without the serializer)
-		const auto value = d->data.at(index.row()).toJsonValue();
-		if (pName.isEmpty() && role == Qt::DisplayRole) {
-			if (value.isObject())
-				return QStringLiteral("QJsonObject <%L1>").arg(index.row());
+		const auto value = d->data.at(index.row());
+		if (!pName.isEmpty())
+			return value.toMap().value(QString::fromUtf8(pName));
+		else if (role == Qt::DisplayRole) {
+			if (value.userType() == QMetaType::QVariantMap)
+				return QStringLiteral("Object <%L1>").arg(index.row());
+			else if (value.userType() == QMetaType::QVariantList)
+				return QStringLiteral("Array <%L1>").arg(index.row());
 			else
-				return value.toVariant();
+				return value;
 		} else
-			return value.toObject().value(QString::fromUtf8(pName)).toVariant();
+			return {};
 #ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
 	} else {
 		// get the meta object
@@ -184,6 +195,7 @@ QVariant PagingModel::data(const QModelIndex &index, int role) const
 
 QVariant PagingModel::object(const QModelIndex &index) const
 {
+	Q_D(const PagingModel);
 	Q_ASSERT(checkIndex(index, CheckIndexOption::ParentIsInvalid | CheckIndexOption::IndexIsValid));
 	return d->data.at(index.row());
 }
@@ -199,11 +211,13 @@ Qt::ItemFlags PagingModel::flags(const QModelIndex &index) const
 
 QHash<int, QByteArray> PagingModel::roleNames() const
 {
-	return d->roleNames;
+	Q_D(const PagingModel);
+	return d->pagingRoleNames;
 }
 
 int PagingModel::addColumn(const QString &text)
 {
+	Q_D(PagingModel);
 	const auto index = d->columns.size();
 	beginInsertColumns(QModelIndex{}, index, index);
 	d->columns.append(text);
@@ -221,22 +235,30 @@ int PagingModel::addColumn(const QString &text, const char *propertyName)
 
 void PagingModel::addRole(int column, int role, const char *propertyName)
 {
+	Q_D(PagingModel);
 	Q_ASSERT_X(column < d->columns.size(), Q_FUNC_INFO, "Cannot add role to non existant column!");
 	d->roleMapping[column].insert(role, propertyName);
-	if(!d->data.isEmpty())
+	if (!d->data.isEmpty())
 		emit dataChanged(this->index(0, column), this->index(d->data.size() - 1, column), {role});
 }
 
 void PagingModel::clearColumns()
 {
+	Q_D(PagingModel);
 	const auto cColumns = d->columns.size() > 1;
-	if(cColumns)
+	if (cColumns)
 		beginRemoveColumns({}, 1, d->columns.size() - 1);
 	d->columns.clear();
 	d->roleMapping.clear();
-	if(cColumns)
+	if (cColumns)
 		endRemoveColumns();
+	if (!d->data.isEmpty())
+		emit dataChanged(this->index(0, 0), this->index(d->data.size() - 1, 0));
 }
+
+PagingModel::PagingModel(PagingModelPrivate &dd, QObject *parent) :
+	  QAbstractTableModel{dd, parent}
+{}
 
 
 
@@ -262,37 +284,35 @@ RestReply *RestClassFetcher::fetch(const QUrl &url) const
 
 // ------------- Private Implementation -------------
 
-PagingModelPrivate::PagingModelPrivate(PagingModel *q_ptr) :
-	q{q_ptr}
-{}
-
 void PagingModelPrivate::generateRoleNames()
 {
-	roleNames = {{PagingModel::ModelDataRole, "modelData"}};
+	pagingRoleNames = {{PagingModel::ModelDataRole, "modelData"}};
 	const auto metaObject = QMetaType::metaObjectForType(typeId);
 	if (metaObject) {
 		auto roleIndex = PagingModel::ModelDataRole;
 		for(auto i = 0; i < metaObject->propertyCount(); ++i)
-			roleNames.insert(++roleIndex, metaObject->property(i).name());
+			pagingRoleNames.insert(++roleIndex, metaObject->property(i).name());
 	}
 }
 
 void PagingModelPrivate::requestNext()
 {
+	Q_Q(PagingModel);
 	Q_ASSERT(nextUrl);
 	auto reply = fetcher->fetch(*nextUrl);
 	if (reply) {
 		nextUrl = std::nullopt;
-		reply->onSucceeded(q, static_cast<std::function<void(int, QJsonObject)>>(std::bind(&PagingModelPrivate::processReply, this, sph::_1, sph::_2)));
+		reply->onSucceeded(q, std::bind(&PagingModelPrivate::processReply, this, sph::_1, sph::_2));
 		reply->onAllErrors(q, std::bind(&PagingModelPrivate::processError, this, sph::_1, sph::_2, sph::_3));
 	} else
 		emit q->fetchError({});
 }
 
-void PagingModelPrivate::processReply(int, const QJsonObject &jsonData)
+void PagingModelPrivate::processReply(int, const RestReply::DataType &data)
 {
-	IPaging *paging;
 #ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
+	Q_Q(PagingModel);
+	IPaging *paging;
 	try {
 		paging = fetcher->client()->pagingFactory()->createPaging(fetcher->client()->serializer(), jsonData);
 	} catch (Exception &e) {
@@ -302,8 +322,16 @@ void PagingModelPrivate::processReply(int, const QJsonObject &jsonData)
 		return;
 	}
 #else
-	paging = fetcher->client()->pagingFactory()->createPaging(jsonData);
+	auto paging = std::visit(__private::overload {
+								 [](std::nullopt_t) -> IPaging* {
+									 return nullptr;
+								 },
+								 [this](auto vData) -> IPaging* {
+									 return fetcher->client()->pagingFactory()->createPaging(vData);
+								 }
+							 }, data);
 #endif
+
 	if (paging) {
 		processPaging(paging);
 		delete paging;
@@ -312,6 +340,7 @@ void PagingModelPrivate::processReply(int, const QJsonObject &jsonData)
 
 void PagingModelPrivate::processPaging(IPaging *paging)
 {
+	Q_Q(PagingModel);
 	if (paging->offset() < data.size()) {
 		qWarning() << "Pagings out of sync - dropping duplicate data";
 		data = data.mid(0, static_cast<int>(paging->offset()));
@@ -328,13 +357,13 @@ void PagingModelPrivate::processPaging(IPaging *paging)
 	}
 
 	std::visit([&](const auto &items){
-		q->beginInsertRows({}, data.size(), data.size() + static_cast<int>(items.size()) - 1);
+		q->beginInsertRows({}, data.size(), static_cast<int>(data.size() + items.size() - 1));
 #ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
 		const auto serializer = fetcher->client()->serializer();
 		auto fetchFailed = false;
-		for (const auto jData : items) {
+		for (const auto &item : items) {
 			try {
-				data.append(serializer->deserializeGeneric(jData, typeId, q));  // TODO care about memory leak
+				data.append(serializer->deserializeGeneric(item, typeId, q));  // TODO care about memory leak
 			} catch (DeserializationException &e) {
 				qCritical() << "Failed to deserialize paging element with error:"
 							<< e.what();
@@ -342,8 +371,8 @@ void PagingModelPrivate::processPaging(IPaging *paging)
 			}
 		}
 #else
-		for (const auto jData : paging->items())
-			data.append(QVariant::fromValue<QJsonValue>(jData));
+		for (const auto &item : items)
+			data.append(item.toVariant());
 #endif
 
 		if (data.size() < paging->total() && paging->hasNext())
@@ -359,8 +388,9 @@ void PagingModelPrivate::processPaging(IPaging *paging)
 	}, paging->items());
 }
 
-void PagingModelPrivate::processError(const QString &message, int code, RestReply::ErrorType errorType)
+void PagingModelPrivate::processError(const QString &message, int code, RestReply::Error errorType)
 {
+	Q_Q(PagingModel);
 	qCritical() << "Network request failed with error of type" << errorType
 				<< "and code" << code << "- error message is:" << qUtf8Printable(message);
 	emit q->fetchError({});

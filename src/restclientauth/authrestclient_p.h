@@ -9,6 +9,7 @@ namespace QtRestClient {
 
 class AuthRestClientPrivate : public RestClientPrivate
 {
+	Q_DECLARE_PUBLIC(AuthRestClient)
 public:
 	QAbstractOAuth *oAuth = nullptr;
 };

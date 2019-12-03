@@ -1,19 +1,50 @@
 #include "authrequestbuilder.h"
-#include "authrequestbuilder_p.h"
+#include <QtCore/QPointer>
 using namespace QtRestClient;
 
-#define authD (static_cast<AuthRequestBuilderPrivate*>(d_ptr()))
-#define cAuthD (static_cast<const AuthRequestBuilderPrivate*>(d_ptr()))
+namespace QtRestClient {
 
-AuthRequestBuilder::AuthRequestBuilder(const QUrl &baseUrl, QAbstractOAuth *oauth, QNetworkAccessManager *nam) :
-	RequestBuilder{new AuthRequestBuilderPrivate{baseUrl, oauth, nam ? nam : (oauth ? oauth->networkAccessManager() : nullptr)}}
-{}
+class AuthExtenderPrivate
+{
+public:
+	QPointer<QAbstractOAuth> oAuth;
+};
+
+}
+
+AuthExtender::AuthExtender(QAbstractOAuth *oAuth) :
+	  d{new AuthExtenderPrivate{}}
+{
+	d->oAuth = oAuth;
+}
+
+AuthExtender::~AuthExtender() = default;
+
+bool AuthExtender::requiresBody() const
+{
+	return true;
+}
+
+void AuthExtender::extendRequest(QNetworkRequest &request, QByteArray &verb, QByteArray *body) const
+{
+	Q_ASSERT(body);
+	d->oAuth->prepareRequest(&request, verb, *body);
+}
+
+
+
+AuthRequestBuilder::AuthRequestBuilder(const QUrl &baseUrl, QAbstractOAuth *oAuth, QNetworkAccessManager *nam) :
+	RequestBuilder{baseUrl, nam}
+{
+	if (oAuth)
+		setOAuth(oAuth, !nam);
+}
 
 AuthRequestBuilder &AuthRequestBuilder::setOAuth(QAbstractOAuth *oAuth, bool replaceNam)
 {
-	authD->oAuth = oAuth;
+	setExtender(new AuthExtender{oAuth});
 	if (replaceNam)
-		authD->nam = oAuth->networkAccessManager();
+		setNetworkAccessManager(oAuth->networkAccessManager());
 	return *this;
 }
 
@@ -27,19 +58,6 @@ AuthRequestBuilder &AuthRequestBuilder::operator=(AuthRequestBuilder &&other) no
 
 AuthRequestBuilder::~AuthRequestBuilder() = default;
 
-// ------------- Private Implementation -------------
-
-QtRestClient::AuthRequestBuilderPrivate::AuthRequestBuilderPrivate(const QUrl &baseUrl, QAbstractOAuth *oAuth, QNetworkAccessManager *nam) :
-	RequestBuilderPrivate{baseUrl, nam},
-				   oAuth{oAuth}
+AuthRequestBuilder::AuthRequestBuilder(RequestBuilder &&extendedBase) :
+	  RequestBuilder{std::move(extendedBase)}
 {}
-
-void AuthRequestBuilderPrivate::prepareRequest(QNetworkRequest &request, QByteArray *sBody) const
-{
-	QByteArray xBody;
-	if (!sBody)
-		sBody = &xBody;
-
-	RequestBuilderPrivate::prepareRequest(request, sBody);
-	oAuth->prepareRequest(&request, verb, *sBody);
-}

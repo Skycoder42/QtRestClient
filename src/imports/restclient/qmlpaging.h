@@ -107,9 +107,9 @@ class QmlPaging
 
 public:
 	//! @private
-	QmlPaging() = default;
+	explicit QmlPaging() = default;
 	//! @private
-	QmlPaging(IPaging *iPaging, RestClient *client, QJSEngine *engine);
+	explicit QmlPaging(IPaging *iPaging, RestClient *client, QJSEngine *engine);
 
 	//! @private
 	static QmlPaging create(RestClient *client, QJSEngine *engine, const QJsonObject &obj);
