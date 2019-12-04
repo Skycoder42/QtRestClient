@@ -112,7 +112,9 @@ public:
 	explicit QmlPaging(IPaging *iPaging, RestClient *client, QJSEngine *engine);
 
 	//! @private
-	static QmlPaging create(RestClient *client, QJSEngine *engine, const QJsonObject &obj);
+	static QmlPaging create(RestClient *client, QJSEngine *engine, const RestReply::DataType &data);
+
+	Q_INVOKABLE bool isValid() const;
 
 	//! Performs a request for the next paging object
 	Q_INVOKABLE QtRestClient::RestReply *next();

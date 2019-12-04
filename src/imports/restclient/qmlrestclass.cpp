@@ -29,39 +29,92 @@ void QmlRestClass::componentComplete()
 	revaluateClass();
 }
 
-RestReply *QmlRestClass::call(const QString &verb, const QJSValue &arg0, const QJSValue &arg1, const QJSValue &arg2, const QJSValue &arg3, const QJSValue &arg4)
+RestReply *QmlRestClass::call(const QString &verb, QJSValue optPath, QJSValue optBody, QJSValue optParams, QJSValue optAsPost, QJSValue optHeaders)
 {
-	return callImpl(verb.toUtf8(), arg0, arg1, arg2, arg3, arg4);
+	const auto path = getPath(optPath, optBody, optParams, optAsPost, optHeaders);
+	const auto body = getBody(optBody, optParams, optAsPost, optHeaders);
+	const auto params = getParams(optParams, optAsPost, optHeaders);
+	const auto asPost = getAsPost(body.has_value(), optAsPost, optHeaders);
+	const auto headers = getHeaders(optHeaders);
+	return callImpl(verb.toUtf8(), path, body, params, asPost, headers);
 }
 
-RestReply *QmlRestClass::get(const QJSValue &arg0, const QJSValue &arg1, const QJSValue &arg2)
+RestReply *QmlRestClass::get(QJSValue optPath, QJSValue optParams, QJSValue optHeaders)
 {
-	return callImpl(RestClass::GetVerb, arg0, arg1, arg2);
+	const auto path = getPath(optPath, optParams, optHeaders);
+	const auto params = getParams(optParams, optHeaders);
+	const auto headers = getHeaders(optHeaders);
+	return callImpl(RestClass::GetVerb, path, std::nullopt, params, false, headers);
 }
 
-RestReply *QmlRestClass::post(const QJSValue &arg0, const QJSValue &arg1, const QJSValue &arg2, const QJSValue &arg3)
+RestReply *QmlRestClass::post(QJSValue optPath, QJSValue optBodyParams, QJSValue optParams, QJSValue optHeaders)
 {
-	return callImpl2(RestClass::PostVerb, true, arg0, arg1, arg2, arg3);
+	const auto path = getPath(optPath, optBodyParams, optParams, optHeaders);
+	std::optional<std::variant<QCborValue, QJsonValue>> body;
+	std::optional<QVariantHash> params;
+	bool postParams;
+	if (optParams.isUndefined() ||
+		(optParams.isObject() && optHeaders.isObject())) {
+		// parameters are either explicitly unset, or all arguments are used -> body must be a body
+		body = getBody(optBodyParams, optParams, optHeaders);
+		params = getParams(optParams, optHeaders);
+		postParams = false;
+	} else if (optBodyParams.isObject()) {
+		// body is an object -> use as post params
+		params = getParams(optBodyParams, optParams, optHeaders);
+		// optParams must be the headers now -> shift over (headers must be undefined)
+		shift(optParams, optHeaders);
+		postParams = true;
+	} else {
+		// body is an array or anything -> process as body
+		body = getBody(optBodyParams, optParams, optHeaders);
+		params = getParams(optParams, optHeaders);
+		postParams = false;
+	}
+	const auto headers = getHeaders(optHeaders);
+	return callImpl(RestClass::PostVerb, path, body, params, postParams, headers);
 }
 
-RestReply *QmlRestClass::put(const QJSValue &body, const QJSValue &arg0, const QJSValue &arg1, const QJSValue &arg2)
+RestReply *QmlRestClass::put(QJSValue optPathOrBody, QJSValue body, QJSValue optParams, QJSValue optHeaders)
 {
-	return callImpl(RestClass::PutVerb, body, arg0, arg1, arg2);
+	const auto path = getPath(optPathOrBody, body, optParams, optHeaders);
+	const auto rBody = getBody(body, optParams, optHeaders);
+	if (!rBody) {
+		qmlWarning(this) << "ERROR: no body specified on put request";
+		return nullptr;
+	}
+	const auto params = getParams(optParams, optHeaders);
+	const auto headers = getHeaders(optHeaders);
+	return callImpl(RestClass::PutVerb, path, rBody, params, false, headers);
 }
 
-RestReply *QmlRestClass::deleteResource(const QJSValue &arg0, const QJSValue &arg1, const QJSValue &arg2)
+RestReply *QmlRestClass::deleteResource(QJSValue optPath, QJSValue optParams, QJSValue optHeaders)
 {
-	return callImpl(RestClass::DeleteVerb, arg0, arg1, arg2);
+	const auto path = getPath(optPath, optParams, optHeaders);
+	const auto params = getParams(optParams, optHeaders);
+	const auto headers = getHeaders(optHeaders);
+	return callImpl(RestClass::DeleteVerb, path, std::nullopt, params, false, headers);
 }
 
-RestReply *QmlRestClass::patch(const QJSValue &body, const QJSValue &arg0, const QJSValue &arg1, const QJSValue &arg2)
+RestReply *QmlRestClass::patch(QJSValue optPathOrBody, QJSValue body, QJSValue optParams, QJSValue optHeaders)
 {
-	return callImpl(RestClass::PatchVerb, body, arg0, arg1, arg2);
+	const auto path = getPath(optPathOrBody, body, optParams, optHeaders);
+	const auto rBody = getBody(body, optParams, optHeaders);
+	if (!rBody) {
+		qmlWarning(this) << "ERROR: no body specified on patch request";
+		return nullptr;
+	}
+	const auto params = getParams(optParams, optHeaders);
+	const auto headers = getHeaders(optHeaders);
+	return callImpl(RestClass::PatchVerb, path, rBody, params, false, headers);
 }
 
-RestReply *QmlRestClass::head(const QJSValue &arg0, const QJSValue &arg1, const QJSValue &arg2)
+RestReply *QmlRestClass::head(QJSValue optPath, QJSValue optParams, QJSValue optHeaders)
 {
-	return callImpl(RestClass::HeadVerb, arg0, arg1, arg2);
+	const auto path = getPath(optPath, optParams, optHeaders);
+	const auto params = getParams(optParams, optHeaders);
+	const auto headers = getHeaders(optHeaders);
+	return callImpl(RestClass::HeadVerb, path, std::nullopt, params, false, headers);
 }
 
 void QmlRestClass::setPath(QString path)
@@ -111,86 +164,127 @@ void QmlRestClass::revaluateClass()
 		emit restClassChanged(_class);
 }
 
-RestReply *QmlRestClass::callImpl(const QByteArray &verb, const QJSValue &arg0, const QJSValue &arg1, const QJSValue &arg2, const QJSValue &arg3, const QJSValue &arg4)
+template<typename... TValues>
+bool QmlRestClass::shift(QJSValue &first, QJSValue &second, TValues&... values) const
 {
-	return callImpl2(verb, false, arg0, arg1, arg2, arg3, arg4);
+	if (!shift(second, values...))
+		return false;
+	second = std::move(first);
+	return true;
 }
 
-RestReply *QmlRestClass::callImpl2(const QByteArray &verb, bool forcePost, const QJSValue &arg0, const QJSValue &arg1, const QJSValue &arg2, const QJSValue &arg3, const QJSValue &arg4)
+bool QmlRestClass::shift(QJSValue &end) const
 {
-	// TODO rework, make safer
-	if (!_class) {
-		qmlWarning(this) << "ERROR: Cannot run call without a proper initialization";
-		return nullptr;
+	return end.isUndefined();
+}
+
+template<typename... TValues>
+std::optional<std::variant<QString, QUrl>> QmlRestClass::getPath(QJSValue &optPath, TValues&... values) const
+{
+	if (optPath.isString())
+		return optPath.toString();
+	else if (const auto variant = optPath.toVariant(); variant.userType() == QMetaType::QUrl)
+		return variant.toUrl();
+	else if (optPath.isUndefined())
+		return std::nullopt;
+	else {
+		if (shift(optPath, values...))
+			optPath = {};
+		else
+			qmlWarning(this) << "Unsupported parameter configuration: Argument is not a path, but cannot be shifted either";
+		return std::nullopt;
 	}
+}
 
-	std::variant<std::nullopt_t, QCborValue, QJsonValue> body = std::nullopt;
-	QString path;
-	QVariantHash params;
-	auto asPostParams = forcePost;
-	HeaderHash headers;
-	auto offset = false;
-
-	if(arg0.isArray() ||
-	   arg0.isObject()) {
+template<typename... TValues>
+std::optional<std::variant<QCborValue, QJsonValue>> QmlRestClass::getBody(QJSValue &optBody, TValues&... values) const
+{
+	if (optBody.isArray() || optBody.isObject()) {
 		switch (_class->client()->dataMode()) {
 		case RestClient::DataMode::Cbor:
-			body = QCborValue::fromVariant(arg0.toVariant());
-			break;
+			return QCborValue::fromVariant(optBody.toVariant());
 		case RestClient::DataMode::Json:
-			body = QJsonValue::fromVariant(arg0.toVariant());
-			break;
+			return QJsonValue::fromVariant(optBody.toVariant());
 		default:
 			Q_UNREACHABLE();
 		}
-		offset = true;
-	} else if (arg0.isUndefined())
-		offset = true;
-
-	const auto &b0 = offset ? arg1 : arg0;
-	const auto &b1 = offset ? arg2 : arg1;
-	const auto &b2 = offset ? arg3 : arg2;
-	const auto &b3 = offset ? arg4 : arg3;
-	offset = false;
-	if (b0.isString()) {
-		path = b0.toString();
-		offset = true;
-	} else if (b0.isUndefined())
-		offset = true;
-
-	const auto &p0 = offset ? b1 : b0;
-	const auto &p1 = offset ? b2 : b1;
-	const auto &p2 = offset ? b3 : b2;
-	offset = false;
-	if (p0.isObject()) {
-		params = p0.toVariant().toHash();
-		if (p1.isBool()) {
-			asPostParams = p1.toBool();
-			offset = true;
-		} else if (p1.isUndefined())
-			offset = true;
-
-		const auto &m0 = offset ? p2 : p1;
-		offset = false;
-		if (m0.isObject()) {
-			auto map = m0.toVariant().toMap();
-			for (auto it = map.constBegin(); it != map.constEnd(); it++)
-				headers.insert(it.key().toUtf8(), it.value().toString().toUtf8());
-		}
+	} else if (optBody.isUndefined())
+		return std::nullopt;
+	else {
+		if (shift(optBody, values...))
+			optBody = {};
+		else
+			qmlWarning(this) << "Unsupported parameter configuration: Argument is not an object or array, but cannot be shifted either";
+		return std::nullopt;
 	}
+}
 
-	return std::visit(__private::overload {
-						  [&](std::nullopt_t) {
-							  if (!path.isEmpty())
-								  return _class->callRaw(verb, path, params, headers, asPostParams);
-							  else
-								  return _class->callRaw(verb, params, headers, asPostParams);
-						  },
-						  [&](const auto &vBody) {
-							  if (!path.isEmpty())
-								  return _class->callRaw(verb, path, vBody, params, headers);
-							  else
-								  return _class->callRaw(verb, vBody, params, headers);
-						  }
-					  }, body);
+template<typename... TValues>
+std::optional<QVariantHash> QmlRestClass::getParams(QJSValue &optParams, TValues&... values) const
+{
+	if (optParams.isObject())
+		return optParams.toVariant().toHash();
+	else if (optParams.isUndefined())
+		return std::nullopt;
+	else {
+		if (shift(optParams, values...))
+			optParams = {};
+		else
+			qmlWarning(this) << "Unsupported parameter configuration: Argument is not a paremeter object, but cannot be shifted either";
+		return std::nullopt;
+	}
+}
+
+template<typename... TValues>
+bool QmlRestClass::getAsPost(bool hasBody, QJSValue &optAsPost, TValues&... values) const
+{
+	if (optAsPost.isBool())
+		return hasBody ? false : optAsPost.toBool();
+	else if (optAsPost.isUndefined())
+		return false;
+	else {
+		if (shift(optAsPost, values...))
+			optAsPost = {};
+		else
+			qmlWarning(this) << "Unsupported parameter configuration: Argument is not a boolean, but cannot be shifted either";
+		return false;
+	}
+}
+
+std::optional<HeaderHash> QmlRestClass::getHeaders(QJSValue &optHeaders) const
+{
+	if (optHeaders.isObject()) {
+		const auto headerMap = optHeaders.toVariant().toMap();
+		HeaderHash headers;
+		headers.reserve(headerMap.size());
+		for (auto it = headerMap.constBegin(); it != headerMap.constEnd(); it++)
+			headers.insert(it.key().toUtf8(), it.value().toString().toUtf8());
+		return headers;
+	} else if (optHeaders.isUndefined())
+		return std::nullopt;
+	else {
+		qmlWarning(this) << "Unsupported parameter configuration: Argument is not a header object, but is the last argument";
+		return std::nullopt;
+	}
+}
+
+RestReply *QmlRestClass::callImpl(const QByteArray &verb, const std::optional<std::variant<QString, QUrl> > &optPath, const std::optional<std::variant<QCborValue, QJsonValue> > &optBody, const std::optional<QVariantHash> &optParams, bool optAsPost, const std::optional<HeaderHash> &optHeaders)
+{
+	if (optPath) {
+		return std::visit([&](const auto &path) {
+			if (optBody) {
+				return std::visit([&](const auto &body) {
+					return _class->callRaw(verb, path, body, optParams.value_or(QVariantHash{}), optHeaders.value_or(HeaderHash{}));
+				}, *optBody);
+			} else
+				return _class->callRaw(verb, path, optParams.value_or(QVariantHash{}), optHeaders.value_or(HeaderHash{}), optAsPost);
+		}, *optPath);
+	} else {
+		if (optBody) {
+			return std::visit([&](const auto &body) {
+				return _class->callRaw(verb, body, optParams.value_or(QVariantHash{}), optHeaders.value_or(HeaderHash{}));
+			}, *optBody);
+		} else
+			return _class->callRaw(verb, optParams.value_or(QVariantHash{}), optHeaders.value_or(HeaderHash{}), optAsPost);
+	}
 }

@@ -81,8 +81,8 @@ public:
 	/*! @brief Perform a HTTP-Request call on this class
 	 *
 	 * @param verb The HTTP-Verb to be used
-	 * @param optBody Optional and variable parameter
 	 * @param optPath Optional and variable parameter
+	 * @param optBody Optional and variable parameter
 	 * @param optParams Optional and variable parameter
 	 * @param optAsPost Optional and variable parameter
 	 * @param optHeaders Optional and variable parameter
@@ -97,11 +97,11 @@ public:
 	 * @sa ::QtRestClient::RestClass::call
 	 */
 	Q_INVOKABLE QtRestClient::RestReply *call(const QString &verb,
-											  const QJSValue &optBody = {},
-											  const QJSValue &optPath = {},
-											  const QJSValue &optParams = {},
-											  const QJSValue &optAsPost = {},
-											  const QJSValue &optHeaders = {});
+											  QJSValue optPath = {},
+											  QJSValue optBody = {},
+											  QJSValue optParams = {},
+											  QJSValue optAsPost = {},
+											  QJSValue optHeaders = {});
 
 	/*! @brief Perform a HTTP-GET-Request on this class
 	 *
@@ -118,11 +118,13 @@ public:
 	 *
 	 * @sa ::QtRestClient::RestClass::get
 	 */
-	Q_INVOKABLE QtRestClient::RestReply *get(const QJSValue &optPath = {}, const QJSValue &optParams = {}, const QJSValue &optHeaders = {});
+	Q_INVOKABLE QtRestClient::RestReply *get(QJSValue optPath = {},
+											 QJSValue optParams = {},
+											 QJSValue optHeaders = {});
 	/*! @brief Perform a HTTP-POST-Request on this class
 	 *
-	 * @param optBody Optional and variable parameter
 	 * @param optPath Optional and variable parameter
+	 * @param optBodyParams Optional and variable parameter
 	 * @param optParams Optional and variable parameter
 	 * @param optHeaders Optional and variable parameter
 	 *
@@ -135,12 +137,14 @@ public:
 	 *
 	 * @sa ::QtRestClient::RestClass::post
 	 */
-	Q_INVOKABLE QtRestClient::RestReply *post(const QJSValue &optBody = {}, const QJSValue &optPath = {}, const QJSValue &optParams = {}, const QJSValue &optHeaders = {});
+	Q_INVOKABLE QtRestClient::RestReply *post(QJSValue optPath = {},
+											  QJSValue optBodyParams = {},
+											  QJSValue optParams = {},
+											  QJSValue optHeaders = {});
 	/*! @brief Perform a HTTP-PUT-Request on this class
 	 *
+	 * @param optPathOrBody Optional and variable parameter
 	 * @param body The data body of the HTTP-Request, sent as json (can be `object` or `array`)
-	 * @param optBody Optional and variable parameter
-	 * @param optPath Optional and variable parameter
 	 * @param optParams Optional and variable parameter
 	 * @param optHeaders Optional and variable parameter
 	 *
@@ -153,7 +157,10 @@ public:
 	 *
 	 * @sa ::QtRestClient::RestClass::put
 	 */
-	Q_INVOKABLE QtRestClient::RestReply *put(const QJSValue &body, const QJSValue &optPath = {}, const QJSValue &optParams = {}, const QJSValue &optHeaders = {});
+	Q_INVOKABLE QtRestClient::RestReply *put(QJSValue optPathOrBody,
+											 QJSValue body = {},
+											 QJSValue optParams = {},
+											 QJSValue optHeaders = {});
 	// [path,] [params, [headers]]
 	/*! @brief Perform a HTTP-DELETE-Request on this class
 	 *
@@ -170,12 +177,13 @@ public:
 	 *
 	 * @sa ::QtRestClient::RestClass::deleteResource
 	 */
-	Q_INVOKABLE QtRestClient::RestReply *deleteResource(const QJSValue &optPath = {}, const QJSValue &optParams = {}, const QJSValue &optHeaders = {});
+	Q_INVOKABLE QtRestClient::RestReply *deleteResource(QJSValue optPath = {},
+														QJSValue optParams = {},
+														QJSValue optHeaders = {});
 	// body, [path,] [params, [headers]]
 	/*! @brief Perform a HTTP-PATCH-Request on this class
 	 *
 	 * @param body The data body of the HTTP-Request, sent as json (can be `object` or `array`)
-	 * @param optBody Optional and variable parameter
 	 * @param optPath Optional and variable parameter
 	 * @param optParams Optional and variable parameter
 	 * @param optHeaders Optional and variable parameter
@@ -189,7 +197,10 @@ public:
 	 *
 	 * @sa ::QtRestClient::RestClass::patch
 	 */
-	Q_INVOKABLE QtRestClient::RestReply *patch(const QJSValue &body, const QJSValue &optPath = {}, const QJSValue &optParams = {}, const QJSValue &optHeaders = {});
+	Q_INVOKABLE QtRestClient::RestReply *patch(QJSValue optPathOrBody,
+											   QJSValue body = {},
+											   QJSValue optParams = {},
+											   QJSValue optHeaders = {});
 	// [path,] [params, [headers]]
 	/*! @brief Perform a HTTP-HEAD-Request on this class
 	 *
@@ -206,7 +217,9 @@ public:
 	 *
 	 * @sa ::QtRestClient::RestClass::head
 	 */
-	Q_INVOKABLE QtRestClient::RestReply *head(const QJSValue &optPath = {}, const QJSValue &optParams = {}, const QJSValue &optHeaders = {});
+	Q_INVOKABLE QtRestClient::RestReply *head(QJSValue optPath = {},
+											  QJSValue optParams = {},
+											  QJSValue optHeaders = {});
 
 public Q_SLOTS:
 	//! @private
@@ -227,9 +240,27 @@ private:
 	QList<QmlRestClass*> _childClasses;
 	bool _init = false;
 
-	// [body,] [path,] [params, [asPost], [headers]]
-	RestReply *callImpl(const QByteArray &verb, const QJSValue &arg0 = {}, const QJSValue &arg1 = {}, const QJSValue &arg2 = {}, const QJSValue &arg3 = {}, const QJSValue &arg4 = {});
-	RestReply *callImpl2(const QByteArray &verb, bool forcePost, const QJSValue &arg0 = {}, const QJSValue &arg1 = {}, const QJSValue &arg2 = {}, const QJSValue &arg3 = {}, const QJSValue &arg4 = {});
+	// moves first into second recursively, if last is undefined
+	template <typename... TValues>
+	bool shift(QJSValue &first, QJSValue &second, TValues& ...values) const;
+	bool shift(QJSValue &end) const;
+
+	template <typename... TValues>
+	std::optional<std::variant<QString, QUrl>> getPath(QJSValue &optPath, TValues&... values) const;
+	template <typename... TValues>
+	std::optional<std::variant<QCborValue, QJsonValue>> getBody(QJSValue &optBody, TValues&... values) const;
+	template <typename... TValues>
+	std::optional<QVariantHash> getParams(QJSValue &optParams, TValues&... values) const;
+	template <typename... TValues>
+	bool getAsPost(bool hasBody, QJSValue &optParams, TValues&... values) const;
+	std::optional<HeaderHash> getHeaders(QJSValue &optHeaders) const;
+
+	RestReply *callImpl(const QByteArray &verb,
+						const std::optional<std::variant<QString, QUrl>> &optPath,
+						const std::optional<std::variant<QCborValue, QJsonValue>> &optBody,
+						const std::optional<QVariantHash> &optParams,
+						bool optAsPost,
+						const std::optional<HeaderHash> &optHeaders);
 };
 
 }

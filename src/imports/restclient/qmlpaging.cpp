@@ -9,23 +9,37 @@ QmlPaging::QmlPaging(IPaging *iPaging, RestClient *client, QJSEngine *engine) :
 	_paging(iPaging)
 {}
 
-QmlPaging QmlPaging::create(RestClient *client, QJSEngine *engine, const QJsonObject &obj)
+QmlPaging QmlPaging::create(RestClient *client, QJSEngine *engine, const RestReply::DataType &data)
 {
+	auto iPaging = std::visit(__private::overload {
+						  [](std::nullopt_t) -> IPaging* {
+							  return nullptr;
+						  },
+						  [&](const auto &vData) {
 #ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
-	auto iPaging = client->pagingFactory()->createPaging(client->serializer(), obj);
+							  return client->pagingFactory()->createPaging(client->serializer(), vData);
 #else
-	auto iPaging = client->pagingFactory()->createPaging(obj);
+							  return client->pagingFactory()->createPaging(vData);
 #endif
+						  }
+					  }, data);
 	return QmlPaging{iPaging, client, engine};
+}
+
+bool QmlPaging::isValid() const
+{
+	return _paging;
 }
 
 RestReply *QmlPaging::next()
 {
 	if (_paging->hasNext()) {
-		auto reply = _client->builder()
+		return new RestReply{
+			_client->builder()
 				.updateFromRelativeUrl(_paging->next(), true)
-				.send();
-		return new RestReply{reply, _client};
+				.send(),
+			_client
+		};
 	} else
 		return nullptr;
 }
@@ -33,10 +47,12 @@ RestReply *QmlPaging::next()
 RestReply *QmlPaging::previous()
 {
 	if (_paging->hasPrevious()) {
-		auto reply = _client->builder()
+		return new RestReply{
+			_client->builder()
 				.updateFromRelativeUrl(_paging->previous(), true)
-				.send();
-		return new RestReply{reply, _client};
+				.send(),
+			_client
+		};
 	} else
 		return nullptr;
 }
@@ -90,7 +106,6 @@ void QmlPaging::iterate(const QJSValue &iterator, int to, int from)
 
 void QmlPaging::iterate(const QJSValue &iterator, const QJSValue &failureHandler, const QJSValue &errorHandler, int to, int from)
 {
-	// TODO check if still ok
 	if (!iterator.isCallable()) {
 		qWarning() << "iterator parameter must be a function";
 		return;
@@ -104,21 +119,21 @@ void QmlPaging::iterate(const QJSValue &iterator, const QJSValue &failureHandler
 		return;
 	}
 	if (from < _paging->offset()) {
-		qWarning() << "from must be smaller then offset" << from << _paging->offset();
+		qWarning() << "from must not be smaller then offset (from:" << from << ", offset:" << _paging->offset() << ")";
 		return;
 	}
 
 	auto index = internalIterate(iterator, from, to);
-	if(index < 0)
+	if (index < 0)
 		return;
 
 	// calc total limit -> only if supports indexes
-	int max = INT_MAX;
+	auto max = std::numeric_limits<qint64>::max();
 	if (_paging->offset() >= 0) {
-		if(to >= 0)
-			max = std::min(to, static_cast<int>(_paging->total()));
+		if (to >= 0)
+			max = std::min(static_cast<qint64>(to), _paging->total());
 		else
-			max = static_cast<int>(_paging->total());
+			max = _paging->total();
 	}
 
 	// continue to the next one
@@ -126,22 +141,28 @@ void QmlPaging::iterate(const QJSValue &iterator, const QJSValue &failureHandler
 		QPointer<RestClient> client{_client};
 		QPointer<QJSEngine> engine{_engine};
 
-		auto reply = next()->onSucceeded([client, engine, iterator, failureHandler, errorHandler, to, index](int, const QJsonObject &data) {
+		auto reply = next()->onSucceeded([client, engine, iterator, failureHandler, errorHandler, to, index](int, const RestReply::DataType &data) {
 			if (!client || !engine)
 				return;
 			auto paging = create(client, engine, data);
-			paging.iterate(iterator, failureHandler, errorHandler, to, index);
+			if (paging.isValid())
+				paging.iterate(iterator, failureHandler, errorHandler, to, index);
 		});
 
 		if (failureHandler.isCallable()) {
-			reply->onFailed([engine, failureHandler](int code, const QJsonObject &data) {
+			reply->onFailed([engine, failureHandler](int code, const RestReply::DataType &data) {
 				if (!engine)
 					return;
 				auto fn = failureHandler;
-				fn.call({
-							code,
-							engine->toScriptValue(data)
-						});
+				auto jsValue = std::visit(__private::overload {
+											  [](std::nullopt_t) {
+												  return QJSValue{};
+											  },
+											  [&](const auto &vData) {
+												  return engine->toScriptValue(vData);
+											  }
+										  }, data);
+				fn.call({code, jsValue});
 			});
 		}
 		if (errorHandler.isCallable()) {
@@ -155,7 +176,6 @@ void QmlPaging::iterate(const QJSValue &iterator, const QJSValue &failureHandler
 
 int QmlPaging::internalIterate(QJSValue iterator, int from, int to) const
 {
-	// TODO check if still ok
 	return std::visit([&](const auto &items) {
 		// handle all items in this paging
 		auto offset = _paging->offset();

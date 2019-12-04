@@ -126,7 +126,7 @@ Item {
 				title: "baum",
 				body: "baum"
 			};
-			var reply = postClass.put(obj, "1");
+			var reply = postClass.put("1", obj);
 			reply.succeeded.connect(function(code, data){
 				waiter.done = true;
 				compare(code, 200);
