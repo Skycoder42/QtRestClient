@@ -3,10 +3,12 @@
 #include <QtCore/QMetaProperty>
 #include <QtCore/QDebug>
 using namespace QtRestClient;
+namespace sph = std::placeholders;
+
 #ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
+#include <QtJsonSerializer/SerializerBase>
 using namespace QtJsonSerializer;
 #endif
-namespace sph = std::placeholders;
 
 PagingModel::PagingModel(QObject *parent) :
 	  PagingModel{*new PagingModelPrivate{}, parent}
@@ -19,7 +21,7 @@ void PagingModel::initialize(const QUrl &initialUrl, IPagingModelFetcher *fetche
 	d->typeId = typeId;
 	d->fetcher.reset(fetcher);
 	d->nextUrl = initialUrl;
-	d->data.clear();
+	d->clearData();
 	d->generateRoleNames();
 	endResetModel();  // automatically calls fetchMore
 }
@@ -35,7 +37,7 @@ void PagingModel::initialize(RestReply *reply, IPagingModelFetcher *fetcher, int
 	beginResetModel();
 	d->typeId = typeId;
 	d->fetcher.reset(fetcher);
-	d->data.clear();
+	d->clearData();
 	d->generateRoleNames();
 	endResetModel();
 	reply->onSucceeded(this, std::bind(&PagingModelPrivate::processReply, d, sph::_1, sph::_2));
@@ -53,7 +55,7 @@ void PagingModel::initialize(IPaging *paging, IPagingModelFetcher *fetcher, int 
 	beginResetModel();
 	d->typeId = typeId;
 	d->fetcher.reset(fetcher);
-	d->data.clear();
+	d->clearData();
 	d->generateRoleNames();
 	endResetModel();
 	d->processPaging(paging);
@@ -169,26 +171,26 @@ QVariant PagingModel::data(const QModelIndex &index, int role) const
 		if (!metaObject)
 			return {};
 
-		// find the property name
-		if (pName.isEmpty() && role == Qt::DisplayRole) {
+		if (!pName.isEmpty()) {
+			// obtain the meta property
+			const auto pIndex = metaObject->indexOfProperty(pName.constData());
+			if (pIndex == -1)
+				return {};
+			const auto prop = metaObject->property(pIndex);
+
+			// read the value
+			if (metaObject->inherits(&QObject::staticMetaObject))
+				return prop.read(d->data.at(index.row()).value<QObject*>());
+			else
+				return prop.readOnGadget(d->data.at(index.row()).data());
+		} else if (role == Qt::DisplayRole) {
 			const auto userProp = metaObject->userProperty();
 			if (userProp.isValid())
 				pName = userProp.name();
 			else
 				return QStringLiteral("%1 <%L2>").arg(QString::fromUtf8(metaObject->className()), index.row());
-		}
-
-		// obtain the meta property
-		const auto pIndex = metaObject->indexOfProperty(pName.constData());
-		if(pIndex == -1)
+		} else
 			return {};
-		const auto prop = metaObject->property(pIndex);
-
-		// read the value
-		if (metaObject->inherits(&QObject::staticMetaObject))
-			return prop.read(d->data.at(index.row()).value<QObject*>());
-		else
-			return prop.readOnGadget(d->data.at(index.row()).data());
 	}
 #endif
 }
@@ -284,6 +286,20 @@ RestReply *RestClassFetcher::fetch(const QUrl &url) const
 
 // ------------- Private Implementation -------------
 
+void PagingModelPrivate::clearData()
+{
+	const auto tFlags = QMetaType::typeFlags(typeId);
+	if (tFlags.testFlag(QMetaType::PointerToQObject) ||
+		tFlags.testFlag(QMetaType::TrackingPointerToQObject)) {
+		for (const auto &value : qAsConst(data)) {
+			const auto obj = value.value<QObject*>();
+			if (obj)
+				obj->deleteLater();
+		}
+	}
+	data.clear();
+}
+
 void PagingModelPrivate::generateRoleNames()
 {
 	pagingRoleNames = {{PagingModel::ModelDataRole, "modelData"}};
@@ -314,10 +330,17 @@ void PagingModelPrivate::processReply(int, const RestReply::DataType &data)
 	Q_Q(PagingModel);
 	IPaging *paging;
 	try {
-		paging = fetcher->client()->pagingFactory()->createPaging(fetcher->client()->serializer(), jsonData);
-	} catch (Exception &e) {
+		paging = std::visit(__private::overload {
+								[](std::nullopt_t) -> IPaging* {
+									return nullptr;
+								},
+								[&](const auto &vData) {
+									return fetcher->client()->pagingFactory()->createPaging(fetcher->client()->serializer(), vData);
+								}
+							}, data);
+	} catch (DeserializationException &e) {
 		qCritical() << "Failed to parse received paging object with error:"
-				   << e.what();
+					<< e.what();
 		emit q->fetchError({});
 		return;
 	}
@@ -363,10 +386,11 @@ void PagingModelPrivate::processPaging(IPaging *paging)
 		auto fetchFailed = false;
 		for (const auto &item : items) {
 			try {
-				data.append(serializer->deserializeGeneric(item, typeId, q));  // TODO care about memory leak
+				data.append(serializer->deserializeGeneric(item, typeId, q));
 			} catch (DeserializationException &e) {
 				qCritical() << "Failed to deserialize paging element with error:"
 							<< e.what();
+				data.append(QVariant{});
 				fetchFailed = true;
 			}
 		}

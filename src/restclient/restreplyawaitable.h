@@ -107,21 +107,16 @@ public:
 
 	//! @copybrief AwaitedException::errorData
 	ErrorClassType genericError() const;
+	using AwaitedException::errorString;
 	//! @copybrief AwaitedException::errorString(const std::function<QString(QJsonObject, int)> &) const
 	QString errorString(const std::function<QString(ErrorClassType, int)> &failureTransformer) const;
 
 	Q_NORETURN void raise() const override;
-	Base *clone() const override;
-
-protected:
-	//! @private
-	GenericAwaitedException(const GenericAwaitedException * const other);
+	ExceptionBase *clone() const override;
 
 private:
-	QJsonObject errorObject() const;
-	QJsonArray errorArray() const;
-	QString errorString(const std::function<QString(QJsonObject, int)> &failureTransformer) const;
-	QString errorString(const std::function<QString(QJsonArray, int)> &failureTransformer) const;
+	using AwaitedException::errorObject;
+	using AwaitedException::errorArray;
 };
 
 //! A helper class to be used with [QtCoroutines](https://github.com/Skycoder42/QtCoroutines) to await a generic rest reply
@@ -212,15 +207,15 @@ void GenericRestReplyAwaitable<DataClassType, ErrorClassType>::prepare(const std
 		resume();
 	});
 	reply->onFailed([this, resume](int code, ErrorClassType data) {
-		errorResult.reset(new exceptionType{code, RestReply::Failure, std::move(data)});
+		errorResult.reset(new exceptionType{code, RestReply::Error::Failure, std::move(data)});
 		resume();
 	});
 	reply->onSerializeException([this, resume](const QtJsonSerializer::Exception &data) {
-		errorResult.reset(new exceptionType{0, RestReply::Deserialization, QString::fromUtf8(data.what())});
+		errorResult.reset(new exceptionType{0, RestReply::Error::Deserialization, QString::fromUtf8(data.what())});
 		resume();
 	});
-	reply->onError([this, resume](QString message, int code, RestReply::Error type) {
-		errorResult.reset(new exceptionType{code, type, std::move(message)});
+	reply->onError([this, resume](const QString &message, int code, RestReply::Error type) {
+		errorResult.reset(new exceptionType{code, type, message});
 		resume();
 	});
 }
@@ -228,7 +223,7 @@ void GenericRestReplyAwaitable<DataClassType, ErrorClassType>::prepare(const std
 template<typename DataClassType, typename ErrorClassType>
 typename GenericRestReplyAwaitable<DataClassType, ErrorClassType>::type GenericRestReplyAwaitable<DataClassType, ErrorClassType>::result()
 {
-	if(errorResult) {
+	if (errorResult) {
 		errorResult->raise();
 		Q_UNREACHABLE();
 	} else
@@ -265,15 +260,15 @@ void GenericRestReplyAwaitable<void, ErrorClassType>::prepare(const std::functio
 		resume();
 	});
 	reply->onFailed([this, resume](int code, ErrorClassType data) {
-		errorResult.reset(new exceptionType{code, RestReply::Failure, std::move(data)});
+		errorResult.reset(new exceptionType{code, RestReply::Error::Failure, std::move(data)});
 		resume();
 	});
 	reply->onSerializeException([this, resume](const QtJsonSerializer::Exception &data) {
-		errorResult.reset(new exceptionType{0, RestReply::Deserialization, QString::fromUtf8(data.what())});
+		errorResult.reset(new exceptionType{0, RestReply::Error::Deserialization, QString::fromUtf8(data.what())});
 		resume();
 	});
-	reply->onError([this, resume](QString message, int code, RestReply::Error type) {
-		errorResult.reset(new exceptionType{code, type, std::move(message)});
+	reply->onError([this, resume](const QString &message, int code, RestReply::Error type) {
+		errorResult.reset(new exceptionType{code, type, message});
 		resume();
 	});
 }
@@ -281,7 +276,7 @@ void GenericRestReplyAwaitable<void, ErrorClassType>::prepare(const std::functio
 template<typename ErrorClassType>
 typename GenericRestReplyAwaitable<void, ErrorClassType>::type GenericRestReplyAwaitable<void, ErrorClassType>::result()
 {
-	if(errorResult) {
+	if (errorResult) {
 		errorResult->raise();
 		Q_UNREACHABLE();
 	}
@@ -300,11 +295,6 @@ GenericAwaitedException<ErrorClassType>::GenericAwaitedException(int code, RestR
 {}
 
 template<typename ErrorClassType>
-GenericAwaitedException<ErrorClassType>::GenericAwaitedException(const GenericAwaitedException * const other) :
-	AwaitedException{other}
-{}
-
-template<typename ErrorClassType>
 ErrorClassType GenericAwaitedException<ErrorClassType>::genericError() const
 {
 	return _data.template value<ErrorClassType>();
@@ -313,7 +303,7 @@ ErrorClassType GenericAwaitedException<ErrorClassType>::genericError() const
 template<typename ErrorClassType>
 QString GenericAwaitedException<ErrorClassType>::errorString(const std::function<QString (ErrorClassType, int)> &failureTransformer) const
 {
-	if(_type == RestReply::Failure)
+	if(_type == RestReply::Error::Failure)
 		return failureTransformer(genericError(), _code);
 	else
 		return errorString();
@@ -326,33 +316,9 @@ void GenericAwaitedException<ErrorClassType>::raise() const
 }
 
 template<typename ErrorClassType>
-AwaitedException::Base *GenericAwaitedException<ErrorClassType>::clone() const
+ExceptionBase *GenericAwaitedException<ErrorClassType>::clone() const
 {
-	return new GenericAwaitedException<ErrorClassType>{this};
-}
-
-template<typename ErrorClassType>
-QJsonObject GenericAwaitedException<ErrorClassType>::errorObject() const
-{
-	return AwaitedException::errorObject();
-}
-
-template<typename ErrorClassType>
-QJsonArray GenericAwaitedException<ErrorClassType>::errorArray() const
-{
-	return AwaitedException::errorArray();
-}
-
-template<typename ErrorClassType>
-QString GenericAwaitedException<ErrorClassType>::errorString(const std::function<QString (QJsonObject, int)> &failureTransformer) const
-{
-	return AwaitedException::errorString(failureTransformer);
-}
-
-template<typename ErrorClassType>
-QString GenericAwaitedException<ErrorClassType>::errorString(const std::function<QString (QJsonArray, int)> &failureTransformer) const
-{
-	return AwaitedException::errorString(failureTransformer);
+	return new GenericAwaitedException<ErrorClassType>{*this};
 }
 
 // await method implementations

@@ -1,10 +1,9 @@
 #include "standardpaging_p.h"
 #include "metacomponent.h"
-#ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
-#include <QtJsonSerializer/JsonSerializer>
-#endif
 using namespace QtRestClient;
+
 #ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
+#include <QtJsonSerializer/SerializerBase>
 using namespace QtJsonSerializer;
 #endif
 
@@ -58,7 +57,7 @@ std::variant<QCborValue, QJsonValue> StandardPaging::originalData() const
 // ------------- Factory Implementation -------------
 
 #ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
-IPaging *StandardPagingFactory::createPaging(JsonSerializer *, const std::variant<QCborValue, QJsonValue> &data) const
+IPaging *StandardPagingFactory::createPaging(SerializerBase *, const std::variant<QCborValue, QJsonValue> &data) const
 #else
 IPaging *StandardPagingFactory::createPaging(const std::variant<QCborValue, QJsonValue> &data) const
 #endif

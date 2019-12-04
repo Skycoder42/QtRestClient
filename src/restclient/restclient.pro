@@ -12,6 +12,7 @@ MODULE_CONFIG += qrestbuilder
 }
 
 HEADERS += \
+	metacomponent.h \
 	pagingmodel.h \
 	pagingmodel_p.h \
 	requestbuilder_p.h \
@@ -30,7 +31,6 @@ HEADERS += \
 
 !no_json_serializer {
 	HEADERS += \
-		metacomponent.h \
 		paging_fwd.h \
 		paging.h \
 		genericrestreply.h \

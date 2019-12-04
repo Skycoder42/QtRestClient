@@ -12,7 +12,7 @@
 
 #ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
 namespace QtJsonSerializer {
-class JsonSerializer;
+class SerializerBase;
 }
 #endif
 
@@ -77,7 +77,7 @@ public:
 
 	//! Creates a new paging object of the given data
 #ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
-	virtual IPaging *createPaging(QtJsonSerializer::JsonSerializer *serializer, const std::variant<QCborValue, QJsonValue> &data) const = 0;
+	virtual IPaging *createPaging(QtJsonSerializer::SerializerBase *serializer, const std::variant<QCborValue, QJsonValue> &data) const = 0;
 #else
 	virtual IPaging *createPaging(const std::variant<QCborValue, QJsonValue> &data) const = 0;
 #endif

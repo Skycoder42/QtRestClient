@@ -1,10 +1,6 @@
 #ifndef QTRESTCLIENT_PAGINGMODEL_H
 #define QTRESTCLIENT_PAGINGMODEL_H
 
-#include <QtCore/qabstractitemmodel.h>
-#include <QtCore/qscopedpointer.h>
-#include <QtCore/qpointer.h>
-
 #include "QtRestClient/qtrestclient_global.h"
 #include "QtRestClient/ipaging.h"
 #include "QtRestClient/restreply.h"
@@ -14,6 +10,10 @@
 #include "QtRestClient/paging_fwd.h"
 #include "QtRestClient/genericrestreply.h"
 #endif
+
+#include <QtCore/qabstractitemmodel.h>
+#include <QtCore/qscopedpointer.h>
+#include <QtCore/qpointer.h>
 
 namespace QtRestClient {
 

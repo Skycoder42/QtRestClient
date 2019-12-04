@@ -1,14 +1,14 @@
 #ifndef QTRESTCLIENT_QRESTCLIENT_P_H
 #define QTRESTCLIENT_QRESTCLIENT_P_H
 
-#ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
-#include <QtJsonSerializer/SerializerBase>
-#endif
-
 #include "restclient.h"
 #include "standardpaging_p.h"
 
 #include <optional>
+
+#ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
+#include <QtJsonSerializer/SerializerBase>
+#endif
 
 #include <QtCore/private/qobject_p.h>
 

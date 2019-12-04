@@ -38,7 +38,7 @@ class Q_RESTCLIENT_EXPORT StandardPagingFactory : public IPagingFactory
 {
 public:
 #ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
-	IPaging *createPaging(QtJsonSerializer::JsonSerializer *serializer, const std::variant<QCborValue, QJsonValue> &data) const override;
+	IPaging *createPaging(QtJsonSerializer::SerializerBase *serializer, const std::variant<QCborValue, QJsonValue> &data) const override;
 #else
 	IPaging *createPaging(const std::variant<QCborValue, QJsonValue> &data) const override;
 #endif

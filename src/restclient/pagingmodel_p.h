@@ -24,6 +24,7 @@ public:
 	QStringList columns;
 	QHash<int, QHash<int, QByteArray>> roleMapping; //column -> (role -> property)
 
+	void clearData();
 	void generateRoleNames();
 	void requestNext();
 	void processReply(int code, const RestReply::DataType &data);

@@ -6,10 +6,11 @@
 #include <QtCore/QCoreApplication>
 #include <QtCore/QRegularExpression>
 #include <QtCore/QUuid>
+using namespace QtRestClient;
+
+#ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
 #include <QtJsonSerializer/JsonSerializer>
 #include <QtJsonSerializer/CborSerializer>
-using namespace QtRestClient;
-#ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
 using namespace QtJsonSerializer;
 #endif
 
