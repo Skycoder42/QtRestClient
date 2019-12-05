@@ -1,5 +1,4 @@
 #include "standardpaging_p.h"
-#include "metacomponent.h"
 using namespace QtRestClient;
 
 #ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
