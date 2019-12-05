@@ -4,6 +4,7 @@
 #include "QtRestClient/qtrestclient_global.h"
 
 #include <variant>
+#include <optional>
 
 #include <QtCore/qcborvalue.h>
 #include <QtCore/qcbormap.h>
