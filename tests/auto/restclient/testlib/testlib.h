@@ -62,6 +62,7 @@ public:
 	}
 
 	static QtRestClient::RestClient *createClient(QObject *parent = nullptr);
+	static void setAccept(QNetworkRequest &request, QtRestClient::RestClient *client);
 };
 
 Q_DECLARE_METATYPE(QUrlQuery)

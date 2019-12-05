@@ -17,7 +17,12 @@ template <typename T>
 using EnableObjectType = typename std::enable_if<std::is_base_of<QObject, T>::value>::type;
 
 template <typename T, typename Enable = void>
-class MetaComponent : public std::false_type {};
+class MetaComponent : public std::false_type
+{
+public:
+	static inline void deleteLater(T) {}
+	static inline void deleteAllLater(const QList<T> &) {}
+};
 
 template <typename T>
 class MetaComponent<T, EnableGadgetType<T>> : public std::true_type

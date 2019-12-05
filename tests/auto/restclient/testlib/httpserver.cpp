@@ -23,12 +23,12 @@ public:
 	HttpError(QHttpServerResponse::StatusCode code = QHttpServerResponse::StatusCode::BadRequest) :
 		  _code{code}
 	{}
-	HttpError(QByteArray message, QHttpServerResponse::StatusCode code = QHttpServerResponse::StatusCode::BadRequest) :
+	HttpError(const QByteArray &message, QHttpServerResponse::StatusCode code = QHttpServerResponse::StatusCode::BadRequest) :
+		  HttpError{QString::fromUtf8(message), code}
+	{}
+	HttpError(QString message, QHttpServerResponse::StatusCode code = QHttpServerResponse::StatusCode::BadRequest) :
 		  _code{code},
 		  _message{std::move(message)}
-	{}
-	HttpError(const QString &message, QHttpServerResponse::StatusCode code = QHttpServerResponse::StatusCode::BadRequest) :
-		  HttpError{message.toUtf8(), code}
 	{}
 	HttpError(const char *message, QHttpServerResponse::StatusCode code = QHttpServerResponse::StatusCode::BadRequest) :
 		  HttpError{QByteArray{message}, code}
@@ -40,7 +40,7 @@ public:
 
 	const char *what() const noexcept override {
 		if (_what.isEmpty())
-			_what = "[" + QByteArray::number(static_cast<int>(_code)) + "]: " + (_message.isEmpty() ? "<No message>" : _message);
+			_what = "[" + QByteArray::number(static_cast<int>(_code)) + "]: " + (_message.isEmpty() ? "<No message>" : _message.toUtf8());
 		return _what.constData();
 	}
 
@@ -53,17 +53,17 @@ public:
 				_code
 			};
 		case Json: {
-			const auto jData = QJsonDocument{QJsonArray{QString::fromUtf8(_message)}}.toJson(QJsonDocument::Compact);
+			const auto jData = QJsonDocument{QJsonArray{_message}}.toJson(QJsonDocument::Compact);
 			return QHttpServerResponse {
 				RequestBuilderPrivate::ContentTypeJson,
 				jData.mid(1, jData.size() - 2),
 				_code
 			};
 		}
-		case Plain:
+		default:
 			return QHttpServerResponse {
 				"text/plain",
-				_message,
+				_message.toUtf8(),
 				_code
 			};
 		}
@@ -71,7 +71,7 @@ public:
 
 private:
 	QHttpServerResponse::StatusCode _code;
-	QByteArray _message;
+	QString _message;
 
 	mutable QByteArray _what;
 };
@@ -275,7 +275,7 @@ void HttpServer::setAdvancedData()
 		postlets[i] = QCborMap {
 			{QStringLiteral("id"), i},
 			{QStringLiteral("title"), QStringLiteral("Title%1").arg(i)},
-			{QStringLiteral("href"), QStringLiteral("/posts/%1").arg(i)}
+			{QStringLiteral("href"), QCborValue{QUrl{QStringLiteral("/posts/%1").arg(i)}}}
 		};
 	}
 	root[QStringLiteral("posts")] = posts;
@@ -290,11 +290,11 @@ void HttpServer::setAdvancedData()
 			{QStringLiteral("total"), 100},
 			{QStringLiteral("offset"), i*10},
 			{QStringLiteral("next"), i < 9 ?
-				QStringLiteral("/pages/%1").arg(i + 1) :
+				QCborValue{QUrl{QStringLiteral("/pages/%1").arg(i + 1)}} :
 				QCborValue{QCborValue::Null}
 			},
 			{QStringLiteral("previous"), i > 0 ?
-				QStringLiteral("/pages/%1").arg(i - 1) :
+				QCborValue{QUrl{QStringLiteral("/pages/%1").arg(i - 1)}} :
 				QCborValue{QCborValue::Null}
 			},
 		};
@@ -309,7 +309,7 @@ void HttpServer::setAdvancedData()
 		QCborMap pagelet {
 			{QStringLiteral("id"), i},
 			{QStringLiteral("next"), i < 9 ?
-				QStringLiteral("/pagelets/%1").arg(i + 1) :
+				QCborValue{QUrl{QStringLiteral("/pagelets/%1").arg(i + 1)}} :
 				QCborValue{QCborValue::Null}
 			},
 		};

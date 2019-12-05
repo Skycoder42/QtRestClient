@@ -233,7 +233,7 @@ void RestReplyPrivate::_q_replyFinished()
 		emit q->error(networkReply->errorString(), networkReply->error(), Error::Network, {});
 	else if (parseError)  // next: parsing errors
 		emit q->error(parseError->second, parseError->first, Error::Parser, {});
-	else if (std::holds_alternative<std::nullopt_t>(data))
+	else if (status >= 300 && std::holds_alternative<std::nullopt_t>(data))
 		emit q->failed(status, data, {});  // only pass as failed without data if any other error does not match
 	else {  // no errors, completed!
 		emit q->succeeded(status, data, {});

@@ -1,4 +1,5 @@
 #include "testlib.h"
+using namespace QtRestClient;
 
 QtRestClient::RestClient *Testlib::createClient(QObject *parent)
 {
@@ -6,6 +7,18 @@ QtRestClient::RestClient *Testlib::createClient(QObject *parent)
 	client->setModernAttributes();
 	client->addRequestAttribute(QNetworkRequest::HTTP2AllowedAttribute, false);
 	return client;
+}
+
+void Testlib::setAccept(QNetworkRequest &request, RestClient *client)
+{
+	switch (client->dataMode()) {
+	case RestClient::DataMode::Cbor:
+		request.setRawHeader("Accept", "application/cbor");
+		break;
+	case RestClient::DataMode::Json:
+		request.setRawHeader("Accept", "application/json");
+		break;
+	}
 }
 
 BodyType::BodyType(QCborValue data) :
