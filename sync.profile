@@ -3,4 +3,8 @@
 	"QtRestClientAuth" => "$basedir/src/restclientauth",
 );
 
-$publicclassregexp = "QtRestClient::(?!PagingData|__private).+"
+$publicclassregexp = "QtRestClient::(?!PagingData|__private).+";
+
+%classnames = (
+	"simple.h" => "Simple",
+);

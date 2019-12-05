@@ -127,8 +127,9 @@ public:
 																	 qint64 to = -1,
 																	 qint64 from = 0);
 
-	// overshadow for setters
+	using GenericRestReplyBase<Paging<DataClassType>, ErrorClassType>::onFailed;
 	GenericRestReply<Paging<DataClassType>, ErrorClassType> *onFailed(QObject *scope, std::function<void(int, ErrorClassType)> handler) final;
+	using GenericRestReplyBase<Paging<DataClassType>, ErrorClassType>::onError;
 	GenericRestReply<Paging<DataClassType>, ErrorClassType> *onError(QObject *scope, std::function<void(QString, int, RestReply::Error)> handler) final;
 
 private:
@@ -323,11 +324,11 @@ GenericRestReply<Paging<DataClassType>, ErrorClassType> *GenericRestReply<Paging
 						   [&](const auto &data) {
 							   auto iPaging = this->_client->pagingFactory()->createPaging(this->_client->serializer(), data);
 							   auto pData = this->_client->serializer()->deserializeGeneric(std::visit(__private::overload {
-																										   [](const QCborArray &data) -> QCborValue {
-																											   return data;
+																										   [](const QCborArray &data) -> std::variant<QCborValue, QJsonValue> {
+																											   return QCborValue{data};
 																										   },
-																										   [](const QJsonArray &data) -> QJsonValue {
-																											   return data;
+																										   [](const QJsonArray &data) -> std::variant<QCborValue, QJsonValue> {
+																											   return QJsonValue{data};
 																										   }
 																									   }, iPaging->items()),
 																							qMetaTypeId<QList<DataClassType>>())

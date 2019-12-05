@@ -64,19 +64,19 @@ void RestAwaitablesTest::testRestReplyAwait_data()
 									{QStringLiteral("body"), QStringLiteral("Body1")},
 								}
 						 << 200
-						 << RestReply::Network;
+						 << RestReply::Error::Network;
 
 	QTest::newRow("notFound") << server->url("/posts/baum")
 							  << false
 							  << QJsonObject{}
 							  << 404
-							  << RestReply::Failure;
+							  << RestReply::Error::Failure;
 
 	QTest::newRow("invalid") << QUrl{QStringLiteral("http://example.com/non/existant/api")}
 							 << false
 							 << QJsonObject()
 							 << 203
-							 << RestReply::Network;
+							 << RestReply::Error::Network;
 }
 
 void RestAwaitablesTest::testRestReplyAwait()
@@ -133,19 +133,19 @@ void RestAwaitablesTest::testGenericRestReplyAwait_data()
 						 << true
 						 << JphPost::createDefault(this)
 						 << 200
-						 << RestReply::Network;
+						 << RestReply::Error::Network;
 
 	QTest::newRow("notFound") << server->url("/posts/34234")
 							  << false
 							  << static_cast<JphPost*>(nullptr)
 							  << 404
-							  << RestReply::Failure;
+							  << RestReply::Error::Failure;
 
 	QTest::newRow("invalid") << QUrl{QStringLiteral("http://example.com/non/existant/api")}
 							 << false
 							 << static_cast<JphPost*>(nullptr)
 							 << 203
-							 << RestReply::Network;
+							 << RestReply::Error::Network;
 }
 
 void RestAwaitablesTest::testGenericRestReplyAwait()
@@ -197,17 +197,17 @@ void RestAwaitablesTest::testGenericVoidRestReplyAwait_data()
 	QTest::newRow("get") << server->url("/posts/1")
 						 << true
 						 << 200
-						 << RestReply::Network;
+						 << RestReply::Error::Network;
 
 	QTest::newRow("notFound") << server->url("/posts/34234")
 							  << false
 							  << 404
-							  << RestReply::Failure;
+							  << RestReply::Error::Failure;
 
 	QTest::newRow("invalid") << QUrl{QStringLiteral("http://example.com/non/existant/api")}
 							 << false
 							 << 203
-							 << RestReply::Network;
+							 << RestReply::Error::Network;
 }
 
 void RestAwaitablesTest::testGenericVoidRestReplyAwait()
