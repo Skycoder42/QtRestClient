@@ -2,9 +2,12 @@
 #define QTRESTCLIENT_QMLGENERICRESTREPLY_H
 
 #include <QtCore/QObject>
+
 #include <QtQml/QJSValue>
 #include <QtQml/QJSEngine>
-#include <QtJsonSerializer/JsonSerializer>
+
+#include <QtJsonSerializer/SerializerBase>
+
 #include <QtRestClient/RestReply>
 
 #ifdef DOXYGEN_RUN
@@ -57,7 +60,7 @@ class QmlGenericRestReply : public QObject
 
 public:
 	//! @private
-	Q_INVOKABLE QmlGenericRestReply(QtJsonSerializer::JsonSerializer *serializer,
+	Q_INVOKABLE QmlGenericRestReply(QtJsonSerializer::SerializerBase *serializer,
 									QJSEngine *engine,
 									int returnType,
 									int errorType,
@@ -109,14 +112,13 @@ public Q_SLOTS:
 	void addErrorHandler(const QJSValue &errorHandler);
 
 private:
-	QtJsonSerializer::JsonSerializer *_serializer;
+	QtJsonSerializer::SerializerBase *_serializer;
 	QJSEngine *_engine;
 	int _returnType;
 	int _errorType;
 	RestReply* _reply;
 
 	bool checkOk(const QJSValue &fn) const;
-	bool isList(int type) const;
 };
 
 }

@@ -2,7 +2,7 @@
 using namespace QtRestClient;
 
 QmlRestClient::QmlRestClient(QObject *parent) :
-	RestClient(parent)
+	RestClient{parent}
 {}
 
 QQmlListProperty<QmlRestClass> QmlRestClient::classes()

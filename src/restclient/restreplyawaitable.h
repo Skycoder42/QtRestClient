@@ -323,8 +323,8 @@ ExceptionBase *GenericAwaitedException<ErrorClassType>::clone() const
 
 // await method implementations
 
-template<typename TInstance, typename DataClassType, typename ErrorClassType>
-GenericRestReplyAwaitable<DataClassType, ErrorClassType> GenericRestReplyBase<TInstance, DataClassType, ErrorClassType>::awaitable()
+template<typename DataClassType, typename ErrorClassType>
+GenericRestReplyAwaitable<DataClassType, ErrorClassType> GenericRestReplyBase<DataClassType, ErrorClassType>::awaitable()
 {
 	return GenericRestReplyAwaitable<DataClassType, ErrorClassType>{this};
 }

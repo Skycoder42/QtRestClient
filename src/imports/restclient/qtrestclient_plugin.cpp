@@ -44,7 +44,7 @@ void QtRestClientDeclarativeModule::registerTypes(const char *uri)
 
 	qmlRegisterType<QtRestClient::QmlRestClient>(uri, 3, 0, "RestClient");
 	qmlRegisterType<QtRestClient::QmlRestClass>(uri, 3, 0, "RestClass");
-	qmlRegisterType<QtRestClient::PagingModel>(uri, 3, 2, "PagingModel");
+	qmlRegisterType<QtRestClient::PagingModel>(uri, 3, 0, "PagingModel");
 
 	qmlRegisterSingletonType<QtRestClient::QmlRestClientGlobal>(uri, 3, 0, "QtRestClient", create_qtrestclient);
 

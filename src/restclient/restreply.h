@@ -64,9 +64,9 @@ public:
 	RestReply *onCompleted(QObject *scope, TFn &&handler);
 
 	//! Set a handler to be called if a network error or json parse error occures
-	RestReply *onError(const std::function<void(QString, int, Error)> &handler);
+	RestReply *onError(std::function<void(QString, int, Error)> handler);
 	//! @copybrief onError(const std::function<void(QString, int, ErrorType)>&)
-	RestReply *onError(QObject *scope, const std::function<void(QString, int, Error)> &handler);
+	RestReply *onError(QObject *scope, std::function<void(QString, int, Error)> handler);
 
 	//! Set a handler to be called if the request did not succeed
 	RestReply *onAllErrors(const std::function<void(QString, int, Error)> &handler);

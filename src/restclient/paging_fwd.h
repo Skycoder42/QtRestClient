@@ -8,23 +8,27 @@
 #include "QtRestClient/restreply.h"
 #include "QtRestClient/metacomponent.h"
 
-#include <QtJsonSerializer/exception.h>
-#include <QtCore/qshareddata.h>
 #include <functional>
+
+#include <QtCore/qshareddata.h>
+
+#include <QtJsonSerializer/exception.h>
 
 namespace QtRestClient {
 
 template<typename DO, typename EO>
 class GenericRestReply;
 
+namespace __private {
 template<typename T>
 class PagingData;
+}
 
 //! A class to access generic paging objects
 template<typename T>
 class Paging
 {
-	static_assert(MetaComponent<T>::value, "T must inherit QObject or have Q_GADGET!");
+	static_assert(__private::MetaComponent<T>::value, "T must inherit QObject or have Q_GADGET!");
 public:
 	//! Default Constructor
 	Paging();
@@ -48,9 +52,9 @@ public:
 	QList<T> items() const;
 
 	//! @copybrief IPaging::total
-	int total() const;
+	qint64 total() const;
 	//! @copybrief IPaging::offset
-	int offset() const;
+	qint64 offset() const;
 
 	//! @copybrief IPaging::hasNext
 	bool hasNext() const;
@@ -69,41 +73,46 @@ public:
 	QUrl previousUrl() const;
 
 	//! Iterates over all paging objects
-	void iterate(const std::function<bool(T, int)> &iterator, int to = -1, int from = 0) const;
+	void iterate(const std::function<bool(T, qint64)> &iterator,
+				 qint64 to = -1,
+				 qint64 from = 0) const;
 	//! @copybrief Paging::iterate(const std::function<bool(T, int)> &, int, int) const
-	void iterate(QObject *scope, const std::function<bool(T, int)> &iterator, int to = -1, int from = 0) const;
+	void iterate(QObject *scope,
+				 const std::function<bool(T, qint64)> &iterator,
+				 qint64 to = -1,
+				 qint64 from = 0) const;
 	//! Iterates over all paging objects, with error handling
 	template<typename EO = QObject*>
-	void iterate(const std::function<bool(T, int)> &iterator,
+	void iterate(const std::function<bool(T, qint64)> &iterator,
 				 const std::function<void(QString, int, RestReply::Error)> &errorHandler,
 				 const std::function<QString(EO, int)> &failureTransformer = {},
-				 int to = -1,
-				 int from = 0) const;
+				 qint64 to = -1,
+				 qint64 from = 0) const;
 	//! @copybrief Paging::iterate(const std::function<bool(T, int)> &, const std::function<void(QString, int, RestReply::ErrorType)> &, const std::function<QString(EO, int)> &, int, int) const
 	template<typename EO = QObject*>
 	void iterate(QObject *scope,
-				 const std::function<bool(T, int)> &iterator,
+				 const std::function<bool(T, qint64)> &iterator,
 				 const std::function<void(QString, int, RestReply::Error)> &errorHandler,
 				 const std::function<QString(EO, int)> &failureTransformer = {},
-				 int to = -1,
-				 int from = 0) const;
+				 qint64 to = -1,
+				 qint64 from = 0) const;
 	//! Iterates over all paging objects, with error handling
 	template<typename EO = QObject*>
-	void iterate(const std::function<bool(T, int)> &iterator,
+	void iterate(const std::function<bool(T, qint64)> &iterator,
 				 const std::function<void(int, EO)> &failureHandler,
 				 const std::function<void(QString, int, RestReply::Error)> &errorHandler = {},
 				 const std::function<void(QtJsonSerializer::Exception &)> &exceptionHandler = {},
-				 int to = -1,
-				 int from = 0) const;
+				 qint64 to = -1,
+				 qint64 from = 0) const;
 	//! @copybrief Paging::iterate(const std::function<bool(T, int)> &, const std::function<void(int, EO)> &, const std::function<void(QString, int, RestReply::ErrorType)> &, const std::function<void(QJsonSerializerException &)> &, int, int) const
 	template<typename EO = QObject*>
 	void iterate(QObject *scope,
-				 const std::function<bool(T, int)> &iterator,
+				 const std::function<bool(T, qint64)> &iterator,
 				 const std::function<void(int, EO)> &failureHandler,
 				 const std::function<void(QString, int, RestReply::Error)> &errorHandler = {},
 				 const std::function<void(QtJsonSerializer::Exception &)> &exceptionHandler = {},
-				 int to = -1,
-				 int from = 0) const;
+				 qint64 to = -1,
+				 qint64 from = 0) const;
 
 	//! @copybrief IPaging::properties
 	QVariantMap properties() const;
@@ -112,9 +121,10 @@ public:
 	void deleteAllItems() const;
 
 private:
-	QSharedDataPointer<PagingData<T>> d;
+	QSharedDataPointer<__private::PagingData<T>> d;
 
-	int internalIterate(std::function<bool(T, int)> iterator, int from, int to) const;
+	qint64 internalIterate(const std::function<bool(T, qint64)> &iterator, qint64 to, qint64 from) const;
+	qint64 calcMax(qint64 to) const;
 };
 
 }

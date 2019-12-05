@@ -3,13 +3,16 @@
 
 #include "QtRestClient/paging_fwd.h"
 #include "QtRestClient/genericrestreply.h"
+
 #include <QtCore/qsharedpointer.h>
+#include <QtCore/qpointer.h>
 
 // ------------- Generic Implementation -------------
 
 namespace QtRestClient {
 
-//! @private
+namespace __private {
+
 template <typename T>
 class PagingData : public QSharedData
 {
@@ -19,12 +22,14 @@ public:
 
 	QSharedPointer<IPaging> iPaging;
 	QList<T> data;
-	RestClient *client = nullptr;
+	QPointer<RestClient> client;
 };
+
+}
 
 template<typename T>
 Paging<T>::Paging() :
-	d(new PagingData<T>())
+	d{new __private::PagingData<T>{}}
 {}
 
 template<typename T>
@@ -41,7 +46,7 @@ Paging<T> &Paging<T>::operator=(Paging<T> &&other) noexcept = default;
 
 template<typename T>
 Paging<T>::Paging(IPaging *iPaging, const QList<T> &data, RestClient *client) :
-	d(new PagingData<T>())
+	d{new __private::PagingData<T>{}}
 {
 	d->iPaging.reset(iPaging);
 	d->data = data;
@@ -67,13 +72,13 @@ QList<T> Paging<T>::items() const
 }
 
 template<typename T>
-int Paging<T>::total() const
+qint64 Paging<T>::total() const
 {
 	return d->iPaging->total();
 }
 
 template<typename T>
-int Paging<T>::offset() const
+qint64 Paging<T>::offset() const
 {
 	return d->iPaging->offset();
 }
@@ -88,11 +93,14 @@ template<typename T>
 template<typename EO>
 GenericRestReply<Paging<T>, EO> *Paging<T>::next() const
 {
-	if(d->iPaging->hasNext()) {
-		auto reply = d->client->builder()
+	if (d->iPaging->hasNext()) {
+		return new GenericRestReply<Paging<T>, EO>{
+			d->client->builder()
 				.updateFromRelativeUrl(d->iPaging->next(), true)
-				.send();
-		return new GenericRestReply<Paging<T>, EO>(reply, d->client, d->client);
+				.send(),
+			d->client,
+			d->client
+		};
 	} else
 		return nullptr;
 }
@@ -113,11 +121,14 @@ template<typename T>
 template<typename EO>
 GenericRestReply<Paging<T>, EO> *Paging<T>::previous() const
 {
-	if(d->iPaging->hasPrevious()) {
-		auto reply = d->client->builder()
+	if (d->iPaging->hasPrevious()) {
+		return new GenericRestReply<Paging<T>, EO>{
+			d->client->builder()
 				.updateFromRelativeUrl(d->iPaging->previous(), true)
-				.send();
-		return new GenericRestReply<Paging<T>, EO>(reply, d->client, d->client);
+				.send(),
+			d->client,
+			d->client
+		};
 	} else
 		return nullptr;
 }
@@ -129,130 +140,128 @@ QUrl Paging<T>::previousUrl() const
 }
 
 template<typename T>
-void Paging<T>::iterate(const std::function<bool (T, int)> &iterator, int to, int from) const
-{
-	iterate(iterator, {}, {}, to, from);
-}
-
-template<typename T>
-void Paging<T>::iterate(QObject *scope, const std::function<bool (T, int)> &iterator, int to, int from) const
-{
-	iterate(scope, iterator, {}, {}, to, from);
-}
-
-template<typename T>
-template<typename EO>
-void Paging<T>::iterate(const std::function<bool(T, int)> &iterator, const std::function<void(QString, int, RestReply::Error)> &errorHandler, const std::function<QString (EO, int)> &failureTransformer, int to, int from) const
+void Paging<T>::iterate(const std::function<bool (T, qint64)> &iterator, qint64 to, qint64 from) const
 {
 	Q_ASSERT(from >= d->iPaging->offset());
 
 	auto index = internalIterate(iterator, to ,from);
-	if(index < 0)
+	if (index < 0)
 		return;
 
-	//calc total limit -> only if supports indexes
-	qint64 max = std::numeric_limits<qint64>::max();
-	if (d->iPaging->offset() >= 0) {
-		if(to >= 0)
-			max = std::min(static_cast<qint64>(to), d->iPaging->total());
-		else
-			max = d->iPaging->total();
+	//continue to the next one
+	auto max = calcMax(to);
+	if (index < max && d->iPaging->hasNext()) {
+		next()->onSucceeded([iterator, to, index](int, const Paging<T> &paging) {
+			if (paging.isValid())
+				paging.iterate(iterator, to, index);
+		});
 	}
+}
+
+template<typename T>
+void Paging<T>::iterate(QObject *scope, const std::function<bool (T, qint64)> &iterator, qint64 to, qint64 from) const
+{
+	Q_ASSERT(from >= d->iPaging->offset());
+
+	auto index = internalIterate(iterator, to ,from);
+	if (index < 0)
+		return;
 
 	//continue to the next one
-	if(index < max && d->iPaging->hasNext()) {
-		next()->onSucceeded([iterator, errorHandler, failureTransformer, to, index](int, Paging<T> paging) {
-				  paging.iterate(iterator, errorHandler, failureTransformer, to, index);
-			  })
-			  ->onAllErrors(errorHandler, failureTransformer);
+	auto max = calcMax(to);
+	if (index < max && d->iPaging->hasNext()) {
+		next()->onSucceeded(scope, [scope, iterator, to, index](int, const Paging<T> &paging) {
+			if (paging.isValid())
+				paging.iterate(scope, iterator, to, index);
+		});
 	}
 }
 
 template<typename T>
 template<typename EO>
-void Paging<T>::iterate(QObject *scope, const std::function<bool(T, int)> &iterator, const std::function<void(QString, int, RestReply::Error)> &errorHandler, const std::function<QString (EO, int)> &failureTransformer, int to, int from) const
+void Paging<T>::iterate(const std::function<bool(T, qint64)> &iterator, const std::function<void(QString, int, RestReply::Error)> &errorHandler, const std::function<QString (EO, int)> &failureTransformer, qint64 to, qint64 from) const
 {
 	Q_ASSERT(from >= d->iPaging->offset());
 
 	auto index = internalIterate(iterator, to ,from);
-	if(index < 0)
+	if (index < 0)
 		return;
 
-	//calc total limit -> only if supports indexes
-	qint64 max = std::numeric_limits<qint64>::max();
-	if(d->iPaging->offset() >= 0) {
-		if(to >= 0)
-			max = std::min(static_cast<qint64>(to), d->iPaging->total());
-		else
-			max = d->iPaging->total();
-	}
-
 	//continue to the next one
-	if(index < max && d->iPaging->hasNext()) {
-		next()->onSucceeded(scope, [iterator, errorHandler, failureTransformer, to, index](int, Paging<T> paging) {
-				  paging.iterate(iterator, errorHandler, failureTransformer, to, index);
-			  })
-			  ->onAllErrors(scope, errorHandler, failureTransformer);
+	auto max = calcMax(to);
+	if (index < max && d->iPaging->hasNext()) {
+		next<EO>()->onSucceeded([iterator, errorHandler, failureTransformer, to, index](int, const Paging<T> &paging) {
+					  if (paging.isValid())
+						  paging.iterate(iterator, errorHandler, failureTransformer, to, index);
+				  })
+			->onAllErrors(errorHandler, failureTransformer);
 	}
 }
 
 template<typename T>
 template<typename EO>
-void Paging<T>::iterate(const std::function<bool(T, int)> &iterator, const std::function<void(int, EO)> &failureHandler, const std::function<void(QString, int, RestReply::Error)> &errorHandler, const std::function<void(QtJsonSerializer::Exception &)> &exceptionHandler, int to, int from) const
+void Paging<T>::iterate(QObject *scope, const std::function<bool(T, qint64)> &iterator, const std::function<void(QString, int, RestReply::Error)> &errorHandler, const std::function<QString (EO, int)> &failureTransformer, qint64 to, qint64 from) const
 {
 	Q_ASSERT(from >= d->iPaging->offset());
 
 	auto index = internalIterate(iterator, to ,from);
-	if(index < 0)
+	if (index < 0)
 		return;
 
-	//calc total limit -> only if supports indexes
-	qint64 max = std::numeric_limits<qint64>::max();
-	if(d->iPaging->offset() >= 0) {
-		if(to >= 0)
-			max = std::min(static_cast<qint64>(to), d->iPaging->total());
-		else
-			max = d->iPaging->total();
-	}
-
 	//continue to the next one
-	if(index < max && d->iPaging->hasNext()) {
-		next()->onSucceeded([iterator, failureHandler, errorHandler, exceptionHandler, to, index](int, Paging<T> paging) {
-				  paging.iterate(iterator, failureHandler, errorHandler, exceptionHandler, to, index);
-			  })
-			  ->onFailed(failureHandler)
-			  ->onError(errorHandler)
-			  ->onSerializeException(exceptionHandler);
+	auto max = calcMax(to);
+	if (index < max && d->iPaging->hasNext()) {
+		next<EO>()->onSucceeded(scope, [scope, iterator, errorHandler, failureTransformer, to, index](int, const Paging<T> &paging) {
+					  if (paging.isValid())
+						  paging.iterate(scope, iterator, errorHandler, failureTransformer, to, index);
+				  })
+			->onAllErrors(scope, errorHandler, failureTransformer);
 	}
 }
 
 template<typename T>
 template<typename EO>
-void Paging<T>::iterate(QObject *scope, const std::function<bool(T, int)> &iterator, const std::function<void(int, EO)> &failureHandler, const std::function<void(QString, int, RestReply::Error)> &errorHandler, const std::function<void(QtJsonSerializer::Exception &)> &exceptionHandler, int to, int from) const
+void Paging<T>::iterate(const std::function<bool(T, qint64)> &iterator, const std::function<void(int, EO)> &failureHandler, const std::function<void(QString, int, RestReply::Error)> &errorHandler, const std::function<void(QtJsonSerializer::Exception &)> &exceptionHandler, qint64 to, qint64 from) const
 {
 	Q_ASSERT(from >= d->iPaging->offset());
 
 	auto index = internalIterate(iterator, to ,from);
-	if(index < 0)
+	if (index < 0)
 		return;
 
-	//calc total limit -> only if supports indexes
-	qint64 max = std::numeric_limits<qint64>::max();
-	if(d->iPaging->offset() >= 0) {
-		if(to >= 0)
-			max = std::min(static_cast<qint64>(to), d->iPaging->total());
-		else
-			max = d->iPaging->total();
+	//continue to the next one
+	auto max = calcMax(to);
+	if (index < max && d->iPaging->hasNext()) {
+		next<EO>()->onSucceeded([iterator, failureHandler, errorHandler, exceptionHandler, to, index](int, const Paging<T> &paging) {
+					  if (paging.isValid())
+						  paging.iterate(iterator, failureHandler, errorHandler, exceptionHandler, to, index);
+				  })
+			->onFailed(failureHandler)
+			->onError(errorHandler)
+			->onSerializeException(exceptionHandler);
 	}
+}
+
+template<typename T>
+template<typename EO>
+void Paging<T>::iterate(QObject *scope, const std::function<bool(T, qint64)> &iterator, const std::function<void(int, EO)> &failureHandler, const std::function<void(QString, int, RestReply::Error)> &errorHandler, const std::function<void(QtJsonSerializer::Exception &)> &exceptionHandler, qint64 to, qint64 from) const
+{
+	Q_ASSERT(from >= d->iPaging->offset());
+
+	auto index = internalIterate(iterator, to ,from);
+	if (index < 0)
+		return;
 
 	//continue to the next one
+	auto max = calcMax(to);
 	if(index < max && d->iPaging->hasNext()) {
-		next()->onSucceeded(scope, [iterator, failureHandler, errorHandler, exceptionHandler, to, index](int, Paging<T> paging) {
-				  paging.iterate(iterator, failureHandler, errorHandler, exceptionHandler, to, index);
-			  })
-			  ->onFailed(scope, failureHandler)
-			  ->onError(scope, errorHandler)
-			  ->onSerializeException(exceptionHandler);
+		next<EO>()->onSucceeded(scope, [scope, iterator, failureHandler, errorHandler, exceptionHandler, to, index](int, const Paging<T> &paging) {
+					  if (paging.isValid())
+						  paging.iterate(scope, iterator, failureHandler, errorHandler, exceptionHandler, to, index);
+				  })
+			->onFailed(scope, failureHandler)
+			->onError(scope, errorHandler)
+			->onSerializeException(exceptionHandler);
 	}
 }
 
@@ -265,52 +274,64 @@ QVariantMap Paging<T>::properties() const
 template<typename T>
 void Paging<T>::deleteAllItems() const
 {
-	MetaComponent<T>::deleteAllLater(d->data);
+	__private::MetaComponent<T>::deleteAllLater(d->data);
 }
 
 template<typename T>
-int Paging<T>::internalIterate(std::function<bool (T, int)> iterator, int to, int from) const
+qint64 Paging<T>::internalIterate(const std::function<bool (T, qint64)> &iterator, qint64 to, qint64 from) const
 {
-	//handle all items in this paging
-
+	// handle all items in this paging
 	auto offset = d->iPaging->offset();
 	auto count = d->data.size();
-	auto start = 0;
-	auto max = count;
-	if(offset >= 0) {// has indexes
-		//from
-		start = qMax(from, offset) - offset;
-		//to
-		if(to >= 0)
-			max = qMin(to, max + offset) - offset;
+	int start;
+	int max;
+	if (offset >= 0) {  // has indexes
+		start = static_cast<int>(std::max(from, offset) - offset);
+		if (to >= 0)
+			max = static_cast<int>(std::min(to, offset + count) - offset);
+	} else {
+		start = 0;
+		max = count;
 	}
 
-	//delete unused items caused by from
-	for(auto j = 0; j < start; j++)
-		MetaComponent<T>::deleteLater(d->data.value(j));
+	// delete unused items caused by from
+	for (auto j = 0; j < start; ++j)
+		__private::MetaComponent<T>::deleteLater(d->data.value(j));
 
-	//iterate over used items
+	// iterate over used items
 	int i;
 	auto canceled = false;
-	for(i = start; i < max; i++) {
+	for(i = start; i < max; ++i) {
 		auto item = d->data.value(i);
-		auto index = offset >= 0 ? i + offset : -1;
-		if(!iterator(item, index)) {
+		auto index = offset >= 0 ? offset + i : -1ll;
+		if (!iterator(item, index)) {
 			canceled = true;
 			break;
 		}
 	}
 
 	//delete all unused items caused by to
-	for(auto j = i; j < count; j++)
-		MetaComponent<T>::deleteLater(d->data.value(j));
+	for(auto j = i; j < count; ++j)
+		__private::MetaComponent<T>::deleteLater(d->data.value(j));
 
-	if(canceled)
+	if (canceled)
 		return -1;
-	else if(offset >= 0)
+	else if (offset >= 0)
 		return offset + i;
 	else
 		return 0;
+}
+
+template<typename T>
+qint64 Paging<T>::calcMax(qint64 to) const
+{
+	if (d->iPaging->offset() >= 0) {
+		if (to >= 0)
+			return std::min(to, d->iPaging->total());
+		else
+			return d->iPaging->total();
+	} else
+		return std::numeric_limits<qint64>::max();
 }
 
 }

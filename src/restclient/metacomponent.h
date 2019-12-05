@@ -5,6 +5,7 @@
 #include "QtRestClient/qtrestclient_helpertypes.h"
 
 #include <QtCore/qobject.h>
+
 #include <QtJsonSerializer/qtjsonserializer_helpertypes.h>
 
 namespace QtRestClient::__private {

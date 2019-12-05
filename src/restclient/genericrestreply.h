@@ -7,31 +7,37 @@
 #include "QtRestClient/paging_fwd.h"
 #include "QtRestClient/metacomponent.h"
 
-#include <QtJsonSerializer/jsonserializer.h>
 #include <type_traits>
+
+#include <QtJsonSerializer/serializerbase.h>
 
 namespace QtRestClient {
 
 template <typename DataClassType, typename ErrorClassType>
 class GenericRestReplyAwaitable;
 
+template <typename DataClassType, typename ErrorClassType>
+class GenericRestReply;
+
 //! A class to handle generic replies for generic requests
-template <typename TInstance, typename DataClassType, typename ErrorClassType = QObject*>
+template <typename DataClassType, typename ErrorClassType>
 class GenericRestReplyBase : public RestReply
 {
 public:
+	using TInstance = GenericRestReply<DataClassType, ErrorClassType>;
+
 	//! @copybrief RestReply::onFailed(const std::function<void(int, QJsonObject)>&)
 	TInstance *onFailed(std::function<void(int, ErrorClassType)> handler);
 	//! @copybrief GenericRestReply::onFailed(const std::function<void(int, ErrorClassType)>&)
-	TInstance *onFailed(QObject *scope, std::function<void(int, ErrorClassType)> handler);
+	virtual TInstance *onFailed(QObject *scope, std::function<void(int, ErrorClassType)> handler);
 	//! Set a handler to be called on deserialization exceptions
 	TInstance *onSerializeException(std::function<void(QtJsonSerializer::Exception&)> handler);
 	//! @copybrief RestReply::onAllErrors(const std::function<void(QString, int, ErrorType)>&, const std::function<QString(QJsonObject, int)>&)
-	TInstance *onAllErrors(std::function<void(QString, int, Error)> handler,
+	TInstance *onAllErrors(const std::function<void(QString, int, Error)> &handler,
 						   std::function<QString(ErrorClassType, int)> failureTransformer = {});
 	//! @copybrief GenericRestReply::onAllErrors(const std::function<void(QString, int, ErrorType)>&, const std::function<QString(ErrorClassType, int)>&)
 	TInstance *onAllErrors(QObject *scope,
-						   std::function<void(QString, int, Error)> handler,
+						   const std::function<void(QString, int, Error)> &handler,
 						   std::function<QString(ErrorClassType, int)> failureTransformer = {});
 
 	//overshadowing, for the right return type only...
@@ -42,7 +48,7 @@ public:
 	//! @copydoc RestReply::onError(const std::function<void(QString, int, ErrorType)> &)
 	TInstance *onError(std::function<void(QString, int, Error)> handler);
 	//! @copydoc RestReply::onError(QObject *, const std::function<void(QString, int, ErrorType)> &)
-	TInstance *onError(QObject *scope, std::function<void(QString, int, Error)> handler);
+	virtual TInstance *onError(QObject *scope, std::function<void(QString, int, Error)> handler);
 	//! @copydoc RestReply::disableAutoDelete
 	TInstance *disableAutoDelete();
 
@@ -55,14 +61,12 @@ protected:
 						 QObject *parent);
 
 	RestClient *_client;
-	std::function<void(int, ErrorClassType)> _failureHandler;
-	std::function<void(QString, int, Error)> _errorHandler;
 	std::function<void(QtJsonSerializer::Exception &)> _exceptionHandler;
 };
 
 //! A class to handle generic replies for generic requests
 template <typename DataClassType, typename ErrorClassType = QObject*>
-class GenericRestReply : public GenericRestReplyBase<GenericRestReply<DataClassType, ErrorClassType>, DataClassType, ErrorClassType>
+class GenericRestReply : public GenericRestReplyBase<DataClassType, ErrorClassType>
 {
 public:
 	//! Creates a generic reply based on a network reply and for a client
@@ -80,7 +84,7 @@ public:
 //! there is no DataClassType, just void, for cases where you don't care about the result itself, only the code.
 //! @copydoc QtRestClient::GenericRestReply
 template <typename ErrorClassType>
-class GenericRestReply<void, ErrorClassType> : public GenericRestReplyBase<GenericRestReply<void, ErrorClassType>, void, ErrorClassType>
+class GenericRestReply<void, ErrorClassType> : public GenericRestReplyBase<void, ErrorClassType>
 {
 public:
 	//! @copydoc GenericRestReply::GenericRestReply
@@ -100,7 +104,7 @@ public:
 //! list form the server, and allows you to iterate over those results.
 //! @copydoc QtRestClient::GenericRestReply
 template <typename DataClassType, typename ErrorClassType>
-class GenericRestReply<Paging<DataClassType>, ErrorClassType> : public GenericRestReplyBase<GenericRestReply<Paging<DataClassType>, ErrorClassType>, Paging<DataClassType>, ErrorClassType>
+class GenericRestReply<Paging<DataClassType>, ErrorClassType> : public GenericRestReplyBase<Paging<DataClassType>, ErrorClassType>
 {
 public:
 	//! @copydoc GenericRestReply::GenericRestReply
@@ -114,10 +118,22 @@ public:
 	GenericRestReply<Paging<DataClassType>, ErrorClassType> *onSucceeded(QObject *scope, std::function<void(int, Paging<DataClassType>)> handler);
 
 	//! shortcut to iterate over all elements via paging objects
-	GenericRestReply<Paging<DataClassType>, ErrorClassType> *iterate(std::function<bool(DataClassType, int)> iterator, int to = -1, int from = 0);
+	GenericRestReply<Paging<DataClassType>, ErrorClassType> *iterate(std::function<bool(DataClassType, qint64)> iterator,
+																	 qint64 to = -1,
+																	 qint64 from = 0);
 	//! shortcut to iterate over all elements via paging objects
-	GenericRestReply<Paging<DataClassType>, ErrorClassType> *iterate(QObject *scope, std::function<bool(DataClassType, int)> iterator, int to = -1, int from = 0);
+	GenericRestReply<Paging<DataClassType>, ErrorClassType> *iterate(QObject *scope,
+																	 std::function<bool(DataClassType, qint64)> iterator,
+																	 qint64 to = -1,
+																	 qint64 from = 0);
 
+	// overshadow for setters
+	GenericRestReply<Paging<DataClassType>, ErrorClassType> *onFailed(QObject *scope, std::function<void(int, ErrorClassType)> handler) final;
+	GenericRestReply<Paging<DataClassType>, ErrorClassType> *onError(QObject *scope, std::function<void(QString, int, RestReply::Error)> handler) final;
+
+private:
+	std::function<void(int, ErrorClassType)> _failureHandler;
+	std::function<void(QString, int, RestReply::Error)> _errorHandler;
 };
 
 } //end namespace, because of include!
@@ -129,101 +145,99 @@ namespace QtRestClient {
 
 // ------------- Implementation base class -------------
 
-template <typename TInstance, typename DataClassType, typename ErrorClassType>
-TInstance *GenericRestReplyBase<TInstance, DataClassType, ErrorClassType>::onFailed(std::function<void (int, ErrorClassType)> handler)
+template <typename DataClassType, typename ErrorClassType>
+typename GenericRestReplyBase<DataClassType, ErrorClassType>::TInstance *GenericRestReplyBase<DataClassType, ErrorClassType>::onFailed(std::function<void (int, ErrorClassType)> handler)
 {
 	return onFailed(this, std::move(handler));
 }
 
-template <typename TInstance, typename DataClassType, typename ErrorClassType>
-TInstance *GenericRestReplyBase<TInstance, DataClassType, ErrorClassType>::onFailed(QObject *scope, std::function<void (int, ErrorClassType)> handler)
+template <typename DataClassType, typename ErrorClassType>
+typename GenericRestReplyBase<DataClassType, ErrorClassType>::TInstance *GenericRestReplyBase<DataClassType, ErrorClassType>::onFailed(QObject *scope, std::function<void (int, ErrorClassType)> handler)
 {
-	RestReply::onFailed(scope, [this, handler](int code, const DataType &value){
+	RestReply::onFailed(scope, [this, xHandler = std::move(handler)](int code, const DataType &value){
 		std::visit(__private::overload {
 					   [&](std::nullopt_t) {
-						   handler(code, ErrorClassType{});
+						   xHandler(code, ErrorClassType{});
 					   },
 					   [&](auto data) {
 						   try {
-							   handler(code, _client->serializer()->deserializeGeneric(data, qMetaTypeId<ErrorClassType>()).template value<ErrorClassType>());
+							   xHandler(code, _client->serializer()->deserializeGeneric(data, qMetaTypeId<ErrorClassType>()).template value<ErrorClassType>());
 						   } catch (QtJsonSerializer::DeserializationException &e) {
 							   if (_exceptionHandler)
 								   _exceptionHandler(e);
-							   handler(code, ErrorClassType{});
+							   xHandler(code, ErrorClassType{});
 						   }
 					   }
 				   }, value);
 	});
-	_failureHandler = std::move(handler);
 	return this;
 }
 
-template <typename TInstance, typename DataClassType, typename ErrorClassType>
-TInstance *GenericRestReplyBase<TInstance, DataClassType, ErrorClassType>::onSerializeException(std::function<void(QtJsonSerializer::Exception&)> handler)
+template <typename DataClassType, typename ErrorClassType>
+typename GenericRestReplyBase<DataClassType, ErrorClassType>::TInstance *GenericRestReplyBase<DataClassType, ErrorClassType>::onSerializeException(std::function<void(QtJsonSerializer::Exception&)> handler)
 {
 	_exceptionHandler = std::move(handler);
 	return this;
 }
 
-template <typename TInstance, typename DataClassType, typename ErrorClassType>
-TInstance *GenericRestReplyBase<TInstance, DataClassType, ErrorClassType>::onAllErrors(std::function<void (QString, int, Error)> handler, std::function<QString (ErrorClassType, int)> failureTransformer)
+template <typename DataClassType, typename ErrorClassType>
+typename GenericRestReplyBase<DataClassType, ErrorClassType>::TInstance *GenericRestReplyBase<DataClassType, ErrorClassType>::onAllErrors(const std::function<void (QString, int, Error)> &handler, std::function<QString (ErrorClassType, int)> failureTransformer)
 {
-	return onAllErrors(this, std::move(handler), std::move(failureTransformer));
+	return onAllErrors(this, handler, std::move(failureTransformer));
 }
 
-template <typename TInstance, typename DataClassType, typename ErrorClassType>
-TInstance *GenericRestReplyBase<TInstance, DataClassType, ErrorClassType>::onAllErrors(QObject *scope, std::function<void (QString, int, Error)> handler, std::function<QString (ErrorClassType, int)> failureTransformer)
+template <typename DataClassType, typename ErrorClassType>
+typename GenericRestReplyBase<DataClassType, ErrorClassType>::TInstance *GenericRestReplyBase<DataClassType, ErrorClassType>::onAllErrors(QObject *scope, const std::function<void (QString, int, Error)> &handler, std::function<QString (ErrorClassType, int)> failureTransformer)
 {
-	this->onFailed(scope, [handler, failureTransformer](int code, ErrorClassType obj){
-		if (failureTransformer)
-			handler(failureTransformer(obj, code), code, Failure);
+	this->onSerializeException([handler](QtJsonSerializer::Exception &exception){
+		handler(QString::fromUtf8(exception.what()), 0, Error::Deserialization);
+	});
+	this->onFailed(scope, [handler, xFt = std::move(failureTransformer)](int code, ErrorClassType obj){
+		if (xFt)
+			handler(xFt(obj, code), code, Error::Failure);
 		else
-			handler(QString(), code, Failure);
-		MetaComponent<ErrorClassType>::deleteLater(obj);
+			handler({}, code, Error::Failure);
+		__private::MetaComponent<ErrorClassType>::deleteLater(obj);
 	});
 	this->onError(scope, handler);
-	this->onSerializeException([handler](QtJsonSerializer::Exception exception){
-		handler(QString::fromUtf8(exception.what()), 0, Deserialization);
-	});
 	return this;
 }
 
-template <typename TInstance, typename DataClassType, typename ErrorClassType>
-TInstance *GenericRestReplyBase<TInstance, DataClassType, ErrorClassType>::onCompleted(std::function<void (int)> handler)
+template <typename DataClassType, typename ErrorClassType>
+typename GenericRestReplyBase<DataClassType, ErrorClassType>::TInstance *GenericRestReplyBase<DataClassType, ErrorClassType>::onCompleted(std::function<void (int)> handler)
 {
-	return onCompleted(this, handler);
+	return onCompleted(this, std::move(handler));
 }
 
-template <typename TInstance, typename DataClassType, typename ErrorClassType>
-TInstance *GenericRestReplyBase<TInstance, DataClassType, ErrorClassType>::onCompleted(QObject *scope, std::function<void (int)> handler)
+template <typename DataClassType, typename ErrorClassType>
+typename GenericRestReplyBase<DataClassType, ErrorClassType>::TInstance *GenericRestReplyBase<DataClassType, ErrorClassType>::onCompleted(QObject *scope, std::function<void (int)> handler)
 {
-	RestReply::onCompleted(scope, handler);
+	RestReply::onCompleted(scope, std::move(handler));
 	return this;
 }
 
-template <typename TInstance, typename DataClassType, typename ErrorClassType>
-TInstance *GenericRestReplyBase<TInstance, DataClassType, ErrorClassType>::onError(std::function<void (QString, int, RestReply::Error)> handler)
+template <typename DataClassType, typename ErrorClassType>
+typename GenericRestReplyBase<DataClassType, ErrorClassType>::TInstance *GenericRestReplyBase<DataClassType, ErrorClassType>::onError(std::function<void (QString, int, RestReply::Error)> handler)
 {
-	return onError(this, handler);
+	return onError(this, std::move(handler));
 }
 
-template <typename TInstance, typename DataClassType, typename ErrorClassType>
-TInstance *GenericRestReplyBase<TInstance, DataClassType, ErrorClassType>::onError(QObject *scope, std::function<void (QString, int, RestReply::Error)> handler)
+template <typename DataClassType, typename ErrorClassType>
+typename GenericRestReplyBase<DataClassType, ErrorClassType>::TInstance *GenericRestReplyBase<DataClassType, ErrorClassType>::onError(QObject *scope, std::function<void (QString, int, RestReply::Error)> handler)
 {
-	RestReply::onError(scope, handler);
-	_errorHandler = std::move(handler);
+	RestReply::onError(scope, std::move(handler));
 	return this;
 }
 
-template <typename TInstance, typename DataClassType, typename ErrorClassType>
-TInstance *GenericRestReplyBase<TInstance, DataClassType, ErrorClassType>::disableAutoDelete()
+template <typename DataClassType, typename ErrorClassType>
+typename GenericRestReplyBase<DataClassType, ErrorClassType>::TInstance *GenericRestReplyBase<DataClassType, ErrorClassType>::disableAutoDelete()
 {
 	RestReply::disableAutoDelete();
 	return this;
 }
 
-template <typename TInstance, typename DataClassType, typename ErrorClassType>
-GenericRestReplyBase<TInstance, DataClassType, ErrorClassType>::GenericRestReplyBase(QNetworkReply *networkReply, RestClient *client, QObject *parent) :
+template <typename DataClassType, typename ErrorClassType>
+GenericRestReplyBase<DataClassType, ErrorClassType>::GenericRestReplyBase(QNetworkReply *networkReply, RestClient *client, QObject *parent) :
 	  RestReply{networkReply, parent},
 	  _client{client}
 {}
@@ -232,7 +246,7 @@ GenericRestReplyBase<TInstance, DataClassType, ErrorClassType>::GenericRestReply
 
 template<typename DataClassType, typename ErrorClassType>
 GenericRestReply<DataClassType, ErrorClassType>::GenericRestReply(QNetworkReply *networkReply, RestClient *client, QObject *parent) :
-	  GenericRestReplyBase<GenericRestReply<DataClassType, ErrorClassType>, DataClassType, ErrorClassType>{networkReply, client, parent}
+	  GenericRestReplyBase<DataClassType, ErrorClassType>{networkReply, client, parent}
 {}
 
 template<typename DataClassType, typename ErrorClassType>
@@ -266,7 +280,7 @@ GenericRestReply<DataClassType, ErrorClassType> *GenericRestReply<DataClassType,
 
 template<typename ErrorClassType>
 GenericRestReply<void, ErrorClassType>::GenericRestReply(QNetworkReply *networkReply, RestClient *client, QObject *parent) :
-	  GenericRestReplyBase<GenericRestReply<void, ErrorClassType>, void, ErrorClassType>{networkReply, client, parent}
+	  GenericRestReplyBase<void, ErrorClassType>{networkReply, client, parent}
 {
 	this->setAllowEmptyReplies(true);
 }
@@ -288,7 +302,7 @@ GenericRestReply<void, ErrorClassType> *GenericRestReply<void, ErrorClassType>::
 
 template<typename DataClassType, typename ErrorClassType>
 GenericRestReply<Paging<DataClassType>, ErrorClassType>::GenericRestReply(QNetworkReply *networkReply, RestClient *client, QObject *parent) :
-	  GenericRestReplyBase<GenericRestReply<Paging<DataClassType>, ErrorClassType>, Paging<DataClassType>, ErrorClassType>{networkReply, client, parent}
+	  GenericRestReplyBase<Paging<DataClassType>, ErrorClassType>{networkReply, client, parent}
 {}
 
 template<typename DataClassType, typename ErrorClassType>
@@ -315,7 +329,9 @@ GenericRestReply<Paging<DataClassType>, ErrorClassType> *GenericRestReply<Paging
 																										   [](const QJsonArray &data) -> QJsonValue {
 																											   return data;
 																										   }
-																									   }, iPaging->items()), qMetaTypeId<QList<DataClassType>>()).template value<QList<DataClassType>>();
+																									   }, iPaging->items()),
+																							qMetaTypeId<QList<DataClassType>>())
+												.template value<QList<DataClassType>>();
 							   xFn(code, Paging<DataClassType>(iPaging, std::move(pData), this->_client));
 						   }
 					   }, value);
@@ -344,10 +360,11 @@ The iterators parameters are:
 @sa Paging::iterate
 */
 template<typename DataClassType, typename ErrorClassType>
-GenericRestReply<Paging<DataClassType>, ErrorClassType> *GenericRestReply<Paging<DataClassType>, ErrorClassType>::iterate(std::function<bool (DataClassType, int)> iterator, int to, int from)
+GenericRestReply<Paging<DataClassType>, ErrorClassType> *GenericRestReply<Paging<DataClassType>, ErrorClassType>::iterate(std::function<bool (DataClassType, qint64)> iterator, qint64 to, qint64 from)
 {
-	return onSucceeded(this, [this, it = std::move(iterator), to, from](int, Paging<DataClassType> paging){
-		paging.iterate(it, this->_failureHandler, this->_errorHandler, this->_exceptionHandler, to, from);
+	return onSucceeded(this, [this, it = std::move(iterator), to, from](int, const Paging<DataClassType> &paging) {
+		if (paging.isValid())
+			paging.iterate(it, this->_failureHandler, this->_errorHandler, this->_exceptionHandler, to, from);
 	});
 }
 
@@ -369,11 +386,26 @@ The iterators parameters are:
 @sa Paging::iterate
 */
 template<typename DataClassType, typename ErrorClassType>
-GenericRestReply<Paging<DataClassType>, ErrorClassType> *GenericRestReply<Paging<DataClassType>, ErrorClassType>::iterate(QObject *scope, std::function<bool (DataClassType, int)> iterator, int to, int from)
+GenericRestReply<Paging<DataClassType>, ErrorClassType> *GenericRestReply<Paging<DataClassType>, ErrorClassType>::iterate(QObject *scope, std::function<bool (DataClassType, qint64)> iterator, qint64 to, qint64 from)
 {
-	return onSucceeded(scope, [this, scope, it = std::move(iterator), to, from](int, Paging<DataClassType> paging){
-		paging.iterate(scope, it, this->_failureHandler, this->_errorHandler, this->_exceptionHandler, to, from);
+	return onSucceeded(scope, [this, scope, it = std::move(iterator), to, from](int, const Paging<DataClassType> &paging){
+		if (paging.isValid())
+			paging.iterate(scope, it, this->_failureHandler, this->_errorHandler, this->_exceptionHandler, to, from);
 	});
+}
+
+template<typename DataClassType, typename ErrorClassType>
+GenericRestReply<Paging<DataClassType>, ErrorClassType> *GenericRestReply<Paging<DataClassType>, ErrorClassType>::onFailed(QObject *scope, std::function<void (int, ErrorClassType)> handler)
+{
+	_failureHandler = std::move(handler);
+	return GenericRestReplyBase<Paging<DataClassType>, ErrorClassType>::onFailed(scope, _failureHandler);
+}
+
+template<typename DataClassType, typename ErrorClassType>
+GenericRestReply<Paging<DataClassType>, ErrorClassType> *GenericRestReply<Paging<DataClassType>, ErrorClassType>::onError(QObject *scope, std::function<void (QString, int, RestReply::Error)> handler)
+{
+	_errorHandler = std::move(handler);
+	return GenericRestReplyBase<Paging<DataClassType>, ErrorClassType>::onError(scope, _errorHandler);
 }
 
 }

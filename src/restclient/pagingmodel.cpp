@@ -171,6 +171,14 @@ QVariant PagingModel::data(const QModelIndex &index, int role) const
 		if (!metaObject)
 			return {};
 
+		if (pName.isEmpty() && role == Qt::DisplayRole) {
+			const auto userProp = metaObject->userProperty();
+			if (userProp.isValid())
+				pName = userProp.name();
+			else
+				return QStringLiteral("%1 <%L2>").arg(QString::fromUtf8(metaObject->className()), index.row());
+		}
+
 		if (!pName.isEmpty()) {
 			// obtain the meta property
 			const auto pIndex = metaObject->indexOfProperty(pName.constData());
@@ -183,12 +191,6 @@ QVariant PagingModel::data(const QModelIndex &index, int role) const
 				return prop.read(d->data.at(index.row()).value<QObject*>());
 			else
 				return prop.readOnGadget(d->data.at(index.row()).data());
-		} else if (role == Qt::DisplayRole) {
-			const auto userProp = metaObject->userProperty();
-			if (userProp.isValid())
-				pName = userProp.name();
-			else
-				return QStringLiteral("%1 <%L2>").arg(QString::fromUtf8(metaObject->className()), index.row());
 		} else
 			return {};
 	}

@@ -26,15 +26,15 @@ RestReply::~RestReply()
 		d->networkReply->deleteLater();
 }
 
-RestReply *RestReply::onError(const std::function<void (QString, int, Error)> &handler)
+RestReply *RestReply::onError(std::function<void(QString, int, Error)> handler)
 {
-	return onError(this, handler);
+	return onError(this, std::move(handler));
 }
 
-RestReply *RestReply::onError(QObject *scope, const std::function<void (QString, int, RestReply::Error)> &handler)
+RestReply *RestReply::onError(QObject *scope, std::function<void (QString, int, RestReply::Error)> handler)
 {
-	connect(this, &RestReply::error, scope, [handler](const QString &errorString, int error, Error type){
-		handler(errorString, error, type);
+	connect(this, &RestReply::error, scope, [xHandler = std::move(handler)](const QString &errorString, int error, Error type){
+		xHandler(errorString, error, type);
 	});
 	return this;
 }

@@ -1,15 +1,14 @@
 #include "qmlgenericrestreply.h"
-#include <QDebug>
-#include <QRegularExpression>
+#include <QtQml/QQmlInfo>
 using namespace QtJsonSerializer;
 
-QtRestClient::QmlGenericRestReply::QmlGenericRestReply(JsonSerializer *serializer, QJSEngine *engine, int returnType, int errorType, QtRestClient::RestReply *reply) :
-	QObject(reply),
-	_serializer(serializer),
-	_engine(engine),
-	_returnType(returnType),
-	_errorType(errorType),
-	_reply(reply)
+QtRestClient::QmlGenericRestReply::QmlGenericRestReply(SerializerBase *serializer, QJSEngine *engine, int returnType, int errorType, QtRestClient::RestReply *reply) :
+	QObject{reply},
+	_serializer{serializer},
+	_engine{engine},
+	_returnType{returnType},
+	_errorType{errorType},
+	_reply{reply}
 {}
 
 QtRestClient::RestReply *QtRestClient::QmlGenericRestReply::reply() const
@@ -29,7 +28,7 @@ QString QtRestClient::QmlGenericRestReply::errorType() const
 
 void QtRestClient::QmlGenericRestReply::addCompletedHandler(const QJSValue &completedHandler)
 {
-	if(!checkOk(completedHandler))
+	if (!checkOk(completedHandler))
 		return;
 
 	_reply->onCompleted([completedHandler](int code){
@@ -40,111 +39,90 @@ void QtRestClient::QmlGenericRestReply::addCompletedHandler(const QJSValue &comp
 
 void QtRestClient::QmlGenericRestReply::addSucceededHandler(const QJSValue &succeededHandler)
 {
-	if(!checkOk(succeededHandler))
+	if (!checkOk(succeededHandler))
 		return;
 
-	QPointer<JsonSerializer> serializer{_serializer};
+	QPointer<SerializerBase> serializer{_serializer};
 	QPointer<QJSEngine> engine{_engine};
 	QPointer<RestReply> reply{_reply};
 	auto type = _returnType;
-	if(isList(type)) {
-		_reply->onSucceeded([succeededHandler, serializer, engine, reply, type](int code, const QJsonArray &arr) {
-			if(!serializer || !engine)
-				return;
-			try {
-				auto fn = succeededHandler;
-				auto var = serializer->deserialize(arr, type, reply);
-				fn.call({code, engine->toScriptValue(var)});
-			} catch(std::exception &e) {
-				qCritical() << e.what();
-			}
-		});
-	} else {
-		_reply->onSucceeded([succeededHandler, serializer, engine, reply, type](int code, const QJsonObject &obj) {
-			if(!serializer || !engine)
-				return;
-			try {
-				auto fn = succeededHandler;
-				auto var = type == QMetaType::Void ? QVariant{} : serializer->deserialize(obj, type, reply);
-				fn.call({code, engine->toScriptValue(var)});
-			} catch(std::exception &e) {
-				qCritical() << e.what();
-			}
-		});
-	}
+
+	_reply->onSucceeded([this, succeededHandler, serializer, engine, reply, type](int code, const RestReply::DataType &data) {
+		if (!serializer || !engine)
+			return;
+		try {
+			auto fn = succeededHandler;
+			std::visit(__private::overload {
+						   [&](std::nullopt_t) {
+							   fn.call({code, QJSValue{}});
+						   },
+						   [&](const auto &vData) {
+							   const auto var = serializer->deserializeGeneric(vData, type, reply);
+							   fn.call({code, engine->toScriptValue(var)});
+						   }
+			}, data);
+		} catch (std::exception &e) {
+			qmlWarning(this) << "ERROR:" << e.what();
+		}
+	});
 }
 
 void QtRestClient::QmlGenericRestReply::addFailedHandler(const QJSValue &failedHandler)
 {
-	if(!checkOk(failedHandler))
+	if (!checkOk(failedHandler))
 		return;
 
-	QPointer<JsonSerializer> serializer{_serializer};
+	QPointer<SerializerBase> serializer{_serializer};
 	QPointer<QJSEngine> engine{_engine};
 	QPointer<RestReply> reply{_reply};
 	auto type = _errorType;
-	if(isList(type)) {
-		_reply->onFailed([failedHandler, serializer, engine, reply, type](int code, const QJsonArray &arr) {
-			if(!serializer || !engine)
-				return;
-			try {
-				auto fn = failedHandler;
-				auto var = serializer->deserialize(arr, type, reply);
-				fn.call({code, engine->toScriptValue(var)});
-			} catch(std::exception &e) {
-				qCritical() << e.what();
-			}
-		});
-	} else {
-		_reply->onFailed([failedHandler, serializer, engine, reply, type](int code, const QJsonObject &obj) {
-			if(!serializer || !engine)
-				return;
-			try {
-				auto fn = failedHandler;
-				auto var = type == QMetaType::Void ? QVariant{} : serializer->deserialize(obj, type, reply);
-				fn.call({code, engine->toScriptValue(var)});
-			} catch(std::exception &e) {
-				qCritical() << e.what();
-			}
-		});
-	}
+	_reply->onFailed([this, failedHandler, serializer, engine, reply, type](int code, const RestReply::DataType &data) {
+		if(!serializer || !engine)
+			return;
+		try {
+			auto fn = failedHandler;
+			std::visit(__private::overload {
+						   [&](std::nullopt_t) {
+							   fn.call({code, QJSValue{}});
+						   },
+						   [&](const auto &vData) {
+							   try {
+								   const auto var = serializer->deserializeGeneric(vData, type, reply);
+								   fn.call({code, engine->toScriptValue(var)});
+							   } catch (DeserializationException &e) {
+								   fn.call({code, QString::fromUtf8(e.message())});
+								   throw;
+							   }
+						   }
+					   }, data);
+		} catch (std::exception &e) {
+			qmlWarning(this) << "ERROR:" << e.what();
+		}
+	});
 }
 
 void QtRestClient::QmlGenericRestReply::addErrorHandler(const QJSValue &errorHandler)
 {
-	if(!checkOk(errorHandler))
+	if (!checkOk(errorHandler))
 		return;
 
 	_reply->onError([errorHandler](const QString &error, int code, RestReply::Error type){
 		auto fn = errorHandler;
-		fn.call({error, code, type});
+		fn.call({error, code, static_cast<int>(type)});
 	});
 }
 
 bool QtRestClient::QmlGenericRestReply::checkOk(const QJSValue &fn) const
 {
-	if(!_reply) {
+	if (!_reply) {
 		qWarning() << "Cannot assign a handler to an invalid reply";
 		return false;
 	}
 
-	if(!fn.isCallable()) {
-		qWarning() << "Passed JS object is not a function!";
+	if (!fn.isCallable()) {
+		qWarning() << "Passed JS object is not a callable function!";
 		return false;
 	}
 
 	return true;
-}
-
-bool QtRestClient::QmlGenericRestReply::isList(int type) const
-{
-	const static QRegularExpression regex {
-		QStringLiteral(R"__(^QList<.*>$)__"),
-		QRegularExpression::DontCaptureOption
-	};
-
-	if(regex.match(QString::fromUtf8(QMetaType::typeName(type)).trimmed()).hasMatch())
-		return true;
-	else
-		return false;
 }

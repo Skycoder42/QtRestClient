@@ -69,7 +69,7 @@ RestClient::DataMode RestClient::dataMode() const
 {
 	Q_D(const RestClient);
 #ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
-	return d->serializer->metaObject()->inherits(&CborSerializer::staticMetaObject) ?
+	return d->serializer && d->serializer->metaObject()->inherits(&CborSerializer::staticMetaObject) ?
 		DataMode::Cbor :
 		DataMode::Json;
 #else

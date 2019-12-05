@@ -5,20 +5,21 @@
 #include "QtRestClient/genericrestreply.h"
 #include "QtRestClient/restclass.h"
 
+#include <functional>
+
 #include <QtCore/qpointer.h>
 #include <QtCore/qsharedpointer.h>
 #include <QtCore/qscopedpointer.h>
-#include <functional>
 
 namespace QtRestClient {
 
 //! A base class to create a simply type version for a normal one. Check The QObject* or Q_GADGET version
 template <typename T, typename = void>
-class Simple {};
+class Simple;
 
 //! A base class to create a simply type version for a normal one. QObject* version
 template<typename T>
-class Simple<T*, typename std::enable_if<std::is_base_of<QObject, T>::value>::type> : public QObject
+class Simple<T*, std::enable_if_t<std::is_base_of_v<QObject, T>>> : public QObject
 {
 public:
 	//! Constructor
@@ -55,9 +56,9 @@ public:
 	//! - The information, whether the object was extended by sending a request (`true`) or already available (`false`) (bool)
 	template<typename ET = QObject*>
 	void extend(RestClient *client,
-				const std::function<void(T*, bool)> &extensionHandler,
+				std::function<void(T*, bool)> extensionHandler,
 				const std::function<void(QString, int, RestReply::Error)> &errorHandler = {},
-				const std::function<QString(ET, int)> &failureTransformer = {});
+				std::function<QString(ET, int)> failureTransformer = {});
 	//! @brief Extends the object by using a handler
 	//! @param client The rest client to be used to create the network request
 	//! @param scope (optional) A scope to limit the callback to
@@ -73,9 +74,9 @@ public:
 	template<typename ET = QObject*>
 	void extend(RestClient *client,
 				QObject *scope,
-				const std::function<void(T*, bool)> &extensionHandler,
+				std::function<void(T*, bool)> extensionHandler,
 				const std::function<void(QString, int, RestReply::Error)> &errorHandler = {},
-				const std::function<QString(ET, int)> &failureTransformer = {});
+				std::function<QString(ET, int)> failureTransformer = {});
 
 private:
 	QSharedPointer<QPointer<T>> _ext;
@@ -85,7 +86,7 @@ private:
 
 //! A base class to create a simply type version for a normal one. Q_GADGET version
 template<typename T>
-class Simple<T, typename std::enable_if<std::is_void<typename T::QtGadgetHelper>::value>::type>
+class Simple<T, std::enable_if_t<std::is_void_v<typename T::QtGadgetHelper>>>
 {
 public:
 	//! Constructor
@@ -122,9 +123,9 @@ public:
 	//! - The information, whether the object was extended by sending a request (`true`) or already available (`false`) (bool)
 	template<typename ET = QObject*>
 	void extend(RestClient *client,
-				const std::function<void(T, bool)> &extensionHandler,
+				std::function<void(T, bool)> extensionHandler,
 				const std::function<void(QString, int, RestReply::Error)> &errorHandler = {},
-				const std::function<QString(ET, int)> &failureTransformer = {});
+				std::function<QString(ET, int)> failureTransformer = {});
 	//! @brief Extends the object by using a handler
 	//! @param client The rest client to be used to create the network request
 	//! @param scope (optional) A scope to limit the callback to
@@ -140,9 +141,9 @@ public:
 	template<typename ET = QObject*>
 	void extend(RestClient *client,
 				QObject *scope,
-				const std::function<void(T, bool)> &extensionHandler,
+				std::function<void(T, bool)> extensionHandler,
 				const std::function<void(QString, int, RestReply::Error)> &errorHandler = {},
-				const std::function<QString(ET, int)> &failureTransformer = {});
+				std::function<QString(ET, int)> failureTransformer = {});
 
 private:
 	QSharedPointer<QScopedPointer<T>> _ext;
@@ -163,77 +164,81 @@ private:
 namespace QtRestClient {
 
 template<typename T>
-Simple<T*, typename std::enable_if<std::is_base_of<QObject, T>::value>::type>::Simple(QObject *parent) :
-	QObject(parent),
-	_ext(new QPointer<T>{})
+Simple<T*, std::enable_if_t<std::is_base_of_v<QObject, T>>>::Simple(QObject *parent) :
+	QObject{parent},
+	_ext{new QPointer<T>{}}
 {}
 
 template<typename T>
-bool Simple<T*, typename std::enable_if<std::is_base_of<QObject, T>::value>::type>::hasExtension() const
+bool Simple<T*, std::enable_if_t<std::is_base_of_v<QObject, T>>>::hasExtension() const
 {
 	return extensionHref().isValid();
 }
 
 template<typename T>
-bool Simple<T*, typename std::enable_if<std::is_base_of<QObject, T>::value>::type>::isExtended() const
+bool Simple<T*, std::enable_if_t<std::is_base_of_v<QObject, T>>>::isExtended() const
 {
 	return ext();
 }
 
 template<typename T>
-T *Simple<T*, typename std::enable_if<std::is_base_of<QObject, T>::value>::type>::currentExtended() const
+T *Simple<T*, std::enable_if_t<std::is_base_of_v<QObject, T>>>::currentExtended() const
 {
 	return ext();
 }
 
 template<typename T>
 template<typename ET>
-GenericRestReply<T*, ET> *Simple<T*, typename std::enable_if<std::is_base_of<QObject, T>::value>::type>::extend(RestClient *client)
+GenericRestReply<T*, ET> *Simple<T*, std::enable_if_t<std::is_base_of_v<QObject, T>>>::extend(RestClient *client)
 {
-	if(hasExtension()) {
+	if (hasExtension()) {
 		QWeakPointer<QPointer<T>> extRef = _ext;
 		return client->rootClass()->get<T*, ET>(extensionHref())
-				->onSucceeded([extRef](int, T *data) {
-					if(auto ext = extRef.toStrongRef())
-						*ext = data;
-				});
+			->onSucceeded([extRef](int, T *data) {
+				if (const auto ext = extRef.toStrongRef(); ext)
+					*ext = data;
+			});
 	} else
 		return nullptr;
 }
 
 template<typename T>
 template<typename ET>
-void Simple<T*, typename std::enable_if<std::is_base_of<QObject, T>::value>::type>::extend(RestClient *client, const std::function<void (T *, bool)> &extensionHandler, const std::function<void (QString, int, RestReply::Error)> &errorHandler, const std::function<QString (ET, int)> &failureTransformer)
+void Simple<T*, std::enable_if_t<std::is_base_of_v<QObject, T>>>::extend(RestClient *client, std::function<void (T *, bool)> extensionHandler, const std::function<void (QString, int, RestReply::Error)> &errorHandler, std::function<QString (ET, int)> failureTransformer)
 {
-	extend(client, const_cast<Simple<T*>*>(this), extensionHandler, errorHandler, failureTransformer);
+	extend(client,
+		   const_cast<Simple<T*, std::enable_if_t<std::is_base_of_v<QObject, T>>>*>(this),
+		   std::move(extensionHandler),
+		   errorHandler,
+		   std::move(failureTransformer));
 }
 
 template<typename T>
 template<typename ET>
-void Simple<T*, typename std::enable_if<std::is_base_of<QObject, T>::value>::type>::extend(RestClient *client, QObject *scope, const std::function<void (T *, bool)> &extensionHandler, const std::function<void (QString, int, RestReply::Error)> &errorHandler, const std::function<QString (ET, int)> &failureTransformer)
+void Simple<T*, std::enable_if_t<std::is_base_of_v<QObject, T>>>::extend(RestClient *client, QObject *scope, std::function<void (T *, bool)> extensionHandler, const std::function<void (QString, int, RestReply::Error)> &errorHandler, std::function<QString (ET, int)> failureTransformer)
 {
-	if(ext())
+	if (ext())
 		extensionHandler(ext(), false);
 	else if(hasExtension()) {
 		QWeakPointer<QPointer<T>> extRef = _ext;
 		client->rootClass()->get<T*, ET>(extensionHref())
-				->onSucceeded(scope, [extRef, extensionHandler](int, T *data){
-					if(auto ext = extRef.toStrongRef())
-						*ext = data;
-					extensionHandler(data, true);
-				})
-				->onAllErrors(scope, errorHandler, failureTransformer);
+			->onSucceeded(scope, [extRef, xEH = std::move(extensionHandler)](int, T *data){
+				if (const auto ext = extRef.toStrongRef(); ext)
+					*ext = data;
+				xEH(data, true);
+			})
+			->onAllErrors(scope, errorHandler, std::move(failureTransformer));
 	}
 }
 
 template<typename T>
-QPointer<T> &QtRestClient::Simple<T*, typename std::enable_if<std::is_base_of<QObject, T>::value>::type>::ext()
+QPointer<T> &QtRestClient::Simple<T*, std::enable_if_t<std::is_base_of_v<QObject, T>>>::ext()
 {
 	return *_ext;
 }
 
 template<typename T>
-const QPointer<T> &QtRestClient::Simple<T*, typename std::enable_if<std::is_base_of<QObject, T>::value>::type>::ext() const
+const QPointer<T> &QtRestClient::Simple<T*, std::enable_if_t<std::is_base_of_v<QObject, T>>>::ext() const
 {
 	return *_ext;
 }
@@ -241,90 +246,90 @@ const QPointer<T> &QtRestClient::Simple<T*, typename std::enable_if<std::is_base
 // ------------- Generic Implementation gadget -------------
 
 template<typename T>
-Simple<T, typename std::enable_if<std::is_void<typename T::QtGadgetHelper>::value>::type>::Simple() :
-	_ext(new QScopedPointer<T>{nullptr})
+Simple<T, std::enable_if_t<std::is_void_v<typename T::QtGadgetHelper>>>::Simple() :
+	_ext{new QScopedPointer<T>{nullptr}}
 {}
 
 template<typename T>
-bool Simple<T, typename std::enable_if<std::is_void<typename T::QtGadgetHelper>::value>::type>::hasExtension() const
+bool Simple<T, std::enable_if_t<std::is_void_v<typename T::QtGadgetHelper>>>::hasExtension() const
 {
 	return extensionHref().isValid();
 }
 
 template<typename T>
-bool Simple<T, typename std::enable_if<std::is_void<typename T::QtGadgetHelper>::value>::type>::isExtended() const
+bool Simple<T, std::enable_if_t<std::is_void_v<typename T::QtGadgetHelper>>>::isExtended() const
 {
 	return ext();
 }
 
 template<typename T>
-T Simple<T, typename std::enable_if<std::is_void<typename T::QtGadgetHelper>::value>::type>::currentExtended() const
+T Simple<T, std::enable_if_t<std::is_void_v<typename T::QtGadgetHelper>>>::currentExtended() const
 {
-	if(ext())
+	if (ext())
 		return *(ext().data());
 	else
-		return T();
+		return {};
 }
 
 template<typename T>
 template<typename ET>
-GenericRestReply<T, ET> *Simple<T, typename std::enable_if<std::is_void<typename T::QtGadgetHelper>::value>::type>::extend(RestClient *client)
+GenericRestReply<T, ET> *Simple<T, std::enable_if_t<std::is_void_v<typename T::QtGadgetHelper>>>::extend(RestClient *client)
 {
-	if(hasExtension()) {
+	if (hasExtension()) {
 		QWeakPointer<QScopedPointer<T>> extRef = _ext;
 		return client->rootClass()->get<T, ET>(extensionHref())
-				->onSucceeded([extRef](int, T data){
-					if(auto ext = extRef.toStrongRef())
-						ext.data()->reset(new T(data));
-				});
+			->onSucceeded([extRef](int, T data){
+				if (const auto ext = extRef.toStrongRef(); ext)
+					ext.data()->reset(new T{data});
+			});
 	} else
 		return nullptr;
 }
 
 template<typename T>
 template<typename ET>
-void Simple<T, typename std::enable_if<std::is_void<typename T::QtGadgetHelper>::value>::type>::extend(RestClient *client, const std::function<void (T, bool)> &extensionHandler, const std::function<void (QString, int, RestReply::Error)> &errorHandler, const std::function<QString (ET, int)> &failureTransformer)
+void Simple<T, std::enable_if_t<std::is_void_v<typename T::QtGadgetHelper>>>::extend(RestClient *client, std::function<void (T, bool)> extensionHandler, const std::function<void (QString, int, RestReply::Error)> &errorHandler, std::function<QString (ET, int)> failureTransformer)
 {
-	if(ext())
+	if (ext())
 		extensionHandler(*(ext().data()), false);
-	else if(hasExtension()) {
+	else if (hasExtension()) {
 		QWeakPointer<QScopedPointer<T>> extRef = _ext;
 		client->rootClass()->get<T, ET>(extensionHref())
-				->onSucceeded([extRef, extensionHandler](int, T data){
-					if(auto ext = extRef.toStrongRef())
-						ext.data()->reset(new T(data));
-					extensionHandler(data, true);
-				})
-				->onAllErrors(errorHandler, failureTransformer);
+			->onSucceeded([extRef, xEH = std::move(extensionHandler)](int, T data){
+				if (const auto ext = extRef.toStrongRef(); ext)
+					ext.data()->reset(new T{data});
+				xEH(data, true);
+			})
+			->onAllErrors(errorHandler, std::move(failureTransformer));
 	}
 }
 
 template<typename T>
 template<typename ET>
-void Simple<T, typename std::enable_if<std::is_void<typename T::QtGadgetHelper>::value>::type>::extend(RestClient *client, QObject *scope, const std::function<void (T, bool)> &extensionHandler, const std::function<void (QString, int, RestReply::Error)> &errorHandler, const std::function<QString (ET, int)> &failureTransformer)
+void Simple<T, std::enable_if_t<std::is_void_v<typename T::QtGadgetHelper>>>::extend(RestClient *client, QObject *scope, std::function<void (T, bool)> extensionHandler, const std::function<void (QString, int, RestReply::Error)> &errorHandler, std::function<QString (ET, int)> failureTransformer)
 {
-	if(ext())
+	if (ext())
 		extensionHandler(*(ext().data()), false);
-	else if(hasExtension()) {
+	else if (hasExtension()) {
 		QWeakPointer<QScopedPointer<T>> extRef = _ext;
 		client->rootClass()->get<T, ET>(extensionHref())
-				->onSucceeded(scope, [extRef, extensionHandler](int, T data){
-					if(auto ext = extRef.toStrongRef())
-						ext.data()->reset(new T(data));
-					extensionHandler(data, true);
-				})
-				->onAllErrors(scope, errorHandler, failureTransformer);
+			->onSucceeded(scope, [extRef, xEH = std::move(extensionHandler)](int, T data){
+				if (const auto ext = extRef.toStrongRef(); ext)
+					ext.data()->reset(new T{data});
+				xEH(data, true);
+			})
+			->onAllErrors(scope, errorHandler, std::move(failureTransformer));
 	}
 }
 
 template<typename T>
-QScopedPointer<T> &QtRestClient::Simple<T, typename std::enable_if<std::is_void<typename T::QtGadgetHelper>::value>::type>::ext()
+QScopedPointer<T> &QtRestClient::Simple<T, std::enable_if_t<std::is_void_v<typename T::QtGadgetHelper>>>::ext()
 {
 	return *_ext;
 }
 
 template<typename T>
-const QScopedPointer<T> &QtRestClient::Simple<T, typename std::enable_if<std::is_void<typename T::QtGadgetHelper>::value>::type>::ext() const
+const QScopedPointer<T> &QtRestClient::Simple<T, std::enable_if_t<std::is_void_v<typename T::QtGadgetHelper>>>::ext() const
 {
 	return *_ext;
 }
