@@ -40,8 +40,14 @@ void PagingModel::initialize(RestReply *reply, IPagingModelFetcher *fetcher, int
 	d->clearData();
 	d->generateRoleNames();
 	endResetModel();
-	reply->onSucceeded(this, std::bind(&PagingModelPrivate::processReply, d, sph::_1, sph::_2));
-	reply->onAllErrors(this, std::bind(&PagingModelPrivate::processError, d, sph::_1, sph::_2, sph::_3));
+	reply->onSucceeded(this, [this](int code, const RestReply::DataType &replyData) {
+		Q_D(PagingModel);
+		d->processReply(code, replyData);
+	});
+	reply->onAllErrors(this, [this](const QString &message, int code, RestReply::Error errorType) {
+		Q_D(PagingModel);
+		d->processError(message, code, errorType);
+	});
 }
 
 void PagingModel::initialize(RestReply *reply, RestClass *restClass, int typeId)
@@ -320,8 +326,12 @@ void PagingModelPrivate::requestNext()
 	auto reply = fetcher->fetch(*nextUrl);
 	if (reply) {
 		nextUrl = std::nullopt;
-		reply->onSucceeded(q, std::bind(&PagingModelPrivate::processReply, this, sph::_1, sph::_2));
-		reply->onAllErrors(q, std::bind(&PagingModelPrivate::processError, this, sph::_1, sph::_2, sph::_3));
+		reply->onSucceeded(q, [this](int code, const RestReply::DataType &replyData) {
+			processReply(code, replyData);
+		});
+		reply->onAllErrors(q, [this](const QString &message, int code, RestReply::Error errorType) {
+			processError(message, code, errorType);
+		});
 	} else
 		emit q->fetchError({});
 }

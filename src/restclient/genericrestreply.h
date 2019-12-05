@@ -170,14 +170,14 @@ typename GenericRestReplyBase<DataClassType, ErrorClassType>::TInstance *Generic
 					   }
 				   }, value);
 	});
-	return this;
+	return static_cast<TInstance*>(this);
 }
 
 template <typename DataClassType, typename ErrorClassType>
 typename GenericRestReplyBase<DataClassType, ErrorClassType>::TInstance *GenericRestReplyBase<DataClassType, ErrorClassType>::onSerializeException(std::function<void(QtJsonSerializer::Exception&)> handler)
 {
 	_exceptionHandler = std::move(handler);
-	return this;
+	return static_cast<TInstance*>(this);
 }
 
 template <typename DataClassType, typename ErrorClassType>
@@ -200,7 +200,7 @@ typename GenericRestReplyBase<DataClassType, ErrorClassType>::TInstance *Generic
 		__private::MetaComponent<ErrorClassType>::deleteLater(obj);
 	});
 	this->onError(scope, handler);
-	return this;
+	return static_cast<TInstance*>(this);
 }
 
 template <typename DataClassType, typename ErrorClassType>
@@ -213,7 +213,7 @@ template <typename DataClassType, typename ErrorClassType>
 typename GenericRestReplyBase<DataClassType, ErrorClassType>::TInstance *GenericRestReplyBase<DataClassType, ErrorClassType>::onCompleted(QObject *scope, std::function<void (int)> handler)
 {
 	RestReply::onCompleted(scope, std::move(handler));
-	return this;
+	return static_cast<TInstance*>(this);
 }
 
 template <typename DataClassType, typename ErrorClassType>
@@ -226,14 +226,14 @@ template <typename DataClassType, typename ErrorClassType>
 typename GenericRestReplyBase<DataClassType, ErrorClassType>::TInstance *GenericRestReplyBase<DataClassType, ErrorClassType>::onError(QObject *scope, std::function<void (QString, int, RestReply::Error)> handler)
 {
 	RestReply::onError(scope, std::move(handler));
-	return this;
+	return static_cast<TInstance*>(this);
 }
 
 template <typename DataClassType, typename ErrorClassType>
 typename GenericRestReplyBase<DataClassType, ErrorClassType>::TInstance *GenericRestReplyBase<DataClassType, ErrorClassType>::disableAutoDelete()
 {
 	RestReply::disableAutoDelete();
-	return this;
+	return static_cast<TInstance*>(this);
 }
 
 template <typename DataClassType, typename ErrorClassType>
