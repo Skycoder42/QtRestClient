@@ -235,22 +235,22 @@ struct FnBinder<int, std::variant<TCbor, TJson>> {
 template <typename T>
 struct unforce {};
 
-template <template<class> class C, typename T>
-struct unforce<C<T>> {
-	template <typename TImpl>
-	using type = C<TImpl>;
+template <template<class> class C, typename... TArgs>
+struct unforce<C<TArgs...>> {
+	template <typename... TImpl>
+	using type = C<TImpl...>;
 };
 
 void stdBindEvalFn(int);
 
-template <typename T>
-using stdBind = typename unforce<decltype(std::bind(stdBindEvalFn, 0))>::type<T>;
+template <typename... TArgs>
+using stdBind = typename unforce<decltype(std::bind(stdBindEvalFn, 0))>::type<TArgs...>;
 
 template <typename T>
 struct FnInfo : public FnInfo<decltype(&T::operator())> {};
 
-template <typename T>
-struct FnInfo<stdBind<T>> : public FnInfo<T> {};
+template <typename T, typename... TArgs>
+struct FnInfo<stdBind<T, TArgs...>> : public FnInfo<T> {};
 
 template <typename TClass, typename TRet, typename... TArgs>
 struct FnInfo<TRet(TClass::*)(TArgs...) const>
