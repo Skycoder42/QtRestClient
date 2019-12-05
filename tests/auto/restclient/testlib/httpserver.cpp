@@ -7,12 +7,19 @@
 #include <QtHttpServer>
 
 #include <QtRestClient/private/requestbuilder_p.h>
+using namespace QtRestClient;
 
 namespace {
 
 class HttpError : public std::exception
 {
 public:
+	enum ContentType {
+		Cbor,
+		Json,
+		Plain
+	};
+
 	HttpError(QHttpServerResponse::StatusCode code = QHttpServerResponse::StatusCode::BadRequest) :
 		  _code{code}
 	{}
@@ -37,12 +44,29 @@ public:
 		return _what.constData();
 	}
 
-	QHttpServerResponse response() noexcept {
-		return QHttpServerResponse {
-			"text/plain",
-			_message,
-			_code
-		};
+	QHttpServerResponse response(ContentType contentType = Plain) noexcept {
+		switch (contentType) {
+		case Cbor:
+			return QHttpServerResponse {
+				RequestBuilderPrivate::ContentTypeCbor,
+				QCborValue{_message}.toCbor(),
+				_code
+			};
+		case Json: {
+			const auto jData = QJsonDocument{QJsonArray{QString::fromUtf8(_message)}}.toJson(QJsonDocument::Compact);
+			return QHttpServerResponse {
+				RequestBuilderPrivate::ContentTypeJson,
+				jData.mid(1, jData.size() - 2),
+				_code
+			};
+		}
+		case Plain:
+			return QHttpServerResponse {
+				"text/plain",
+				_message,
+				_code
+			};
+		}
 	}
 
 private:
@@ -116,10 +140,12 @@ bool HttpServer::setupRoutes()
 			}
 		}));
 		QVERIFY(_server->route(QStringLiteral("/<arg>"), [this](const QString &type, const QHttpServerRequest &request) -> QHttpServerResponse {
+			HttpError::ContentType ct = HttpError::Plain;
 			try {
 				if (!_data.contains(type))
 					throw HttpError{QHttpServerResponse::StatusCode::NotFound};
 				const auto asJson = checkAccept(request);
+				ct = asJson ? HttpError::Json : HttpError::Cbor;
 
 				switch (request.method()) {
 				case QHttpServerRequest::Method::Get: {
@@ -155,14 +181,16 @@ bool HttpServer::setupRoutes()
 				}
 			} catch (HttpError &e) {
 				qWarning() << e.what();
-				return e.response();
+				return e.response(ct);
 			}
 		}));
 		QVERIFY(_server->route(QStringLiteral("/<arg>/<arg>"), [this](const QString &type, int index, const QHttpServerRequest &request) -> QHttpServerResponse {
+			HttpError::ContentType ct = HttpError::Plain;
 			try {
 				if (!_data.contains(type))
 					throw HttpError{QHttpServerResponse::StatusCode::NotFound};
 				const auto asJson = checkAccept(request);
+				ct = asJson ? HttpError::Json : HttpError::Cbor;
 				auto tMap = _data[type].toMap();
 
 				switch (request.method()) {
@@ -188,7 +216,7 @@ bool HttpServer::setupRoutes()
 				}
 			} catch (HttpError &e) {
 				qWarning() << e.what();
-				return e.response();
+				return e.response(ct);
 			}
 		}));
 		ok = true;
@@ -306,10 +334,10 @@ bool HttpServer::checkAccept(const QHttpServerRequest &request)
 			throw HttpError{QHttpServerResponse::StatusCode::Unauthorized};
 	}
 
-	const auto accept = request.headers().value(QStringLiteral("Accept"), QtRestClient::RequestBuilderPrivate::ContentTypeJson);
-	if (accept == QtRestClient::RequestBuilderPrivate::ContentTypeJson)
+	const auto accept = request.headers().value(QStringLiteral("Accept"), RequestBuilderPrivate::ContentTypeJson);
+	if (accept == RequestBuilderPrivate::ContentTypeJson)
 		return true;
-	else if (accept == QtRestClient::RequestBuilderPrivate::ContentTypeCbor)
+	else if (accept == RequestBuilderPrivate::ContentTypeCbor)
 		return false;
 	else
 		throw HttpError{accept.toByteArray(), QHttpServerResponse::StatusCode::NotAcceptable};
@@ -318,7 +346,7 @@ bool HttpServer::checkAccept(const QHttpServerRequest &request)
 QCborMap HttpServer::extract(const QHttpServerRequest &request, bool allowPost)
 {
 	const auto cType = request.headers()[QStringLiteral("Content-Type")].toByteArray();
-	if (cType == QtRestClient::RequestBuilderPrivate::ContentTypeCbor) {
+	if (cType == RequestBuilderPrivate::ContentTypeCbor) {
 		QCborParserError error;
 		const auto cbor = QCborValue::fromCbor(request.body(), &error);
 		if (error.error != QCborError::NoError)
@@ -326,7 +354,7 @@ QCborMap HttpServer::extract(const QHttpServerRequest &request, bool allowPost)
 		if (!cbor.isMap())
 			throw HttpError{"Unexpected cbor type - must be a map"};
 		return cbor.toMap();
-	} else if (cType == QtRestClient::RequestBuilderPrivate::ContentTypeJson) {
+	} else if (cType == RequestBuilderPrivate::ContentTypeJson) {
 		QJsonParseError error;
 		const auto json = QJsonDocument::fromJson(request.body(), &error);
 		if (error.error != QJsonParseError::NoError)
@@ -334,7 +362,7 @@ QCborMap HttpServer::extract(const QHttpServerRequest &request, bool allowPost)
 		if (!json.isObject())
 			throw HttpError{"Unexpected json type - must be an object"};
 		return QCborMap::fromJsonObject(json.object());
-	} else if (allowPost && cType == QtRestClient::RequestBuilderPrivate::ContentTypeUrlEncoded) {
+	} else if (allowPost && cType == RequestBuilderPrivate::ContentTypeUrlEncoded) {
 		QUrlQuery query {QString::fromUtf8(request.body())};
 		QCborMap map;
 		for(const auto &param : query.queryItems(QUrl::FullyDecoded))
@@ -356,7 +384,7 @@ QHttpServerResponse HttpServer::reply(bool asJson, const QCborValue &value)
 			throw HttpError{QHttpServerResponse::StatusCode::InternalServerError};
 	} else {
 		return QHttpServerResponse {
-			QtRestClient::RequestBuilderPrivate::ContentTypeCbor,
+			RequestBuilderPrivate::ContentTypeCbor,
 			QCborValue{value}.toCbor()
 		};
 	}

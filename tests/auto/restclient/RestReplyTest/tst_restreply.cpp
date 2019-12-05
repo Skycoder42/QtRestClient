@@ -1,14 +1,14 @@
-#include "simplejphpost.h"
 #include "testlib.h"
 
 #include <jphpost.h>
 using namespace QtJsonSerializer;
+using namespace QtRestClient;
 
 class RestReplyTest : public QObject
 {
 	Q_OBJECT
 
-signals:
+Q_SIGNALS:
 	void test_unlock();
 
 private Q_SLOTS:
@@ -22,33 +22,33 @@ private Q_SLOTS:
 	void testGenericReplyWrapping_data();
 	void testGenericReplyWrapping();
 
-	void testGenericVoidReplyWrapping_data();
-	void testGenericVoidReplyWrapping();
+//	void testGenericVoidReplyWrapping_data();
+//	void testGenericVoidReplyWrapping();
 
-	void testGenericListReplyWrapping_data();
-	void testGenericListReplyWrapping();
+//	void testGenericListReplyWrapping_data();
+//	void testGenericListReplyWrapping();
 
-	void testGenericPagingReplyWrapping_data();
-	void testGenericPagingReplyWrapping();
-	void testPagingNext();
-	void testPagingPrevious();
-	void testPagingIterate();
+//	void testGenericPagingReplyWrapping_data();
+//	void testGenericPagingReplyWrapping();
+//	void testPagingNext();
+//	void testPagingPrevious();
+//	void testPagingIterate();
 
-	void testSimpleExtension();
-	void testSimplePagingIterate();
+//	void testSimpleExtension();
+//	void testSimplePagingIterate();
 
-	void testCallbackOverloads();
+//	void testCallbackOverloads();
 
 private:
 	HttpServer *server;
-	QtRestClient::RestClient *client;
+	RestClient *client;
 	QNetworkAccessManager *nam;
 };
 
 void RestReplyTest::initTestCase()
 {
 	JsonSerializer::registerListConverters<JphPost*>();
-	JsonSerializer::registerListConverters<SimpleJphPost*>();
+	JsonSerializer::registerListConverters<JphPostSimple*>();
 	server = new HttpServer(this);
 	QVERIFY(server->setupRoutes());
 	server->setAdvancedData();
@@ -60,11 +60,11 @@ void RestReplyTest::initTestCase()
 
 void RestReplyTest::cleanupTestCase()
 {
-	server->deleteLater();
-	server = nullptr;
+	nam = nullptr;
 	client->deleteLater();
 	client = nullptr;
-	nam = nullptr;
+	server->deleteLater();
+	server = nullptr;
 }
 
 void RestReplyTest::testReplyWrapping_data()
@@ -72,23 +72,32 @@ void RestReplyTest::testReplyWrapping_data()
 	QTest::addColumn<QUrl>("url");
 	QTest::addColumn<bool>("succeed");
 	QTest::addColumn<int>("status");
-	QTest::addColumn<QJsonObject>("result");
+	QTest::addColumn<BodyType>("result");
 
-	QJsonObject object;
-	object["userId"] = 1;
-	object["id"] = 1;
-	object["title"] = "Title1";
-	object["body"] = "Body1";
+	QCborMap map;
+	map[QStringLiteral("id")] = 1;
+	map[QStringLiteral("userId")] = 1;
+	map[QStringLiteral("title")] = QStringLiteral("Title1");
+	map[QStringLiteral("body")] = QStringLiteral("Body1");
 
-	QTest::newRow("get") << server->url("/posts/1")
-						 << true
-						 << 200
-						 << object;
+	QTest::newRow("get.cbor") << server->url("/posts/1")
+							  << true
+							  << 200
+							  << Testlib::CBody(map);
+	QTest::newRow("get.json") << server->url("/posts/1")
+							  << true
+							  << 200
+							  << Testlib::JBody(map);
 
-	QTest::newRow("notFound") << server->url("/posts/baum")
-							  << false
-							  << 404
-							  << QJsonObject();
+	QTest::newRow("notFound.cbor") << server->url("/posts/435345")
+								   << false
+								   << 404
+								   << Testlib::CBody();
+
+	QTest::newRow("notFound.json") << server->url("/posts/435345")
+								   << false
+								   << 404
+								   << Testlib::JBody();
 }
 
 void RestReplyTest::testReplyWrapping()
@@ -96,21 +105,20 @@ void RestReplyTest::testReplyWrapping()
 	QFETCH(QUrl, url);
 	QFETCH(bool, succeed);
 	QFETCH(int, status);
-	QFETCH(QJsonObject, result);
+	QFETCH(BodyType, result);
 
 	QNetworkRequest request(url);
-	request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
-
+	result.setAccept(request);
 	bool called = false;
 
-	auto reply = new QtRestClient::RestReply(nam->get(request));
-	reply->onSucceeded([&](int code, QJsonObject data){
+	auto reply = new RestReply(nam->get(request));
+	reply->onSucceeded([&](int code, const RestReply::DataType &data){
 		called = true;
 		QVERIFY(succeed);
 		QCOMPARE(code, status);
-		QCOMPARE(data, result);
+		QCOMPARE(BodyType{data}, result);
 	});
-	reply->onAllErrors([&](QString error, int code, QtRestClient::RestReply::Error type){
+	reply->onAllErrors([&](const QString &error, int code, QtRestClient::RestReply::Error type){
 		called = true;
 		QVERIFY2(!succeed, qUtf8Printable(error));
 		QCOMPARE(type, QtRestClient::RestReply::Error::Failure);
@@ -124,16 +132,17 @@ void RestReplyTest::testReplyWrapping()
 
 void RestReplyTest::testReplyError()
 {
-	QNetworkRequest request(QStringLiteral("https://skycoder42.de/invalid"));
+	QNetworkRequest request(server->url("/invalid"));
 	request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
+	request.setRawHeader("Accept", "application/cbor");
 
 	bool called = false;
 
 	auto reply = new QtRestClient::RestReply(nam->get(request));
-	reply->onAllErrors([&](QString, int code, QtRestClient::RestReply::Error type){
+	reply->onAllErrors([&](const QString &, int code, QtRestClient::RestReply::Error type){
 		called = true;
 		QCOMPARE(type, QtRestClient::RestReply::Error::Network);
-		QCOMPARE(code, (int)QNetworkReply::ContentNotFoundError);
+		QCOMPARE(code, static_cast<int>(QNetworkReply::ContentNotFoundError));
 	});
 
 	QSignalSpy deleteSpy(reply, &QtRestClient::RestReply::destroyed);
@@ -143,17 +152,18 @@ void RestReplyTest::testReplyError()
 
 void RestReplyTest::testReplyRetry()
 {
-	QNetworkRequest request(QStringLiteral("https://skycoder42.de/invalid"));
+	QNetworkRequest request(server->url("/invalid"));
 	request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
+	request.setRawHeader("Accept", "application/cbor");
 
 	auto retryCount = 0;
 
 	auto reply = new QtRestClient::RestReply(nam->get(request));
-	reply->onAllErrors([&](QString, int code, QtRestClient::RestReply::Error type){
+	reply->onAllErrors([&](const QString &, int code, QtRestClient::RestReply::Error type){
 		retryCount++;
 		QCOMPARE(type, QtRestClient::RestReply::Error::Network);
-		QCOMPARE(code, (int)QNetworkReply::ContentNotFoundError);
-		if(retryCount < 3)
+		QCOMPARE(code, static_cast<int>(QNetworkReply::ContentNotFoundError));
+		if (retryCount < 3)
 			reply->retryAfter((retryCount - 1) * 1500);//first 0, the 1500
 	});
 
@@ -175,7 +185,7 @@ void RestReplyTest::testGenericReplyWrapping_data()
 	QTest::newRow("get") << server->url("/posts/1")
 						 << true
 						 << 200
-						 << (QObject*)JphPost::createDefault(this)
+						 << static_cast<QObject*>(JphPost::createDefault(this))
 						 << false;
 
 	QTest::newRow("notFound") << server->url("/posts/834")
@@ -199,38 +209,55 @@ void RestReplyTest::testGenericReplyWrapping()
 	QFETCH(QObject*, result);
 	QFETCH(bool, except);
 
-	QNetworkRequest request(url);
-	request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
+	try {
+		for (auto mode : {RestClient::DataMode::Cbor, RestClient::DataMode::Json}) {
+			client->setDataMode(mode);
 
-	bool called = false;
+			QNetworkRequest request(url);
+			request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
+			switch (mode) {
+			case RestClient::DataMode::Cbor:
+				request.setRawHeader("Accept", "application/cbor");
+				break;
+			case RestClient::DataMode::Json:
+				request.setRawHeader("Accept", "application/json");
+				break;
+			}
 
-	auto reply = new QtRestClient::GenericRestReply<JphPost*>(nam->get(request), client);
-	reply->onSucceeded([&](int code, JphPost *data){
-		called = true;
-		QVERIFY(succeed);
-		QVERIFY(!except);
-		QCOMPARE(code, status);
-		QVERIFY(JphPost::equals(data, result));
-		data->deleteLater();
-	});
-	reply->onAllErrors([&](QString error, int code, QtRestClient::RestReply::Error type){
-		called = true;
-		QVERIFY2(!succeed, qUtf8Printable(error));
-		if(except)
-			QCOMPARE(type, QtRestClient::RestReply::Error::Deserialization);
-		else {
-			QCOMPARE(type, QtRestClient::RestReply::Error::Failure);
-			QCOMPARE(code, status);
+			bool called = false;
+
+			auto reply = new QtRestClient::GenericRestReply<JphPost*>(nam->get(request), client);
+			reply->onSucceeded([&](int code, JphPost *data){
+				called = true;
+				QVERIFY(succeed);
+				QVERIFY(!except);
+				QCOMPARE(code, status);
+				QVERIFY(JphPost::equals(data, result));
+				data->deleteLater();
+			});
+			reply->onAllErrors([&](const QString &error, int code, QtRestClient::RestReply::Error type){
+				called = true;
+				QVERIFY2(!succeed, qUtf8Printable(error));
+				if (except)
+					QCOMPARE(type, QtRestClient::RestReply::Error::Deserialization);
+				else {
+					QCOMPARE(type, QtRestClient::RestReply::Error::Failure);
+					QCOMPARE(code, status);
+				}
+			});
+
+			QSignalSpy deleteSpy(reply, &QtRestClient::RestReply::destroyed);
+			QVERIFY(deleteSpy.wait());
+			QVERIFY(called);
+
+			result->deleteLater();
 		}
-	});
-
-	QSignalSpy deleteSpy(reply, &QtRestClient::RestReply::destroyed);
-	QVERIFY(deleteSpy.wait());
-	QVERIFY(called);
-
-	result->deleteLater();
+	} catch (std::exception &e) {
+		QFAIL(e.what());
+	}
 }
 
+/*
 void RestReplyTest::testGenericVoidReplyWrapping_data()
 {
 	QTest::addColumn<QUrl>("url");
@@ -814,6 +841,7 @@ void RestReplyTest::testCallbackOverloads()
 	});
 	QTRY_VERIFY(called);
 }
+*/
 
 QTEST_MAIN(RestReplyTest)
 

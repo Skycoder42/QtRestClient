@@ -227,12 +227,14 @@ void RestReplyPrivate::_q_replyFinished()
 		parseError = std::make_pair(-1, QStringLiteral("Unsupported content type: %1").arg(QString::fromUtf8(contentType)));
 
 	//check "http errors", because they can have data, but only if json is valid
-	if (!parseError && status >= 300)  // first: status code error + valid data
+	if (!parseError && status >= 300 && !std::holds_alternative<std::nullopt_t>(data))  // first: status code error + valid data
 		emit q->failed(status, data, {});
 	else if (networkReply->error() != QNetworkReply::NoError)  // next: check normal network errors
 		emit q->error(networkReply->errorString(), networkReply->error(), Error::Network, {});
 	else if (parseError)  // next: parsing errors
 		emit q->error(parseError->second, parseError->first, Error::Parser, {});
+	else if (std::holds_alternative<std::nullopt_t>(data))
+		emit q->failed(status, data, {});  // only pass as failed without data if any other error does not match
 	else {  // no errors, completed!
 		emit q->succeeded(status, data, {});
 		retryDelay = -1;
@@ -242,7 +244,6 @@ void RestReplyPrivate::_q_replyFinished()
 		retryDelay = -1;
 		_q_retryReply();
 	} else if (retryDelay > 0) {
-		retryDelay = -1;
 		auto sTimer = new QTimer{q};
 		sTimer->setSingleShot(true);
 		sTimer->setTimerType(Qt::PreciseTimer);
@@ -251,6 +252,7 @@ void RestReplyPrivate::_q_replyFinished()
 				this, &RestReplyPrivate::_q_retryReply);
 		QObject::connect(sTimer, &QTimer::timeout,
 						 sTimer, &QTimer::deleteLater);
+		retryDelay = -1;
 		sTimer->start();
 	} else if (autoDelete)
 		q->deleteLater();

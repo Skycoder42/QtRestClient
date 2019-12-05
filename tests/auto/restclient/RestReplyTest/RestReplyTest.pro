@@ -9,10 +9,6 @@ TARGET = tst_restreply
 
 include(../tests.pri)
 
-HEADERS += \
-	simplejphpost.h
-
-SOURCES += tst_restreply.cpp \
-	simplejphpost.cpp
+SOURCES += tst_restreply.cpp
 
 DEFINES += SRCDIR=\\\"$$PWD/\\\"

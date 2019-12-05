@@ -39,10 +39,10 @@ class JphPostSimple : public QtRestClient::Simple<JphPost*>
 	Q_PROPERTY(QString title MEMBER title)
 	Q_PROPERTY(QUrl href MEMBER href)
 
-	QTRESTCLIENT_EXT_HREF_PROP(href)
-
 public:
 	Q_INVOKABLE JphPostSimple(QObject *parent = nullptr);
+
+	QTRESTCLIENT_EXT_HREF_PROP(href)
 
 	int id;
 	QString title;
@@ -53,11 +53,11 @@ template<typename T>
 bool JphPost::listEquals(const QList<T*> &left, const QList<T*> &right)
 {
 	static_assert(std::is_base_of<QObject, T>::value, "T must inherit QObject!");
-	if(left.size() != right.size())
+	if (left.size() != right.size())
 		return false;
 	else {
-		for(auto i = 0; i < left.size(); i++) {
-			if(!equals(left[i], right[i]))
+		for (auto i = 0; i < left.size(); i++) {
+			if (!equals(qobject_cast<JphPost*>(left[i]), qobject_cast<JphPost*>(right[i])))
 				return false;
 		}
 		return true;

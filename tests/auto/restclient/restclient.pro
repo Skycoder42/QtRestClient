@@ -4,15 +4,15 @@ android: CONFIG += no_coroutine_tests
 contains(QMAKE_COMPILER_DEFINES, _MSC_VER=1900): CONFIG += no_coroutine_tests
 
 SUBDIRS += \
-	PagingModelTest \
+#	PagingModelTest \
 	testlib \
 	RequestBuilderTest \
-	RestClientTest \
+#	RestClientTest \
 	RestReplyTest \
-	IntegrationTest \
-	RestBuilderTest \
+#	IntegrationTest \
+#	RestBuilderTest \
 
-!no_coroutine_tests: SUBDIRS += RestAwaitablesTest
+#!no_coroutine_tests: SUBDIRS += RestAwaitablesTest
 
 RequestBuilderTest.depends += testlib
 RestClientTest.depends += testlib
