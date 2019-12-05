@@ -2,6 +2,7 @@
 #define RESTREPLYAWAITABLE_P_H
 
 #include "restreplyawaitable.h"
+
 #include <QtCore/QPointer>
 
 namespace QtRestClient {

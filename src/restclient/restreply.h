@@ -2,12 +2,11 @@
 #define QTRESTCLIENT_RESTREPLY_H
 
 #include "QtRestClient/qtrestclient_global.h"
-#include "QtRestClient/metacomponent.h"
+#include "QtRestClient/qtrestclient_helpertypes.h"
 
-#include <QtCore/qjsonarray.h>
-#include <QtCore/qjsonobject.h>
-#include <QtNetwork/qnetworkreply.h>
 #include <functional>
+
+#include <QtNetwork/qnetworkreply.h>
 
 namespace QtRestClient {
 

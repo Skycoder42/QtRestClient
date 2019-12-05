@@ -4,15 +4,14 @@
 #include "QtRestClient/qtrestclient_global.h"
 
 #include <QtCore/qcborvalue.h>
-#include <QtCore/qjsonarray.h>
-#include <QtCore/qjsonobject.h>
+#include <QtCore/qjsonvalue.h>
 #include <QtCore/qurl.h>
 #include <QtCore/qurlquery.h>
 #include <QtCore/qversionnumber.h>
 #include <QtCore/qshareddata.h>
 
-#include <QtNetwork/qnetworkreply.h>
 #include <QtNetwork/qnetworkrequest.h>
+#include <QtNetwork/qnetworkreply.h>
 
 namespace QtRestClient {
 

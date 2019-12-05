@@ -39,6 +39,7 @@ Q_RESTCLIENT_EXPORT RestClass *apiRootClass(const QString &name);
 Q_RESTCLIENT_EXPORT RestClass *createApiClass(const QString &name, const QString &path, QObject *parent = nullptr);
 
 Q_RESTCLIENT_EXPORT Q_DECLARE_LOGGING_CATEGORY(logGlobal)
+
 }
 
 #endif // QTRESTCLIENT_GLOBAL_H

@@ -3,4 +3,4 @@
 	"QtRestClientAuth" => "$basedir/src/restclientauth",
 );
 
-$publicclassregexp = "QtRestClient::(?!PagingData|MetaComponent).+"
+$publicclassregexp = "QtRestClient::(?!PagingData|__private).+"

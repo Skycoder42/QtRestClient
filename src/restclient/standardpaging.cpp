@@ -7,49 +7,32 @@ using namespace QtRestClient;
 using namespace QtJsonSerializer;
 #endif
 
-std::variant<QCborArray, QJsonArray> StandardPaging::items() const
+QVariantMap StandardCborPaging::properties() const
+{
+	return _data.toVariant().toMap();
+}
+
+QCborArray StandardCborPaging::cborItems() const
 {
 	return _items;
 }
 
-qint64 StandardPaging::total() const
+QCborValue StandardCborPaging::originalCbor() const
 {
-	return _total;
+	return _data;
 }
 
-qint64 StandardPaging::offset() const
+QVariantMap StandardJsonPaging::properties() const
 {
-	return _offset;
+	return _data.toVariant().toMap();
 }
 
-bool StandardPaging::hasNext() const
+QJsonArray StandardJsonPaging::jsonItems() const
 {
-	return _next.isValid();
+	return _items;
 }
 
-QUrl StandardPaging::next() const
-{
-	return _next;
-}
-
-bool StandardPaging::hasPrevious() const
-{
-	return _prev.isValid();
-}
-
-QUrl StandardPaging::previous() const
-{
-	return _prev;
-}
-
-QVariantMap StandardPaging::properties() const
-{
-	return std::visit([](auto data){
-			   return data.toVariant();
-		   }, _data).toMap();
-}
-
-std::variant<QCborValue, QJsonValue> StandardPaging::originalData() const
+QJsonValue StandardJsonPaging::originalJson() const
 {
 	return _data;
 }
@@ -62,31 +45,34 @@ IPaging *StandardPagingFactory::createPaging(SerializerBase *, const std::varian
 IPaging *StandardPagingFactory::createPaging(const std::variant<QCborValue, QJsonValue> &data) const
 #endif
 {
-	auto paging = new StandardPaging{};
-	std::visit(__private::overload {
-				   [paging](const QCborValue &value) {
-					   const auto map = value.toMap();
-					   paging->_items = map[QStringLiteral("items")].toArray();
-					   paging->_total = map[QStringLiteral("total")].toInteger(paging->_total);
-					   paging->_offset = map[QStringLiteral("offset")].toInteger(paging->_offset);
-					   if (const auto url = extractUrl(map[QStringLiteral("next")]); url)
-						   paging->_next = *url;
-					   if (const auto url = extractUrl(map[QStringLiteral("previous")]); url)
-						   paging->_prev = *url;
-				   },
-				   [paging](const QJsonValue &value) {
-					   const auto obj = value.toObject();
-					   paging->_items = obj[QStringLiteral("items")].toArray();
-					   paging->_total = obj[QStringLiteral("total")].toInt(static_cast<int>(paging->_total));
-					   paging->_offset = obj[QStringLiteral("offset")].toInt(static_cast<int>(paging->_offset));
-					   if (const auto url = extractUrl(obj[QStringLiteral("next")]); url)
-						   paging->_next = *url;
-					   if (const auto url = extractUrl(obj[QStringLiteral("previous")]); url)
-						   paging->_prev = *url;
-				   }
-			   }, data);
-	paging->_data = data;
-	return paging;
+	return std::visit(__private::overload {
+						  [](const QCborValue &value) -> IPaging* {
+							  const auto map = value.toMap();
+							  auto paging = new StandardCborPaging{};
+							  paging->_total = map[QStringLiteral("total")].toInteger(paging->_total);
+							  paging->_offset = map[QStringLiteral("offset")].toInteger(paging->_offset);
+							  if (const auto url = extractUrl(map[QStringLiteral("next")]); url)
+								  paging->_next = *url;
+							  if (const auto url = extractUrl(map[QStringLiteral("previous")]); url)
+								  paging->_prev = *url;
+							  paging->_items = map[QStringLiteral("items")].toArray();
+							  paging->_data = value;
+							  return paging;
+						  },
+						  [](const QJsonValue &value) -> IPaging* {
+							  const auto obj = value.toObject();
+							  auto paging = new StandardJsonPaging{};
+							  paging->_total = obj[QStringLiteral("total")].toInt(static_cast<int>(paging->_total));
+							  paging->_offset = obj[QStringLiteral("offset")].toInt(static_cast<int>(paging->_offset));
+							  if (const auto url = extractUrl(obj[QStringLiteral("next")]); url)
+								  paging->_next = *url;
+							  if (const auto url = extractUrl(obj[QStringLiteral("previous")]); url)
+								  paging->_prev = *url;
+							  paging->_items = obj[QStringLiteral("items")].toArray();
+							  paging->_data = value;
+							  return paging;
+						  }
+					  }, data);
 }
 
 std::optional<QUrl> StandardPagingFactory::extractUrl(const std::variant<QCborValue, QJsonValue> &value)
