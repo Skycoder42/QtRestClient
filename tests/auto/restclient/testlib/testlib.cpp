@@ -56,6 +56,31 @@ BodyType::BodyType(const QtRestClient::RestReply::DataType &data) :
 											   }, data)}
 {}
 
+BodyType BodyType::parse(QNetworkReply *reply)
+{
+	const auto contentType = reply->header(QNetworkRequest::ContentTypeHeader).toByteArray();
+	if (contentType == "application/cbor") {
+		QCborStreamReader reader{reply};
+		auto repData = QCborValue::fromCbor(reader);
+		if (reader.lastError() != QCborError::NoError)
+			return Testlib::CBody();
+		else
+			return repData;
+	} else if (contentType == "application/json") {
+		QJsonParseError error;
+		auto repData = QJsonDocument::fromJson(reply->readAll(), &error);
+		if (error.error != QJsonParseError::NoError)
+			return Testlib::JBody();
+		else if (repData.isObject())
+			return repData.object();
+		else if (repData.isArray())
+			return repData.array();
+		else
+			return QJsonValue{QJsonValue::Null};
+	} else
+		return {};
+}
+
 bool BodyType::isValid() const
 {
 	return visit([](const auto &body) {
@@ -76,6 +101,13 @@ QByteArray BodyType::accept() const
 void BodyType::setAccept(QNetworkRequest &request) const
 {
 	request.setRawHeader("Accept", accept());
+}
+
+QVariant BodyType::toVariant() const
+{
+	return visit([](const auto &data){
+		return data.toVariant();
+	});
 }
 
 bool BodyType::operator==(const BodyType &other) const

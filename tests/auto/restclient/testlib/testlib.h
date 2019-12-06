@@ -26,9 +26,12 @@ public:
 
 	explicit BodyType(const QtRestClient::RestReply::DataType &data);
 
+	static BodyType parse(QNetworkReply *reply);
+
 	bool isValid() const;
 	QByteArray accept() const;
 	void setAccept(QNetworkRequest &request) const;
+	QVariant toVariant() const;
 
 	template <typename TFn>
 	inline auto visit(TFn &&fn) {

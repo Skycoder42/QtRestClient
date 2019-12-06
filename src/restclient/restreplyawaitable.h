@@ -101,7 +101,7 @@ class GenericAwaitedException : public AwaitedException
 {
 public:
 	//! Constructor, takes an error code, type and additional data
-	GenericAwaitedException(int code, RestReply::Error type, const ErrorClassType &data);
+	GenericAwaitedException(int code, const ErrorClassType &data);
 	//! Constructor, takes an error code, type and an error string
 	GenericAwaitedException(int code, RestReply::Error type, const QString &data);
 
@@ -207,7 +207,7 @@ void GenericRestReplyAwaitable<DataClassType, ErrorClassType>::prepare(const std
 		resume();
 	});
 	reply->onFailed([this, resume](int code, ErrorClassType data) {
-		errorResult.reset(new exceptionType{code, RestReply::Error::Failure, std::move(data)});
+		errorResult.reset(new exceptionType{code, std::move(data)});
 		resume();
 	});
 	reply->onSerializeException([this, resume](const QtJsonSerializer::Exception &data) {
@@ -260,7 +260,7 @@ void GenericRestReplyAwaitable<void, ErrorClassType>::prepare(const std::functio
 		resume();
 	});
 	reply->onFailed([this, resume](int code, ErrorClassType data) {
-		errorResult.reset(new exceptionType{code, RestReply::Error::Failure, std::move(data)});
+		errorResult.reset(new exceptionType{code, std::move(data)});
 		resume();
 	});
 	reply->onSerializeException([this, resume](const QtJsonSerializer::Exception &data) {
@@ -285,8 +285,8 @@ typename GenericRestReplyAwaitable<void, ErrorClassType>::type GenericRestReplyA
 
 
 template<typename ErrorClassType>
-GenericAwaitedException<ErrorClassType>::GenericAwaitedException(int code, RestReply::Error type, const ErrorClassType &data) :
-	AwaitedException{code, type, QVariant::fromValue<ErrorClassType>(data)}
+GenericAwaitedException<ErrorClassType>::GenericAwaitedException(int code, const ErrorClassType &data) :
+	AwaitedException{code, RestReply::Error::Failure, QVariant::fromValue<ErrorClassType>(data)}
 {}
 
 template<typename ErrorClassType>
@@ -326,7 +326,7 @@ ExceptionBase *GenericAwaitedException<ErrorClassType>::clone() const
 template<typename DataClassType, typename ErrorClassType>
 GenericRestReplyAwaitable<DataClassType, ErrorClassType> GenericRestReplyBase<DataClassType, ErrorClassType>::awaitable()
 {
-	return GenericRestReplyAwaitable<DataClassType, ErrorClassType>{this};
+	return GenericRestReplyAwaitable<DataClassType, ErrorClassType>{static_cast<TInstance*>(this)};
 }
 #endif
 

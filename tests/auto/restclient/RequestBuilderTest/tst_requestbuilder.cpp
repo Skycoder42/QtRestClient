@@ -428,17 +428,9 @@ void RequestBuilderTest::testSending()
 	QCOMPARE(reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt(), status);
 
 	if(error == QNetworkReply::NoError) {
-		if (std::holds_alternative<QCborValue>(object)) {
-			QCborParserError e;
-			auto repData = QCborValue::fromCbor(reply->readAll(), &e).toMap();
-			QCOMPARE(e.error, QCborError::NoError);
-			QCOMPARE(BodyType{repData}, object);
-		} else {
-			QJsonParseError e;
-			auto repData = QJsonDocument::fromJson(reply->readAll(), &e).object();
-			QCOMPARE(e.error, QJsonParseError::NoError);
-			QCOMPARE(BodyType{repData}, object);
-		}
+		auto repData = BodyType::parse(reply);
+		QVERIFY(repData.isValid());
+		QCOMPARE(repData, object);
 	}
 
 	reply->deleteLater();

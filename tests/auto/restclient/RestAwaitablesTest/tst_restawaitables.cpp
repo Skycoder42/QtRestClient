@@ -51,52 +51,70 @@ void RestAwaitablesTest::testRestReplyAwait_data()
 {
 	QTest::addColumn<QUrl>("url");
 	QTest::addColumn<bool>("succeed");
-	QTest::addColumn<QJsonObject>("result");
+	QTest::addColumn<BodyType>("result");
 	QTest::addColumn<int>("code");
 	QTest::addColumn<RestReply::Error>("type");
 
-	QTest::newRow("get") << server->url("/posts/1")
-						 << true
-						 << QJsonObject {
-									{QStringLiteral("userId"), 1},
-									{QStringLiteral("id"), 1},
-									{QStringLiteral("title"), QStringLiteral("Title1")},
-									{QStringLiteral("body"), QStringLiteral("Body1")},
-								}
-						 << 200
-						 << RestReply::Error::Network;
+	QCborMap data {
+		{QStringLiteral("id"), 1},
+		{QStringLiteral("userId"), 1},
+		{QStringLiteral("title"), QStringLiteral("Title1")},
+		{QStringLiteral("body"), QStringLiteral("Body1")}
+	};
 
-	QTest::newRow("notFound") << server->url("/posts/baum")
-							  << false
-							  << QJsonObject{}
-							  << 404
-							  << RestReply::Error::Failure;
+	QTest::newRow("get.cbor") << server->url("/posts/1")
+							  << true
+							  << Testlib::CBody(data)
+							  << 200
+							  << RestReply::Error::Network;
+	QTest::newRow("get.data") << server->url("/posts/1")
+							  << true
+							  << Testlib::JBody(data)
+							  << 200
+							  << RestReply::Error::Network;
 
-	QTest::newRow("invalid") << QUrl{QStringLiteral("http://example.com/non/existant/api")}
-							 << false
-							 << QJsonObject()
-							 << 203
-							 << RestReply::Error::Network;
+	QTest::newRow("notFound.cbor") << server->url("/posts/2334")
+								   << false
+								   << Testlib::CBody()
+								   << 404
+								   << RestReply::Error::Failure;
+	QTest::newRow("notFound.json") << server->url("/posts/2334")
+								   << false
+								   << Testlib::JBody()
+								   << 404
+								   << RestReply::Error::Failure;
+
+	QTest::newRow("invalid.cbor") << server->url("/invalid")
+								  << false
+								  << Testlib::CBody()
+								  << static_cast<int>(QNetworkReply::ContentNotFoundError)
+								  << RestReply::Error::Network;
+	QTest::newRow("invalid.json") << server->url("/invalid")
+								  << false
+								  << Testlib::JBody()
+								  << static_cast<int>(QNetworkReply::ContentNotFoundError)
+								  << RestReply::Error::Network;
 }
 
 void RestAwaitablesTest::testRestReplyAwait()
 {
 	QFETCH(QUrl, url);
 	QFETCH(bool, succeed);
-	QFETCH(QJsonObject, result);
+	QFETCH(BodyType, result);
 	QFETCH(int, code);
 	QFETCH(RestReply::Error, type);
 
 	QEventLoop loop;
 	auto res = createAndRun([&](){
-		auto reply = new RestReply{nam->get(QNetworkRequest{url}), this};
+		QNetworkRequest request{url};
+		result.setAccept(request);
+		auto reply = new RestReply{nam->get(request), this};
 		try {
 			bool ok = false;
 			[&](){
-				if(succeed) {
-					auto data = std::get<QJsonValue>(await(reply->awaitable()));  // TODO clean
-					QVERIFY(data.isObject());
-					QCOMPARE(data.toObject(), result);
+				if (succeed) {
+					auto data = await(reply->awaitable());
+					QCOMPARE(BodyType{data}, result);
 				} else {
 					try {
 						await(reply->awaitable());
@@ -104,14 +122,14 @@ void RestAwaitablesTest::testRestReplyAwait()
 					} catch (AwaitedException &e) {
 						QCOMPARE(e.errorType(), type);
 						QCOMPARE(e.errorCode(), code);
-						if(!result.isEmpty())
-							QCOMPARE(e.errorObject(), result);
+						if (result.isValid())
+							QCOMPARE(e.errorData(), result.toVariant());
 					}
 				}
 				ok = true;
 			}();
 			loop.exit(ok ? EXIT_SUCCESS : EXIT_FAILURE);
-		} catch(std::exception &e) {
+		} catch (std::exception &e) {
 			loop.exit(EXIT_FAILURE);
 			QFAIL(e.what());
 		}
@@ -141,10 +159,10 @@ void RestAwaitablesTest::testGenericRestReplyAwait_data()
 							  << 404
 							  << RestReply::Error::Failure;
 
-	QTest::newRow("invalid") << QUrl{QStringLiteral("http://example.com/non/existant/api")}
+	QTest::newRow("invalid") << server->url("/invalid")
 							 << false
 							 << static_cast<JphPost*>(nullptr)
-							 << 203
+							 << static_cast<int>(QNetworkReply::ContentNotFoundError)
 							 << RestReply::Error::Network;
 }
 
@@ -156,35 +174,40 @@ void RestAwaitablesTest::testGenericRestReplyAwait()
 	QFETCH(int, code);
 	QFETCH(RestReply::Error, type);
 
-	QEventLoop loop;
-	auto res = createAndRun([&](){
-		auto reply = new GenericRestReply<JphPost*>{nam->get(QNetworkRequest{url}), client, this};
-		try {
-			bool ok = false;
-			[&](){
-				if(succeed) {
-					auto data = await(reply->awaitable());
-					QVERIFY(JphPost::equals(data, result));
-				} else {
-					try {
-						await(reply->awaitable());
-						QFAIL("Await successed. Expected AwaitedException");
-					} catch (GenericAwaitedException<QObject*> &e) {
-						QCOMPARE(e.errorType(), type);
-						QCOMPARE(e.errorCode(), code);
+	for (auto mode : {RestClient::DataMode::Cbor, RestClient::DataMode::Json}) {
+		client->setDataMode(mode);
+		QEventLoop loop;
+		auto res = createAndRun([&](){
+			QNetworkRequest request{url};
+			Testlib::setAccept(request, client);
+			auto reply = new GenericRestReply<JphPost*, QString>{nam->get(request), client, this};
+			try {
+				bool ok = false;
+				[&](){
+					if (succeed) {
+						auto data = await(reply->awaitable());
+						QVERIFY(JphPost::equals(data, result));
+					} else {
+						try {
+							await(reply->awaitable());
+							QFAIL("Await successed. Expected AwaitedException");
+						} catch (GenericAwaitedException<QString> &e) {
+							QCOMPARE(e.errorType(), type);
+							QCOMPARE(e.errorCode(), code);
+						}
 					}
-				}
-				ok = true;
-			}();
-			loop.exit(ok ? EXIT_SUCCESS : EXIT_FAILURE);
-		} catch(std::exception &e) {
-			loop.exit(EXIT_FAILURE);
-			QFAIL(e.what());
-		}
-	});
-	QVERIFY(res.first != InvalidRoutineId);
-	QCOMPARE(res.second, Paused);
-	QCOMPARE(loop.exec(), EXIT_SUCCESS);
+					ok = true;
+				}();
+				loop.exit(ok ? EXIT_SUCCESS : EXIT_FAILURE);
+			} catch (std::exception &e) {
+				loop.exit(EXIT_FAILURE);
+				QFAIL(e.what());
+			}
+		});
+		QVERIFY(res.first != InvalidRoutineId);
+		QCOMPARE(res.second, Paused);
+		QCOMPARE(loop.exec(), EXIT_SUCCESS);
+	}
 }
 
 void RestAwaitablesTest::testGenericVoidRestReplyAwait_data()
@@ -204,7 +227,7 @@ void RestAwaitablesTest::testGenericVoidRestReplyAwait_data()
 							  << 404
 							  << RestReply::Error::Failure;
 
-	QTest::newRow("invalid") << QUrl{QStringLiteral("http://example.com/non/existant/api")}
+	QTest::newRow("invalid") << server->url("/invalid")
 							 << false
 							 << 203
 							 << RestReply::Error::Network;
@@ -217,34 +240,39 @@ void RestAwaitablesTest::testGenericVoidRestReplyAwait()
 	QFETCH(int, code);
 	QFETCH(RestReply::Error, type);
 
-	QEventLoop loop;
-	auto res = createAndRun([&](){
-		auto reply = new GenericRestReply<void>{nam->get(QNetworkRequest{url}), client, this};
-		try {
-			bool ok = false;
-			[&](){
-				if(succeed) {
-					await(reply->awaitable());
-				} else {
-					try {
+	for (auto mode : {RestClient::DataMode::Cbor, RestClient::DataMode::Json}) {
+		client->setDataMode(mode);
+		QEventLoop loop;
+		auto res = createAndRun([&](){
+			QNetworkRequest request{url};
+			Testlib::setAccept(request, client);
+			auto reply = new GenericRestReply<void, QString>{nam->get(request), client, this};
+			try {
+				bool ok = false;
+				[&](){
+					if (succeed)
 						await(reply->awaitable());
-						QFAIL("Await successed. Expected AwaitedException");
-					} catch (GenericAwaitedException<QObject*> &e) {
-						QCOMPARE(e.errorType(), type);
-						QCOMPARE(e.errorCode(), code);
+					else {
+						try {
+							await(reply->awaitable());
+							QFAIL("Await successed. Expected AwaitedException");
+						} catch (GenericAwaitedException<QString> &e) {
+							QCOMPARE(e.errorType(), type);
+							QCOMPARE(e.errorCode(), code);
+						}
 					}
-				}
-				ok = true;
-			}();
-			loop.exit(ok ? EXIT_SUCCESS : EXIT_FAILURE);
-		} catch(std::exception &e) {
-			loop.exit(EXIT_FAILURE);
-			QFAIL(e.what());
-		}
-	});
-	QVERIFY(res.first != InvalidRoutineId);
-	QCOMPARE(res.second, Paused);
-	QCOMPARE(loop.exec(), EXIT_SUCCESS);
+					ok = true;
+				}();
+				loop.exit(ok ? EXIT_SUCCESS : EXIT_FAILURE);
+			} catch (std::exception &e) {
+				loop.exit(EXIT_FAILURE);
+				QFAIL(e.what());
+			}
+		});
+		QVERIFY(res.first != InvalidRoutineId);
+		QCOMPARE(res.second, Paused);
+		QCOMPARE(loop.exec(), EXIT_SUCCESS);
+	}
 }
 
 QTEST_MAIN(RestAwaitablesTest)

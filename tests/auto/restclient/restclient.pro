@@ -12,7 +12,7 @@ SUBDIRS += \
 #	RestBuilderTest \
 	IntegrationTest
 
-#!no_coroutine_tests: SUBDIRS += RestAwaitablesTest
+!no_coroutine_tests: SUBDIRS += RestAwaitablesTest
 
 RequestBuilderTest.depends += testlib
 RestClientTest.depends += testlib

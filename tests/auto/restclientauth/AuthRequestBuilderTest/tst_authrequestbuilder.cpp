@@ -37,56 +37,80 @@ void AuthRequestBuilderTest::cleanupTestCase()
 void AuthRequestBuilderTest::testSending_data()
 {
 	QTest::addColumn<QUrl>("url");
-	QTest::addColumn<QJsonObject>("body");
+	QTest::addColumn<BodyType>("body");
 	QTest::addColumn<QByteArray>("verb");
 	QTest::addColumn<int>("status");
 	QTest::addColumn<QNetworkReply::NetworkError>("error");
-	QTest::addColumn<QJsonObject>("object");
+	QTest::addColumn<BodyType>("object");
 
-	QJsonObject object;
-	object["userId"] = 1;
-	object["id"] = 1;
-	object["title"] = "Title1";
-	object["body"] = "Body1";
-	QTest::newRow("testDefaultGet") << server->url("/posts/1")
-									<< QJsonObject()
-									<< QByteArray()
-									<< 200
-									<< QNetworkReply::NoError
-									<< object;
+	QCborMap map;
+	map[QStringLiteral("id")] = 1;
+	map[QStringLiteral("userId")] = 1;
+	map[QStringLiteral("title")] = QStringLiteral("Title1");
+	map[QStringLiteral("body")] = QStringLiteral("Body1");
 
-	object["title"] = "baum";
-	object["body"] = 42;
-	QTest::newRow("testPut") << server->url("/posts/1")
-							 << object
-							 << QByteArray("PUT")
-							 << 200
-							 << QNetworkReply::NoError
-							 << object;
+	QTest::newRow("testDefaultGet.cbor") << server->url("/posts/1")
+										 << Testlib::CBody()
+										 << QByteArray()
+										 << 200
+										 << QNetworkReply::NoError
+										 << Testlib::CBody(map);
+	QTest::newRow("testDefaultGet.json") << server->url("/posts/1")
+										 << Testlib::JBody()
+										 << QByteArray()
+										 << 200
+										 << QNetworkReply::NoError
+										 << Testlib::JBody(map);
 
-	QTest::newRow("testError") << server->url("/posts/baum")
-							   << QJsonObject()
-							   << QByteArray("GET")
-							   << 404
-							   << QNetworkReply::ContentNotFoundError
-							   << QJsonObject();
+	map[QStringLiteral("title")] = "baum";
+	map.remove(QStringLiteral("body")); // TODO workarounb
+	map[QStringLiteral("body")] = 42;
+	QTest::newRow("testPut.cbor") << server->url("/posts/1")
+								  << Testlib::CBody(map)
+								  << QByteArray("PUT")
+								  << 200
+								  << QNetworkReply::NoError
+								  << Testlib::CBody(map);
+	QTest::newRow("testPut.json") << server->url("/posts/1")
+								  << Testlib::JBody(map)
+								  << QByteArray("PUT")
+								  << 200
+								  << QNetworkReply::NoError
+								  << Testlib::JBody(map);
+
+	QTest::newRow("testError.cbor") << server->url("/posts/3434")
+									<< Testlib::CBody()
+									<< QByteArray("GET")
+									<< 404
+									<< QNetworkReply::ContentNotFoundError
+									<< Testlib::CBody();
+	QTest::newRow("testError.json") << server->url("/posts/3434")
+									<< Testlib::JBody()
+									<< QByteArray("GET")
+									<< 404
+									<< QNetworkReply::ContentNotFoundError
+									<< Testlib::JBody();
 }
 
 void AuthRequestBuilderTest::testSending()
 {
 	QFETCH(QUrl, url);
-	QFETCH(QJsonObject, body);
+	QFETCH(BodyType, body);
 	QFETCH(QByteArray, verb);
 	QFETCH(int, status);
 	QFETCH(QNetworkReply::NetworkError, error);
-	QFETCH(QJsonObject, object);
+	QFETCH(BodyType, object);
 
 	QtRestClient::AuthRequestBuilder builder(url, oAuth);
+	builder.setAccept(body.accept());
 	builder.setAttribute(QNetworkRequest::HTTP2AllowedAttribute, false);
-	if(!verb.isEmpty())
+	if (!verb.isEmpty())
 		builder.setVerb(verb);
-	if(!body.isEmpty())
-		builder.setBody(body);
+	if (body.isValid()) {
+		body.visit([&](const auto &data) {
+			builder.setBody(data);
+		});
+	}
 
 	auto reply = builder.send();
 	QSignalSpy replySpy(reply, &QNetworkReply::finished);
@@ -95,10 +119,9 @@ void AuthRequestBuilderTest::testSending()
 	QCOMPARE(reply->error(), error);
 	QCOMPARE(reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt(), status);
 
-	if(error == QNetworkReply::NoError) {
-		QJsonParseError e;
-		auto repData = QJsonDocument::fromJson(reply->readAll(), &e).object();
-		QCOMPARE(e.error, QJsonParseError::NoError);
+	if (error == QNetworkReply::NoError) {
+		auto repData = BodyType::parse(reply);
+		QVERIFY(repData.isValid());
 		QCOMPARE(repData, object);
 	}
 
