@@ -630,17 +630,17 @@ void ObjectBuilder::writeDataClass()
 
 void ObjectBuilder::writeMemberDefinitions()
 {
-	for(const auto &propVar : qAsConst(data.properties)) {
+	for (const auto &propVar : qAsConst(data.properties)) {
 		if (nonstd::holds_alternative<RestBuilderXmlReader::Property>(propVar)) {
 			const auto &prop = nonstd::get<RestBuilderXmlReader::Property>(propVar);
 			source << "\t" << prop.type << " " << prop.key << " {";
-			if(!prop.defaultValue.isEmpty())
+			if (!prop.defaultValue.isEmpty())
 				source << writeParamDefault(prop);
 			source << "};\n";
 		} else {
 			const auto &prop = nonstd::get<RestBuilderXmlReader::UserProperty>(propVar);
 			source << "\t" << prop.type << " " << prop.member.value_or(prop.key) << " {";
-			if(prop.defaultValue)
+			if (prop.defaultValue)
 				source << writeExpression(*prop.defaultValue, true);
 			source << "};\n";
 		}
@@ -649,22 +649,26 @@ void ObjectBuilder::writeMemberDefinitions()
 
 void ObjectBuilder::writeSetupHooks()
 {
-	if(!data.registerConverters && !data.qmlUri)
+	if (!data.registerConverters && !data.qmlUri)
 		return;
 
 	source << "\nnamespace {\n\n"
 		   << "void __" << data.name << "_setup_hook()\n"
 		   << "{\n";
 
-	if(data.registerConverters)
-		source << "\tQtJsonSerializer::SerializerBase::registerListConverters<" << data.name << (isObject ? "*" : "") << ">();\n";
-	if(data.qmlUri) {
+	if (data.registerConverters) {
+		if (isObject || data.generateEquals.value_or(true))
+			source << "\tQtJsonSerializer::SerializerBase::registerBasicConverters<" << data.name << ">();\n";
+		else
+			source << "\tQtJsonSerializer::SerializerBase::registerListConverters<" << data.name << ">();\n";
+	}
+	if (data.qmlUri) {
 		auto uriParts = data.qmlUri.value().split(QLatin1Char(' '), QString::SkipEmptyParts);
 		auto uriPath = uriParts.takeFirst();
 		auto uriVersion = QVersionNumber::fromString(uriParts.join(QLatin1Char(' ')));
-		if(uriVersion.isNull())
+		if (uriVersion.isNull())
 			uriVersion = {1,0};
-		if(isObject) {
+		if (isObject) {
 			source << "\tqmlRegisterType<" << data.name << ">(\""
 				   << uriPath << "\", " << uriVersion.majorVersion() << ", " << uriVersion.minorVersion()
 				   << ", \"" << data.name << "\");\n";
