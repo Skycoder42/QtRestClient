@@ -1,9 +1,11 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <QtCore/QScopedPointer>
 #include <QtNetwork/QAuthenticator>
 #include <QtWidgets/QMainWindow>
 #include <QtRestClient/RestClient>
+#include <QtRestClient/RestReply>
 
 namespace Ui {
 	class MainWindow;
@@ -15,9 +17,11 @@ class MainWindow : public QMainWindow
 
 public:
 	explicit MainWindow(QWidget *parent = nullptr);
-	~MainWindow();
+	~MainWindow() override;
 
 private slots:
+	void on_cborButton_toggled(bool checked);
+	void on_jsonButton_toggled(bool checked);
 	void on_addParamButton_clicked();
 	void on_removeParamButton_clicked();
 	void on_addHeaderButton_clicked();
@@ -28,8 +32,11 @@ private slots:
 	void zeroBars();
 
 private:
-	Ui::MainWindow *ui;
-	QtRestClient::RestClient *client;
+	QScopedPointer<Ui::MainWindow> _ui;
+	QtRestClient::RestClient *_client;
+
+	QtRestClient::RestReply::DataType parseBody() const;
+	void writeBody(const QtRestClient::RestReply::DataType &data);
 };
 
 #endif // MAINWINDOW_H

@@ -6,5 +6,5 @@ SUBDIRS += \
 
 !no_json_serializer {
 	SUBDIRS += \
-		JsonPlaceholderApi
+		#JsonPlaceholderApi
 }

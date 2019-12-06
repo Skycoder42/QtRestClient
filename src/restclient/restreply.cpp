@@ -188,13 +188,31 @@ void RestReplyPrivate::_q_replyFinished()
 	Q_Q(RestReply);
 	retryDelay = -1;
 	const auto status = networkReply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-	const auto contentType = networkReply->header(QNetworkRequest::ContentTypeHeader).toByteArray();
+	auto contentType = networkReply->header(QNetworkRequest::ContentTypeHeader).toByteArray().trimmed();
 	const auto contentLength = networkReply->header(QNetworkRequest::ContentLengthHeader).toInt();
 
 	DataType data{std::nullopt};
 	std::optional<std::pair<int, QString>> parseError = std::nullopt;
-	if (contentLength == 0 && (status == 204 || status >= 300 || allowEmptyReplies)) {  // 204 = NO_CONTENT
-		// ok
+
+	// verify content type
+	if (const auto cList = contentType.split(';'); cList.size() > 1) {
+		contentType = cList.first().trimmed();
+		for (auto i = 1; i < cList.size(); ++i) {
+			auto args = cList[i].trimmed().split('=');
+			if (args.size() == 2 && args[0] == "charset") {
+				if (args[1].toLower() != "utf-8") {
+					parseError = std::make_pair(-1, QStringLiteral("Unsupported charset: %1").arg(QString::fromUtf8(args[1])));
+					break;
+				}
+			} else
+				qWarning() << "Unknown content type directive:" << args[0];
+		}
+	}
+
+	if (parseError) {
+		// means content type is invalid -> do nothing, but is here to skip the rest
+	} else if (contentLength == 0 && (status == 204 || status >= 300 || allowEmptyReplies)) {  // 204 = NO_CONTENT
+		// ok, nothing to do, but is here to skip the rest
 	} else if (contentType == RequestBuilderPrivate::ContentTypeCbor) {
 		QCborStreamReader reader{networkReply};
 		data = QCborValue::fromCbor(reader);
@@ -231,9 +249,9 @@ void RestReplyPrivate::_q_replyFinished()
 		emit q->failed(status, data, {});
 	else if (networkReply->error() != QNetworkReply::NoError)  // next: check normal network errors
 		emit q->error(networkReply->errorString(), networkReply->error(), Error::Network, {});
-	else if (parseError)  // next: parsing errors
+	else if (parseError)  {// next: parsing errors
 		emit q->error(parseError->second, parseError->first, Error::Parser, {});
-	else if (status >= 300 && std::holds_alternative<std::nullopt_t>(data))
+	} else if (status >= 300 && std::holds_alternative<std::nullopt_t>(data))
 		emit q->failed(status, data, {});  // only pass as failed without data if any other error does not match
 	else {  // no errors, completed!
 		emit q->succeeded(status, data, {});
