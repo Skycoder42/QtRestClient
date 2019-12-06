@@ -2,6 +2,7 @@
 <RestClass name="PostClass"
 		   base="QObject"
 		   export="TEST_EXPORT"
+		   except="QString"
 		   namespace="TestSpace">
 	<Include local="true">post.h</Include>
 

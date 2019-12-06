@@ -410,7 +410,7 @@ void ObjectBuilder::writeSourceIncludes()
 	if(data.registerConverters) {
 		source << "#include <QtCore/QCoreApplication>\n"
 			   << "#include <QtCore/QHash>\n"
-			   << "#include <QtJsonSerializer/JsonSerializer>\n";
+			   << "#include <QtJsonSerializer/SerializerBase>\n";
 	}
 	if(data.qmlUri)
 		source << "#include <QtQml/qqml.h>\n";
@@ -657,7 +657,7 @@ void ObjectBuilder::writeSetupHooks()
 		   << "{\n";
 
 	if(data.registerConverters)
-		source << "\tQtJsonSerializer::JsonSerializer::registerListConverters<" << data.name << (isObject ? "*" : "") << ">();\n";
+		source << "\tQtJsonSerializer::SerializerBase::registerListConverters<" << data.name << (isObject ? "*" : "") << ">();\n";
 	if(data.qmlUri) {
 		auto uriParts = data.qmlUri.value().split(QLatin1Char(' '), QString::SkipEmptyParts);
 		auto uriPath = uriParts.takeFirst();

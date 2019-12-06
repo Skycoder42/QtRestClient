@@ -7,6 +7,7 @@ DEFINES += "VERSION_MAJOR=$$MODULE_VERSION_MAJOR"
 DEFINES += "VERSION_MINOR=$$MODULE_VERSION_MINOR"
 
 HEADERS += \
+	qmlrestreply.h \
 	qtrestclient_plugin.h \
 	qmlrestclass.h \
 	qmlrestclient.h \
@@ -14,6 +15,7 @@ HEADERS += \
 	qmlpaging.h
 
 SOURCES += \
+	qmlrestreply.cpp \
 	qtrestclient_plugin.cpp \
 	qmlrestclass.cpp \
 	qmlrestclient.cpp \

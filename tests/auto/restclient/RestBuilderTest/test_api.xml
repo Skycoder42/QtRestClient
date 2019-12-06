@@ -4,13 +4,15 @@
 		 export="TEST_EXPORT"
 		 autoCreate="true"
 		 except="User*"
+		 dataMode="Cbor"
 		 globalName="localhost">
 	<Include local="true">user.h</Include>
 	<Include local="true">api_posts.h</Include>
 	<Include local="true">testmacro.h</Include>
 
-	<BaseUrl>http://localhost:45715</BaseUrl>
+	<BaseUrl expr="true">serverUrl()</BaseUrl>
 	<Parameter key="limit" expr="true">QString::number(LIMIT)</Parameter>
+	<Header key="Keep-Alive">no</Header>
 	<Header key="Secret" expr="true">APP_SECRET</Header>
 
 	<Class key="posts" type="TestSpace::PostClass"/>
@@ -18,7 +20,7 @@
 	<Method name="createUser"
 			verb="POST"
 			returns="User*"
-			except="QObject*"
+			except="QString"
 			postParams="true">
 		<Param key="name" type="QString"/>
 		<Param key="gender" type="User::GenderType">User::GenderType::Female</Param>

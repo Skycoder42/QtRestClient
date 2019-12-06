@@ -19,7 +19,7 @@
 	<Method name="createUser"
 			verb="POST"
 			returns="User*"
-			except="QObject*"
+			except="QString"
 			postParams="true">
 		<Param key="name" type="QString"/>
 		<Param key="gender" type="User::GenderType">User::Female</Param>

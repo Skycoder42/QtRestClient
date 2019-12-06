@@ -2,6 +2,7 @@
 <RestClass name="PostClass"
 		   base="QObject"
 		   export="TEST_EXPORT"
+		   except="QString"
 		   namespace="TestSpace"
 		   qmlUri="de.skycoder42.qtrestclient.test 3.0">
 	<Include local="true">post.h</Include>

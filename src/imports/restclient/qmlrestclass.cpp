@@ -1,5 +1,7 @@
 #include "qmlrestclass.h"
-#include <QQmlInfo>
+#include <QtQml/QQmlInfo>
+#include <QtQml/QQmlEngine>
+#include <QtQml/QQmlContext>
 using namespace QtRestClient;
 
 QmlRestClass::QmlRestClass(QObject *parent) :
@@ -29,7 +31,7 @@ void QmlRestClass::componentComplete()
 	revaluateClass();
 }
 
-RestReply *QmlRestClass::call(const QString &verb, QJSValue optPath, QJSValue optBody, QJSValue optParams, QJSValue optAsPost, QJSValue optHeaders)
+QmlRestReply *QmlRestClass::call(const QString &verb, QJSValue optPath, QJSValue optBody, QJSValue optParams, QJSValue optAsPost, QJSValue optHeaders)
 {
 	const auto path = getPath(optPath, optBody, optParams, optAsPost, optHeaders);
 	const auto body = getBody(optBody, optParams, optAsPost, optHeaders);
@@ -39,7 +41,7 @@ RestReply *QmlRestClass::call(const QString &verb, QJSValue optPath, QJSValue op
 	return callImpl(verb.toUtf8(), path, body, params, asPost, headers);
 }
 
-RestReply *QmlRestClass::get(QJSValue optPath, QJSValue optParams, QJSValue optHeaders)
+QmlRestReply *QmlRestClass::get(QJSValue optPath, QJSValue optParams, QJSValue optHeaders)
 {
 	const auto path = getPath(optPath, optParams, optHeaders);
 	const auto params = getParams(optParams, optHeaders);
@@ -47,7 +49,7 @@ RestReply *QmlRestClass::get(QJSValue optPath, QJSValue optParams, QJSValue optH
 	return callImpl(RestClass::GetVerb, path, std::nullopt, params, false, headers);
 }
 
-RestReply *QmlRestClass::post(QJSValue optPath, QJSValue optBodyParams, QJSValue optParams, QJSValue optHeaders)
+QmlRestReply *QmlRestClass::post(QJSValue optPath, QJSValue optBodyParams, QJSValue optParams, QJSValue optHeaders)
 {
 	const auto path = getPath(optPath, optBodyParams, optParams, optHeaders);
 	std::optional<std::variant<QCborValue, QJsonValue>> body;
@@ -75,7 +77,7 @@ RestReply *QmlRestClass::post(QJSValue optPath, QJSValue optBodyParams, QJSValue
 	return callImpl(RestClass::PostVerb, path, body, params, postParams, headers);
 }
 
-RestReply *QmlRestClass::put(QJSValue optPathOrBody, QJSValue body, QJSValue optParams, QJSValue optHeaders)
+QmlRestReply *QmlRestClass::put(QJSValue optPathOrBody, QJSValue body, QJSValue optParams, QJSValue optHeaders)
 {
 	const auto path = getPath(optPathOrBody, body, optParams, optHeaders);
 	const auto rBody = getBody(body, optParams, optHeaders);
@@ -88,7 +90,7 @@ RestReply *QmlRestClass::put(QJSValue optPathOrBody, QJSValue body, QJSValue opt
 	return callImpl(RestClass::PutVerb, path, rBody, params, false, headers);
 }
 
-RestReply *QmlRestClass::deleteResource(QJSValue optPath, QJSValue optParams, QJSValue optHeaders)
+QmlRestReply *QmlRestClass::deleteResource(QJSValue optPath, QJSValue optParams, QJSValue optHeaders)
 {
 	const auto path = getPath(optPath, optParams, optHeaders);
 	const auto params = getParams(optParams, optHeaders);
@@ -96,7 +98,7 @@ RestReply *QmlRestClass::deleteResource(QJSValue optPath, QJSValue optParams, QJ
 	return callImpl(RestClass::DeleteVerb, path, std::nullopt, params, false, headers);
 }
 
-RestReply *QmlRestClass::patch(QJSValue optPathOrBody, QJSValue body, QJSValue optParams, QJSValue optHeaders)
+QmlRestReply *QmlRestClass::patch(QJSValue optPathOrBody, QJSValue body, QJSValue optParams, QJSValue optHeaders)
 {
 	const auto path = getPath(optPathOrBody, body, optParams, optHeaders);
 	const auto rBody = getBody(body, optParams, optHeaders);
@@ -109,7 +111,7 @@ RestReply *QmlRestClass::patch(QJSValue optPathOrBody, QJSValue body, QJSValue o
 	return callImpl(RestClass::PatchVerb, path, rBody, params, false, headers);
 }
 
-RestReply *QmlRestClass::head(QJSValue optPath, QJSValue optParams, QJSValue optHeaders)
+QmlRestReply *QmlRestClass::head(QJSValue optPath, QJSValue optParams, QJSValue optHeaders)
 {
 	const auto path = getPath(optPath, optParams, optHeaders);
 	const auto params = getParams(optParams, optHeaders);
@@ -268,23 +270,30 @@ std::optional<HeaderHash> QmlRestClass::getHeaders(QJSValue &optHeaders) const
 	}
 }
 
-RestReply *QmlRestClass::callImpl(const QByteArray &verb, const std::optional<std::variant<QString, QUrl> > &optPath, const std::optional<std::variant<QCborValue, QJsonValue> > &optBody, const std::optional<QVariantHash> &optParams, bool optAsPost, const std::optional<HeaderHash> &optHeaders)
+QmlRestReply *QmlRestClass::makeQmlReply(RestReply *reply)
+{
+	auto qmlReply = new QmlRestReply{reply, QQmlEngine::contextForObject(this)->engine(), nullptr};
+	QQmlEngine::setObjectOwnership(qmlReply, QQmlEngine::JavaScriptOwnership);
+	return qmlReply;
+}
+
+QmlRestReply *QmlRestClass::callImpl(const QByteArray &verb, const std::optional<std::variant<QString, QUrl> > &optPath, const std::optional<std::variant<QCborValue, QJsonValue> > &optBody, const std::optional<QVariantHash> &optParams, bool optAsPost, const std::optional<HeaderHash> &optHeaders)
 {
 	if (optPath) {
 		return std::visit([&](const auto &path) {
 			if (optBody) {
 				return std::visit([&](const auto &body) {
-					return _class->callRaw(verb, path, body, optParams.value_or(QVariantHash{}), optHeaders.value_or(HeaderHash{}));
+					return makeQmlReply(_class->callRaw(verb, path, body, optParams.value_or(QVariantHash{}), optHeaders.value_or(HeaderHash{})));
 				}, *optBody);
 			} else
-				return _class->callRaw(verb, path, optParams.value_or(QVariantHash{}), optHeaders.value_or(HeaderHash{}), optAsPost);
+				return makeQmlReply(_class->callRaw(verb, path, optParams.value_or(QVariantHash{}), optHeaders.value_or(HeaderHash{}), optAsPost));
 		}, *optPath);
 	} else {
 		if (optBody) {
 			return std::visit([&](const auto &body) {
-				return _class->callRaw(verb, body, optParams.value_or(QVariantHash{}), optHeaders.value_or(HeaderHash{}));
+				return makeQmlReply(_class->callRaw(verb, body, optParams.value_or(QVariantHash{}), optHeaders.value_or(HeaderHash{})));
 			}, *optBody);
 		} else
-			return _class->callRaw(verb, optParams.value_or(QVariantHash{}), optHeaders.value_or(HeaderHash{}), optAsPost);
+			return makeQmlReply(_class->callRaw(verb, optParams.value_or(QVariantHash{}), optHeaders.value_or(HeaderHash{}), optAsPost));
 	}
 }

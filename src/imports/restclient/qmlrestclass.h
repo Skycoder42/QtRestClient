@@ -9,6 +9,8 @@
 
 #include <QtRestClient/RestClass>
 
+#include "qmlrestreply.h"
+
 #ifdef DOXYGEN_RUN
 namespace de::skycoder42::QtRestClient {
 
@@ -96,12 +98,12 @@ public:
 	 *
 	 * @sa ::QtRestClient::RestClass::call
 	 */
-	Q_INVOKABLE QtRestClient::RestReply *call(const QString &verb,
-											  QJSValue optPath = {},
-											  QJSValue optBody = {},
-											  QJSValue optParams = {},
-											  QJSValue optAsPost = {},
-											  QJSValue optHeaders = {});
+	Q_INVOKABLE QtRestClient::QmlRestReply *call(const QString &verb,
+												 QJSValue optPath = {},
+												 QJSValue optBody = {},
+												 QJSValue optParams = {},
+												 QJSValue optAsPost = {},
+												 QJSValue optHeaders = {});
 
 	/*! @brief Perform a HTTP-GET-Request on this class
 	 *
@@ -118,9 +120,9 @@ public:
 	 *
 	 * @sa ::QtRestClient::RestClass::get
 	 */
-	Q_INVOKABLE QtRestClient::RestReply *get(QJSValue optPath = {},
-											 QJSValue optParams = {},
-											 QJSValue optHeaders = {});
+	Q_INVOKABLE QtRestClient::QmlRestReply *get(QJSValue optPath = {},
+												QJSValue optParams = {},
+												QJSValue optHeaders = {});
 	/*! @brief Perform a HTTP-POST-Request on this class
 	 *
 	 * @param optPath Optional and variable parameter
@@ -137,10 +139,10 @@ public:
 	 *
 	 * @sa ::QtRestClient::RestClass::post
 	 */
-	Q_INVOKABLE QtRestClient::RestReply *post(QJSValue optPath = {},
-											  QJSValue optBodyParams = {},
-											  QJSValue optParams = {},
-											  QJSValue optHeaders = {});
+	Q_INVOKABLE QtRestClient::QmlRestReply *post(QJSValue optPath = {},
+												 QJSValue optBodyParams = {},
+												 QJSValue optParams = {},
+												 QJSValue optHeaders = {});
 	/*! @brief Perform a HTTP-PUT-Request on this class
 	 *
 	 * @param optPathOrBody Optional and variable parameter
@@ -157,10 +159,10 @@ public:
 	 *
 	 * @sa ::QtRestClient::RestClass::put
 	 */
-	Q_INVOKABLE QtRestClient::RestReply *put(QJSValue optPathOrBody,
-											 QJSValue body = {},
-											 QJSValue optParams = {},
-											 QJSValue optHeaders = {});
+	Q_INVOKABLE QtRestClient::QmlRestReply *put(QJSValue optPathOrBody,
+												QJSValue body = {},
+												QJSValue optParams = {},
+												QJSValue optHeaders = {});
 	// [path,] [params, [headers]]
 	/*! @brief Perform a HTTP-DELETE-Request on this class
 	 *
@@ -177,9 +179,9 @@ public:
 	 *
 	 * @sa ::QtRestClient::RestClass::deleteResource
 	 */
-	Q_INVOKABLE QtRestClient::RestReply *deleteResource(QJSValue optPath = {},
-														QJSValue optParams = {},
-														QJSValue optHeaders = {});
+	Q_INVOKABLE QtRestClient::QmlRestReply *deleteResource(QJSValue optPath = {},
+														   QJSValue optParams = {},
+														   QJSValue optHeaders = {});
 	// body, [path,] [params, [headers]]
 	/*! @brief Perform a HTTP-PATCH-Request on this class
 	 *
@@ -197,10 +199,10 @@ public:
 	 *
 	 * @sa ::QtRestClient::RestClass::patch
 	 */
-	Q_INVOKABLE QtRestClient::RestReply *patch(QJSValue optPathOrBody,
-											   QJSValue body = {},
-											   QJSValue optParams = {},
-											   QJSValue optHeaders = {});
+	Q_INVOKABLE QtRestClient::QmlRestReply *patch(QJSValue optPathOrBody,
+												  QJSValue body = {},
+												  QJSValue optParams = {},
+												  QJSValue optHeaders = {});
 	// [path,] [params, [headers]]
 	/*! @brief Perform a HTTP-HEAD-Request on this class
 	 *
@@ -217,9 +219,9 @@ public:
 	 *
 	 * @sa ::QtRestClient::RestClass::head
 	 */
-	Q_INVOKABLE QtRestClient::RestReply *head(QJSValue optPath = {},
-											  QJSValue optParams = {},
-											  QJSValue optHeaders = {});
+	Q_INVOKABLE QtRestClient::QmlRestReply *head(QJSValue optPath = {},
+												 QJSValue optParams = {},
+												 QJSValue optHeaders = {});
 
 public Q_SLOTS:
 	//! @private
@@ -255,12 +257,13 @@ private:
 	bool getAsPost(bool hasBody, QJSValue &optParams, TValues&... values) const;
 	std::optional<HeaderHash> getHeaders(QJSValue &optHeaders) const;
 
-	RestReply *callImpl(const QByteArray &verb,
-						const std::optional<std::variant<QString, QUrl>> &optPath,
-						const std::optional<std::variant<QCborValue, QJsonValue>> &optBody,
-						const std::optional<QVariantHash> &optParams,
-						bool optAsPost,
-						const std::optional<HeaderHash> &optHeaders);
+	QmlRestReply *makeQmlReply(RestReply *reply);
+	QmlRestReply *callImpl(const QByteArray &verb,
+						   const std::optional<std::variant<QString, QUrl>> &optPath,
+						   const std::optional<std::variant<QCborValue, QJsonValue>> &optBody,
+						   const std::optional<QVariantHash> &optParams,
+						   bool optAsPost,
+						   const std::optional<HeaderHash> &optHeaders);
 };
 
 }

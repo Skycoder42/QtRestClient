@@ -9,7 +9,7 @@ SUBDIRS += \
 	RequestBuilderTest \
 	RestClientTest \
 	RestReplyTest \
-#	RestBuilderTest \
+	RestBuilderTest \
 	IntegrationTest
 
 !no_coroutine_tests: SUBDIRS += RestAwaitablesTest

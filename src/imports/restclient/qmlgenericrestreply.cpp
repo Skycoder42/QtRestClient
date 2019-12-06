@@ -11,11 +11,6 @@ QtRestClient::QmlGenericRestReply::QmlGenericRestReply(SerializerBase *serialize
 	_reply{reply}
 {}
 
-QtRestClient::RestReply *QtRestClient::QmlGenericRestReply::reply() const
-{
-	return _reply;
-}
-
 QString QtRestClient::QmlGenericRestReply::returnType() const
 {
 	return QString::fromUtf8(QMetaType::typeName(_returnType));
@@ -115,12 +110,12 @@ void QtRestClient::QmlGenericRestReply::addErrorHandler(const QJSValue &errorHan
 bool QtRestClient::QmlGenericRestReply::checkOk(const QJSValue &fn) const
 {
 	if (!_reply) {
-		qWarning() << "Cannot assign a handler to an invalid reply";
+		qmlWarning(this) << "Cannot assign a handler to an invalid reply";
 		return false;
 	}
 
 	if (!fn.isCallable()) {
-		qWarning() << "Passed JS object is not a callable function!";
+		qmlWarning(this) << "Passed JS object is not a callable function!";
 		return false;
 	}
 

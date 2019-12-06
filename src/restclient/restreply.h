@@ -95,7 +95,7 @@ public:
 	bool allowsEmptyReplies() const;
 
 	//! Returns the network reply associated with the rest reply
-	QNetworkReply *networkReply() const;
+	Q_INVOKABLE QNetworkReply *networkReply() const;
 
 	//! Returns an awaitable object for this reply
 	RestReplyAwaitable awaitable();

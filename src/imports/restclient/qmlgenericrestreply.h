@@ -38,7 +38,7 @@ class QmlGenericRestReply : public QObject
 	 * }
 	 * @sa ::QtRestClient::RestReply
 	 */
-	Q_PROPERTY(QtRestClient::RestReply *reply READ reply CONSTANT)
+	Q_PROPERTY(QtRestClient::RestReply *reply MEMBER _reply CONSTANT)
 	/*! @brief The primary reply type returned by this request
 	 *
 	 * @default{<i>auto</i>}
@@ -66,8 +66,6 @@ public:
 									int errorType,
 									QtRestClient::RestReply *reply);
 
-	//! @private
-	QtRestClient::RestReply * reply() const;
 	//! @private
 	QString returnType() const;
 	//! @private

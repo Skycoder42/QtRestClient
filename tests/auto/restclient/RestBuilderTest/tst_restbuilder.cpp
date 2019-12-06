@@ -6,6 +6,14 @@
 #include <simplepost.h>
 using namespace TestSpace;
 
+namespace {
+QUrl _serverUrl;
+}
+
+QUrl serverUrl() {
+	return _serverUrl;
+}
+
 class RestBuilderTest : public QObject
 {
 	Q_OBJECT
@@ -26,8 +34,8 @@ void RestBuilderTest::initTestCase()
 {
 	server = new HttpServer(45715, this);
 	QVERIFY(server->setupRoutes());
+	_serverUrl = server->url();
 
-	QCborMap vRoot;
 	QCborMap posts;
 	for(auto i = 0; i < 100; i++) {
 		posts[i] = QCborMap {
@@ -123,10 +131,7 @@ void RestBuilderTest::testCustomCompiledApiPosts()
 		called = true;
 		QFAIL(qUtf8Printable(error));
 	});
-
-	QSignalSpy deleteSpy(reply, &QtRestClient::RestReply::destroyed);
-	QVERIFY(deleteSpy.wait());
-	QVERIFY(called);
+	QTRY_VERIFY(called);
 
 	called = false;
 	auto reply2 = api->posts()->post(42);
@@ -142,31 +147,27 @@ void RestBuilderTest::testCustomCompiledApiPosts()
 		called = true;
 		QFAIL(qUtf8Printable(error));
 	});
+	QTRY_VERIFY(called);
 
-	QSignalSpy deleteSpy2(reply2, &QtRestClient::RestReply::destroyed);
-	QVERIFY(deleteSpy2.wait());
-	QVERIFY(called);
-
-	called = false;
 	QCoreApplication::processEvents();
+	called = false;
 	QSignalSpy errorSpy(api->posts(), &PostClass::apiError);
-	api->posts()->setErrorTranslator([&](QObject*,int){
+	api->posts()->setErrorTranslator([&](const QString &error, int){
 		called = true;
-		return QString();
+		return error;
 	});
 	auto reply3 = api->posts()->post(4242);
 	reply3->onSucceeded([&](int, const Post &){
 		called = true;
 		QFAIL("Expected to fail!");
 	});
-	QSignalSpy deleteSpy3(reply3, &QtRestClient::RestReply::destroyed);
+	QTRY_VERIFY(called);
 
-	QVERIFY(errorSpy.wait());
-	QCOMPARE(errorSpy[0][2].toInt(), static_cast<int>(QtRestClient::RestReply::Failure));
+	if (errorSpy.isEmpty())
+		QVERIFY(errorSpy.wait());
+	QCOMPARE(errorSpy.size(), 1);
+	QCOMPARE(errorSpy[0][2].toInt(), static_cast<int>(QtRestClient::RestReply::Error::Failure));
 	QCOMPARE(errorSpy[0][1].toInt(), 404);
-
-	QVERIFY(deleteSpy3.wait());
-	QVERIFY(called);
 }
 
 QTEST_MAIN(RestBuilderTest)

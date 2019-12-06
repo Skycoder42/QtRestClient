@@ -194,7 +194,7 @@ Module {
         }
         Method {
             name: "call"
-            type: "QtRestClient::RestReply*"
+            type: "QtRestClient::QmlRestReply*"
             Parameter { name: "verb"; type: "string" }
             Parameter { name: "optPath"; type: "QJSValue" }
             Parameter { name: "optBody"; type: "QJSValue" }
@@ -204,7 +204,7 @@ Module {
         }
         Method {
             name: "call"
-            type: "QtRestClient::RestReply*"
+            type: "QtRestClient::QmlRestReply*"
             Parameter { name: "verb"; type: "string" }
             Parameter { name: "optPath"; type: "QJSValue" }
             Parameter { name: "optBody"; type: "QJSValue" }
@@ -213,7 +213,7 @@ Module {
         }
         Method {
             name: "call"
-            type: "QtRestClient::RestReply*"
+            type: "QtRestClient::QmlRestReply*"
             Parameter { name: "verb"; type: "string" }
             Parameter { name: "optPath"; type: "QJSValue" }
             Parameter { name: "optBody"; type: "QJSValue" }
@@ -221,44 +221,44 @@ Module {
         }
         Method {
             name: "call"
-            type: "QtRestClient::RestReply*"
+            type: "QtRestClient::QmlRestReply*"
             Parameter { name: "verb"; type: "string" }
             Parameter { name: "optPath"; type: "QJSValue" }
             Parameter { name: "optBody"; type: "QJSValue" }
         }
         Method {
             name: "call"
-            type: "QtRestClient::RestReply*"
+            type: "QtRestClient::QmlRestReply*"
             Parameter { name: "verb"; type: "string" }
             Parameter { name: "optPath"; type: "QJSValue" }
         }
         Method {
             name: "call"
-            type: "QtRestClient::RestReply*"
+            type: "QtRestClient::QmlRestReply*"
             Parameter { name: "verb"; type: "string" }
         }
         Method {
             name: "get"
-            type: "QtRestClient::RestReply*"
+            type: "QtRestClient::QmlRestReply*"
             Parameter { name: "optPath"; type: "QJSValue" }
             Parameter { name: "optParams"; type: "QJSValue" }
             Parameter { name: "optHeaders"; type: "QJSValue" }
         }
         Method {
             name: "get"
-            type: "QtRestClient::RestReply*"
+            type: "QtRestClient::QmlRestReply*"
             Parameter { name: "optPath"; type: "QJSValue" }
             Parameter { name: "optParams"; type: "QJSValue" }
         }
         Method {
             name: "get"
-            type: "QtRestClient::RestReply*"
+            type: "QtRestClient::QmlRestReply*"
             Parameter { name: "optPath"; type: "QJSValue" }
         }
-        Method { name: "get"; type: "QtRestClient::RestReply*" }
+        Method { name: "get"; type: "QtRestClient::QmlRestReply*" }
         Method {
             name: "post"
-            type: "QtRestClient::RestReply*"
+            type: "QtRestClient::QmlRestReply*"
             Parameter { name: "optPath"; type: "QJSValue" }
             Parameter { name: "optBodyParams"; type: "QJSValue" }
             Parameter { name: "optParams"; type: "QJSValue" }
@@ -266,26 +266,26 @@ Module {
         }
         Method {
             name: "post"
-            type: "QtRestClient::RestReply*"
+            type: "QtRestClient::QmlRestReply*"
             Parameter { name: "optPath"; type: "QJSValue" }
             Parameter { name: "optBodyParams"; type: "QJSValue" }
             Parameter { name: "optParams"; type: "QJSValue" }
         }
         Method {
             name: "post"
-            type: "QtRestClient::RestReply*"
+            type: "QtRestClient::QmlRestReply*"
             Parameter { name: "optPath"; type: "QJSValue" }
             Parameter { name: "optBodyParams"; type: "QJSValue" }
         }
         Method {
             name: "post"
-            type: "QtRestClient::RestReply*"
+            type: "QtRestClient::QmlRestReply*"
             Parameter { name: "optPath"; type: "QJSValue" }
         }
-        Method { name: "post"; type: "QtRestClient::RestReply*" }
+        Method { name: "post"; type: "QtRestClient::QmlRestReply*" }
         Method {
             name: "put"
-            type: "QtRestClient::RestReply*"
+            type: "QtRestClient::QmlRestReply*"
             Parameter { name: "optPathOrBody"; type: "QJSValue" }
             Parameter { name: "body"; type: "QJSValue" }
             Parameter { name: "optParams"; type: "QJSValue" }
@@ -293,44 +293,44 @@ Module {
         }
         Method {
             name: "put"
-            type: "QtRestClient::RestReply*"
+            type: "QtRestClient::QmlRestReply*"
             Parameter { name: "optPathOrBody"; type: "QJSValue" }
             Parameter { name: "body"; type: "QJSValue" }
             Parameter { name: "optParams"; type: "QJSValue" }
         }
         Method {
             name: "put"
-            type: "QtRestClient::RestReply*"
+            type: "QtRestClient::QmlRestReply*"
             Parameter { name: "optPathOrBody"; type: "QJSValue" }
             Parameter { name: "body"; type: "QJSValue" }
         }
         Method {
             name: "put"
-            type: "QtRestClient::RestReply*"
+            type: "QtRestClient::QmlRestReply*"
             Parameter { name: "optPathOrBody"; type: "QJSValue" }
         }
         Method {
             name: "deleteResource"
-            type: "QtRestClient::RestReply*"
+            type: "QtRestClient::QmlRestReply*"
             Parameter { name: "optPath"; type: "QJSValue" }
             Parameter { name: "optParams"; type: "QJSValue" }
             Parameter { name: "optHeaders"; type: "QJSValue" }
         }
         Method {
             name: "deleteResource"
-            type: "QtRestClient::RestReply*"
+            type: "QtRestClient::QmlRestReply*"
             Parameter { name: "optPath"; type: "QJSValue" }
             Parameter { name: "optParams"; type: "QJSValue" }
         }
         Method {
             name: "deleteResource"
-            type: "QtRestClient::RestReply*"
+            type: "QtRestClient::QmlRestReply*"
             Parameter { name: "optPath"; type: "QJSValue" }
         }
-        Method { name: "deleteResource"; type: "QtRestClient::RestReply*" }
+        Method { name: "deleteResource"; type: "QtRestClient::QmlRestReply*" }
         Method {
             name: "patch"
-            type: "QtRestClient::RestReply*"
+            type: "QtRestClient::QmlRestReply*"
             Parameter { name: "optPathOrBody"; type: "QJSValue" }
             Parameter { name: "body"; type: "QJSValue" }
             Parameter { name: "optParams"; type: "QJSValue" }
@@ -338,41 +338,41 @@ Module {
         }
         Method {
             name: "patch"
-            type: "QtRestClient::RestReply*"
+            type: "QtRestClient::QmlRestReply*"
             Parameter { name: "optPathOrBody"; type: "QJSValue" }
             Parameter { name: "body"; type: "QJSValue" }
             Parameter { name: "optParams"; type: "QJSValue" }
         }
         Method {
             name: "patch"
-            type: "QtRestClient::RestReply*"
+            type: "QtRestClient::QmlRestReply*"
             Parameter { name: "optPathOrBody"; type: "QJSValue" }
             Parameter { name: "body"; type: "QJSValue" }
         }
         Method {
             name: "patch"
-            type: "QtRestClient::RestReply*"
+            type: "QtRestClient::QmlRestReply*"
             Parameter { name: "optPathOrBody"; type: "QJSValue" }
         }
         Method {
             name: "head"
-            type: "QtRestClient::RestReply*"
+            type: "QtRestClient::QmlRestReply*"
             Parameter { name: "optPath"; type: "QJSValue" }
             Parameter { name: "optParams"; type: "QJSValue" }
             Parameter { name: "optHeaders"; type: "QJSValue" }
         }
         Method {
             name: "head"
-            type: "QtRestClient::RestReply*"
+            type: "QtRestClient::QmlRestReply*"
             Parameter { name: "optPath"; type: "QJSValue" }
             Parameter { name: "optParams"; type: "QJSValue" }
         }
         Method {
             name: "head"
-            type: "QtRestClient::RestReply*"
+            type: "QtRestClient::QmlRestReply*"
             Parameter { name: "optPath"; type: "QJSValue" }
         }
-        Method { name: "head"; type: "QtRestClient::RestReply*" }
+        Method { name: "head"; type: "QtRestClient::QmlRestReply*" }
     }
     Component {
         name: "QtRestClient::QmlRestClient"
@@ -438,6 +438,30 @@ Module {
             type: "QtRestClient::QmlPaging"
             Parameter { name: "client"; type: "QtRestClient::RestClient"; isPointer: true }
             Parameter { name: "data"; type: "QVariantMap" }
+        }
+    }
+    Component {
+        name: "QtRestClient::QmlRestReply"
+        prototype: "QObject"
+        exports: ["de.skycoder42.RestClient/RestReply 3.0"]
+        isCreatable: false
+        exportMetaObjectRevisions: [0]
+        Property { name: "reply"; type: "QtRestClient::RestReply"; isReadonly: true; isPointer: true }
+        Method {
+            name: "addCompletedHandler"
+            Parameter { name: "completedHandler"; type: "QJSValue" }
+        }
+        Method {
+            name: "addSucceededHandler"
+            Parameter { name: "succeededHandler"; type: "QJSValue" }
+        }
+        Method {
+            name: "addFailedHandler"
+            Parameter { name: "failedHandler"; type: "QJSValue" }
+        }
+        Method {
+            name: "addErrorHandler"
+            Parameter { name: "errorHandler"; type: "QJSValue" }
         }
     }
     Component {
@@ -553,86 +577,5 @@ Module {
             name: "removeRequestAttribute"
             Parameter { name: "attribute"; type: "QNetworkRequest::Attribute" }
         }
-    }
-    Component {
-        name: "QtRestClient::RestReply"
-        prototype: "QObject"
-        exports: ["de.skycoder42.RestClient/RestReply 3.0"]
-        isCreatable: false
-        exportMetaObjectRevisions: [0]
-        Enum {
-            name: "Error"
-            values: {
-                "Network": 0,
-                "Parser": 1,
-                "Failure": 2,
-                "Deserialization": 3
-            }
-        }
-        Property { name: "autoDelete"; type: "bool" }
-        Property { name: "allowEmptyReplies"; type: "bool" }
-        Signal {
-            name: "completed"
-            Parameter { name: "httpStatus"; type: "int" }
-            Parameter { name: "reply"; type: "DataType" }
-        }
-        Signal {
-            name: "succeeded"
-            Parameter { name: "httpStatus"; type: "int" }
-            Parameter { name: "reply"; type: "DataType" }
-        }
-        Signal {
-            name: "failed"
-            Parameter { name: "httpStatus"; type: "int" }
-            Parameter { name: "reason"; type: "DataType" }
-        }
-        Signal {
-            name: "error"
-            Parameter { name: "errorString"; type: "string" }
-            Parameter { name: "error"; type: "int" }
-            Parameter { name: "errorType"; type: "Error" }
-        }
-        Signal {
-            name: "networkError"
-            Parameter { name: "error"; type: "QNetworkReply::NetworkError" }
-        }
-        Signal {
-            name: "sslErrors"
-            Parameter { name: "errors"; type: "QList<QSslError>" }
-            Parameter { name: "ignoreErrors"; type: "bool&" }
-        }
-        Signal {
-            name: "downloadProgress"
-            Parameter { name: "bytesReceived"; type: "qlonglong" }
-            Parameter { name: "bytesTotal"; type: "qlonglong" }
-        }
-        Signal {
-            name: "uploadProgress"
-            Parameter { name: "bytesSent"; type: "qlonglong" }
-            Parameter { name: "bytesTotal"; type: "qlonglong" }
-        }
-        Signal {
-            name: "autoDeleteChanged"
-            Parameter { name: "autoDelete"; type: "bool" }
-        }
-        Signal {
-            name: "allowEmptyRepliesChanged"
-            Parameter { name: "allowEmptyReplies"; type: "bool" }
-        }
-        Method { name: "abort" }
-        Method { name: "retry" }
-        Method {
-            name: "retryAfter"
-            Parameter { name: "mSecs"; type: "int" }
-        }
-        Method {
-            name: "setAutoDelete"
-            Parameter { name: "autoDelete"; type: "bool" }
-        }
-        Method {
-            name: "setAllowEmptyReplies"
-            Parameter { name: "allowEmptyReplies"; type: "bool" }
-        }
-        Method { name: "disableAutoDelete"; type: "RestReply*" }
     }
 }

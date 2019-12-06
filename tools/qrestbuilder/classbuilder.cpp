@@ -17,7 +17,7 @@ ClassBuilder::ClassBuilder(RestBuilderXmlReader::RestApi restApi) :
 
 void ClassBuilder::build()
 {
-	//data preprocessing
+	// data preprocessing
 	data.includes = QList<RestBuilderXmlReader::Include>{
 		{false, QStringLiteral("QtCore/QString")},
 		{false, QStringLiteral("QtCore/QStringList")},
@@ -25,24 +25,24 @@ void ClassBuilder::build()
 		{false, QStringLiteral("QtRestClient/RestClient")},
 		{false, QStringLiteral("QtRestClient/RestClass")}
 	} + data.includes;
-	if(data.qmlUri && isApi)
+	if (data.qmlUri && isApi)
 		data.includes.append({false, QStringLiteral("QtQml/QQmlParserStatus")});
 
-	for(auto &method : elements.methods) {
-		if(!method.except)
+	for (auto &method : elements.methods) {
+		if (!method.except)
 			method.except = data.except;
 
-		if(!method.postParams)
+		if (!method.postParams)
 			method.postParams = method.verb == QStringLiteral("POST") && !method.body;
-		if(method.postParams.value() && method.body)
+		if (method.postParams.value() && method.body)
 			throw GeneralException("You cannot have post params AND a method body at the same time");
 	}
 
-	if(!isApi || !apiData.globalName)
+	if (!isApi || !apiData.globalName)
 		apiData.autoCreate = false;
 
 	// cpp code generation
-	if(isApi)
+	if (isApi)
 		generateApi();
 	else
 		generateClass();
@@ -54,11 +54,11 @@ void ClassBuilder::generateClass()
 	writeClassBeginDeclaration();
 	writeClassMainDeclaration();
 	header << "};\n\n";
-	if(data.qmlUri)
+	if (data.qmlUri)
 		writeQmlDeclaration();
-	if(data.nspace)
+	if (data.nspace)
 		header << "}\n\n";
-	if(data.qmlUri)
+	if (data.qmlUri)
 		header << "Q_DECLARE_METATYPE(" << nsName(QStringLiteral("Qml") + data.name, data.nspace) << ")\n\n";
 
 	//write source
@@ -71,16 +71,16 @@ void ClassBuilder::generateClass()
 
 void ClassBuilder::generateApi()
 {
-	//write header
+	// write header
 	writeClassBeginDeclaration();
 	header << "\tstatic " << data.name << "::Factory factory();\n\n";
 	header << "\t" << data.name << "(QObject *parent = nullptr);\n";
 	writeClassMainDeclaration();
 	header << "\n\tstatic QtRestClient::RestClient *generateClient();\n"
 		   << "};\n\n";
-	if(data.qmlUri)
+	if (data.qmlUri)
 		writeQmlDeclaration();
-	if(data.nspace)
+	if (data.nspace)
 		header << "}\n\n";
 
 	//write source
@@ -94,11 +94,11 @@ void ClassBuilder::generateApi()
 		   << "{}\n";
 	writeClassMainDefinition();
 	//write API generation
-	if(apiData.globalName)
+	if (apiData.globalName)
 		writeGlobalApiGeneration();
 	else
 		writeLocalApiGeneration();
-	if(data.qmlUri)
+	if (data.qmlUri)
 		writeQmlDefinitions();
 	writeStartupCode();
 }
@@ -138,7 +138,7 @@ void ClassBuilder::writeClassMainDeclaration()
 
 	header << "\tvoid setErrorTranslator(std::function<QString(" << data.except << ", int)> fn);\n\n";
 	header << "Q_SIGNALS:\n"
-		   << "\tvoid apiError(const QString &errorString, int errorCode, QtRestClient::RestReply::ErrorType errorType);\n\n"
+		   << "\tvoid apiError(const QString &errorString, int errorCode, QtRestClient::RestReply::Error errorType);\n\n"
 		   << "private:\n"
 		   << "\tQScopedPointer<" << data.name << "Private> d;\n";
 }
@@ -146,19 +146,21 @@ void ClassBuilder::writeClassMainDeclaration()
 void ClassBuilder::writeClassBeginDefinition()
 {
 	source << "#include \"" << fileName << ".h\"\n\n";
-	if(isApi || data.qmlUri) {
+	if (isApi || data.qmlUri) {
 		source << "#include <QtCore/QCoreApplication>\n"
 			   << "#include <QtCore/QTimer>\n";
 	}
-	if(data.qmlUri) {
+	if (data.qmlUri) {
 		source << "#include <QtQml/QQmlEngine>\n"
 			   << "#include <QtQml/QQmlContext>\n";
 	}
+	if (isApi && apiData.authenticator)
+		source << "#include <QtRestClientAuth/AuthRestClient>\n";
 	source << "#include <QtCore/QPointer>\n"
 		   << "using namespace QtRestClient;\n";
-	if(data.nspace)
+	if (data.nspace)
 		source << "using namespace " << data.nspace.value() << ";\n";
-	if(isApi || !classData.path)
+	if (isApi || !classData.path)
 		source << "\nconst QString " << data.name << "::Path;\n";
 	else
 		source << "\nconst QString " << data.name << "::Path{" << writeExpression(classData.path.value(), true) << "};\n";
@@ -169,7 +171,7 @@ void ClassBuilder::writeClassBeginDefinition()
 void ClassBuilder::writeClassMainDefinition()
 {
 	source << "\n" << data.name << "::" << data.name << "(RestClass *restClass, QObject *parent) :\n"
-		   << "\t" << data.base << "(parent),\n"
+		   << "\t" << data.base << "{parent},\n"
 		   << "\td{new " << data.name << "Private{restClass}}\n"
 		   << "{\n"
 		   << "\td->restClass->setParent(this);\n"
@@ -222,8 +224,8 @@ void ClassBuilder::writeFactoryDeclaration()
 		   << "\t\tQ_DISABLE_COPY(Factory)\n"
 		   << "\tpublic:\n"
 		   << "\t\tFactory(QtRestClient::RestClient *client, QStringList &&parentPath);\n"
-		   << "\t\tFactory(Factory &&other);\n"
-		   << "\t\tFactory &operator=(Factory &&other);\n"
+		   << "\t\tFactory(Factory &&other) noexcept;\n"
+		   << "\t\tFactory &operator=(Factory &&other) noexcept;\n"
 		   << "\t\t~Factory();\n\n";
 	for(const auto &subClass : qAsConst(elements.classes))
 		header << "\t\t" << subClass.type << "::Factory " << subClass.key << "() const;\n";
@@ -238,7 +240,7 @@ void ClassBuilder::writeFactoryDeclaration()
 void ClassBuilder::writePrivateDefinitions()
 {
 	// class
-	if(data.nspace)
+	if (data.nspace)
 		source << "\nnamespace " << data.nspace.value() << " {\n";
 	source << "\nclass " << data.name << "Private\n"
 		   << "{\n"
@@ -248,7 +250,7 @@ void ClassBuilder::writePrivateDefinitions()
 		   << "\t{}\n\n"
 		   << "\tRestClass *restClass;\n"
 		   << "\tstd::function<QString(" << data.except << ", int)> errorTranslator;\n";
-	for(const auto &subClass : qAsConst(elements.classes))
+	for (const auto &subClass : qAsConst(elements.classes))
 		source << '\t' << subClass.type << " *" << subClass.key << " = nullptr;\n";
 	source << "};\n\n";
 
@@ -257,14 +259,14 @@ void ClassBuilder::writePrivateDefinitions()
 		   << "{\n"
 		   << "public:\n"
 		   << "\tinline " << data.name << "PrivateFactory(RestClient *client, QStringList &&subPath) :\n"
-		   << "\tclient{client},\n"
+		   << "\t\tclient{client},\n"
 		   << "\t\tsubPath{std::move(subPath)}\n"
 		   << "\t{}\n\n"
 		   << "\tRestClient *client;\n"
 		   << "\tQStringList subPath;\n"
 		   << "};\n\n";
 
-	if(data.nspace)
+	if (data.nspace)
 		source << "}\n";
 }
 
@@ -275,17 +277,17 @@ void ClassBuilder::writeFactoryDefinition()
 		   << "{\n"
 		   << "\td->subPath.append(" << data.name << "::Path);\n"
 		   << "}\n\n"
-		   << data.name << "::Factory::Factory(Factory &&other)\n"
+		   << data.name << "::Factory::Factory(Factory &&other) noexcept\n"
 		   << "{\n"
 		   << "\td.swap(other.d);\n"
 		   << "}\n\n"
-		   << data.name << "::Factory &" << data.name << "::Factory::operator=(Factory &&other)\n"
+		   << data.name << "::Factory &" << data.name << "::Factory::operator=(Factory &&other) noexcept\n"
 		   << "{\n"
 		   << "\td.swap(other.d);\n"
 		   << "\treturn *this;\n"
 		   << "}\n\n"
 		   << data.name << "::Factory::~Factory() = default;\n";
-	for(const auto &subClass : qAsConst(elements.classes)) {
+	for (const auto &subClass : qAsConst(elements.classes)) {
 		source << "\n" << subClass.type << "::Factory " << data.name << "::Factory::" << subClass.key << "() const\n"
 			   << "{\n"
 			   << "\treturn {d->client, std::move(d->subPath)};\n"
@@ -341,7 +343,7 @@ void ClassBuilder::writeMethodDefinitions()
 
 		if(method.except == data.except) {
 			source << "\tQPointer<" << data.name << "> __this(this);\n"
-				   << "\t__reply->onAllErrors([__this](const QString &__e, int __c, RestReply::ErrorType __t){\n"
+				   << "\t__reply->onAllErrors([__this](const QString &__e, int __c, RestReply::Error __t){\n"
 				   << "\t\tif(__this)\n"
 				   << "\t\t\temit __this->apiError(__e, __c, __t);\n"
 				   << "\t}, [__this](" << method.except.value() << " __o, int __c){\n"
@@ -421,9 +423,22 @@ void ClassBuilder::writeGlobalApiGeneration()
 
 void ClassBuilder::writeApiCreation()
 {
-	source << "client = new RestClient(QCoreApplication::instance());\n"
-		   << "\t\tclient->setBaseUrl(QUrl{" << writeExpression(apiData.baseUrl, true) << "});\n";
-	if(apiData.baseUrl.apiVersion) {
+	QByteArray dataMode;
+	switch (apiData.dataMode) {
+		case RestBuilderXmlReader::Json:
+			dataMode = "RestClient::DataMode::Json";
+			break;
+		case RestBuilderXmlReader::Cbor:
+			dataMode = "RestClient::DataMode::Cbor";
+			break;
+	}
+
+	if (apiData.authenticator)
+		source << "client = new AuthRestClient(" << dataMode << ", " << *apiData.authenticator << ", QCoreApplication::instance());\n";
+	else
+		source << "client = new RestClient(" << dataMode << ", QCoreApplication::instance());\n";
+	source << "\t\tclient->setBaseUrl(QUrl{" << writeExpression(apiData.baseUrl, true) << "});\n";
+	if (apiData.baseUrl.apiVersion) {
 		auto vNum = QVersionNumber::fromString(apiData.baseUrl.apiVersion.value());
 		QStringList args;
 		args.reserve(vNum.segmentCount());
@@ -431,9 +446,9 @@ void ClassBuilder::writeApiCreation()
 			args.append(QString::number(segment));
 		source << "\t\tclient->setApiVersion(QVersionNumber{" << args.join(QStringLiteral(", ")) << "});\n";
 	}
-	for(const auto &header : qAsConst(apiData.headers))
+	for (const auto &header : qAsConst(apiData.headers))
 		source << "\t\tclient->addGlobalHeader(\"" << header.key << "\", " << writeExpression(header, false) << ");\n";
-	for(const auto &param : qAsConst(apiData.params))
+	for (const auto &param : qAsConst(apiData.params))
 		source << "\t\tclient->addGlobalParameter(QStringLiteral(\"" << param.key << "\"), " << writeExpression(param, true) << ");\n";
 }
 
@@ -541,7 +556,7 @@ void ClassBuilder::writeQmlDefinitions()
 			   << "\tif(!reply)\n"
 			   << "\t\treturn nullptr;\n"
 			   << "\treturn reinterpret_cast<QtRestClient::QmlGenericRestReply*>(QMetaType::metaObjectForType(QMetaType::type(\"QtRestClient::QmlGenericRestReply*\"))\n"
-			   << "\t\t->newInstance(Q_ARG(QtJsonSerializer::JsonSerializer*, _d->restClient()->serializer()),\n"
+			   << "\t\t->newInstance(Q_ARG(QtJsonSerializer::SerializerBase*, _d->restClient()->serializer()),\n"
 			   << "\t\t\tQ_ARG(QJSEngine*, reinterpret_cast<QJSEngine*>(_engine)),\n"
 			   << "\t\t\tQ_ARG(int, QMetaType::type(\"" << method.returns << "\")),\n"
 			   << "\t\t\tQ_ARG(int, QMetaType::type(\"" << method.except.value() << "\")),\n"

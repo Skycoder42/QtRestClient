@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
 	parser.process(a);
 
 	try {
-		if(parser.isSet(QStringLiteral("convert"))) {
+		if (parser.isSet(QStringLiteral("convert"))) {
 			XmlConverter converter;
 			converter.convert(parser.value(QStringLiteral("convert")),
 							  parser.value(QStringLiteral("in")),
@@ -65,18 +65,17 @@ int main(int argc, char *argv[])
 			throw RestBuilderXmlReader::FileException{inFile};
 		QXmlStreamReader reader(&inFile);
 
-		//TEST
 		RestBuilderXmlReader builderBase;
 		auto data = builderBase.readDocument(parser.value(QStringLiteral("in")));
 
 		QScopedPointer<RestBuilder> builder;
-		if(nonstd::holds_alternative<RestBuilderXmlReader::RestObject>(data))
+		if (nonstd::holds_alternative<RestBuilderXmlReader::RestObject>(data))
 			builder.reset(new ObjectBuilder(nonstd::get<RestBuilderXmlReader::RestObject>(data)));
-		else if(nonstd::holds_alternative<RestBuilderXmlReader::RestGadget>(data))
+		else if (nonstd::holds_alternative<RestBuilderXmlReader::RestGadget>(data))
 			builder.reset(new ObjectBuilder(nonstd::get<RestBuilderXmlReader::RestGadget>(data)));
-		else if(nonstd::holds_alternative<RestBuilderXmlReader::RestClass>(data))
+		else if (nonstd::holds_alternative<RestBuilderXmlReader::RestClass>(data))
 			builder.reset(new ClassBuilder(nonstd::get<RestBuilderXmlReader::RestClass>(data)));
-		else if(nonstd::holds_alternative<RestBuilderXmlReader::RestApi>(data))
+		else if (nonstd::holds_alternative<RestBuilderXmlReader::RestApi>(data))
 			builder.reset(new ClassBuilder(nonstd::get<RestBuilderXmlReader::RestApi>(data)));
 		else
 			Q_UNREACHABLE();
@@ -85,7 +84,7 @@ int main(int argc, char *argv[])
 					   parser.value(QStringLiteral("header")),
 					   parser.value(QStringLiteral("impl")));
 		return EXIT_SUCCESS;
-	} catch(RestBuilderXmlReader::Exception &e) {
+	} catch (RestBuilderXmlReader::Exception &e) {
 		qCritical() << e.what();
 		return EXIT_FAILURE;
 	}

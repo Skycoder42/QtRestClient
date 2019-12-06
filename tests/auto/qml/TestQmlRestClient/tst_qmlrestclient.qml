@@ -6,7 +6,6 @@ import de.skycoder42.qtrestclient.test 3.0
 Item {
 	id: root
 
-	//TODO make full testcase via http server
 	TestCase {
 		id: testCase
 		name: "RestClient"
@@ -49,11 +48,11 @@ Item {
 			}
 
 			function repConnect(reply) {
-				reply.failed.connect(function(code, data) {
+				reply.addFailedHandler(function(code, data) {
 					done = true;
 					testCase.fail(code + ": " + JSON.stringify(data));
 				});
-				reply.error.connect(function(error, code, type) {
+				reply.addErrorHandler(function(error, code, type) {
 					done = true;
 					testCase.fail(error + " (" + code + ", " + type + ")");
 				});
@@ -62,7 +61,7 @@ Item {
 			function ewait(reply) {
 				repConnect(reply);
 				var i = 0;
-				while(!done && i < 50){
+				while (!done && i < 50){
 					i++;
 					testCase.wait(100);
 				}
@@ -72,7 +71,7 @@ Item {
 			function cwait(reply, counter) {
 				repConnect(reply);
 				var i = 0;
-				while(!done && waiter.counter < counter && i < 50){
+				while (!done && waiter.counter < counter && i < 50){
 					i++;
 					testCase.wait(100);
 				}
@@ -99,6 +98,19 @@ Item {
 									  }));
 		}
 
+		function test_list() {
+			waiter.ok = false;
+			var reply = postClass.get();
+			reply.addSucceededHandler(function(code, data){
+				waiter.done = true;
+				compare(code, 200);
+				compare(data.length, 100);
+				waiter.ok = true;
+			});
+			waiter.ewait(reply);
+			verify(waiter.ok);
+		}
+
 		function test_post() {
 			waiter.ok = false;
 			var params = {
@@ -107,8 +119,8 @@ Item {
 				title: "baum",
 				userId: "42"
 			};
-			var reply = postClass.post(undefined, params);
-			reply.succeeded.connect(function(code, data){
+			var reply = postClass.post(params);
+			reply.addSucceededHandler(function(code, data){
 				waiter.done = true;
 				compare(code, 200);
 				compare(data, params, JSON.stringify(data) + " != " + JSON.stringify(params));
@@ -127,7 +139,7 @@ Item {
 				body: "baum"
 			};
 			var reply = postClass.put("1", obj);
-			reply.succeeded.connect(function(code, data){
+			reply.addSucceededHandler(function(code, data){
 				waiter.done = true;
 				compare(code, 200);
 				compare(data, obj, JSON.stringify(data) + " != " + JSON.stringify(obj));
@@ -137,23 +149,10 @@ Item {
 			verify(waiter.ok);
 		}
 
-		function test_list() {
-			waiter.ok = false;
-			var reply = postClass.get();
-			reply.succeeded.connect(function(code, data){
-				waiter.done = true;
-				compare(code, 200);
-				compare(data.length, 100);
-				waiter.ok = true;
-			});
-			waiter.ewait(reply);
-			verify(waiter.ok);
-		}
-
 		function test_paging() {
 			waiter.ok = false;
 			var reply = pagesClass.get("0");
-			reply.completed.connect(function(code, data) {
+			reply.addSucceededHandler(function(code, data) {
 				compare(code, 200);
 				verify(data);
 				var paging = QtRestClient.createPaging(api, data);

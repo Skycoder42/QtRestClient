@@ -221,16 +221,24 @@
 			</xs:extension>
 		</xs:simpleContent>
 	</xs:complexType>
+	<xs:simpleType name="DataMode">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Cbor"/>
+			<xs:enumeration value="Json"/>
+		</xs:restriction>
+	</xs:simpleType>
 	<xs:complexType name="RestApi">
 		<xs:complexContent>
 			<xs:extension base="RestAccess">
 				<xs:sequence>
+					<xs:element maxOccurs="1" minOccurs="0" name="Authenticator" type="xs:string"/>
 					<xs:element maxOccurs="1" minOccurs="1" name="BaseUrl" type="BaseUrl"/>
 					<xs:element maxOccurs="unbounded" minOccurs="0" name="Parameter" type="FixedParam" qxg:member="params"/>
 					<xs:element maxOccurs="unbounded" minOccurs="0" name="Header" type="FixedParam" qxg:member="headers"/>
 					<xs:group ref="RestAccessElements" qxg:inherit="true"/>
 				</xs:sequence>
 				<xs:attribute name="globalName" type="xs:string" use="optional"/>
+				<xs:attribute name="dataMode" type="DataMode" use="optional" default="Json"/>
 				<xs:attribute default="true" name="autoCreate" type="xs:boolean" use="optional"/>
 			</xs:extension>
 		</xs:complexContent>

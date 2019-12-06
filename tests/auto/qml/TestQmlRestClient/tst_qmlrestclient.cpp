@@ -36,9 +36,8 @@ static void initImportPath()
 	QVERIFY(_server->setupRoutes());
 	_server->setAdvancedData();
 
-	QCborMap vRoot;
 	QCborMap posts;
-	for(auto i = 0; i < 100; i++) {
+	for (auto i = 0; i < 100; i++) {
 		posts[i] = QCborMap {
 			{QStringLiteral("id"), i},
 			{QStringLiteral("user"), QCborMap {
@@ -49,8 +48,7 @@ static void initImportPath()
 			{QStringLiteral("body"), QStringLiteral("Body%1").arg(i)}
 		};
 	}
-	vRoot[QStringLiteral("posts")] = posts;
-	_server->setSubData(QStringLiteral("v1"), vRoot);
+	_server->setSubData(QStringLiteral("posts"), posts);
 }
 Q_COREAPP_STARTUP_FUNCTION(initImportPath)
 

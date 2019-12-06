@@ -5,6 +5,7 @@
 #include <QtRestClient/RestReply>
 #include <QtRestClient/PagingModel>
 
+#include "qmlrestreply.h"
 #include "qmlrestclass.h"
 #include "qmlrestclient.h"
 #include "qmlpaging.h"
@@ -36,7 +37,7 @@ void QtRestClientDeclarativeModule::registerTypes(const char *uri)
 	qRegisterMetaType<QtRestClient::QmlPaging>();
 
 	//Version 3.0
-	qmlRegisterUncreatableType<QtRestClient::RestReply>(uri, 3, 0, "RestReply", QStringLiteral("RestReplies can only be returned from restclass methods"));
+	qmlRegisterUncreatableType<QtRestClient::QmlRestReply>(uri, 3, 0, "RestReply", QStringLiteral("RestReplies can only be returned from restclass methods"));
 #ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
 	qmlRegisterUncreatableType<QtRestClient::QmlGenericRestReply>(uri, 3, 0, "GenericRestReply", QStringLiteral("GenericRestReplies can only be returned from generated restclass methods"));
 #endif

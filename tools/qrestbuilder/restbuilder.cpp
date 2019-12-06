@@ -104,9 +104,9 @@ QString RestBuilder::writeParamArg(const RestBuilderXmlReader::BaseParam &param,
 
 QString RestBuilder::writeExpression(const RestBuilderXmlReader::Expression &expression, bool asString)
 {
-	if(expression.expr)
+	if (expression.expr)
 		return expression.value;
-	else if(asString)
+	else if (asString)
 		return QStringLiteral("QStringLiteral(\"") + expression.value + QStringLiteral("\")");
 	else
 		return QLatin1Char('"') + expression.value + QLatin1Char('"');
