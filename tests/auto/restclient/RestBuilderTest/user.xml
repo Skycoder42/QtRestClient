@@ -4,11 +4,11 @@
 			registerConverters="true"
 			testEquality="false"
 			generateEquals="true">
-	<Enum name="GenderType" isClass="true">
+	<Enum name="GenderType">
 		<Key name="Male"/>
 		<Key name="Female"/>
 	</Enum>
-	<Enum name="UserType" base="int" isFlags="true">
+	<Enum name="UserType" base="int" isFlags="true" isClass="false">
 		<Key name="Person">0x00</Key>
 		<Key name="Sir">0x01</Key>
 		<Key name="Doctor">0x02</Key>

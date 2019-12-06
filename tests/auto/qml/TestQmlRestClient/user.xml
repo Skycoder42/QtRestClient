@@ -19,6 +19,6 @@
 
 	<Property key="id" type="int">-1</Property>
 	<Property key="name" type="QString" asStr="true">Anonymous</Property>
-	<Property key="gender" type="User::GenderType" generateReset="false">User::Male</Property>
-	<Property key="title" type="User::UserTypes">User::Person</Property>
+	<Property key="gender" type="User::GenderType" generateReset="false">User::GenderType::Male</Property>
+	<Property key="title" type="User::UserTypes">User::UserType::Person</Property>
 </RestObject>
