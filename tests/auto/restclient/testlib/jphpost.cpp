@@ -1,11 +1,7 @@
 #include "jphpost.h"
 
 JphPost::JphPost(QObject *parent) :
-	QObject{parent},
-	id{0},
-	userId{0},
-	title{},
-	body{}
+	QObject{parent}
 {}
 
 JphPost::JphPost(int id, int userId, QString title, QString body, QObject *parent) :
@@ -65,4 +61,11 @@ JphPost *JphPost::createFirst(QObject *parent)
 
 JphPostSimple::JphPostSimple(QObject *parent) :
 	Simple{parent}
+{}
+
+JphPostSimple::JphPostSimple(int id, QString title, QUrl href, QObject *parent) :
+	Simple{parent},
+	id{id},
+	title{std::move(title)},
+	href{std::move(href)}
 {}

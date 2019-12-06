@@ -283,15 +283,12 @@ qint64 Paging<T>::internalIterate(const std::function<bool (T, qint64)> &iterato
 	// handle all items in this paging
 	auto offset = d->iPaging->offset();
 	auto count = d->data.size();
-	int start;
-	int max;
+	int start = 0;
+	int max = count;
 	if (offset >= 0) {  // has indexes
 		start = static_cast<int>(std::max(from, offset) - offset);
 		if (to >= 0)
 			max = static_cast<int>(std::min(to, offset + count) - offset);
-	} else {
-		start = 0;
-		max = count;
 	}
 
 	// delete unused items caused by from

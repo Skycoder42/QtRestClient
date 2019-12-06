@@ -25,8 +25,8 @@ public:
 	static JphPost *createDefault(QObject *parent);
 	static JphPost *createFirst(QObject *parent);
 
-	int id;
-	int userId;
+	int id = 0;
+	int userId = 0;
 	QString title;
 	QString body;
 };
@@ -41,10 +41,11 @@ class JphPostSimple : public QtRestClient::Simple<JphPost*>
 
 public:
 	Q_INVOKABLE JphPostSimple(QObject *parent = nullptr);
+	JphPostSimple(int id, QString title, QUrl href, QObject *parent = nullptr);
 
 	QTRESTCLIENT_EXT_HREF_PROP(href)
 
-	int id;
+	int id = 0;
 	QString title;
 	QUrl href;
 };
