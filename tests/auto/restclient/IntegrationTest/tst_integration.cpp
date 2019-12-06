@@ -11,7 +11,7 @@ private Q_SLOTS:
 	void initTestCase();
 	void cleanupTestCase();
 
-	void testJsonChain();
+	void testRawChain();
 	void testQObjectChain();
 	void testQObjectListChain();
 	void testQObjectPagingChain();
@@ -33,39 +33,47 @@ void IntegrationTest::initTestCase()
 
 void IntegrationTest::cleanupTestCase()
 {
-	if(client) {
-		client->deleteLater();
-		client = nullptr;
-	}
+	client->deleteLater();
+	client = nullptr;
 }
 
-void IntegrationTest::testJsonChain()
+void IntegrationTest::testRawChain()
 {
-	QJsonObject object;
-	object["id"] = 1;
-	object["userId"] = 42;
-	object["title"] = "baum";
-	object["body"] = "baum";
+	QCborMap map;
+	map[QStringLiteral("id")] = 1;
+	map[QStringLiteral("userId")] = 42;
+	map[QStringLiteral("title")] = QStringLiteral("baum");
+	map[QStringLiteral("body")] = QStringLiteral("baum");
 
 	auto postClass = client->createClass("posts", client);
 
-	bool called = false;
-
-	auto reply = postClass->callRaw(RestClass::PutVerb, "1", object);
-	reply->onSucceeded([&](int code, QJsonObject data){
+	auto called = false;
+	client->setDataMode(RestClient::DataMode::Cbor);
+	auto reply = postClass->callRaw(RestClass::PutVerb, "1", map);
+	reply->onSucceeded([&](int code, const QCborMap &data){
 		called = true;
 		QCOMPARE(code, 200);
-		QCOMPARE(data, object);
+		QCOMPARE(data, map);
 	});
-	reply->onAllErrors([&](QString error, int code, RestReply::Error){
+	reply->onAllErrors([&](const QString &error, int code, RestReply::Error){
 		called = true;
 		QFAIL(qUtf8Printable(error.isEmpty() ? QString::number(code) : error));
 	});
+	QTRY_VERIFY(called);
 
-	object["id"] = 1;
-	QSignalSpy deleteSpy(reply, &RestReply::destroyed);
-	QVERIFY(deleteSpy.wait());
-	QVERIFY(called);
+	called = false;
+	client->setDataMode(RestClient::DataMode::Json);
+	reply = postClass->callRaw(RestClass::PutVerb, "1", map.toJsonObject());
+	reply->onSucceeded([&](int code, const QJsonObject &data){
+		called = true;
+		QCOMPARE(code, 200);
+		QCOMPARE(data, map.toJsonObject());
+	});
+	reply->onAllErrors([&](const QString &error, int code, RestReply::Error){
+		called = true;
+		QFAIL(qUtf8Printable(error.isEmpty() ? QString::number(code) : error));
+	});
+	QTRY_VERIFY(called);
 
 	postClass->deleteLater();
 }
@@ -73,26 +81,29 @@ void IntegrationTest::testJsonChain()
 void IntegrationTest::testQObjectChain()
 {
 	auto object = new JphPost(2, 42, "baum", "baum", this);
-
 	auto postClass = client->createClass("posts", client);
 
-	bool called = false;
+	try {
+		for (auto mode : {RestClient::DataMode::Cbor, RestClient::DataMode::Json}) {
+			client->setDataMode(mode);
 
-	auto reply = postClass->put<JphPost*>("2", object);
-	reply->onSucceeded([&](int code, JphPost *data){
-		called = true;
-		QCOMPARE(code, 200);
-		QVERIFY(JphPost::equals(data, object));
-		data->deleteLater();
-	});
-	reply->onAllErrors([&](QString error, int code, RestReply::Error){
-		called = true;
-		QFAIL(qUtf8Printable(error.isEmpty() ? QString::number(code) : error));
-	});
-
-	QSignalSpy deleteSpy(reply, &RestReply::destroyed);
-	QVERIFY(deleteSpy.wait());
-	QVERIFY(called);
+			auto called = false;
+			auto reply = postClass->put<JphPost*, QString>("2", object);
+			reply->onSucceeded([&](int code, JphPost *data){
+				called = true;
+				QCOMPARE(code, 200);
+				QVERIFY(JphPost::equals(data, object));
+				data->deleteLater();
+			});
+			reply->onAllErrors([&](const QString &error, int code, RestReply::Error){
+				called = true;
+				QFAIL(qUtf8Printable(error.isEmpty() ? QString::number(code) : error));
+			});
+			QTRY_VERIFY(called);
+		}
+	} catch (std::exception &e) {
+		QFAIL(e.what());
+	}
 
 	postClass->deleteLater();
 	object->deleteLater();
@@ -102,23 +113,27 @@ void IntegrationTest::testQObjectListChain()
 {
 	auto postClass = client->createClass("posts", client);
 
-	bool called = false;
+	try {
+		for (auto mode : {RestClient::DataMode::Cbor, RestClient::DataMode::Json}) {
+			client->setDataMode(mode);
 
-	auto reply = postClass->get<QList<JphPost*>>();
-	reply->onSucceeded([&](int code, QList<JphPost*> data){
-		called = true;
-		QCOMPARE(code, 200);
-		QCOMPARE(data.size(), 100);
-		qDeleteAll(data);
-	});
-	reply->onAllErrors([&](QString error, int code, RestReply::Error){
-		called = true;
-		QFAIL(qUtf8Printable(error.isEmpty() ? QString::number(code) : error));
-	});
-
-	QSignalSpy deleteSpy(reply, &RestReply::destroyed);
-	QVERIFY(deleteSpy.wait());
-	QVERIFY(called);
+			bool called = false;
+			auto reply = postClass->get<QList<JphPost*>, QString>();
+			reply->onSucceeded([&](int code, const QList<JphPost*> &data){
+				called = true;
+				QCOMPARE(code, 200);
+				QCOMPARE(data.size(), 100);
+				qDeleteAll(data);
+			});
+			reply->onAllErrors([&](const QString &error, int code, RestReply::Error){
+				called = true;
+				QFAIL(qUtf8Printable(error.isEmpty() ? QString::number(code) : error));
+			});
+			QTRY_VERIFY(called);
+		}
+	} catch (std::exception &e) {
+		QFAIL(e.what());
+	}
 
 	postClass->deleteLater();
 }
@@ -127,27 +142,32 @@ void IntegrationTest::testQObjectPagingChain()
 {
 	auto pagingClass = client->createClass("pages", client);
 
-	int count = 0;
+	try {
+		for (auto mode : {RestClient::DataMode::Cbor, RestClient::DataMode::Json}) {
+			client->setDataMode(mode);
 
-	auto reply = pagingClass->get<Paging<JphPost*>>("0");
-	reply->iterate([&](JphPost* data, int index){
-		auto ok = false;
-		[&](){
-			QCOMPARE(index, count);
-			QCOMPARE(data->id, count++);
-			ok = true;
-		}();
-		data->deleteLater();
-		return ok;
-	});
-	reply->onAllErrors([&](QString error, int code, RestReply::Error){
-		count = 142;
-		QFAIL(qUtf8Printable(error.isEmpty() ? QString::number(code) : error));
-	});
-
-	while(count < 100)
-		QCoreApplication::processEvents();
-	QCoreApplication::processEvents();
+			auto count = 0;
+			auto reply = pagingClass->get<Paging<JphPost*>, QString>("0");
+			reply->iterate([&](JphPost* data, int index){
+				auto ok = false;
+				[&](){
+					QVERIFY(data);
+					QCOMPARE(index, count);
+					QCOMPARE(data->id, count++);
+					ok = true;
+				}();
+				data->deleteLater();
+				return ok;
+			});
+			reply->onAllErrors([&](const QString &error, int code, RestReply::Error){
+				count = 101;
+				QFAIL(qUtf8Printable(error.isEmpty() ? QString::number(code) : error));
+			});
+			QTRY_COMPARE(count, 100);
+		}
+	} catch (std::exception &e) {
+		QFAIL(e.what());
+	}
 
 	pagingClass->deleteLater();
 }
@@ -168,6 +188,21 @@ static void DO_NOT_CALL_compilation_test_reply()
 	rep->onError({});
 	rep->onError(nullptr, {});
 	rep->disableAutoDelete();
+}
+
+template <typename T>
+static void DO_NOT_CALL_compilation_test_paging()
+{
+	Paging<T> paging;
+	paging.iterate({}, 10, 5);
+	paging.iterate(nullptr, {}, 10, 5);
+	paging.iterate({}, {}, {}, 10, 5);
+	paging.iterate(nullptr, {}, {}, {}, 10, 5);
+	paging.iterate({}, {}, {}, {}, 10, 5);
+	paging.iterate(nullptr, {}, {}, {}, {}, 10, 5);
+	GenericRestReply<Paging<T>> *rep = nullptr;
+	rep->iterate({}, 10, 5);
+	rep->iterate(nullptr, {}, 10, 5);
 }
 
 template <typename T>
@@ -254,55 +289,10 @@ static void DO_NOT_CALL_compilation_test()
 	DO_NOT_CALL_compilation_test_reply<Paging<JphUserSimple>>();
 	DO_NOT_CALL_compilation_test_reply<Paging<JphPostSimple*>>();
 
-	//special call iterate
-	{
-		Paging<JphPost*> paging;
-		paging.iterate({}, 10, 5);
-		paging.iterate(nullptr, {}, 10, 5);
-		paging.iterate({}, {}, {}, 10, 5);
-		paging.iterate(nullptr, {}, {}, {}, 10, 5);
-		paging.iterate({}, {}, {}, {}, 10, 5);
-		paging.iterate(nullptr, {}, {}, {}, {}, 10, 5);
-		GenericRestReply<Paging<JphPost*>> *rep = nullptr;
-		rep->iterate({}, 10, 5);
-		rep->iterate(nullptr, {}, 10, 5);
-	}
-	{
-		Paging<JphUser> paging;
-		paging.iterate({}, 10, 5);
-		paging.iterate(nullptr, {}, 10, 5);
-		paging.iterate({}, {}, {}, 10, 5);
-		paging.iterate(nullptr, {}, {}, {}, 10, 5);
-		paging.iterate({}, {}, {}, {}, 10, 5);
-		paging.iterate(nullptr, {}, {}, {}, {}, 10, 5);
-		GenericRestReply<Paging<JphUser>> *rep = nullptr;
-		rep->iterate({}, 10, 5);
-		rep->iterate(nullptr, {}, 10, 5);
-	}
-	{
-		Paging<JphUserSimple> paging;
-		paging.iterate({}, 10, 5);
-		paging.iterate(nullptr, {}, 10, 5);
-		paging.iterate({}, {}, {}, 10, 5);
-		paging.iterate(nullptr, {}, {}, {}, 10, 5);
-		paging.iterate({}, {}, {}, {}, 10, 5);
-		paging.iterate(nullptr, {}, {}, {}, {}, 10, 5);
-		GenericRestReply<Paging<JphUserSimple>> *rep = nullptr;
-		rep->iterate({}, 10, 5);
-		rep->iterate(nullptr, {}, 10, 5);
-	}
-	{
-		Paging<JphPostSimple*> paging;
-		paging.iterate({}, 10, 5);
-		paging.iterate(nullptr, {}, 10, 5);
-		paging.iterate({}, {}, {}, 10, 5);
-		paging.iterate(nullptr, {}, {}, {}, 10, 5);
-		paging.iterate({}, {}, {}, {}, 10, 5);
-		paging.iterate(nullptr, {}, {}, {}, {}, 10, 5);
-		GenericRestReply<Paging<JphPostSimple*>> *rep = nullptr;
-		rep->iterate({}, 10, 5);
-		rep->iterate(nullptr, {}, 10, 5);
-	}
+	DO_NOT_CALL_compilation_test_paging<JphPost*>();
+	DO_NOT_CALL_compilation_test_paging<JphPostSimple*>();
+	DO_NOT_CALL_compilation_test_paging<JphUser>();
+	DO_NOT_CALL_compilation_test_paging<JphUserSimple>();
 
 	DO_NOT_CALL_compilation_test_class<JphPost*>();//object
 	DO_NOT_CALL_compilation_test_class<JphUser>();//gadget
@@ -317,7 +307,7 @@ static void DO_NOT_CALL_compilation_test()
 	s.extend(nullptr, {});
 	s.extend(nullptr, nullptr, {});
 
-	JphPostSimple *p;
+	auto p = new JphPostSimple{};
 	p->hasExtension();
 	p->isExtended();
 	p->currentExtended();

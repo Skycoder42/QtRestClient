@@ -31,6 +31,7 @@ void PagingModelTest::initTestCase()
 	QVERIFY(server->setupRoutes());
 	server->setAdvancedData();
 	client = Testlib::createClient(this);
+	QVERIFY(client->serializer());
 	client->setBaseUrl(server->url());
 	model = new PagingModel{this};
 
@@ -77,6 +78,7 @@ void PagingModelTest::testInitModel()
 		QVERIFY(mIndex.isValid());
 		// test returned object
 		const auto post = model->object<JphPost*>(mIndex);
+		QVERIFY(post);
 		QCOMPARE(post->id, i);
 		QCOMPARE(post->userId, qCeil(i/2.0));
 		QCOMPARE(post->title, QStringLiteral("Title%1").arg(i));

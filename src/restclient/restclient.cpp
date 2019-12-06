@@ -174,7 +174,8 @@ void RestClient::setPagingFactory(IPagingFactory *factory)
 void RestClient::setDataMode(RestClient::DataMode dataMode)
 {
 #ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
-	if (this->dataMode() == dataMode)
+	Q_D(RestClient);
+	if (this->dataMode() == dataMode && d->serializer)
 		return;
 
 	SerializerBase *ser;

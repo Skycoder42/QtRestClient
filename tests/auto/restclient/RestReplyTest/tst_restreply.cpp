@@ -711,28 +711,25 @@ void RestReplyTest::testPagingIterate()
 			Testlib::setAccept(request, client);
 
 			auto count = 0;
-			auto completed = false;
 			auto reply = new QtRestClient::GenericRestReply<QtRestClient::Paging<JphPost*>, QString>(nam->get(request), client);
 			reply->iterate([&](JphPost *data, int index){
 				auto ok = false;
 				[&](){
 					QVERIFY(data);
 					QCOMPARE(index, count);
-					QCOMPARE(data->id, count);//validating the id is enough
+					QCOMPARE(data->id, count++);
 					ok = true;
 				}();
-				if (!ok || ++count >= 100)
-					completed = true;
+				if (!ok)
+					count = 101;
 				data->deleteLater();
 				return ok;
 			});
 			reply->onAllErrors([&](const QString &error, int, QtRestClient::RestReply::Error){
 				count = 101;
-				completed = true;
 				QFAIL(qUtf8Printable(error));
 			});
-			QTRY_VERIFY(completed);
-			QCOMPARE(count, 100);
+			QTRY_COMPARE(count, 100);
 		}
 	} catch (std::exception &e) {
 		QFAIL(e.what());
@@ -812,28 +809,25 @@ void RestReplyTest::testSimplePagingIterate()
 			Testlib::setAccept(request, client);
 
 			auto count = 0;
-			auto completed = false;
 			auto reply = new GenericRestReply<Paging<JphPostSimple*>, QString>(nam->get(request), client);
 			reply->iterate([&](JphPostSimple *data, int index){
 				auto ok = false;
 				[&](){
 					QVERIFY(data);
 					QCOMPARE(index, -1);
-					QCOMPARE(data->id, count);//validating the id is enough
+					QCOMPARE(data->id, count++);
 					ok = true;
 				}();
-				if (!ok || ++count == 100)
-					completed = true;
+				if (!ok)
+					count = 101;
 				data->deleteLater();
 				return ok;
 			});
 			reply->onAllErrors([&](const QString &error, int, QtRestClient::RestReply::Error){
 				count = 101;
-				completed = true;
 				QFAIL(qUtf8Printable(error));
 			});
-			QTRY_VERIFY(completed);
-			QCOMPARE(count, 100);
+			QTRY_COMPARE(count, 100);
 		}
 	} catch (std::exception &e) {
 		QFAIL(e.what());
