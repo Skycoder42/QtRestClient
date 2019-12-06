@@ -7,7 +7,7 @@ SUBDIRS += \
 #	PagingModelTest \
 	testlib \
 	RequestBuilderTest \
-#	RestClientTest \
+	RestClientTest \
 	RestReplyTest \
 #	IntegrationTest \
 #	RestBuilderTest \

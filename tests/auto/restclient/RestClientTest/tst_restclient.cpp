@@ -5,15 +5,9 @@ class RestClientTest : public QObject
 	Q_OBJECT
 
 private Q_SLOTS:
-	void initTestCase();
-
 	void testBaseUrl_data();
 	void testBaseUrl();
 };
-
-void RestClientTest::initTestCase()
-{
-}
 
 void RestClientTest::testBaseUrl_data()
 {
