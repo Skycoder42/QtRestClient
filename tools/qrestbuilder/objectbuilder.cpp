@@ -67,9 +67,13 @@ void ObjectBuilder::generateApiObject()
 				header << "\tvoid " << prop.notify->name << "(const " << prop.metaType.value_or(prop.type) << " &" << prop.key << ");\n";
 		}
 	}
-	header << "\nprivate:\n"
-		   << "\tQScopedPointer<" << data.name << "Private> d;\n"
+	header << "\nprivate:\n";
+	if (data.generateEquals.value_or(false))
+		writeQHashDeclaration(true);
+	header << "\tQScopedPointer<" << data.name << "Private> d;\n"
 		   << "};\n\n";
+	if (data.generateEquals.value_or(false))
+		writeQHashDeclaration(false);
 	if(data.nspace)
 		header << "}\n\n";
 	writeFlagOperators();
@@ -84,10 +88,12 @@ void ObjectBuilder::generateApiObject()
 	writeAggregateConstructorDefinition();
 	source << data.name << "::~" << data.name << "() = default;\n\n";
 	writeReadDefinitions();
-	if(data.generateEquals.value_or(false))
-		writeEqualsDefinition();
 	writeWriteDefinitions();
 	writeResetDefinitions();
+	if (data.generateEquals.value_or(false)) {
+		writeEqualsDefinition();
+		writeQHashDefinition();
+	}
 	writeSetupHooks();
 }
 
@@ -398,8 +404,13 @@ void ObjectBuilder::writeQHashDeclaration(bool asFriend)
 {
 	if (asFriend)
 		header << "\tfriend ";
-	header << exportedName(QStringLiteral("uint qHash"), data.exportKey)
-		   << "(const " << data.name << " &data, uint seed" << (asFriend ? "" : " = 0") << ");\n\n";
+	if (isObject) {
+		header << exportedName(QStringLiteral("uint qHash"), data.exportKey)
+			   << "(const QPointer<" << data.name << "> &data, uint seed" << (asFriend ? "" : " = 0") << ");\n\n";
+	} else {
+		header << exportedName(QStringLiteral("uint qHash"), data.exportKey)
+			   << "(const " << data.name << " &data, uint seed" << (asFriend ? "" : " = 0") << ");\n\n";
+	}
 }
 
 void ObjectBuilder::writeSourceIncludes()
@@ -575,29 +586,37 @@ void ObjectBuilder::writeEqualsDefinition()
 
 void ObjectBuilder::writeQHashDefinition()
 {
-	source << "\nnamespace {\n\n"
-		   << "inline uint seed_rot(uint x, uint &n) {\n"
-		   << "\tn %= std::numeric_limits<uint>::digits;\n"
-		   << "\tx = (x << n) | (x >> ((-n) & (std::numeric_limits<uint>::digits - 1)));\n"
-		   << "\t++n;\n"
-		   << "\treturn x;\n"
-		   << "}\n\n"
-		   << "template <typename T>\n"
-		   << "inline uint dynHash(const T &data, uint seed) {\n"
-		   << "\treturn qHash(data, seed);\n"
-		   << "}\n\n"
-		   << "}\n\n"
+	if (isObject) {
+		source << "\nuint " << nsName(QStringLiteral("qHash"), data.nspace)
+			   << "(const QPointer<" << data.name << "> &data, uint seed)\n"
+			   << "{\n"
+			   << "\treturn ::qHash(data.data(), seed);\n"
+			   << "}\n";
+	} else {
+		source << "\nnamespace {\n\n"
+			   << "inline uint seed_rot(uint x, uint &n) {\n"
+			   << "\tn %= std::numeric_limits<uint>::digits;\n"
+			   << "\tx = (x << n) | (x >> ((-n) & (std::numeric_limits<uint>::digits - 1)));\n"
+			   << "\t++n;\n"
+			   << "\treturn x;\n"
+			   << "}\n\n"
+			   << "template <typename T>\n"
+			   << "inline uint dynHash(const T &data, uint seed) {\n"
+			   << "\treturn qHash(data, seed);\n"
+			   << "}\n\n"
+			   << "}\n\n"
 
-		   << "uint " << nsName(QStringLiteral("qHash"), data.nspace)
-		   << "(const " << data.name << "& data, uint seed)\n"
-		   << "{\n"
-		   << "\tauto n = 0u;\n"
-		   << "\treturn seed_rot(seed, n)";
-	for(const auto &propVar : qAsConst(data.properties)) {
-		const auto &prop = propertyBasics(propVar);
-		source << "\n\t\t^ dynHash(data.d->" << prop.key << ", seed_rot(seed, n))";
+			   << "uint " << nsName(QStringLiteral("qHash"), data.nspace)
+			   << "(const " << data.name << " &data, uint seed)\n"
+			   << "{\n"
+			   << "\tauto n = 0u;\n"
+			   << "\treturn seed_rot(seed, n)";
+		for(const auto &propVar : qAsConst(data.properties)) {
+			const auto &prop = propertyBasics(propVar);
+			source << "\n\t\t^ dynHash(data.d->" << prop.key << ", seed_rot(seed, n))";
+		}
+		source << ";\n}\n";
 	}
-	source << ";\n}\n";
 }
 
 void ObjectBuilder::writePrivateClass()
