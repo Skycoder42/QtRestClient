@@ -10,6 +10,8 @@ namespace sph = std::placeholders;
 using namespace QtJsonSerializer;
 #endif
 
+Q_LOGGING_CATEGORY(QtRestClient::logPagingModel, "qt.restclient.PagingModel")
+
 PagingModel::PagingModel(QObject *parent) :
 	  PagingModel{*new PagingModelPrivate{}, parent}
 {}
@@ -232,7 +234,7 @@ int PagingModel::addColumn(const QString &text)
 	beginInsertColumns(QModelIndex{}, index, index);
 	d->columns.append(text);
 	endInsertColumns();
-	emit headerDataChanged(Qt::Horizontal, index, index);
+	Q_EMIT headerDataChanged(Qt::Horizontal, index, index);
 	return index;
 }
 
@@ -249,7 +251,7 @@ void PagingModel::addRole(int column, int role, const char *propertyName)
 	Q_ASSERT_X(column < d->columns.size(), Q_FUNC_INFO, "Cannot add role to non existant column!");
 	d->roleMapping[column].insert(role, propertyName);
 	if (!d->data.isEmpty())
-		emit dataChanged(this->index(0, column), this->index(d->data.size() - 1, column), {role});
+		Q_EMIT dataChanged(this->index(0, column), this->index(d->data.size() - 1, column), {role});
 }
 
 void PagingModel::clearColumns()
@@ -263,7 +265,7 @@ void PagingModel::clearColumns()
 	if (cColumns)
 		endRemoveColumns();
 	if (!d->data.isEmpty())
-		emit dataChanged(this->index(0, 0), this->index(d->data.size() - 1, 0));
+		Q_EMIT dataChanged(this->index(0, 0), this->index(d->data.size() - 1, 0));
 }
 
 PagingModel::PagingModel(PagingModelPrivate &dd, QObject *parent) :
@@ -333,7 +335,7 @@ void PagingModelPrivate::requestNext()
 			processError(message, code, errorType);
 		});
 	} else
-		emit q->fetchError({});
+		Q_EMIT q->fetchError({});
 }
 
 void PagingModelPrivate::processReply(int, const RestReply::DataType &data)
@@ -351,9 +353,9 @@ void PagingModelPrivate::processReply(int, const RestReply::DataType &data)
 								}
 							}, data);
 	} catch (DeserializationException &e) {
-		qCritical() << "Failed to parse received paging object with error:"
-					<< e.what();
-		emit q->fetchError({});
+		qCCritical(logPagingModel) << "Failed to parse received paging object with error:"
+								   << e.what();
+		Q_EMIT q->fetchError({});
 		return;
 	}
 #else
@@ -377,17 +379,17 @@ void PagingModelPrivate::processPaging(IPaging *paging)
 {
 	Q_Q(PagingModel);
 	if (paging->offset() < data.size()) {
-		qWarning() << "Pagings out of sync - dropping duplicate data";
+		qCWarning(logPagingModel) << "Pagings out of sync - dropping duplicate data";
 		data = data.mid(0, static_cast<int>(paging->offset()));
 	} else if (paging->offset() > data.size()) {
 		if (paging->hasPrevious()) {
-			qWarning() << "Pagings out of sync - trying for previous data";
+			qCWarning(logPagingModel) << "Pagings out of sync - trying for previous data";
 			nextUrl = paging->previous();
 			requestNext();
 			return;
 		} else {
-			qWarning() << "Pagings out of sync - skipping" << paging->offset() - data.size()
-					   << "unobtainable elements";
+			qCWarning(logPagingModel) << "Pagings out of sync - skipping" << paging->offset() - data.size()
+									  << "unobtainable elements";
 		}
 	}
 
@@ -400,8 +402,8 @@ void PagingModelPrivate::processPaging(IPaging *paging)
 			try {
 				data.append(serializer->deserializeGeneric(item, typeId, q));
 			} catch (DeserializationException &e) {
-				qCritical() << "Failed to deserialize paging element with error:"
-							<< e.what();
+				qCCritical(logPagingModel) << "Failed to deserialize paging element with error:"
+										   << e.what();
 				data.append(QVariant{});
 				fetchFailed = true;
 			}
@@ -419,7 +421,7 @@ void PagingModelPrivate::processPaging(IPaging *paging)
 
 #ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
 		if (fetchFailed)
-			emit q->fetchError({});
+			Q_EMIT q->fetchError({});
 #endif
 	}, paging->items());
 }
@@ -427,7 +429,7 @@ void PagingModelPrivate::processPaging(IPaging *paging)
 void PagingModelPrivate::processError(const QString &message, int code, RestReply::Error errorType)
 {
 	Q_Q(PagingModel);
-	qCritical() << "Network request failed with error of type" << errorType
-				<< "and code" << code << "- error message is:" << qUtf8Printable(message);
-	emit q->fetchError({});
+	qCCritical(logPagingModel) << "Network request failed with error of type" << errorType
+							   << "and code" << code << "- error message is:" << qUtf8Printable(message);
+	Q_EMIT q->fetchError({});
 }

@@ -11,6 +11,7 @@
 #include <functional>
 
 #include <QtCore/qshareddata.h>
+#include <QtCore/qloggingcategory.h>
 
 #include <QtJsonSerializer/exception.h>
 
@@ -28,7 +29,6 @@ class PagingData;
 template<typename T>
 class Paging
 {
-	static_assert(__private::MetaComponent<T>::value, "T must inherit QObject or have Q_GADGET!");
 public:
 	//! Default Constructor
 	Paging();
@@ -126,6 +126,8 @@ private:
 	qint64 internalIterate(const std::function<bool(T, qint64)> &iterator, qint64 to, qint64 from) const;
 	qint64 calcMax(qint64 to) const;
 };
+
+Q_RESTCLIENT_EXPORT Q_DECLARE_LOGGING_CATEGORY(logPaging)
 
 }
 

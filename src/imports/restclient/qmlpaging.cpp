@@ -1,6 +1,7 @@
 #include "qmlpaging.h"
 #include <QDebug>
 #include <QPointer>
+#include <QtQml/QQmlInfo>
 using namespace QtRestClient;
 
 QmlPaging::QmlPaging(IPaging *iPaging, RestClient *client, QJSEngine *engine) :

@@ -125,7 +125,7 @@ void QmlRestClass::setPath(QString path)
 		return;
 
 	_path = std::move(path);
-	emit pathChanged(_path);
+	Q_EMIT pathChanged(_path);
 	revaluateClass();
 }
 
@@ -134,7 +134,7 @@ void QmlRestClass::revaluateClass()
 	if (!_init)
 		return;
 	if (_class) {
-		emit restClassChanged(nullptr);
+		Q_EMIT restClassChanged(nullptr);
 		_class->deleteLater();
 	}
 	_class = nullptr;
@@ -163,7 +163,7 @@ void QmlRestClass::revaluateClass()
 	}
 
 	if (_class)
-		emit restClassChanged(_class);
+		Q_EMIT restClassChanged(_class);
 }
 
 template<typename... TValues>

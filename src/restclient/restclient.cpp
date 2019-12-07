@@ -9,6 +9,7 @@
 using namespace QtRestClient;
 
 #ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
+#include "paging_fwd.h"
 #include <QtJsonSerializer/JsonSerializer>
 #include <QtJsonSerializer/CborSerializer>
 using namespace QtJsonSerializer;
@@ -161,7 +162,7 @@ void RestClient::setSerializer(SerializerBase *serializer)
 		d->serializer->deleteLater();
 	d->serializer = serializer;
 	serializer->setParent(this);
-	emit dataModeChanged(dataMode(), {});
+	Q_EMIT dataModeChanged(dataMode(), {});
 }
 #endif
 
@@ -197,7 +198,7 @@ void RestClient::setDataMode(RestClient::DataMode dataMode)
 		return;
 
 	d->dataMode = dataMode;
-	emit dataModeChanged(d->dataMode, {});
+	Q_EMIT dataModeChanged(d->dataMode, {});
 #endif
 }
 
@@ -208,7 +209,7 @@ void RestClient::setBaseUrl(QUrl baseUrl)
 		return;
 
 	d->baseUrl = std::move(baseUrl);
-	emit baseUrlChanged(d->baseUrl, {});
+	Q_EMIT baseUrlChanged(d->baseUrl, {});
 }
 
 void RestClient::setApiVersion(QVersionNumber apiVersion)
@@ -218,7 +219,7 @@ void RestClient::setApiVersion(QVersionNumber apiVersion)
 		return;
 
 	d->apiVersion = std::move(apiVersion);
-	emit apiVersionChanged(d->apiVersion, {});
+	Q_EMIT apiVersionChanged(d->apiVersion, {});
 }
 
 void RestClient::setGlobalHeaders(HeaderHash globalHeaders)
@@ -228,7 +229,7 @@ void RestClient::setGlobalHeaders(HeaderHash globalHeaders)
 		return;
 
 	d->headers = std::move(globalHeaders);
-	emit globalHeadersChanged(d->headers, {});
+	Q_EMIT globalHeadersChanged(d->headers, {});
 }
 
 void RestClient::setGlobalParameters(QUrlQuery globalParameters)
@@ -238,7 +239,7 @@ void RestClient::setGlobalParameters(QUrlQuery globalParameters)
 		return;
 
 	d->query = std::move(globalParameters);
-	emit globalParametersChanged(d->query, {});
+	Q_EMIT globalParametersChanged(d->query, {});
 }
 
 void RestClient::setRequestAttributes(QHash<QNetworkRequest::Attribute, QVariant> requestAttributes)
@@ -248,7 +249,7 @@ void RestClient::setRequestAttributes(QHash<QNetworkRequest::Attribute, QVariant
 		return;
 
 	d->attribs = std::move(requestAttributes);
-	emit requestAttributesChanged(d->attribs, {});
+	Q_EMIT requestAttributesChanged(d->attribs, {});
 }
 
 void RestClient::setModernAttributes()
@@ -257,7 +258,7 @@ void RestClient::setModernAttributes()
 	d->attribs.insert(QNetworkRequest::HttpPipeliningAllowedAttribute, true);
 	d->attribs.insert(QNetworkRequest::SpdyAllowedAttribute, true);
 	d->attribs.insert(QNetworkRequest::HTTP2AllowedAttribute, true);
-	emit requestAttributesChanged(d->attribs, {});
+	Q_EMIT requestAttributesChanged(d->attribs, {});
 }
 
 #ifndef QT_NO_SSL
@@ -268,7 +269,7 @@ void RestClient::setSslConfiguration(QSslConfiguration sslConfiguration)
 		return;
 
 	d->sslConfig = std::move(sslConfiguration);
-	emit sslConfigurationChanged(d->sslConfig, {});
+	Q_EMIT sslConfigurationChanged(d->sslConfig, {});
 }
 #endif
 
@@ -276,42 +277,42 @@ void RestClient::addGlobalHeader(const QByteArray &name, const QByteArray &value
 {
 	Q_D(RestClient);
 	d->headers.insert(name, value);
-	emit globalHeadersChanged(d->headers, {});
+	Q_EMIT globalHeadersChanged(d->headers, {});
 }
 
 void RestClient::removeGlobalHeader(const QByteArray &name)
 {
 	Q_D(RestClient);
 	if(d->headers.remove(name) > 0)
-		emit globalHeadersChanged(d->headers, {});
+		Q_EMIT globalHeadersChanged(d->headers, {});
 }
 
 void RestClient::addGlobalParameter(const QString &name, const QString &value)
 {
 	Q_D(RestClient);
 	d->query.addQueryItem(name, value);
-	emit globalParametersChanged(d->query, {});
+	Q_EMIT globalParametersChanged(d->query, {});
 }
 
 void RestClient::removeGlobalParameter(const QString &name)
 {
 	Q_D(RestClient);
 	d->query.removeQueryItem(name);
-	emit globalParametersChanged(d->query, {});
+	Q_EMIT globalParametersChanged(d->query, {});
 }
 
 void RestClient::addRequestAttribute(QNetworkRequest::Attribute attribute, const QVariant &value)
 {
 	Q_D(RestClient);
 	d->attribs.insert(attribute, value);
-	emit requestAttributesChanged(d->attribs, {});
+	Q_EMIT requestAttributesChanged(d->attribs, {});
 }
 
 void RestClient::removeRequestAttribute(QNetworkRequest::Attribute attribute)
 {
 	Q_D(RestClient);
 	d->attribs.remove(attribute);
-	emit requestAttributesChanged(d->attribs, {});
+	Q_EMIT requestAttributesChanged(d->attribs, {});
 }
 
 RestClient::RestClient(RestClientPrivate &dd, QObject *parent) :
@@ -337,6 +338,9 @@ QHash<QString, RestClient*> RestClientPrivate::globalApis;
 // ------------- Global header implementation -------------
 
 Q_LOGGING_CATEGORY(QtRestClient::logGlobal, "qt.restclient");
+#ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
+Q_LOGGING_CATEGORY(QtRestClient::logPaging, "qt.restclient.Paging")
+#endif
 
 /*!
 @param name The name to identify the API with. Use to obtain a reference to the API later on

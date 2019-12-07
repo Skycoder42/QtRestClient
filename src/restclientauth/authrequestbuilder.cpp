@@ -10,6 +10,8 @@ public:
 	QPointer<QAbstractOAuth> oAuth;
 };
 
+Q_LOGGING_CATEGORY(logAuthExtender, "qt.restclientauth.AuthExtender")
+
 }
 
 AuthExtender::AuthExtender(QAbstractOAuth *oAuth) :
@@ -29,6 +31,7 @@ void AuthExtender::extendRequest(QNetworkRequest &request, QByteArray &verb, QBy
 {
 	Q_ASSERT(body);
 	d->oAuth->prepareRequest(&request, verb, *body);
+	qCDebug(logAuthExtender) << "Added authorization data to request";
 }
 
 

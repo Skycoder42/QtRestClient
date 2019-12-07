@@ -4,6 +4,7 @@
 #include "QtRestClientAuth/qtrestclientauth_global.h"
 
 #include <QtCore/QScopedPointer>
+#include <QtCore/QLoggingCategory>
 
 #include <QtNetworkAuth/qabstractoauth.h>
 
@@ -48,6 +49,8 @@ private:
 	friend class AuthRestClient;
 	AuthRequestBuilder(RequestBuilder &&extendedBase);
 };
+
+Q_DECLARE_LOGGING_CATEGORY(logAuthExtender)
 
 }
 

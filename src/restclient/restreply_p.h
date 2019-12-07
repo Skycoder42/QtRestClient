@@ -23,7 +23,7 @@ public:
 	QPointer<QNetworkReply> networkReply;
 	bool autoDelete = true;
 	bool allowEmptyReplies = false;
-	int retryDelay = -1;
+	std::chrono::milliseconds retryDelay {-1};
 
 	void connectReply();
 
@@ -33,6 +33,8 @@ public:
 	void _q_handleSslErrors(const QList<QSslError> &errors);
 #endif
 };
+
+Q_DECLARE_LOGGING_CATEGORY(logReply)
 
 }
 

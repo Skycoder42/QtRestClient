@@ -6,6 +6,7 @@
 
 #include <QtCore/QPointer>
 #include <QtCore/QSharedPointer>
+#include <QtCore/QLoggingCategory>
 
 namespace QtRestClient {
 
@@ -42,6 +43,8 @@ struct Q_RESTCLIENT_EXPORT RequestBuilderPrivate : public QSharedData
 
 	void prepareRequest(QNetworkRequest &request, QByteArray *sBody) const;
 };
+
+Q_DECLARE_LOGGING_CATEGORY(logBuilder)
 
 }
 

@@ -6,6 +6,7 @@
 #include <optional>
 
 #include <QtCore/QHash>
+#include <QtCore/QLoggingCategory>
 
 #include <QtCore/private/qabstractitemmodel_p.h>
 
@@ -31,6 +32,8 @@ public:
 	void processPaging(IPaging *paging);
 	void processError(const QString &message, int code, RestReply::Error errorType);
 };
+
+Q_DECLARE_LOGGING_CATEGORY(logPagingModel)
 
 }
 

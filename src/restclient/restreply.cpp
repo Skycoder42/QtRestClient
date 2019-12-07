@@ -8,8 +8,11 @@
 #include <QtCore/QJsonDocument>
 #include <QtCore/QTimer>
 #include <QtCore/QCborStreamReader>
-
 using namespace QtRestClient;
+using namespace std::chrono;
+using namespace std::chrono_literals;
+
+Q_LOGGING_CATEGORY(QtRestClient::logReply, "qt.restclient.RestReply")
 
 RestReply::RestReply(QNetworkReply *networkReply, QObject *parent) :
 	  RestReply{*new RestReplyPrivate{}, parent}
@@ -85,13 +88,13 @@ void RestReply::abort()
 void RestReply::retry()
 {
 	Q_D(RestReply);
-	d->retryDelay = 0;
+	d->retryDelay = 0ms;
 }
 
-void RestReply::retryAfter(int mSecs)
+void RestReply::retryAfter(std::chrono::milliseconds mSecs)
 {
 	Q_D(RestReply);
-	d->retryDelay = mSecs;
+	d->retryDelay = std::move(mSecs);
 }
 
 void RestReply::setAutoDelete(bool autoDelete)
@@ -101,7 +104,7 @@ void RestReply::setAutoDelete(bool autoDelete)
 		return;
 
 	d->autoDelete = autoDelete;
-	emit autoDeleteChanged(autoDelete, {});
+	Q_EMIT autoDeleteChanged(autoDelete, {});
 }
 
 void RestReply::setAllowEmptyReplies(bool allowEmptyReplies)
@@ -111,35 +114,12 @@ void RestReply::setAllowEmptyReplies(bool allowEmptyReplies)
 		return;
 
 	d->allowEmptyReplies = allowEmptyReplies;
-	emit allowEmptyRepliesChanged(d->allowEmptyReplies, {});
+	Q_EMIT allowEmptyRepliesChanged(d->allowEmptyReplies, {});
 }
 
 RestReply::RestReply(RestReplyPrivate &dd, QObject *parent) :
 	  QObject{dd, parent}
 {}
-
-QByteArray RestReply::jsonTypeName(QJsonValue::Type type)
-{
-	switch (type) {
-	case QJsonValue::Null:
-		return "null";
-	case QJsonValue::Bool:
-		return "bool";
-	case QJsonValue::Double:
-		return "double";
-	case QJsonValue::String:
-		return "string";
-	case QJsonValue::Array:
-		return "array";
-	case QJsonValue::Object:
-		return "object";
-	case QJsonValue::Undefined:
-		return "undefined";
-	default:
-		Q_UNREACHABLE();
-		return {};
-	}
-}
 
 // ------------- Private Implementation -------------
 
@@ -186,10 +166,14 @@ void RestReplyPrivate::connectReply()
 void RestReplyPrivate::_q_replyFinished()
 {
 	Q_Q(RestReply);
-	retryDelay = -1;
+	retryDelay = -1ms;
 	const auto status = networkReply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
 	auto contentType = networkReply->header(QNetworkRequest::ContentTypeHeader).toByteArray().trimmed();
 	const auto contentLength = networkReply->header(QNetworkRequest::ContentLengthHeader).toInt();
+
+	qCDebug(logReply) << "Received reply with status" << status
+					  << "and content of type" << contentType
+					  << "with length" << contentLength;
 
 	DataType data{std::nullopt};
 	std::optional<std::pair<int, QString>> parseError = std::nullopt;
@@ -205,7 +189,7 @@ void RestReplyPrivate::_q_replyFinished()
 					break;
 				}
 			} else
-				qWarning() << "Unknown content type directive:" << args[0];
+				qCWarning(logReply) << "Unknown content type directive:" << args[0];
 		}
 	}
 
@@ -246,22 +230,25 @@ void RestReplyPrivate::_q_replyFinished()
 
 	//check "http errors", because they can have data, but only if json is valid
 	if (!parseError && status >= 300 && !std::holds_alternative<std::nullopt_t>(data))  // first: status code error + valid data
-		emit q->failed(status, data, {});
+		Q_EMIT q->failed(status, data, {});
 	else if (networkReply->error() != QNetworkReply::NoError)  // next: check normal network errors
-		emit q->error(networkReply->errorString(), networkReply->error(), Error::Network, {});
+		Q_EMIT q->error(networkReply->errorString(), networkReply->error(), Error::Network, {});
 	else if (parseError)  {// next: parsing errors
-		emit q->error(parseError->second, parseError->first, Error::Parser, {});
+		Q_EMIT q->error(parseError->second, parseError->first, Error::Parser, {});
 	} else if (status >= 300 && std::holds_alternative<std::nullopt_t>(data))
-		emit q->failed(status, data, {});  // only pass as failed without data if any other error does not match
+		Q_EMIT q->failed(status, data, {});  // only pass as failed without data if any other error does not match
 	else {  // no errors, completed!
-		emit q->succeeded(status, data, {});
-		retryDelay = -1;
+		Q_EMIT q->succeeded(status, data, {});
+		retryDelay = -1ms;
 	}
 
-	if (retryDelay == 0) {
-		retryDelay = -1;
+	if (retryDelay == 0ms) {
+		retryDelay = -1ms;
 		_q_retryReply();
-	} else if (retryDelay > 0) {
+	} else if (retryDelay > 0ms) {
+		qCDebug(logReply) << "Retrying request in"
+						  << retryDelay.count()
+						  << "milliseconds";
 		auto sTimer = new QTimer{q};
 		sTimer->setSingleShot(true);
 		sTimer->setTimerType(Qt::PreciseTimer);
@@ -270,7 +257,7 @@ void RestReplyPrivate::_q_replyFinished()
 				this, &RestReplyPrivate::_q_retryReply);
 		QObject::connect(sTimer, &QTimer::timeout,
 						 sTimer, &QTimer::deleteLater);
-		retryDelay = -1;
+		retryDelay = -1ms;
 		sTimer->start();
 	} else if (autoDelete)
 		q->deleteLater();
@@ -283,6 +270,9 @@ void RestReplyPrivate::_q_retryReply()
 	auto verb = request.attribute(QNetworkRequest::CustomVerbAttribute, RestClass::GetVerb).toByteArray();
 	auto body = networkReply->property(PropertyBuffer).toByteArray();
 
+	qCDebug(logReply) << "Retrying request with HTTP-Verb:"
+					  << verb.constData();
+
 	networkReply->deleteLater();
 	networkReply = compatSend(nam, request, verb, body);
 	connectReply();
@@ -293,7 +283,7 @@ void RestReplyPrivate::_q_handleSslErrors(const QList<QSslError> &errors)
 {
 	Q_Q(RestReply);
 	bool ignore = false;
-	emit q->sslErrors(errors, ignore);
+	Q_EMIT q->sslErrors(errors, ignore);
 	if (ignore)
 		networkReply->ignoreSslErrors(errors);
 }

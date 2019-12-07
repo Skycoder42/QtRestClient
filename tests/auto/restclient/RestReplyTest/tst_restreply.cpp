@@ -3,6 +3,7 @@
 #include <jphpost.h>
 using namespace QtJsonSerializer;
 using namespace QtRestClient;
+using namespace std::chrono_literals;
 
 class RestReplyTest : public QObject
 {
@@ -150,22 +151,21 @@ void RestReplyTest::testReplyRetry()
 	QNetworkRequest request(server->url("/invalid"));
 	request.setRawHeader("Accept", "application/cbor");
 
-	auto retryCount = 0;
+	auto retryCount = 0ms;
 
 	auto reply = new QtRestClient::RestReply(nam->get(request));
 	reply->onAllErrors([&](const QString &, int code, QtRestClient::RestReply::Error type){
 		retryCount++;
 		QCOMPARE(type, QtRestClient::RestReply::Error::Network);
 		QCOMPARE(code, static_cast<int>(QNetworkReply::ContentNotFoundError));
-		if (retryCount < 3)
-			reply->retryAfter((retryCount - 1) * 1500);//first 0, the 1500
+		if (retryCount < 3ms)
+			reply->retryAfter((retryCount - 1ms) * 1500);//first 0, the 1500
 	});
 
 	QSignalSpy deleteSpy(reply, &QtRestClient::RestReply::destroyed);
 	QVERIFY(!deleteSpy.wait(1000));
 	QVERIFY(deleteSpy.wait(14000));
-	QVERIFY(retryCount);
-	QCOMPARE(retryCount, 3);
+	QCOMPARE(retryCount, 3ms);
 }
 
 void RestReplyTest::testCallbackOverloads()

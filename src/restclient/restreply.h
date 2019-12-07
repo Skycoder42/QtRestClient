@@ -5,6 +5,7 @@
 #include "QtRestClient/qtrestclient_helpertypes.h"
 
 #include <functional>
+#include <chrono>
 
 #include <QtNetwork/qnetworkreply.h>
 
@@ -106,7 +107,7 @@ public Q_SLOTS:
 	//! Tries to make the same request again, and reuses this rest reply
 	void retry();
 	//! Tries to make the same request again after a delay, and reuses this rest reply
-	void retryAfter(int mSecs);
+	void retryAfter(std::chrono::milliseconds mSecs);
 
 	//! @writeAcFn{RestReply::autoDelete}
 	void setAutoDelete(bool autoDelete);
@@ -143,8 +144,6 @@ Q_SIGNALS:
 protected:
 	//! @private
 	RestReply(RestReplyPrivate &dd, QObject *parent = nullptr);
-	//! @private
-	static QByteArray jsonTypeName(QJsonValue::Type type);
 
 private:
 	Q_DECLARE_PRIVATE(RestReply)

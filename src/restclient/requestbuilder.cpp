@@ -8,6 +8,8 @@
 #include <QtCore/QDebug>
 using namespace QtRestClient;
 
+Q_LOGGING_CATEGORY(QtRestClient::logBuilder, "qt.restclient.RequestBuilder")
+
 RequestBuilder::RequestBuilder(const QUrl &baseUrl, QNetworkAccessManager *nam) :
 	d{new RequestBuilderPrivate{baseUrl, nam}}
 {}
@@ -65,10 +67,10 @@ RequestBuilder &RequestBuilder::updateFromRelativeUrl(const QUrl &url, bool merg
 	auto cUrl = buildUrl();
 	d->base = cUrl.resolved(url);
 	if (d->base.host() != cUrl.host()) {
-		qWarning() << "URL host changed from"
-				   << cUrl.host()
-				   << "to"
-				   << d->base.host();
+		qCWarning(logBuilder) << "URL host changed from"
+							  << cUrl.host()
+							  << "to"
+							  << d->base.host();
 	}
 	//clear all the rest
 	d->version = QVersionNumber();
@@ -236,6 +238,8 @@ QUrl RequestBuilder::buildUrl() const
 	if (d->extender)
 		d->extender->extendUrl(url);
 
+	qCDebug(logBuilder) << "built URL as" << url.toString(QUrl::PrettyDecoded | QUrl::RemoveUserInfo);
+
 	return url;
 }
 
@@ -300,6 +304,10 @@ void RequestBuilderPrivate::prepareRequest(QNetworkRequest &request, QByteArray 
 #ifndef QT_NO_SSL
 	request.setSslConfiguration(sslConfig);
 #endif
+
+	qCDebug(logBuilder) << "created request with headers"
+						<< headers.keys()
+						<< "and attributes" << attributes.keys();
 
 	// create the body
 	if (sBody) {
