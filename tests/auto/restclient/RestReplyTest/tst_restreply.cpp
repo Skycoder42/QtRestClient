@@ -37,6 +37,9 @@ private Q_SLOTS:
 	void testSimpleExtension();
 	void testSimplePagingIterate();
 
+	void testAsync_data();
+	void testAsync();
+
 private:
 	HttpServer *server;
 	RestClient *client;
@@ -830,6 +833,87 @@ void RestReplyTest::testSimplePagingIterate()
 			QTRY_COMPARE(count, 100);
 		}
 	} catch (std::exception &e) {
+		QFAIL(e.what());
+	}
+}
+
+void RestReplyTest::testAsync_data()
+{
+	QTest::addColumn<QUrl>("url");
+	QTest::addColumn<bool>("succeed");
+	QTest::addColumn<int>("status");
+	QTest::addColumn<QObject*>("result");
+	QTest::addColumn<bool>("except");
+
+	QTest::newRow("get") << server->url("/posts/1")
+						 << true
+						 << 200
+						 << static_cast<QObject*>(JphPost::createDefault(this))
+						 << false;
+
+	QTest::newRow("notFound") << server->url("/posts/834")
+							  << false
+							  << 404
+							  << new QObject(this)
+							  << false;
+
+	QTest::newRow("serExcept") << server->url("/posts")
+							   << false
+							   << 0
+							   << new QObject(this)
+							   << true;
+}
+
+void RestReplyTest::testAsync()
+{
+	QFETCH(QUrl, url);
+	QFETCH(bool, succeed);
+	QFETCH(int, status);
+	QFETCH(QObject*, result);
+	QFETCH(bool, except);
+
+	QThreadPool testPool;
+	try {
+		for (auto mode : {RestClient::DataMode::Cbor, RestClient::DataMode::Json}) {
+			client->setDataMode(mode);
+			QNetworkRequest request(url);
+			Testlib::setAccept(request, client);
+
+			bool called = false;
+
+			auto reply = new QtRestClient::GenericRestReply<JphPost*, QString>(nam->get(request), client);
+			QVERIFY(!reply->isAsync());
+			reply->makeAsync(&testPool);
+			QVERIFY(reply->isAsync());
+
+			const auto cThread = QThread::currentThread();
+			reply->onSucceeded([&](int code, JphPost *data){
+				called = true;
+				QVERIFY(QThread::currentThread() != cThread);
+				QVERIFY(succeed);
+				QVERIFY(!except);
+				QCOMPARE(code, status);
+				QVERIFY(JphPost::equals(data, result));
+				data->deleteLater();
+			});
+			reply->onAllErrors([&](const QString &error, int code, QtRestClient::RestReply::Error type){
+				called = true;
+				QVERIFY(QThread::currentThread() != cThread);
+				QVERIFY2(!succeed, qUtf8Printable(error));
+				if (except)
+					QCOMPARE(type, QtRestClient::RestReply::Error::Deserialization);
+				else {
+					QCOMPARE(type, QtRestClient::RestReply::Error::Failure);
+					QCOMPARE(code, status);
+				}
+			});
+			QTRY_VERIFY(called);
+		}
+
+		QVERIFY(testPool.waitForDone(5000));
+	} catch (std::exception &e) {
+		testPool.clear();
+		testPool.waitForDone(5000);
 		QFAIL(e.what());
 	}
 }

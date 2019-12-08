@@ -7,6 +7,8 @@
 #include <functional>
 #include <chrono>
 
+#include <QtCore/QThreadPool>
+
 #include <QtNetwork/qnetworkreply.h>
 
 namespace QtRestClient {
@@ -23,6 +25,7 @@ class Q_RESTCLIENT_EXPORT RestReply : public QObject
 	Q_PROPERTY(bool autoDelete READ autoDelete WRITE setAutoDelete NOTIFY autoDeleteChanged)
 	//! Speciefies, whether empty rest replies are allowed
 	Q_PROPERTY(bool allowEmptyReplies READ allowsEmptyReplies WRITE setAllowEmptyReplies NOTIFY allowEmptyRepliesChanged)
+	Q_PROPERTY(bool async READ isAsync WRITE setAsync NOTIFY asyncChanged)
 
 public:
 	using DataType = __private::__binder::DataType;
@@ -84,6 +87,7 @@ public:
 						   const std::function<void(QString, int, Error)> &handler,
 						   TFn &&failureTransformer);
 
+	Q_INVOKABLE RestReply *makeAsync(QThreadPool *threadPool = QThreadPool::globalInstance());
 	//! @writeAcFn{RestReply::autoDelete}
 	Q_INVOKABLE inline RestReply *disableAutoDelete() {
 		setAutoDelete(false);
@@ -94,6 +98,8 @@ public:
 	bool autoDelete() const;
 	//! @readAcFn{RestReply::allowEmptyReplies}
 	bool allowsEmptyReplies() const;
+	//! @readAcFn{RestReply::async}
+	bool isAsync() const;
 
 	//! Returns the network reply associated with the rest reply
 	Q_INVOKABLE QNetworkReply *networkReply() const;
@@ -113,6 +119,8 @@ public Q_SLOTS:
 	void setAutoDelete(bool autoDelete);
 	//! @writeAcFn{RestReply::allowEmptyReplies}
 	void setAllowEmptyReplies(bool allowEmptyReplies);
+	//! @writeAcFn{RestReply::async}
+	void setAsync(bool async);
 
 Q_SIGNALS:
 	//! Is emitted when the request completed, i.e. succeeded or failed
@@ -140,6 +148,8 @@ Q_SIGNALS:
 	void autoDeleteChanged(bool autoDelete, QPrivateSignal);
 	//! @notifyAcFn{RestReply::allowEmptyReplies}
 	void allowEmptyRepliesChanged(bool allowEmptyReplies, QPrivateSignal);
+	//! @notifyAcFn{RestReply::async}
+	void asyncChanged(bool async, QPrivateSignal);
 
 protected:
 	//! @private
@@ -153,6 +163,8 @@ private:
 #ifndef QT_NO_SSL
 	Q_PRIVATE_SLOT(d_func(), void _q_handleSslErrors(const QList<QSslError> &))
 #endif
+
+	Qt::ConnectionType callbackType() const;
 };
 
 template<typename TFn>
@@ -165,7 +177,8 @@ template<typename TFn>
 RestReply *RestReply::onSucceeded(QObject *scope, TFn &&handler)
 {
 	connect(this, &RestReply::succeeded,
-			scope, __private::bindCallback(std::forward<TFn>(handler)));
+			scope, __private::bindCallback(std::forward<TFn>(handler)),
+			callbackType());
 	return this;
 }
 
@@ -179,7 +192,8 @@ template<typename TFn>
 RestReply *RestReply::onFailed(QObject *scope, TFn &&handler)
 {
 	connect(this, &RestReply::failed,
-			scope, __private::bindCallback(std::forward<TFn>(handler)));
+			scope, __private::bindCallback(std::forward<TFn>(handler)),
+			callbackType());
 	return this;
 }
 
@@ -193,7 +207,8 @@ template<typename TFn>
 RestReply *RestReply::onCompleted(QObject *scope, TFn &&handler)
 {
 	connect(this, &RestReply::completed,
-			scope, __private::bindCallback(std::forward<TFn>(handler)));
+			scope, __private::bindCallback(std::forward<TFn>(handler)),
+			callbackType());
 	return this;
 }
 

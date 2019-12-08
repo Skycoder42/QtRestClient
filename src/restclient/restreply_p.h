@@ -4,12 +4,13 @@
 #include "restreply.h"
 
 #include <QtCore/QPointer>
+#include <QtCore/QRunnable>
 
 #include <QtCore/private/qobject_p.h>
 
 namespace QtRestClient {
 
-class Q_RESTCLIENT_EXPORT RestReplyPrivate : public QObjectPrivate
+class Q_RESTCLIENT_EXPORT RestReplyPrivate : public QObjectPrivate, public QRunnable
 {
 	Q_DECLARE_PUBLIC(RestReply)
 public:
@@ -23,7 +24,10 @@ public:
 	QPointer<QNetworkReply> networkReply;
 	bool autoDelete = true;
 	bool allowEmptyReplies = false;
+	QThreadPool *asyncPool = nullptr;
 	std::chrono::milliseconds retryDelay {-1};
+
+	RestReplyPrivate();
 
 	void connectReply();
 
@@ -32,6 +36,8 @@ public:
 #ifndef QT_NO_SSL
 	void _q_handleSslErrors(const QList<QSslError> &errors);
 #endif
+
+	void run() override;
 };
 
 Q_DECLARE_LOGGING_CATEGORY(logReply)
