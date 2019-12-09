@@ -105,7 +105,7 @@ public Q_SLOTS:
 	 * The handlers arguments are:
 	 * - The error string (string)
 	 * - The error code (int)
-	 * - The error type (::QtRestClient::RestReply::ErrorType)
+	 * - The error type (::QtRestClient::RestReply::Error)
 	 */
 	void addErrorHandler(const QJSValue &errorHandler);
 

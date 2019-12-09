@@ -9,6 +9,7 @@
 #include <QtCore/qurlquery.h>
 #include <QtCore/qversionnumber.h>
 #include <QtCore/qshareddata.h>
+#include <QtCore/qmimetype.h>
 #ifdef QT_RESTCLIENT_USE_ASYNC
 #include <QtCore/qfuture.h>
 #endif
@@ -23,6 +24,7 @@ struct RequestBuilderPrivate;
 class Q_RESTCLIENT_EXPORT RequestBuilder
 {
 public:
+	//! A simple interface to add custom extensions to the building process
 	class Q_RESTCLIENT_EXPORT IExtender
 	{
 		Q_DISABLE_COPY(IExtender)
@@ -30,8 +32,11 @@ public:
 		IExtender();
 		virtual ~IExtender();
 
+		//! Perform additional operations on the URL
 		virtual void extendUrl(QUrl &url) const;
+		//! Specifies, whether extendRequest() always requires the `body` parameter
 		virtual bool requiresBody() const;
+		//! Perform additional operations on the request
 		virtual void extendRequest(QNetworkRequest &request, QByteArray &verb, QByteArray *body) const;
 	};
 
@@ -49,6 +54,7 @@ public:
 
 	//! Sets the network access manager to be used for send()
 	RequestBuilder &setNetworkAccessManager(QNetworkAccessManager *nam);
+	//! Sets the extender to use for extending the build
 	RequestBuilder &setExtender(IExtender *extender);
 
 	//! Sets the credentails of the URL
@@ -86,13 +92,16 @@ public:
 
 	//! Sets the content of the generated network request
 	RequestBuilder &setBody(QByteArray body, const QByteArray &contentType, bool setAccept = true);
-	//! @copybrief RequestBuilder::setBody(QByteArray, const QByteArray &)
+	//! @copybrief RequestBuilder::setBody(QByteArray, const QByteArray &, bool)
 	RequestBuilder &setBody(QCborValue body, bool setAccept = true);
-	//! @copybrief RequestBuilder::setBody(QByteArray, const QByteArray &)
+	//! @copybrief RequestBuilder::setBody(QByteArray, const QByteArray &, bool)
 	RequestBuilder &setBody(const QJsonValue &body, bool setAccept = true);
 	//! Sets the HTTP-Verb to be used by the generated network request
 	RequestBuilder &setVerb(QByteArray verb);
+	//! Sets the "Accept" HTTP-header to the given mimetype
 	RequestBuilder &setAccept(const QByteArray &mimeType);
+	//! @copydoc setAccept(const QByteArray &)
+	RequestBuilder &setAccept(const QMimeType &mimeType);
 
 	//! Adds a post parameter to the body
 	RequestBuilder &addPostParameter(const QString &name, const QString &value);
@@ -103,9 +112,10 @@ public:
 	QUrl buildUrl() const;
 	//! Creates a network request from the builder settings
 	QNetworkRequest build() const;
-	//! reates a network request and sends it with the builder settings
+	//! Creates a network request and sends it with the builder settings
 	QNetworkReply *send() const;
 #ifdef QT_RESTCLIENT_USE_ASYNC
+	//! Asynchronously creates a network request and sends it with the builder settings
 	QFuture<QNetworkReply*> sendAsync() const;
 #endif
 

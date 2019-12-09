@@ -1,5 +1,7 @@
 #include "testlib.h"
 #include <QtRestClientAuth/QtRestClientAuth>
+using namespace QtRestClient;
+using namespace QtRestClient::Auth;
 
 class AuthRequestBuilderTest : public QObject
 {
@@ -101,7 +103,7 @@ void AuthRequestBuilderTest::testSending()
 	QFETCH(QNetworkReply::NetworkError, error);
 	QFETCH(BodyType, object);
 
-	QtRestClient::AuthRequestBuilder builder(url, oAuth);
+	AuthRequestBuilder builder(url, oAuth);
 	builder.setAccept(body.accept());
 	builder.setAttribute(QNetworkRequest::HTTP2AllowedAttribute, false);
 	if (!verb.isEmpty())

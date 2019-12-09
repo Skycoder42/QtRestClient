@@ -28,7 +28,7 @@ namespace QtRestClient {
 class RestClient;
 class RestClass;
 
-//! A typedef for a collection of HTTP-Request headers
+//! A typedef for a collection of HTTP request headers
 using HeaderHash = QHash<QByteArray, QByteArray>;
 
 //! Makes the given API available under the given name

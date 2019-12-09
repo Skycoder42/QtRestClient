@@ -24,6 +24,15 @@ class QmlPaging
 {
 	Q_GADGET
 
+	/*! Specifies, whether the paging object is valid and accessable
+	 *
+	 * @default{`false`}
+	 * @accessors{
+	 *	@memberAc{valid}
+	 *  @readonlyAc
+	 * }
+	 */
+	Q_PROPERTY(bool valid READ isValid CONSTANT)
 	/*! @copybrief ::QtRestClient::IPaging::items
 	 *
 	 * @default{<i>empty</i>}
@@ -114,7 +123,8 @@ public:
 	//! @private
 	static QmlPaging create(RestClient *client, QJSEngine *engine, const RestReply::DataType &data);
 
-	Q_INVOKABLE bool isValid() const;
+	//! @private
+	bool isValid() const;
 
 	//! Performs a request for the next paging object
 	Q_INVOKABLE QtRestClient::RestReply *next();

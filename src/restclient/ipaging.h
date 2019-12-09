@@ -47,26 +47,33 @@ public:
 	virtual std::variant<QCborValue, QJsonValue> originalData() const = 0;
 };
 
+//! Interface to parse generic CBOR paging objects and operate on them
 class Q_RESTCLIENT_EXPORT ICborPaging : public IPaging
 {
 public:
+	//! @copybrief IPaging::items
 	virtual QCborArray cborItems() const = 0;
+	//! @copybrief IPaging::originalData
 	virtual QCborValue originalCbor() const = 0;
 
 	std::variant<QCborArray, QJsonArray> items() const final;
 	std::variant<QCborValue, QJsonValue> originalData() const final;
 };
 
+//! Interface to parse generic JSON paging objects and operate on them
 class Q_RESTCLIENT_EXPORT IJsonPaging : public IPaging
 {
 public:
+	//! @copybrief IPaging::items
 	virtual QJsonArray jsonItems() const = 0;
+	//! @copybrief IPaging::originalData
 	virtual QJsonValue originalJson() const = 0;
 
 	std::variant<QCborArray, QJsonArray> items() const final;
 	std::variant<QCborValue, QJsonValue> originalData() const final;
 };
 
+//! A factory interface to create IPaging instances from raw data
 class Q_RESTCLIENT_EXPORT IPagingFactory
 {
 	Q_DISABLE_COPY(IPagingFactory)

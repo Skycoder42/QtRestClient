@@ -32,6 +32,7 @@ class Q_RESTCLIENT_EXPORT RestClient : public QObject
 	Q_OBJECT
 	friend class RestClientPrivate;
 
+	//! The data mode the client is currently in
 	Q_PROPERTY(DataMode dataMode READ dataMode WRITE setDataMode NOTIFY dataModeChanged)
 	//! The base URL to be used for every request to that api
 	Q_PROPERTY(QUrl baseUrl READ baseUrl WRITE setBaseUrl NOTIFY baseUrlChanged)
@@ -43,6 +44,7 @@ class Q_RESTCLIENT_EXPORT RestClient : public QObject
 	Q_PROPERTY(QUrlQuery globalParameters READ globalParameters WRITE setGlobalParameters NOTIFY globalParametersChanged)
 	//! A collection of attributes to be set on every request
 	Q_PROPERTY(QHash<QNetworkRequest::Attribute, QVariant> requestAttributes READ requestAttributes WRITE setRequestAttributes NOTIFY requestAttributesChanged)
+	//! Specifies, whether the client can be used in a multithreaded context
 	Q_PROPERTY(bool threaded READ isThreaded WRITE setThreaded NOTIFY threadedChanged)
 
 #ifndef QT_NO_SSL
@@ -51,20 +53,24 @@ class Q_RESTCLIENT_EXPORT RestClient : public QObject
 #endif
 
 #ifdef QT_RESTCLIENT_USE_ASYNC
+	//! Holds a thread pool to be used by all replies created via this clients classes
 	Q_PROPERTY(QThreadPool* asyncPool READ asyncPool WRITE setAsyncPool NOTIFY asyncPoolChanged)
 #endif
 
 public:
+	//! The different data modes in which the client can operate
 	enum class DataMode {
-		Cbor,
-		Json
+		Cbor,  //!< The client expects and sends data in the binary CBOR format
+		Json  //!< The client expects and sends data in the textual JSON format
 	};
 	Q_ENUM(DataMode)
 
 	//! Constructor
 	explicit RestClient(QObject *parent = nullptr);
+	//! Constructor with a data mode
 	explicit RestClient(DataMode dataMode, QObject *parent = nullptr);
 #ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
+	//! Constructor with a serializer
 	explicit RestClient(QtJsonSerializer::SerializerBase *serializer, QObject *parent = nullptr);
 #endif
 
@@ -186,6 +192,7 @@ Q_SIGNALS:
 protected:
 	//! @private
 	RestClient(RestClientPrivate &dd, QObject *parent = nullptr);
+	//! @private
 	void setupNam();
 
 private:

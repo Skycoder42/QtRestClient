@@ -29,11 +29,17 @@ class Q_RESTCLIENT_EXPORT RestReply : public QObject
 	//! Speciefies, whether empty rest replies are allowed
 	Q_PROPERTY(bool allowEmptyReplies READ allowsEmptyReplies WRITE setAllowEmptyReplies NOTIFY allowEmptyRepliesChanged)
 #ifdef QT_RESTCLIENT_USE_ASYNC
+	//! Specifies, whether the reply should be handled on a threadpool or not
 	Q_PROPERTY(bool async READ isAsync WRITE setAsync NOTIFY asyncChanged)
 #endif
 
 public:
+#ifdef DOXYGEN_RUN
+	//! Internal datatype that unites JSON and CBOR data in a typesafe union
+	using DataType = std::variant<std::nullopt_t, QCborValue, QJsonValue>;
+#else
 	using DataType = __private::__binder::DataType;
+#endif
 
 	//! Defines the different possible error types
 	enum class Error {
@@ -50,13 +56,14 @@ public:
 	//! Creates a new reply based on a network reply
 	RestReply(QNetworkReply *networkReply, QObject *parent = nullptr);
 #ifdef QT_RESTCLIENT_USE_ASYNC
+	//! Creates a new reply based on a future network reply
 	RestReply(const QFuture<QNetworkReply*> &networkReplyFuture, QObject *parent = nullptr);
+	//! Creates a new reply based on a network reply and a threadpool
 	RestReply(QNetworkReply *networkReply, QThreadPool *asyncPool, QObject *parent = nullptr);
+	//! Creates a new reply based on a future network reply and a threadpool
 	RestReply(const QFuture<QNetworkReply*> &networkReplyFuture, QThreadPool *asyncPool, QObject *parent = nullptr);
 #endif
 	~RestReply() override;
-
-	// TODO add allowed signatures to doc
 
 	//! Set a handler to be called if the request succeeded
 	template <typename TFn>
@@ -79,25 +86,26 @@ public:
 
 	//! Set a handler to be called if a network error or json parse error occures
 	RestReply *onError(std::function<void(QString, int, Error)> handler);
-	//! @copybrief onError(const std::function<void(QString, int, ErrorType)>&)
+	//! @copybrief onError(std::function<void(QString, int, Error)>)
 	RestReply *onError(QObject *scope, std::function<void(QString, int, Error)> handler);
 
-	//! Set a handler to be called if the request did not succeed
+	//! @private
 	RestReply *onAllErrors(const std::function<void(QString, int, Error)> &handler);
-	//! @copybrief onAllErrors(const std::function<void(QString, int, ErrorType)>&)
+	//! @private
 	RestReply *onAllErrors(QObject *scope,
 						   const std::function<void(QString, int, Error)> &handler);
-	//! @copydoc onAllErrors(const std::function<void(QString, int, ErrorType)>&)
+	//! Set a handler to be called if the request did not succeed
 	template <typename TFn>
 	RestReply *onAllErrors(const std::function<void(QString, int, Error)> &handler,
 						   TFn &&failureTransformer);
-	//! @copydoc onAllErrors(QObject *, const std::function<void(QString, int, ErrorType)>&)
+	//! @copybrief onAllErrors(const std::function<void(QString, int, Error)>&, TFn&&)
 	template <typename TFn>
 	RestReply *onAllErrors(QObject *scope,
 						   const std::function<void(QString, int, Error)> &handler,
 						   TFn &&failureTransformer);
 
 #ifdef QT_RESTCLIENT_USE_ASYNC
+	//! @writeAcFn{RestReply::async}
 	Q_INVOKABLE RestReply *makeAsync(QThreadPool *threadPool = QThreadPool::globalInstance());
 #endif
 	//! @writeAcFn{RestReply::autoDelete}
@@ -176,13 +184,13 @@ protected:
 private:
 	Q_DECLARE_PRIVATE(RestReply)
 
+	Qt::ConnectionType callbackType() const;
+
 	Q_PRIVATE_SLOT(d_func(), void _q_replyFinished())
 	Q_PRIVATE_SLOT(d_func(), void _q_retryReply())
 #ifndef QT_NO_SSL
 	Q_PRIVATE_SLOT(d_func(), void _q_handleSslErrors(const QList<QSslError> &))
 #endif
-
-	Qt::ConnectionType callbackType() const;
 };
 
 template<typename TFn>
@@ -231,13 +239,13 @@ RestReply *RestReply::onCompleted(QObject *scope, TFn &&handler)
 }
 
 template<typename TFn>
-RestReply *RestReply::onAllErrors(const std::function<void (QString, int, RestReply::Error)> &handler, TFn &&failureTransformer)
+RestReply *RestReply::onAllErrors(const std::function<void (QString, int, Error)> &handler, TFn &&failureTransformer)
 {
 	return onAllErrors(this, handler, std::forward<TFn>(failureTransformer));
 }
 
 template<typename TFn>
-RestReply *RestReply::onAllErrors(QObject *scope, const std::function<void (QString, int, RestReply::Error)> &handler, TFn &&failureTransformer)
+RestReply *RestReply::onAllErrors(QObject *scope, const std::function<void (QString, int, Error)> &handler, TFn &&failureTransformer)
 {
 	this->onFailed(scope, __private::bindCallback(handler, std::forward<TFn>(failureTransformer), Error::Failure));
 	this->onError(scope, handler);

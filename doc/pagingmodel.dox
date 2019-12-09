@@ -5,7 +5,7 @@ This class can be used to provide a generic item model that uses a paging REST-A
 the data to be displayed to the user.
 
 To use the model, you have to initialize() it once with a URL, a Paging object or a rest reply
-that returns a paging object. This works for both, the generic and non generic (JSON) replies.
+that returns a paging object. This works for both, the generic and non generic (CBOR/JSON) replies.
 The model uses the prpperties of the object that is managed by the paging object to generate
 roles that can be used in the UI.
 

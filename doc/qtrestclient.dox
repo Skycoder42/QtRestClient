@@ -5,16 +5,22 @@
 */
 
 /*!
+@namespace QtRestClient::Auth
+
+@brief The namespace for the QNetworkAuth extensions
+*/
+
+/*!
 @namespace de::skycoder42::QtRestClient
 
 @brief The QML import for the QtRestClient QML module
 
 <b>Current Version</b><br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.1
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.0
 
 <b>Available Types</b>
 - QtRestClient (singleton)
-- @ref QtRestClient::RestReply "RestReply" (uncreatable)
+- RestReply (uncreatable)
 - GenericRestReply (uncreatable)
 - Paging (uncreatable)
 - RestClient

@@ -76,7 +76,7 @@ public:
 	void iterate(const std::function<bool(T, qint64)> &iterator,
 				 qint64 to = -1,
 				 qint64 from = 0) const;
-	//! @copybrief Paging::iterate(const std::function<bool(T, int)> &, int, int) const
+	//! @copybrief Paging::iterate(const std::function<bool(T, qint64)> &, qint64, qint64) const
 	void iterate(QObject *scope,
 				 const std::function<bool(T, qint64)> &iterator,
 				 qint64 to = -1,
@@ -88,7 +88,7 @@ public:
 				 const std::function<QString(EO, int)> &failureTransformer = {},
 				 qint64 to = -1,
 				 qint64 from = 0) const;
-	//! @copybrief Paging::iterate(const std::function<bool(T, int)> &, const std::function<void(QString, int, RestReply::ErrorType)> &, const std::function<QString(EO, int)> &, int, int) const
+	//! @copybrief Paging::iterate(const std::function<bool(T, qint64)> &, const std::function<void(QString, int, RestReply::Error)> &, const std::function<QString(EO, int)> &, qint64, qint64) const
 	template<typename EO = QObject*>
 	void iterate(QObject *scope,
 				 const std::function<bool(T, qint64)> &iterator,
@@ -96,7 +96,7 @@ public:
 				 const std::function<QString(EO, int)> &failureTransformer = {},
 				 qint64 to = -1,
 				 qint64 from = 0) const;
-	//! Iterates over all paging objects, with error handling
+	//! @copybrief Paging::iterate(const std::function<bool(T, qint64)> &, const std::function<void(QString, int, RestReply::Error)> &, const std::function<QString(EO, int)> &, qint64, qint64) const
 	template<typename EO = QObject*>
 	void iterate(const std::function<bool(T, qint64)> &iterator,
 				 const std::function<void(int, EO)> &failureHandler,
@@ -104,7 +104,7 @@ public:
 				 const std::function<void(QtJsonSerializer::Exception &)> &exceptionHandler = {},
 				 qint64 to = -1,
 				 qint64 from = 0) const;
-	//! @copybrief Paging::iterate(const std::function<bool(T, int)> &, const std::function<void(int, EO)> &, const std::function<void(QString, int, RestReply::ErrorType)> &, const std::function<void(QJsonSerializerException &)> &, int, int) const
+	//! @copybrief Paging::iterate(const std::function<bool(T, qint64)> &, const std::function<void(int, EO)> &, const std::function<void(QString, int, RestReply::Error)> &, const std::function<void(QtJsonSerializer::Exception &)> &, qint64, qint64) const
 	template<typename EO = QObject*>
 	void iterate(QObject *scope,
 				 const std::function<bool(T, qint64)> &iterator,

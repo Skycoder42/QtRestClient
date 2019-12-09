@@ -157,6 +157,7 @@ Item {
 				verify(data);
 				var paging = QtRestClient.createPaging(api, data);
 				verify(paging);
+				verify(paging.valid);
 				compare(paging.total, 100);
 				compare(paging.offset, waiter.counter);
 				compare(paging.items.length, 10);

@@ -1,12 +1,14 @@
 /*!
 @class QtRestClient::IPaging
 
-Implement this interface, as well as a custom PagingFactory, if you need to parse a non standard
-paging object. You should implement all of the methods correctly. However, you can still use the
-paging if you can't provide all of them. Simply return default values in that case. However, if
-you want to use the iterate functionality of the paging, you will have to implement all of them.
+Implement this interface, as well as a custom IPagingFactory, if you need to parse a non
+standard paging object. You should implement all of the methods correctly. However, you can
+still use the paging if you can't provide all of them. Simply return default values in that case.
+However, if you want to use the iterate functionality of the paging, you will have to implement
+all of them.
 
-The standard implementation expects JSON data of the following format:
+The standard implementation expects CBOR or JSON data of the following format and will return
+either a ICborPaging or a IJsonPaging object:
 @code{.json}
 {
 	"total": int,
@@ -18,17 +20,17 @@ The standard implementation expects JSON data of the following format:
 }
 @endcode
 
-Additional field will be ignored, but are still a valid paging objects. Missing fields or
+Additional fields will be ignored, but are still a valid paging objects. Missing fields or
 incompatibale types are not allowed, but wont create an error here. Validation is done by
-PagingFactory::createPaging
+IPagingFactory::createPaging
 
-@sa PagingFactory, Paging
+@sa ICborPaging, IJsonPaging, IPagingFactory, Paging
 */
 
 /*!
 @fn QtRestClient::IPaging::total
 
-@returns The total amount of items for this request, or `INT_MAX` if not available
+@returns The total amount of items for this request, or `std::numeric_limits<qint64>::max()` if not available
 
 If you implement total, please note that total means total independently of the paging, and **not**
 the number of elements in the paging. It's the maximum number of items that exist for this request on
@@ -50,9 +52,9 @@ of the first element in the paging.
 */
 
 /*!
-@class QtRestClient::PagingFactory
+@class QtRestClient::IPagingFactory
 
-In order to use paging, you need a factory to create those. A default PagingFactory
+In order to use paging, you need a factory to create those. A default IPagingFactory
 is used to do so. However, if you need to reimplement IPaging, you need to create a factory
 as well.
 
@@ -63,10 +65,10 @@ as well.
 @fn QtRestClient::IPagingFactory::createPaging
 
 @param serializer A json serializer, if you want to use it for deserialization
-@param data The paging json object to be loaded into a IPaging interface
+@param data The paging CBOR/JSON data to be loaded into a IPaging interface
 @return A new paging interface instance
-@throws QJsonDeserializationException Will be thrown if the passed json data is not a valid
-paging object
+@throws QJsonSerializer::DeserializationException Will be thrown if the passed json data is not
+a valid paging object
 
 When reimplementing this function, make shure to not return `nullptr`, if the creation failed.
 throw an exception instead, as specified by this documenation

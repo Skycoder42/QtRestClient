@@ -93,10 +93,13 @@ elements of RestAccess can/must also be used for a RestClass, include the additi
 The rest api is basically a root class with additional properties to create the apis root RestClient.
 
 @subsubsection generator_doc_RestApi_attribs Attributes
- Name		| Allowed values	| Default/Required							| Description
-------------|-------------------|-------------------------------------------|-------------
- globalName	| string			| <i>none</i>								| The APIs global name. If specified the api is made available globally by using QtRestClient::addGlobalApi with that name
- autoCreate	| bool				| true if `globalName` is set, else false	| <i>Requires `globalName` to be set.</i> If set to true, the API will be automatically registered on application start. If not, it happens on first use
+ Name		| Allowed values						| Default/Required							| Description
+------------|---------------------------------------|-------------------------------------------|-------------
+ globalName	| string								| <i>none</i>								| The APIs global name. If specified the api is made available globally by using QtRestClient::addGlobalApi with that name
+ dataMode	| QtRestClient::RestClient::DataMode	| "Json"									| Sets the QtRestClient::RestClient::dataMode to the given value
+ threaded	| bool									| true if `globalName` is set, else false	| Sets the QtRestClient::RestClient::threaded to the given value
+ async		| bool									| true if `globalName` is set, else false	| Sets the QtRestClient::RestClient::asyncPool to the default QThreadPool::globalInstance. Implies `threaded`
+ autoCreate	| bool									| true if `globalName` is set, else false	| <i>Requires `globalName` to be set.</i> If set to true, the API will be automatically registered on application start. If not, it happens on first use
 
 @subsubsection generator_doc_RestApi_children Allowed Child Elements
  Name		| XML-Type										| Limits	| Description

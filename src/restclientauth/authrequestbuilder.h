@@ -10,12 +10,14 @@
 
 #include <QtRestClient/requestbuilder.h>
 
-namespace QtRestClient {
+namespace QtRestClient::Auth {
 
 class AuthExtenderPrivate;
+//! An extender that adds OAuth information to a request
 class Q_RESTCLIENTAUTH_EXPORT AuthExtender : public RequestBuilder::IExtender
 {
 public:
+	//! Constructs the extender from an abstract OAuth interface
 	AuthExtender(QAbstractOAuth *oAuth);
 	~AuthExtender() override;
 
@@ -42,7 +44,7 @@ public:
 	AuthRequestBuilder &operator=(AuthRequestBuilder &&other) noexcept;
 	~AuthRequestBuilder();
 
-	//! Sets the OAUth instance to authenticate requests created via build() or send()
+	//! Sets the OAuth instance to authenticate requests created via build() or send()
 	AuthRequestBuilder &setOAuth(QAbstractOAuth *oAuth, bool replaceNam = true);
 
 private:

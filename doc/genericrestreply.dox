@@ -5,32 +5,13 @@
 @tparam ErrorClassType The type of the negative result
 
 This class is an extension to the RestReply, that includes deserialization into the reply. This
-way, you can directly use them without ever caring about the JSON in the background.
+way, you can directly use them without ever caring about the CBOR/JSON in the background.
 
 @sa RestReply, RestClass
 */
 
 /*!
-@fn QtRestClient::GenericRestReply::onSucceeded(const std::function<void(int, DataClassType)>&)
-
-@param handler The function to be called on success
-@returns A reference to this reply
-
-The handlers arguments are:
-- The HTTP-Status code (int)
-- The deserialized Content of the reply (DataClassType)
-
-@sa GenericRestReply::onFailed, RestReply::onSucceeded
-*/
-
-/*!
-@fn QtRestClient::GenericRestReply::onSucceeded(QObject*, const std::function<void(int, DataClassType)>&)
-@param scope (optional) A scope to limit the callback to
-@copydetails GenericRestReply::onSucceeded(const std::function<void(int, DataClassType)>&)
-*/
-
-/*!
-@fn QtRestClient::GenericRestReply::onFailed(const std::function<void(int, ErrorClassType)>&)
+@fn QtRestClient::GenericRestReplyBase::onFailed(std::function<void(int, ErrorClassType)>)
 
 @param handler The function to be called on failure
 @returns A reference to this reply
@@ -43,25 +24,25 @@ The handlers arguments are:
 */
 
 /*!
-@fn QtRestClient::GenericRestReply::onFailed(QObject*, const std::function<void(int, ErrorClassType)>&)
-@param scope (optional) A scope to limit the callback to
-@copydetails GenericRestReply::onFailed(const std::function<void(int, ErrorClassType)>&)
+@fn QtRestClient::GenericRestReplyBase::onFailed(QObject*, std::function<void(int, ErrorClassType)>)
+@param scope A scope to limit the callback to
+@copydetails GenericRestReplyBase::onFailed(std::function<void(int, ErrorClassType)>)
 */
 
 /*!
-@fn QtRestClient::GenericRestReply::onSerializeException
+@fn QtRestClient::GenericRestReplyBase::onSerializeException
 
 @param handler The function to be called on an exception
 @returns A reference to this reply
 
 The handlers arguments are:
-- The exception thrown by the QJsonSerializer (QJsonSerializerException)
+- The exception thrown by the QJsonSerializer (QtJsonSerializer::Exception)
 
-@sa GenericRestReply::onAllErrors
+@sa GenericRestReplyBase::onAllErrors
 */
 
 /*!
-@fn QtRestClient::GenericRestReply::onAllErrors(const std::function<void(QString, int, ErrorType)>&, const std::function<QString(ErrorClassType, int)>&)
+@fn QtRestClient::GenericRestReplyBase::onAllErrors(const std::function<void(QString, int, Error)>&, std::function<QString(ErrorClassType, int)>)
 
 @param handler The function to be called on any error
 @param failureTransformer A function to be called to extract an error string from the failure data
@@ -78,7 +59,7 @@ The handlers arguments are:
   - For json error: QJsonParseError::error
   - For failure error: The HTTP-Status code
   - For serializer error: 0 (unused)
-- The error type (RestReply::ErrorType)
+- The error type (RestReply::Error)
 
 The failureTransformer arguments are
 - The deserialized Content of the reply (ErrorClassType)
@@ -90,7 +71,26 @@ GenericRestReply::onSerializeException, RestReply::onAllErrors
 */
 
 /*!
-@fn QtRestClient::GenericRestReply::onAllErrors(QObject*, const std::function<void(QString, int, ErrorType)>&, const std::function<QString(ErrorClassType, int)>&)
-@param scope (optional) A scope to limit the callback to
-@copydetails GenericRestReply::onAllErrors(const std::function<void(QString, int, ErrorType)>&, const std::function<QString(ErrorClassType, int)>&)
+@fn QtRestClient::GenericRestReplyBase::onAllErrors(QObject*, const std::function<void(QString, int, Error)>&, std::function<QString(ErrorClassType, int)>)
+@param scope A scope to limit the callback to
+@copydetails GenericRestReply::onAllErrors(const std::function<void(QString, int, Error)>&, std::function<QString(ErrorClassType, int)>)
+*/
+
+/*!
+@fn QtRestClient::GenericRestReply::onSucceeded(std::function<void(int, DataClassType)>)
+
+@param handler The function to be called on success
+@returns A reference to this reply
+
+The handlers arguments are:
+- The HTTP-Status code (int)
+- The deserialized Content of the reply (DataClassType)
+
+@sa GenericRestReply::onFailed, RestReply::onSucceeded
+*/
+
+/*!
+@fn QtRestClient::GenericRestReply::onSucceeded(QObject*, std::function<void(int, DataClassType)>)
+@param scope A scope to limit the callback to
+@copydetails GenericRestReply::onSucceeded(std::function<void(int, DataClassType)>)
 */

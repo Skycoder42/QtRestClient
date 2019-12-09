@@ -11,6 +11,28 @@ requests.
 */
 
 /*!
+@property QtRestClient::RestClient::dataMode
+
+@default{`RestClient::DataMode::Json`}
+
+The dataMode controls in which format data that is sent by the classes of this client and
+received by replies must be. Data can either be in JSON or in CBOR format, but cannot be mixed.
+
+@note Changing the dataMode will reset the internally used serializer. If you want to use a
+custom serializer, only set the serializer, not the dataMode, as the mode will be derived from
+the serializer.
+
+@accessors{
+	@readAc{dataMode()}
+	@writeAc{setDataMode()}
+	@writeAc{setSerializer() (indirectly)}
+	@notifyAc{dataModeChanged()}
+}
+
+@sa RestClient::setSerializer, RestClient::DataMode
+*/
+
+/*!
 @property QtRestClient::RestClient::baseUrl
 
 @default{invalid <i>(default constructed)</i>}
@@ -108,6 +130,25 @@ RequestBuilder::setAttributes
 */
 
 /*!
+@property QtRestClient::RestClient::threaded
+
+@default{`false`}
+
+By default, the restclient can only be accessed from the thread it was created in. By setting
+this property to true, it can be accessed globally from any thread.
+
+@warning Please read the "Async" section of the README before using it in a threaded context
+
+@accessors{
+	@readAc{isThreaded()}
+	@writeAc{setThreaded()}
+	@notifyAc{threadedChanged()}
+}
+
+@sa RestClient::asyncPool, RequestBuilder::sendAsync
+*/
+
+/*!
 @property QtRestClient::RestClient::sslConfiguration
 
 @default{QSslConfiguration::defaultConfiguration()}
@@ -123,6 +164,29 @@ existing client.
 }
 
 @sa QSslConfiguration::setDefaultConfiguration, RequestBuilder::setSslConfig
+*/
+
+/*!
+@property QtRestClient::RestClient::asyncPool
+
+@default{`nullptr`}
+
+By setting this property to any valid QThreadPool, all RestReply instances created by any
+RestClass that belongs to this client instance will have the RestReply::async property set to
+`true` and use this threadpool for their execution.
+
+@note This property implies RestClient::threaded and will automatically change it to `true`
+when set to a non nullptr value.
+
+@warning Please read the "Async" section of the README before using it in a threaded context
+
+@accessors{
+	@readAc{asyncPool()}
+	@writeAc{setAsyncPool()}
+	@notifyAc{asyncPoolChanged()}
+}
+
+@sa RestClient::threaded, RestReply::async
 */
 
 /*!

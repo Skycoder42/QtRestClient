@@ -3,6 +3,7 @@
 #include "authrequestbuilder.h"
 #include <QtRestClient/private/restclient_p.h>
 using namespace QtRestClient;
+using namespace QtRestClient::Auth;
 
 AuthRestClient::AuthRestClient(QAbstractOAuth *oAuth, QObject *parent) :
 	  AuthRestClient{DataMode::Json, oAuth, parent}

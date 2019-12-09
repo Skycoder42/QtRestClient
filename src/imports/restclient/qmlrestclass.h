@@ -90,10 +90,11 @@ public:
 	 * @param optHeaders Optional and variable parameter
 	 *
 	 * The method parameters are declared as var to be able to provide advance syntax.
-	 * They are all placeholders for different types and can be used with the following syntax
+	 * They are all placeholders for different types and can be used with the following syntax.
+	 * They can be explicitly skipped by using `undefined` as value.
 	 * (the format is `<name>:<type>[|<type>...]` for every possible param):
 	 * @code
-	 * [body:object|array,] [path:string,] [params:object, [asPost:bool], [headers:object]]
+	 * verb [,path:string] [,body:object|array] [,params:object [,asPost:bool] [,headers:object]]
 	 * @endcode
 	 *
 	 * @sa ::QtRestClient::RestClass::call
@@ -112,10 +113,11 @@ public:
 	 * @param optHeaders Optional and variable parameter
 	 *
 	 * The method parameters are declared as var to be able to provide advance syntax.
-	 * They are all placeholders for different types and can be used with the following syntax
+	 * They are all placeholders for different types and can be used with the following syntax.
+	 * They can be explicitly skipped by using `undefined` as value.
 	 * (the format is `<name>:<type>[|<type>...]` for every possible param):
 	 * @code
-	 * [path:string,] [params:object, [headers:object]]
+	 * [path:string,] [params:object [,headers:object]]
 	 * @endcode
 	 *
 	 * @sa ::QtRestClient::RestClass::get
@@ -131,10 +133,11 @@ public:
 	 * @param optHeaders Optional and variable parameter
 	 *
 	 * The method parameters are declared as var to be able to provide advance syntax.
-	 * They are all placeholders for different types and can be used with the following syntax
+	 * They are all placeholders for different types and can be used with the following syntax.
+	 * They can be explicitly skipped by using `undefined` as value.
 	 * (the format is `<name>:<type>[|<type>...]` for every possible param):
 	 * @code
-	 * [body:object|array,] [path:string,] [params:object, [headers:object]]
+	 * [path:string] [,body:object|array [,params:object [,headers:object]]]
 	 * @endcode
 	 *
 	 * @sa ::QtRestClient::RestClass::post
@@ -151,10 +154,11 @@ public:
 	 * @param optHeaders Optional and variable parameter
 	 *
 	 * The method parameters are declared as var to be able to provide advance syntax.
-	 * They are all placeholders for different types and can be used with the following syntax
+	 * They are all placeholders for different types and can be used with the following syntax.
+	 * They can be explicitly skipped by using `undefined` as value.
 	 * (the format is `<name>:<type>[|<type>...]` for every possible param):
 	 * @code
-	 * [body:object|array,] [path:string,] [params:object, [headers:object]]
+	 * [path:string,] body:object|array [,params:object [,headers:object]]
 	 * @endcode
 	 *
 	 * @sa ::QtRestClient::RestClass::put
@@ -163,7 +167,6 @@ public:
 												QJSValue body = {},
 												QJSValue optParams = {},
 												QJSValue optHeaders = {});
-	// [path,] [params, [headers]]
 	/*! @brief Perform a HTTP-DELETE-Request on this class
 	 *
 	 * @param optPath Optional and variable parameter
@@ -171,10 +174,11 @@ public:
 	 * @param optHeaders Optional and variable parameter
 	 *
 	 * The method parameters are declared as var to be able to provide advance syntax.
-	 * They are all placeholders for different types and can be used with the following syntax
+	 * They are all placeholders for different types and can be used with the following syntax.
+	 * They can be explicitly skipped by using `undefined` as value.
 	 * (the format is `<name>:<type>[|<type>...]` for every possible param):
 	 * @code
-	 * [path:string,] [params:object, [headers:object]]
+	 * [path:string] [,params:object [,headers:object]]
 	 * @endcode
 	 *
 	 * @sa ::QtRestClient::RestClass::deleteResource
@@ -182,19 +186,19 @@ public:
 	Q_INVOKABLE QtRestClient::QmlRestReply *deleteResource(QJSValue optPath = {},
 														   QJSValue optParams = {},
 														   QJSValue optHeaders = {});
-	// body, [path,] [params, [headers]]
 	/*! @brief Perform a HTTP-PATCH-Request on this class
 	 *
+	 * @param optPathOrBody Optional and variable parameter
 	 * @param body The data body of the HTTP-Request, sent as json (can be `object` or `array`)
-	 * @param optPath Optional and variable parameter
 	 * @param optParams Optional and variable parameter
 	 * @param optHeaders Optional and variable parameter
 	 *
 	 * The method parameters are declared as var to be able to provide advance syntax.
-	 * They are all placeholders for different types and can be used with the following syntax
+	 * They are all placeholders for different types and can be used with the following syntax.
+	 * They can be explicitly skipped by using `undefined` as value.
 	 * (the format is `<name>:<type>[|<type>...]` for every possible param):
 	 * @code
-	 * [body:object|array,] [path:string,] [params:object, [headers:object]]
+	 * [path:string,] body:object|array [,params:object [,headers:object]]
 	 * @endcode
 	 *
 	 * @sa ::QtRestClient::RestClass::patch
@@ -203,7 +207,6 @@ public:
 												  QJSValue body = {},
 												  QJSValue optParams = {},
 												  QJSValue optHeaders = {});
-	// [path,] [params, [headers]]
 	/*! @brief Perform a HTTP-HEAD-Request on this class
 	 *
 	 * @param optPath Optional and variable parameter
@@ -211,10 +214,11 @@ public:
 	 * @param optHeaders Optional and variable parameter
 	 *
 	 * The method parameters are declared as var to be able to provide advance syntax.
-	 * They are all placeholders for different types and can be used with the following syntax
+	 * They are all placeholders for different types and can be used with the following syntax.
+	 * They can be explicitly skipped by using `undefined` as value.
 	 * (the format is `<name>:<type>[|<type>...]` for every possible param):
 	 * @code
-	 * [path:string,] [params:object, [headers:object]]
+	 * [path:string] [,params:object [,headers:object]]
 	 * @endcode
 	 *
 	 * @sa ::QtRestClient::RestClass::head

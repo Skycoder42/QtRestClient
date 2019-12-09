@@ -1,8 +1,9 @@
 #include "authrequestbuilder.h"
 #include <QtCore/QPointer>
 using namespace QtRestClient;
+using namespace QtRestClient::Auth;
 
-namespace QtRestClient {
+namespace QtRestClient::Auth {
 
 class AuthExtenderPrivate
 {

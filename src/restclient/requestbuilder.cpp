@@ -199,6 +199,11 @@ RequestBuilder &RequestBuilder::setAccept(const QByteArray &mimeType)
 	return *this;
 }
 
+RequestBuilder &RequestBuilder::setAccept(const QMimeType &mimeType)
+{
+	return setAccept(mimeType.name().toUtf8());
+}
+
 RequestBuilder &RequestBuilder::addPostParameter(const QString &name, const QString &value)
 {
 	d->postQuery.addQueryItem(name, value);

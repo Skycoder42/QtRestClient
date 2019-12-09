@@ -41,21 +41,21 @@ created by a RestClass
 */
 
 /*!
-@fn QtRestClient::Paging::iterate(const std::function<bool(T, int)>&, int, int) const
+@fn QtRestClient::Paging::iterate(const std::function<bool(T, qint64)>&, qint64, qint64) const
 
 @param iterator The iterator to be be called for every element iterated over
 @param to The upper limit of how far the iteration should go (-1 means no limit)
 @param from The lower limit from where the iteration should start
 
-The paging object will iterate over all it's elements, and then automatically call next(),
+The paging object will iterate over all it's elements and then automatically call next(),
 and perform an iteration on the result of that reply as well. This continues until no next
-element is available anymore.
+element is available anymore or the iterator returns `false` to cancel early.
 
 By setting `to`, you can specify a limit. As soon as the iteration reaches the element with an
 index that equals the limit, the iteration is canceled. The element at the `to` index will
-**not** be passed to the iterator
+**not** be passed to the iterator.
 
-By settings `from`, you can specify an offset. The iteration will skip all elements, until the
+By setting `from`, you can specify an offset. The iteration will skip all elements, until the
 index reaches the offset. The element with the `from` index is the **first** to be passed to
 the iterator. Please note, that `from` must not be smaller then Paging::offset. If thats the
 case, this function will assert.
@@ -64,45 +64,45 @@ case, this function will assert.
 
 The iterators parameters are:
 - One element of the deserialized Content of the paging replies (DataClassType)
-- The index of the current element (int)
+- The index of the current element or -1 if not supported (int)
 - _returns:_ `true` if the iteration should continue, `false` to cancel it prematurely
 */
 
 /*!
-@fn QtRestClient::Paging::iterate(QObject *, const std::function<bool(T, int)>&, int, int) const
-@param scope (optional) A scope to limit the callback to
-@copydetails Paging::iterate(const std::function<bool(T, int)>&, int, int) const
+@fn QtRestClient::Paging::iterate(QObject *, const std::function<bool(T, qint64)>&, qint64, qint64) const
+@param scope A scope to limit the callback to
+@copydetails Paging::iterate(const std::function<bool(T, qint64)>&, qint64, qint64) const
 */
 
 /*!
-@fn QtRestClient::Paging::iterate(const std::function<bool(T, int)> &, const std::function<void(QString, int, RestReply::ErrorType)> &, const std::function<QString(EO, int)>&, int, int) const
+@fn QtRestClient::Paging::iterate(const std::function<bool(T, qint64)> &, const std::function<void(QString, int, RestReply::Error)> &, const std::function<QString(EO, int)>&, qint64, qint64) const
 
 @tparam EO The type of the negative result
 @param errorHandler Will be passed to GenericRestReply::onAllErrors for all replies
 @param failureTransformer Will be passed to GenericRestReply::onAllErrors for all replies
 
-@copydetails QtRestClient::Paging::iterate(const std::function<bool(T, int)>&, int, int) const
+@copydetails QtRestClient::Paging::iterate(const std::function<bool(T, qint64)>&, qint64, qint64) const
 */
 
 /*!
-@fn QtRestClient::Paging::iterate(QObject *, const std::function<bool(T, int)> &, const std::function<void(QString, int, RestReply::ErrorType)> &, const std::function<QString(EO, int)>&, int, int) const
-@param scope (optional) A scope to limit the callback to
-@copydetails Paging::iterate(const std::function<bool(T, int)> &, const std::function<void(QString, int, RestReply::ErrorType)> &, const std::function<QString(EO, int)>&, int, int) const
+@fn QtRestClient::Paging::iterate(QObject *, const std::function<bool(T, qint64)> &, const std::function<void(QString, int, RestReply::Error)> &, const std::function<QString(EO, int)>&, qint64, qint64) const
+@param scope A scope to limit the callback to
+@copydetails Paging::iterate(const std::function<bool(T, qint64)> &, const std::function<void(QString, int, RestReply::Error)> &, const std::function<QString(EO, int)>&, qint64, qint64) const
 */
 
 /*!
-@fn QtRestClient::Paging::iterate(const std::function<bool(T, int)>&, const std::function<void(int, EO)>&, const std::function<void(QString, int, RestReply::ErrorType)>&, const std::function<void(QJsonSerializerException &)>&, int, int) const
+@fn QtRestClient::Paging::iterate(const std::function<bool(T, qint64)>&, const std::function<void(int, EO)>&, const std::function<void(QString, int, RestReply::Error)>&, const std::function<void(QtJsonSerializer::Exception &)>&, qint64, qint64) const
 
 @tparam EO The type of the negative result
 @param failureHandler Will be passed to GenericRestReply::onFailed for all replies
 @param errorHandler Will be passed to GenericRestReply::onError for all replies
 @param exceptionHandler Will be passed to GenericRestReply::onSerializeException for all replies
 
-@copydetails QtRestClient::Paging::iterate(const std::function<bool(T, int)>&, int, int) const
+@copydetails QtRestClient::Paging::iterate(const std::function<bool(T, qint64)>&, qint64, qint64) const
 */
 
 /*!
-@fn QtRestClient::Paging::iterate(QObject *, const std::function<bool(T, int)>&, const std::function<void(int, EO)>&, const std::function<void(QString, int, RestReply::ErrorType)>&, const std::function<void(QJsonSerializerException &)>&, int, int) const
-@param scope (optional) A scope to limit the callback to
-@copydetails Paging::iterate(const std::function<bool(T, int)>&, const std::function<void(int, EO)>&, const std::function<void(QString, int, RestReply::ErrorType)>&, const std::function<void(QJsonSerializerException &)>&, int, int) const
+@fn QtRestClient::Paging::iterate(QObject *, const std::function<bool(T, qint64)>&, const std::function<void(int, EO)>&, const std::function<void(QString, int, RestReply::Error)>&, const std::function<void(QtJsonSerializer::Exception &)>&, qint64, qint64) const
+@param scope A scope to limit the callback to
+@copydetails Paging::iterate(const std::function<bool(T, qint64)>&, const std::function<void(int, EO)>&, const std::function<void(QString, int, RestReply::Error)>&, const std::function<void(QtJsonSerializer::Exception &)>&, qint64, qint64) const
 */

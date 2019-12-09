@@ -123,6 +123,7 @@ Module {
         exports: ["de.skycoder42.RestClient/Paging 3.0"]
         isCreatable: false
         exportMetaObjectRevisions: [0]
+        Property { name: "valid"; type: "bool"; isReadonly: true }
         Property { name: "items"; type: "QVariantList"; isReadonly: true }
         Property { name: "total"; type: "int"; isReadonly: true }
         Property { name: "offset"; type: "int"; isReadonly: true }
@@ -167,7 +168,6 @@ Module {
             Parameter { name: "failureHandler"; type: "QJSValue" }
             Parameter { name: "errorHandler"; type: "QJSValue" }
         }
-        Method { name: "isValid"; type: "bool" }
         Method { name: "next"; type: "QtRestClient::RestReply*" }
         Method { name: "previous"; type: "QtRestClient::RestReply*" }
     }

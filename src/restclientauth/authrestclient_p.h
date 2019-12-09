@@ -5,7 +5,7 @@
 
 #include <QtRestClient/private/restclient_p.h>
 
-namespace QtRestClient {
+namespace QtRestClient::Auth {
 
 class AuthRestClientPrivate : public RestClientPrivate
 {

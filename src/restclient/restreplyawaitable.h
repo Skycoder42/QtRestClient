@@ -8,9 +8,10 @@
 #include "QtRestClient/genericrestreply.h"
 #endif
 
-#if !defined(QT_NO_EXCEPTIONS) && QT_CONFIG(future)
+#if defined(DOXYGEN_RUN) || (!defined(QT_NO_EXCEPTIONS) && QT_CONFIG(future))
 #include <QtCore/QException>
 namespace QtRestClient {
+//! The base class for exceptions of the module
 using ExceptionBase = QException;
 }
 #else
@@ -36,15 +37,15 @@ public:
 	//! Returns the additional error data
 	QVariant errorData() const;
 
-	//! Converts the error data to json object and returns it
+	//! Converts the error data to a map and returns it
 	QVariantMap errorObject() const;
-	//! Converts the error data to json array and returns it
+	//! Converts the error data to a list and returns it
 	QVariantList errorArray() const;
 	//! Converts the error data to a string and returns it
 	QString errorString() const;
 	//! Converts the error data to a string using the transformer if neccessary and returns it
 	QString errorString(const std::function<QString(QVariantMap, int)> &failureTransformer) const;
-	//! @copybrief AwaitedException::errorString(const std::function<QString(QJsonObject, int)> &) const
+	//! @copybrief AwaitedException::errorString(const std::function<QString(QVariantMap, int)> &) const
 	QString errorString(const std::function<QString(QVariantList, int)> &failureTransformer) const;
 
 	//! @inherit{QException::what}
@@ -108,7 +109,7 @@ public:
 	//! @copybrief AwaitedException::errorData
 	ErrorClassType genericError() const;
 	using AwaitedException::errorString;
-	//! @copybrief AwaitedException::errorString(const std::function<QString(QJsonObject, int)> &) const
+	//! @copybrief AwaitedException::errorString(const std::function<QString(QVariantMap, int)> &) const
 	QString errorString(const std::function<QString(ErrorClassType, int)> &failureTransformer) const;
 
 	Q_NORETURN void raise() const override;
