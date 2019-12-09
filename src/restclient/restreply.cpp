@@ -233,6 +233,7 @@ QNetworkReply *RestReplyPrivate::compatSend(QNetworkAccessManager *nam, const QN
 	return reply;
 }
 
+#ifdef QT_RESTCLIENT_USE_ASYNC
 void RestReplyPrivate::compatSendAsync(QFutureInterface<QNetworkReply*> futureIf, QNetworkAccessManager *nam, const QNetworkRequest &request, const QByteArray &verb, const QByteArray &body)
 {
 	futureIf.reportStarted();
@@ -249,6 +250,7 @@ void RestReplyPrivate::compatSendAsync(QFutureInterface<QNetworkReply*> futureIf
 		QMetaObject::invokeMethod(helper, "exec");
 	}
 }
+#endif
 
 RestReplyPrivate::RestReplyPrivate()
 {

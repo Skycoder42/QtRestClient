@@ -223,7 +223,7 @@ void RestClient::setDataMode(RestClient::DataMode dataMode)
 	ser->setAllowDefaultNull(true);
 	setSerializer(ser);
 #else
-	QWriteLocker _{d->asyncLock};
+	QWriteLocker _{d->threadLock};
 	if (d->dataMode == dataMode)
 		return;
 
