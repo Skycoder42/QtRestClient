@@ -22,6 +22,7 @@ class Q_RESTCLIENT_EXPORT RestClientPrivate : public QObjectPrivate
 public:
 	using DataMode = RestClient::DataMode;
 
+	static QReadWriteLock globalApiLock;
 	static QHash<QString, RestClient*> globalApis;
 
 	QUrl baseUrl;

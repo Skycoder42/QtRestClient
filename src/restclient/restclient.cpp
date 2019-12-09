@@ -406,6 +406,7 @@ void RestClient::setupNam()
 
 // ------------- Private Implementation -------------
 
+QReadWriteLock RestClientPrivate::globalApiLock;
 QHash<QString, RestClient*> RestClientPrivate::globalApis;
 
 RestClientPrivate::~RestClientPrivate()
@@ -432,6 +433,7 @@ Q_LOGGING_CATEGORY(QtRestClient::logPaging, "qt.restclient.Paging")
 */
 bool QtRestClient::addGlobalApi(const QString &name, RestClient *client)
 {
+	QWriteLocker _{&RestClientPrivate::globalApiLock};
 	if (RestClientPrivate::globalApis.contains(name))
 		return false;
 	else {
@@ -457,6 +459,7 @@ client->setParent(this);
 */
 void QtRestClient::removeGlobalApi(const QString &name, bool deleteClient)
 {
+	QWriteLocker _{&RestClientPrivate::globalApiLock};
 	if (deleteClient) {
 		auto client = RestClientPrivate::globalApis.take(name);
 		if (client)
@@ -473,6 +476,7 @@ void QtRestClient::removeGlobalApi(const QString &name, bool deleteClient)
 */
 RestClient *QtRestClient::apiClient(const QString &name)
 {
+	QReadLocker _{&RestClientPrivate::globalApiLock};
 	return RestClientPrivate::globalApis.value(name, nullptr);
 }
 
@@ -484,6 +488,7 @@ RestClient *QtRestClient::apiClient(const QString &name)
 */
 RestClass *QtRestClient::apiRootClass(const QString &name)
 {
+	QReadLocker _{&RestClientPrivate::globalApiLock};
 	auto client = RestClientPrivate::globalApis.value(name, nullptr);
 	if (client)
 		return client->rootClass();
@@ -501,6 +506,7 @@ RestClass *QtRestClient::apiRootClass(const QString &name)
 */
 RestClass *QtRestClient::createApiClass(const QString &name, const QString &path, QObject *parent)
 {
+	QReadLocker _{&RestClientPrivate::globalApiLock};
 	auto client = RestClientPrivate::globalApis.value(name, nullptr);
 	if (client)
 		return client->createClass(path, parent);
