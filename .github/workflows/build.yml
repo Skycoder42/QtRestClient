@@ -109,7 +109,7 @@ jobs:
       - name: build qthttpserver
         if: steps.cache-qt.outputs.cache-hit != 'true' && !contains(matrix.platform, 'mingw')
         run: |
-          qmake ${{matrix.extra-flags}}
+          qmake
           ${{steps.qt.outputs.make}} qmake_all
           ${{steps.qt.outputs.make}}
           ${{steps.qt.outputs.make}} install
@@ -119,7 +119,7 @@ jobs:
         run: 7z x "src/3rdparty/qthttpserver-${{matrix.platform}}.zip" "-o${{steps.qt.outputs.qtdir}}" -aoa -y
       - name: qmake
         run: |
-          qmake CONFIG+=install_ok QT_PLATFORM=${{matrix.platform}}
+          qmake CONFIG+=install_ok QT_PLATFORM=${{matrix.platform}} ${{matrix.extra-flags}}
           ${{steps.qt.outputs.make}} qmake_all
       - name: make module
         run: |
