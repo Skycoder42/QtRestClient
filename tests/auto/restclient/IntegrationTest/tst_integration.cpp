@@ -16,6 +16,9 @@ private Q_SLOTS:
 	void testQObjectListChain();
 	void testQObjectPagingChain();
 
+	void testAsync();
+	void testAsyncPaging();
+
 private:
 	HttpServer *server;
 	RestClient *client;
@@ -166,6 +169,107 @@ void IntegrationTest::testQObjectPagingChain()
 			QTRY_COMPARE(count, 100);
 		}
 	} catch (std::exception &e) {
+		QFAIL(e.what());
+	}
+
+	pagingClass->deleteLater();
+}
+
+void IntegrationTest::testAsync()
+{
+	client->setThreaded(true);
+	client->setAsyncPool(QThreadPool::globalInstance());
+
+	const auto cThread = QThread::currentThread();
+	auto obj1 = JphPost::create(5, this);
+	auto obj2 = JphPost::create(50, this);
+
+	auto postClass = client->createClass("posts", client);
+
+	try {
+		for (auto mode : {RestClient::DataMode::Cbor, RestClient::DataMode::Json}) {
+			client->setDataMode(mode);
+
+			auto called = false;
+			postClass->get<JphPost*, QString>("5")
+				->onSucceeded([&](int code1, JphPost *data1){
+					auto sg = qScopeGuard([&](){
+						called = true;
+					});
+					QVERIFY(QThread::currentThread() != cThread);
+					QCOMPARE(code1, 200);
+					QVERIFY(JphPost::equals(data1, obj1));
+					data1->deleteLater();
+
+					postClass->get<JphPost*, QString>("50")
+						->onSucceeded([&](int code2, JphPost *data2){
+							called = true;
+							QVERIFY(QThread::currentThread() != cThread);
+							QCOMPARE(code2, 200);
+							QVERIFY(JphPost::equals(data2, obj2));
+							data2->deleteLater();
+						})->onAllErrors([&](const QString &error, int code, RestReply::Error){
+							called = true;
+							QVERIFY(QThread::currentThread() != cThread);
+							QFAIL(qUtf8Printable(error.isEmpty() ? QString::number(code) : error));
+						});
+
+					sg.dismiss();
+				})->onAllErrors([&](const QString &error, int code, RestReply::Error){
+					called = true;
+					QVERIFY(QThread::currentThread() != cThread);
+					QFAIL(qUtf8Printable(error.isEmpty() ? QString::number(code) : error));
+				});
+			QTRY_VERIFY(called);
+		}
+		QVERIFY(client->asyncPool()->waitForDone());
+	} catch (std::exception &e) {
+		client->asyncPool()->clear();
+		client->asyncPool()->waitForDone();
+		QFAIL(e.what());
+	}
+
+	obj1->deleteLater();
+	obj2->deleteLater();
+}
+
+void IntegrationTest::testAsyncPaging()
+{
+	client->setThreaded(true);
+	client->setAsyncPool(QThreadPool::globalInstance());
+
+	const auto cThread = QThread::currentThread();
+	auto pagingClass = client->createClass("pages", client);
+
+	try {
+		for (auto mode : {RestClient::DataMode::Cbor, RestClient::DataMode::Json}) {
+			client->setDataMode(mode);
+
+			auto count = 0;
+			auto reply = pagingClass->get<Paging<JphPost*>, QString>("0");
+			reply->iterate([&](JphPost* data, int index){
+				auto ok = false;
+				[&](){
+					QVERIFY(QThread::currentThread() != cThread);
+					QVERIFY(data);
+					QCOMPARE(index, count);
+					QCOMPARE(data->id, count++);
+					ok = true;
+				}();
+				data->deleteLater();
+				return ok;
+			});
+			reply->onAllErrors([&](const QString &error, int code, RestReply::Error){
+				count = 101;
+				QVERIFY(QThread::currentThread() != cThread);
+				QFAIL(qUtf8Printable(error.isEmpty() ? QString::number(code) : error));
+			});
+			QTRY_COMPARE(count, 100);
+		}
+		QVERIFY(client->asyncPool()->waitForDone());
+	} catch (std::exception &e) {
+		client->asyncPool()->clear();
+		client->asyncPool()->waitForDone();
 		QFAIL(e.what());
 	}
 

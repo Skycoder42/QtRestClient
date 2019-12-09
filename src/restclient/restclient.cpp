@@ -49,7 +49,7 @@ RestClass *RestClient::rootClass() const
 QNetworkAccessManager *RestClient::manager() const
 {
 	Q_D(const RestClient);
-	QReadLocker _{d->asyncLock};
+	QReadLocker _{d->threadLock};
 	return d->nam;
 }
 
@@ -57,7 +57,7 @@ QNetworkAccessManager *RestClient::manager() const
 SerializerBase *RestClient::serializer() const
 {
 	Q_D(const RestClient);
-	QReadLocker _{d->asyncLock};
+	QReadLocker _{d->threadLock};
 	return d->serializer;
 }
 #endif
@@ -65,14 +65,14 @@ SerializerBase *RestClient::serializer() const
 IPagingFactory *RestClient::pagingFactory() const
 {
 	Q_D(const RestClient);
-	QReadLocker _{d->asyncLock};
+	QReadLocker _{d->threadLock};
 	return d->pagingFactory.data();
 }
 
 RestClient::DataMode RestClient::dataMode() const
 {
 	Q_D(const RestClient);
-	QReadLocker _{d->asyncLock};
+	QReadLocker _{d->threadLock};
 #ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
 	return d->serializer && d->serializer->metaObject()->inherits(&CborSerializer::staticMetaObject) ?
 		DataMode::Cbor :
@@ -85,57 +85,66 @@ RestClient::DataMode RestClient::dataMode() const
 QUrl RestClient::baseUrl() const
 {
 	Q_D(const RestClient);
-	QReadLocker _{d->asyncLock};
+	QReadLocker _{d->threadLock};
 	return d->baseUrl;
 }
 
 QVersionNumber RestClient::apiVersion() const
 {
 	Q_D(const RestClient);
-	QReadLocker _{d->asyncLock};
+	QReadLocker _{d->threadLock};
 	return d->apiVersion;
 }
 
 HeaderHash RestClient::globalHeaders() const
 {
 	Q_D(const RestClient);
-	QReadLocker _{d->asyncLock};
+	QReadLocker _{d->threadLock};
 	return d->headers;
 }
 
 QUrlQuery RestClient::globalParameters() const
 {
 	Q_D(const RestClient);
-	QReadLocker _{d->asyncLock};
+	QReadLocker _{d->threadLock};
 	return d->query;
 }
 
 QHash<QNetworkRequest::Attribute, QVariant> RestClient::requestAttributes() const
 {
 	Q_D(const RestClient);
-	QReadLocker _{d->asyncLock};
+	QReadLocker _{d->threadLock};
 	return d->attribs;
 }
 
-bool RestClient::isAsync() const
+bool RestClient::isThreaded() const
 {
 	Q_D(const RestClient);
-	return d->asyncLock;
+	return d->threadLock;
 }
 
 #ifndef QT_NO_SSL
 QSslConfiguration RestClient::sslConfiguration() const
 {
 	Q_D(const RestClient);
-	QReadLocker _{d->asyncLock};
+	QReadLocker _{d->threadLock};
 	return d->sslConfig;
+}
+#endif
+
+#ifdef QT_RESTCLIENT_USE_ASYNC
+QThreadPool *RestClient::asyncPool() const
+{
+	Q_D(const RestClient);
+	QReadLocker _{d->threadLock};
+	return d->asyncPool;
 }
 #endif
 
 RequestBuilder RestClient::builder() const
 {
 	Q_D(const RestClient);
-	QReadLocker _{d->asyncLock};
+	QReadLocker _{d->threadLock};
 	RequestBuilder builder{d->baseUrl, d->nam};
 
 	builder.setVersion(d->apiVersion)
@@ -163,7 +172,7 @@ RequestBuilder RestClient::builder() const
 void RestClient::setManager(QNetworkAccessManager *manager)
 {
 	Q_D(RestClient);
-	QWriteLocker _{d->asyncLock};
+	QWriteLocker _{d->threadLock};
 	d->nam->deleteLater();
 	d->nam = manager;
 	manager->setParent(this);
@@ -173,7 +182,7 @@ void RestClient::setManager(QNetworkAccessManager *manager)
 void RestClient::setSerializer(SerializerBase *serializer)
 {
 	Q_D(RestClient);
-	QWriteLocker _{d->asyncLock};
+	QWriteLocker _{d->threadLock};
 	if (d->serializer == serializer)
 		return;
 
@@ -189,7 +198,7 @@ void RestClient::setSerializer(SerializerBase *serializer)
 void RestClient::setPagingFactory(IPagingFactory *factory)
 {
 	Q_D(RestClient);
-	QWriteLocker _{d->asyncLock};
+	QWriteLocker _{d->threadLock};
 	d->pagingFactory.reset(factory);
 }
 
@@ -226,7 +235,7 @@ void RestClient::setDataMode(RestClient::DataMode dataMode)
 void RestClient::setBaseUrl(QUrl baseUrl)
 {
 	Q_D(RestClient);
-	QWriteLocker _{d->asyncLock};
+	QWriteLocker _{d->threadLock};
 	if (d->baseUrl == baseUrl)
 		return;
 
@@ -237,7 +246,7 @@ void RestClient::setBaseUrl(QUrl baseUrl)
 void RestClient::setApiVersion(QVersionNumber apiVersion)
 {
 	Q_D(RestClient);
-	QWriteLocker _{d->asyncLock};
+	QWriteLocker _{d->threadLock};
 	if (d->apiVersion == apiVersion)
 		return;
 
@@ -248,7 +257,7 @@ void RestClient::setApiVersion(QVersionNumber apiVersion)
 void RestClient::setGlobalHeaders(HeaderHash globalHeaders)
 {
 	Q_D(RestClient);
-	QWriteLocker _{d->asyncLock};
+	QWriteLocker _{d->threadLock};
 	if (d->headers == globalHeaders)
 		return;
 
@@ -259,7 +268,7 @@ void RestClient::setGlobalHeaders(HeaderHash globalHeaders)
 void RestClient::setGlobalParameters(QUrlQuery globalParameters)
 {
 	Q_D(RestClient);
-	QWriteLocker _{d->asyncLock};
+	QWriteLocker _{d->threadLock};
 	if (d->query == globalParameters)
 		return;
 
@@ -270,7 +279,7 @@ void RestClient::setGlobalParameters(QUrlQuery globalParameters)
 void RestClient::setRequestAttributes(QHash<QNetworkRequest::Attribute, QVariant> requestAttributes)
 {
 	Q_D(RestClient);
-	QWriteLocker _{d->asyncLock};
+	QWriteLocker _{d->threadLock};
 	if (d->attribs == requestAttributes)
 		return;
 
@@ -281,33 +290,33 @@ void RestClient::setRequestAttributes(QHash<QNetworkRequest::Attribute, QVariant
 void RestClient::setModernAttributes()
 {
 	Q_D(RestClient);
-	QWriteLocker _{d->asyncLock};
+	QWriteLocker _{d->threadLock};
 	d->attribs.insert(QNetworkRequest::HttpPipeliningAllowedAttribute, true);
 	d->attribs.insert(QNetworkRequest::SpdyAllowedAttribute, true);
 	d->attribs.insert(QNetworkRequest::HTTP2AllowedAttribute, true);
 	Q_EMIT requestAttributesChanged(d->attribs, {});
 }
 
-void RestClient::setAsync(bool async)
+void RestClient::setThreaded(bool threaded)
 {
 	Q_D(RestClient);
-	if (static_cast<bool>(d->asyncLock) == async)
+	if (static_cast<bool>(d->threadLock) == threaded)
 		return;
 
-	if (async)
-		d->asyncLock.storeRelease(new QReadWriteLock{QReadWriteLock::Recursive});
+	if (threaded)
+		d->threadLock.storeRelease(new QReadWriteLock{QReadWriteLock::Recursive});
 	else {
-		auto ptr = d->asyncLock.fetchAndStoreOrdered(nullptr);
+		auto ptr = d->threadLock.fetchAndStoreOrdered(nullptr);
 		delete ptr;
 	}
-	Q_EMIT asyncChanged(d->asyncLock, {});
+	Q_EMIT threadedChanged(d->threadLock, {});
 }
 
 #ifndef QT_NO_SSL
 void RestClient::setSslConfiguration(QSslConfiguration sslConfiguration)
 {
 	Q_D(RestClient);
-	QWriteLocker _{d->asyncLock};
+	QWriteLocker _{d->threadLock};
 	if (d->sslConfig == sslConfiguration)
 		return;
 
@@ -316,10 +325,25 @@ void RestClient::setSslConfiguration(QSslConfiguration sslConfiguration)
 }
 #endif
 
+#ifdef QT_RESTCLIENT_USE_ASYNC
+void RestClient::setAsyncPool(QThreadPool *asyncPool)
+{
+	Q_D(RestClient);
+	QWriteLocker _{d->threadLock};
+	if (d->asyncPool == asyncPool)
+		return;
+
+	d->asyncPool = asyncPool;
+	if (d->asyncPool)
+		setThreaded(true);
+	Q_EMIT asyncPoolChanged(d->asyncPool, {});
+}
+#endif
+
 void RestClient::addGlobalHeader(const QByteArray &name, const QByteArray &value)
 {
 	Q_D(RestClient);
-	QWriteLocker _{d->asyncLock};
+	QWriteLocker _{d->threadLock};
 	d->headers.insert(name, value);
 	Q_EMIT globalHeadersChanged(d->headers, {});
 }
@@ -327,7 +351,7 @@ void RestClient::addGlobalHeader(const QByteArray &name, const QByteArray &value
 void RestClient::removeGlobalHeader(const QByteArray &name)
 {
 	Q_D(RestClient);
-	QWriteLocker _{d->asyncLock};
+	QWriteLocker _{d->threadLock};
 	if(d->headers.remove(name) > 0)
 		Q_EMIT globalHeadersChanged(d->headers, {});
 }
@@ -335,7 +359,7 @@ void RestClient::removeGlobalHeader(const QByteArray &name)
 void RestClient::addGlobalParameter(const QString &name, const QString &value)
 {
 	Q_D(RestClient);
-	QWriteLocker _{d->asyncLock};
+	QWriteLocker _{d->threadLock};
 	d->query.addQueryItem(name, value);
 	Q_EMIT globalParametersChanged(d->query, {});
 }
@@ -343,7 +367,7 @@ void RestClient::addGlobalParameter(const QString &name, const QString &value)
 void RestClient::removeGlobalParameter(const QString &name)
 {
 	Q_D(RestClient);
-	QWriteLocker _{d->asyncLock};
+	QWriteLocker _{d->threadLock};
 	d->query.removeQueryItem(name);
 	Q_EMIT globalParametersChanged(d->query, {});
 }
@@ -351,7 +375,7 @@ void RestClient::removeGlobalParameter(const QString &name)
 void RestClient::addRequestAttribute(QNetworkRequest::Attribute attribute, const QVariant &value)
 {
 	Q_D(RestClient);
-	QWriteLocker _{d->asyncLock};
+	QWriteLocker _{d->threadLock};
 	d->attribs.insert(attribute, value);
 	Q_EMIT requestAttributesChanged(d->attribs, {});
 }
@@ -359,7 +383,7 @@ void RestClient::addRequestAttribute(QNetworkRequest::Attribute attribute, const
 void RestClient::removeRequestAttribute(QNetworkRequest::Attribute attribute)
 {
 	Q_D(RestClient);
-	QWriteLocker _{d->asyncLock};
+	QWriteLocker _{d->threadLock};
 	d->attribs.remove(attribute);
 	Q_EMIT requestAttributesChanged(d->attribs, {});
 }
@@ -386,7 +410,7 @@ QHash<QString, RestClient*> RestClientPrivate::globalApis;
 
 RestClientPrivate::~RestClientPrivate()
 {
-	auto ptr = asyncLock.fetchAndStoreOrdered(nullptr);
+	auto ptr = threadLock.fetchAndStoreOrdered(nullptr);
 	delete ptr;
 }
 

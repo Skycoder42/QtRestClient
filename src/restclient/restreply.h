@@ -51,6 +51,8 @@ public:
 	RestReply(QNetworkReply *networkReply, QObject *parent = nullptr);
 #ifdef QT_RESTCLIENT_USE_ASYNC
 	RestReply(const QFuture<QNetworkReply*> &networkReplyFuture, QObject *parent = nullptr);
+	RestReply(QNetworkReply *networkReply, QThreadPool *asyncPool, QObject *parent = nullptr);
+	RestReply(const QFuture<QNetworkReply*> &networkReplyFuture, QThreadPool *asyncPool, QObject *parent = nullptr);
 #endif
 	~RestReply() override;
 

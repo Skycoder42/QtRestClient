@@ -8,6 +8,9 @@
 #include <QtCore/qurl.h>
 #include <QtCore/qurlquery.h>
 #include <QtCore/qversionnumber.h>
+#ifdef QT_RESTCLIENT_USE_ASYNC
+#include <QtCore/qthreadpool.h>
+#endif
 
 #include <QtNetwork/qnetworkrequest.h>
 
@@ -40,11 +43,15 @@ class Q_RESTCLIENT_EXPORT RestClient : public QObject
 	Q_PROPERTY(QUrlQuery globalParameters READ globalParameters WRITE setGlobalParameters NOTIFY globalParametersChanged)
 	//! A collection of attributes to be set on every request
 	Q_PROPERTY(QHash<QNetworkRequest::Attribute, QVariant> requestAttributes READ requestAttributes WRITE setRequestAttributes NOTIFY requestAttributesChanged)
-	Q_PROPERTY(bool async READ isAsync WRITE setAsync NOTIFY asyncChanged)
+	Q_PROPERTY(bool threaded READ isThreaded WRITE setThreaded NOTIFY threadedChanged)
 
 #ifndef QT_NO_SSL
 	//! The SSL configuration to be used for HTTPS
 	Q_PROPERTY(QSslConfiguration sslConfiguration READ sslConfiguration WRITE setSslConfiguration NOTIFY sslConfigurationChanged)
+#endif
+
+#ifdef QT_RESTCLIENT_USE_ASYNC
+	Q_PROPERTY(QThreadPool* asyncPool READ asyncPool WRITE setAsyncPool NOTIFY asyncPoolChanged)
 #endif
 
 public:
@@ -87,11 +94,15 @@ public:
 	QUrlQuery globalParameters() const;
 	//! @readAcFn{RestClient::requestAttributes}
 	QHash<QNetworkRequest::Attribute, QVariant> requestAttributes() const;
-	//! @readAcFn{RestClient::async}
-	bool isAsync() const;
+	//! @readAcFn{RestClient::threaded}
+	bool isThreaded() const;
 #ifndef QT_NO_SSL
 	//! @readAcFn{RestClient::sslConfiguration}
 	QSslConfiguration sslConfiguration() const;
+#endif
+#ifdef QT_RESTCLIENT_USE_ASYNC
+	//! @readAcFn{RestClient::asyncPool}
+	QThreadPool* asyncPool() const;
 #endif
 
 	//! Creates a request builder with all the settings of this client
@@ -122,11 +133,15 @@ public Q_SLOTS:
 	void setRequestAttributes(QHash<QNetworkRequest::Attribute, QVariant> requestAttributes);
 	//! Sets modern attributes in RestClient::requestAttributes
 	void setModernAttributes();
-	//! @writeAcFn{RestClient::async}
-	void setAsync(bool async);
+	//! @writeAcFn{RestClient::threaded}
+	void setThreaded(bool threaded);
 #ifndef QT_NO_SSL
 	//! @writeAcFn{RestClient::sslConfiguration}
 	void setSslConfiguration(QSslConfiguration sslConfiguration);
+#endif
+#ifdef QT_RESTCLIENT_USE_ASYNC
+	//! @writeAcFn{RestClient::asyncPool}
+	void setAsyncPool(QThreadPool* asyncPool);
 #endif
 
 	//! @writeAcFn{RestClient::globalHeaders}
@@ -157,11 +172,15 @@ Q_SIGNALS:
 	void globalParametersChanged(QUrlQuery globalParameters, QPrivateSignal);
 	//! @notifyAcFn{RestClient::requestAttributes}
 	void requestAttributesChanged(QHash<QNetworkRequest::Attribute, QVariant> requestAttributes, QPrivateSignal);
-	//! @notifyAcFn{RestClient::async}
-	void asyncChanged(bool async, QPrivateSignal);
+	//! @notifyAcFn{RestClient::threaded}
+	void threadedChanged(bool threaded, QPrivateSignal);
 #ifndef QT_NO_SSL
 	//! @notifyAcFn{RestClient::sslConfiguration}
 	void sslConfigurationChanged(QSslConfiguration sslConfiguration, QPrivateSignal);
+#endif
+#ifdef QT_RESTCLIENT_USE_ASYNC
+	//! @notifyAcFn{RestClient::asyncPool}
+	void asyncPoolChanged(QThreadPool* asyncPool, QPrivateSignal);
 #endif
 
 protected:

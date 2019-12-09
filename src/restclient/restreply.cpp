@@ -45,6 +45,20 @@ RestReply::RestReply(const QFuture<QNetworkReply*> &networkReplyFuture, QObject 
 		d->watcher->setFuture(networkReplyFuture);
 	}
 }
+
+RestReply::RestReply(QNetworkReply *networkReply, QThreadPool *asyncPool, QObject *parent) :
+	RestReply{networkReply, parent}
+{
+	if (asyncPool)
+		makeAsync(asyncPool);
+}
+
+RestReply::RestReply(const QFuture<QNetworkReply *> &networkReplyFuture, QThreadPool *asyncPool, QObject *parent) :
+	RestReply{networkReplyFuture, parent}
+{
+	if (asyncPool)
+		makeAsync(asyncPool);
+}
 #endif
 
 RestReply::~RestReply()

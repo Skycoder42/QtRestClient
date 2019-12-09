@@ -5,7 +5,7 @@
 		 autoCreate="true"
 		 except="User*"
 		 dataMode="Cbor"
-		 async="true"
+		 threaded="true"
 		 globalName="localhost">
 	<Include local="true">user.h</Include>
 	<Include local="true">api_posts.h</Include>

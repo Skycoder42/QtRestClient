@@ -480,8 +480,9 @@ Module {
         Property { name: "globalHeaders"; type: "HeaderHash" }
         Property { name: "globalParameters"; type: "QUrlQuery" }
         Property { name: "requestAttributes"; type: "QHash<QNetworkRequest::Attribute,QVariant>" }
-        Property { name: "async"; type: "bool" }
+        Property { name: "threaded"; type: "bool" }
         Property { name: "sslConfiguration"; type: "QSslConfiguration" }
+        Property { name: "asyncPool"; type: "QThreadPool"; isPointer: true }
         Signal {
             name: "dataModeChanged"
             Parameter { name: "dataMode"; type: "DataMode" }
@@ -507,12 +508,16 @@ Module {
             Parameter { name: "requestAttributes"; type: "QHash<QNetworkRequest::Attribute,QVariant>" }
         }
         Signal {
-            name: "asyncChanged"
-            Parameter { name: "async"; type: "bool" }
+            name: "threadedChanged"
+            Parameter { name: "threaded"; type: "bool" }
         }
         Signal {
             name: "sslConfigurationChanged"
             Parameter { name: "sslConfiguration"; type: "QSslConfiguration" }
+        }
+        Signal {
+            name: "asyncPoolChanged"
+            Parameter { name: "asyncPool"; type: "QThreadPool"; isPointer: true }
         }
         Method {
             name: "setManager"
@@ -552,12 +557,16 @@ Module {
         }
         Method { name: "setModernAttributes" }
         Method {
-            name: "setAsync"
-            Parameter { name: "async"; type: "bool" }
+            name: "setThreaded"
+            Parameter { name: "threaded"; type: "bool" }
         }
         Method {
             name: "setSslConfiguration"
             Parameter { name: "sslConfiguration"; type: "QSslConfiguration" }
+        }
+        Method {
+            name: "setAsyncPool"
+            Parameter { name: "asyncPool"; type: "QThreadPool"; isPointer: true }
         }
         Method {
             name: "addGlobalHeader"

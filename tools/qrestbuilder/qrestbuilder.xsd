@@ -239,6 +239,7 @@
 				</xs:sequence>
 				<xs:attribute name="globalName" type="xs:string" use="optional"/>
 				<xs:attribute name="dataMode" type="DataMode" use="optional" default="Json"/>
+				<xs:attribute name="threaded" type="xs:boolean" use="optional" default="false"/>
 				<xs:attribute name="async" type="xs:boolean" use="optional" default="false"/>
 				<xs:attribute name="autoCreate" type="xs:boolean" use="optional" default="true"/>
 			</xs:extension>

@@ -270,16 +270,22 @@ typename GenericRestReplyBase<DataClassType, ErrorClassType>::TInstance *Generic
 	return static_cast<TInstance*>(this);
 }
 
+#ifdef QT_RESTCLIENT_USE_ASYNC
 template <typename DataClassType, typename ErrorClassType>
 GenericRestReplyBase<DataClassType, ErrorClassType>::GenericRestReplyBase(QNetworkReply *networkReply, RestClient *client, QObject *parent) :
-	  RestReply{networkReply, parent},
-	  _client{client}
+	RestReply{networkReply, client->asyncPool(), parent},
+	_client{client}
 {}
 
-#ifdef QT_RESTCLIENT_USE_ASYNC
 template<typename DataClassType, typename ErrorClassType>
 GenericRestReplyBase<DataClassType, ErrorClassType>::GenericRestReplyBase(const QFuture<QNetworkReply*> &networkReplyFuture, RestClient *client, QObject *parent) :
-	RestReply{networkReplyFuture, parent},
+	RestReply{networkReplyFuture, client->asyncPool(), parent},
+	_client{client}
+{}
+#else
+template <typename DataClassType, typename ErrorClassType>
+GenericRestReplyBase<DataClassType, ErrorClassType>::GenericRestReplyBase(QNetworkReply *networkReply, RestClient *client, QObject *parent) :
+	RestReply{networkReply, parent},
 	_client{client}
 {}
 #endif

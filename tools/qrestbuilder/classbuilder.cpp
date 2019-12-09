@@ -40,6 +40,8 @@ void ClassBuilder::build()
 
 	if (!isApi || !apiData.globalName)
 		apiData.autoCreate = false;
+	if (isApi && apiData.async)
+		apiData.threaded = true;
 
 	// cpp code generation
 	if (isApi)
@@ -437,8 +439,10 @@ void ClassBuilder::writeApiCreation()
 		source << "client = new AuthRestClient(" << dataMode << ", " << *apiData.authenticator << ", QCoreApplication::instance());\n";
 	else
 		source << "client = new RestClient(" << dataMode << ", QCoreApplication::instance());\n";
-	source << "\t\tclient->setAsync(" << (apiData.async ? "true" : "false") << ");\n"
-		   << "\t\tclient->setBaseUrl(QUrl{" << writeExpression(apiData.baseUrl, true) << "});\n";
+	source << "\t\tclient->setThreaded(" << (apiData.threaded ? "true" : "false") << ");\n";
+	if (apiData.async)
+		source << "\t\tclient->setAsyncPool(QThreadPool::globalInstance());\n";
+	source << "\t\tclient->setBaseUrl(QUrl{" << writeExpression(apiData.baseUrl, true) << "});\n";
 	if (apiData.baseUrl.apiVersion) {
 		auto vNum = QVersionNumber::fromString(apiData.baseUrl.apiVersion.value());
 		QStringList args;

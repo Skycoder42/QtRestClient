@@ -935,7 +935,7 @@ void RestReplyTest::testThreaded()
 	QFETCH(bool, except);
 
 	try {
-		client->setAsync(true);
+		client->setThreaded(true);
 		for (auto mode : {RestClient::DataMode::Cbor, RestClient::DataMode::Json}) {
 			client->setDataMode(mode);
 
@@ -1000,7 +1000,7 @@ void RestReplyTest::testAsync()
 
 	QThreadPool testPool;
 	try {
-		client->setAsync(true);
+		client->setThreaded(true);
 		for (auto mode : {RestClient::DataMode::Cbor, RestClient::DataMode::Json}) {
 			client->setDataMode(mode);
 			QNetworkRequest request(url);
@@ -1051,7 +1051,7 @@ void RestReplyTest::testAsyncSend()
 	auto obj2 = JphPost::create(2, this);
 	QThreadPool testPool;
 	try {
-		client->setAsync(true);
+		client->setThreaded(true);
 		client->setDataMode(RestClient::DataMode::Cbor);
 		QNetworkRequest request1(server->url("/posts/1"));
 		Testlib::setAccept(request1, client);

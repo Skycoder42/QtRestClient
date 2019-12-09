@@ -41,63 +41,108 @@ RestClass *RestClass::subClass(const QString &path, QObject *parent) const
 RestReply *RestClass::callRaw(const QByteArray &verb, const QString &methodPath, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody) const
 {
 	return std::visit([&](const auto &reply) {
-			return new RestReply{reply, nullptr};
+#ifdef QT_RESTCLIENT_USE_ASYNC
+		Q_D(const RestClass);
+		return new RestReply{reply, d->client->asyncPool(), nullptr};
+#else
+		return new RestReply{reply, nullptr};
+#endif
 	}, create(verb, methodPath, parameters, headers, paramsAsBody));
 }
 
 RestReply *RestClass::callRaw(const QByteArray &verb, const QString &methodPath, const QCborValue &body, const QVariantHash &parameters, const HeaderHash &headers) const
 {
 	return std::visit([&](const auto &reply) {
+#ifdef QT_RESTCLIENT_USE_ASYNC
+		Q_D(const RestClass);
+		return new RestReply{reply, d->client->asyncPool(), nullptr};
+#else
 		return new RestReply{reply, nullptr};
+#endif
 	}, create(verb, methodPath, body, parameters, headers));
 }
 
 RestReply *RestClass::callRaw(const QByteArray &verb, const QString &methodPath, const QJsonValue &body, const QVariantHash &parameters, const HeaderHash &headers) const
 {
 	return std::visit([&](const auto &reply) {
+#ifdef QT_RESTCLIENT_USE_ASYNC
+		Q_D(const RestClass);
+		return new RestReply{reply, d->client->asyncPool(), nullptr};
+#else
 		return new RestReply{reply, nullptr};
+#endif
 	}, create(verb, methodPath, body, parameters, headers));
 }
 
 RestReply *RestClass::callRaw(const QByteArray &verb, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody) const
 {
 	return std::visit([&](const auto &reply) {
+#ifdef QT_RESTCLIENT_USE_ASYNC
+		Q_D(const RestClass);
+		return new RestReply{reply, d->client->asyncPool(), nullptr};
+#else
 		return new RestReply{reply, nullptr};
+#endif
 	}, create(verb, parameters, headers, paramsAsBody));
 }
 
 RestReply *RestClass::callRaw(const QByteArray &verb, const QCborValue &body, const QVariantHash &parameters, const HeaderHash &headers) const
 {
 	return std::visit([&](const auto &reply) {
+#ifdef QT_RESTCLIENT_USE_ASYNC
+		Q_D(const RestClass);
+		return new RestReply{reply, d->client->asyncPool(), nullptr};
+#else
 		return new RestReply{reply, nullptr};
+#endif
 	}, create(verb, body, parameters, headers));
 }
 
 RestReply *RestClass::callRaw(const QByteArray &verb, const QJsonValue &body, const QVariantHash &parameters, const HeaderHash &headers) const
 {
 	return std::visit([&](const auto &reply) {
+#ifdef QT_RESTCLIENT_USE_ASYNC
+		Q_D(const RestClass);
+		return new RestReply{reply, d->client->asyncPool(), nullptr};
+#else
 		return new RestReply{reply, nullptr};
+#endif
 	}, create(verb, body, parameters, headers));
 }
 
 RestReply *RestClass::callRaw(const QByteArray &verb, const QUrl &relativeUrl, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody) const
 {
 	return std::visit([&](const auto &reply) {
+#ifdef QT_RESTCLIENT_USE_ASYNC
+		Q_D(const RestClass);
+		return new RestReply{reply, d->client->asyncPool(), nullptr};
+#else
 		return new RestReply{reply, nullptr};
+#endif
 	}, create(verb, relativeUrl, parameters, headers, paramsAsBody));
 }
 
 RestReply *RestClass::callRaw(const QByteArray &verb, const QUrl &relativeUrl, const QCborValue &body, const QVariantHash &parameters, const HeaderHash &headers) const
 {
 	return std::visit([&](const auto &reply) {
+#ifdef QT_RESTCLIENT_USE_ASYNC
+		Q_D(const RestClass);
+		return new RestReply{reply, d->client->asyncPool(), nullptr};
+#else
 		return new RestReply{reply, nullptr};
+#endif
 	}, create(verb, relativeUrl, body, parameters, headers));
 }
 
 RestReply *RestClass::callRaw(const QByteArray &verb, const QUrl &relativeUrl, const QJsonValue &body, const QVariantHash &parameters, const HeaderHash &headers) const
 {
 	return std::visit([&](const auto &reply) {
+#ifdef QT_RESTCLIENT_USE_ASYNC
+		Q_D(const RestClass);
+		return new RestReply{reply, d->client->asyncPool(), nullptr};
+#else
 		return new RestReply{reply, nullptr};
+#endif
 	}, create(verb, relativeUrl, body, parameters, headers));
 }
 
@@ -117,7 +162,7 @@ RestClass::CreateResult RestClass::create(const QByteArray &verb, const QString 
 		.addHeaders(headers)
 		.setVerb(verb);
 #ifdef QT_RESTCLIENT_USE_ASYNC
-	if (client()->isAsync())
+	if (client()->isThreaded())
 		return cBuilder.sendAsync();
 	else
 #endif
@@ -133,7 +178,7 @@ RestClass::CreateResult RestClass::create(const QByteArray &verb, const QString 
 		.setBody(body, false)
 		.setVerb(verb);
 #ifdef QT_RESTCLIENT_USE_ASYNC
-	if (client()->isAsync())
+	if (client()->isThreaded())
 		return cBuilder.sendAsync();
 	else
 #endif
@@ -149,7 +194,7 @@ RestClass::CreateResult RestClass::create(const QByteArray &verb, const QString 
 		.setBody(body, false)
 		.setVerb(verb);
 #ifdef QT_RESTCLIENT_USE_ASYNC
-	if (client()->isAsync())
+	if (client()->isThreaded())
 		return cBuilder.sendAsync();
 	else
 #endif
@@ -164,7 +209,7 @@ RestClass::CreateResult RestClass::create(const QByteArray &verb, const QVariant
 		.addHeaders(headers)
 		.setVerb(verb);
 #ifdef QT_RESTCLIENT_USE_ASYNC
-	if (client()->isAsync())
+	if (client()->isThreaded())
 		return cBuilder.sendAsync();
 	else
 #endif
@@ -179,7 +224,7 @@ RestClass::CreateResult RestClass::create(const QByteArray &verb, const QCborVal
 		.setBody(body, false)
 		.setVerb(verb);
 #ifdef QT_RESTCLIENT_USE_ASYNC
-	if (client()->isAsync())
+	if (client()->isThreaded())
 		return cBuilder.sendAsync();
 	else
 #endif
@@ -194,7 +239,7 @@ RestClass::CreateResult RestClass::create(const QByteArray &verb, const QJsonVal
 		.setBody(body, false)
 		.setVerb(verb);
 #ifdef QT_RESTCLIENT_USE_ASYNC
-	if (client()->isAsync())
+	if (client()->isThreaded())
 		return cBuilder.sendAsync();
 	else
 #endif
@@ -210,7 +255,7 @@ RestClass::CreateResult RestClass::create(const QByteArray &verb, const QUrl &re
 		.addHeaders(headers)
 		.setVerb(verb);
 #ifdef QT_RESTCLIENT_USE_ASYNC
-	if (client()->isAsync())
+	if (client()->isThreaded())
 		return cBuilder.sendAsync();
 	else
 #endif
@@ -226,7 +271,7 @@ RestClass::CreateResult RestClass::create(const QByteArray &verb, const QUrl &re
 		.setBody(body, false)
 		.setVerb(verb);
 #ifdef QT_RESTCLIENT_USE_ASYNC
-	if (client()->isAsync())
+	if (client()->isThreaded())
 		return cBuilder.sendAsync();
 	else
 #endif
@@ -242,7 +287,7 @@ RestClass::CreateResult RestClass::create(const QByteArray &verb, const QUrl &re
 		.setBody(body, false)
 		.setVerb(verb);
 #ifdef QT_RESTCLIENT_USE_ASYNC
-	if (client()->isAsync())
+	if (client()->isThreaded())
 		return cBuilder.sendAsync();
 	else
 #endif

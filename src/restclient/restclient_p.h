@@ -29,9 +29,12 @@ public:
 	HeaderHash headers;
 	QUrlQuery query;
 	QHash<QNetworkRequest::Attribute, QVariant> attribs;
-	QAtomicPointer<QReadWriteLock> asyncLock {nullptr};
+	QAtomicPointer<QReadWriteLock> threadLock {nullptr};
 #ifndef QT_NO_SSL
 	QSslConfiguration sslConfig = QSslConfiguration::defaultConfiguration();
+#endif
+#ifdef QT_RESTCLIENT_USE_ASYNC
+	QPointer<QThreadPool> asyncPool;
 #endif
 
 	QNetworkAccessManager *nam = nullptr;
