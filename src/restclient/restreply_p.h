@@ -24,7 +24,9 @@ public:
 	QPointer<QNetworkReply> networkReply;
 	bool autoDelete = true;
 	bool allowEmptyReplies = false;
+#ifdef QT_RESTCLIENT_USE_ASYNC
 	QThreadPool *asyncPool = nullptr;
+#endif
 	std::chrono::milliseconds retryDelay {-1};
 
 	RestReplyPrivate();

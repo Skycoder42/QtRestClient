@@ -7,7 +7,10 @@
 #include <functional>
 #include <chrono>
 
+#if QT_CONFIG(thread)
 #include <QtCore/QThreadPool>
+#define QT_RESTCLIENT_USE_ASYNC
+#endif
 
 #include <QtNetwork/qnetworkreply.h>
 
@@ -25,7 +28,9 @@ class Q_RESTCLIENT_EXPORT RestReply : public QObject
 	Q_PROPERTY(bool autoDelete READ autoDelete WRITE setAutoDelete NOTIFY autoDeleteChanged)
 	//! Speciefies, whether empty rest replies are allowed
 	Q_PROPERTY(bool allowEmptyReplies READ allowsEmptyReplies WRITE setAllowEmptyReplies NOTIFY allowEmptyRepliesChanged)
+#ifdef QT_RESTCLIENT_USE_ASYNC
 	Q_PROPERTY(bool async READ isAsync WRITE setAsync NOTIFY asyncChanged)
+#endif
 
 public:
 	using DataType = __private::__binder::DataType;
@@ -87,7 +92,9 @@ public:
 						   const std::function<void(QString, int, Error)> &handler,
 						   TFn &&failureTransformer);
 
+#ifdef QT_RESTCLIENT_USE_ASYNC
 	Q_INVOKABLE RestReply *makeAsync(QThreadPool *threadPool = QThreadPool::globalInstance());
+#endif
 	//! @writeAcFn{RestReply::autoDelete}
 	Q_INVOKABLE inline RestReply *disableAutoDelete() {
 		setAutoDelete(false);
@@ -98,8 +105,10 @@ public:
 	bool autoDelete() const;
 	//! @readAcFn{RestReply::allowEmptyReplies}
 	bool allowsEmptyReplies() const;
+#ifdef QT_RESTCLIENT_USE_ASYNC
 	//! @readAcFn{RestReply::async}
 	bool isAsync() const;
+#endif
 
 	//! Returns the network reply associated with the rest reply
 	Q_INVOKABLE QNetworkReply *networkReply() const;
@@ -119,8 +128,10 @@ public Q_SLOTS:
 	void setAutoDelete(bool autoDelete);
 	//! @writeAcFn{RestReply::allowEmptyReplies}
 	void setAllowEmptyReplies(bool allowEmptyReplies);
+#ifdef QT_RESTCLIENT_USE_ASYNC
 	//! @writeAcFn{RestReply::async}
 	void setAsync(bool async);
+#endif
 
 Q_SIGNALS:
 	//! Is emitted when the request completed, i.e. succeeded or failed
@@ -148,8 +159,10 @@ Q_SIGNALS:
 	void autoDeleteChanged(bool autoDelete, QPrivateSignal);
 	//! @notifyAcFn{RestReply::allowEmptyReplies}
 	void allowEmptyRepliesChanged(bool allowEmptyReplies, QPrivateSignal);
+#ifdef QT_RESTCLIENT_USE_ASYNC
 	//! @notifyAcFn{RestReply::async}
 	void asyncChanged(bool async, QPrivateSignal);
+#endif
 
 protected:
 	//! @private

@@ -56,6 +56,7 @@ RestReply *RestReply::onAllErrors(QObject *scope, const std::function<void (QStr
 	return this;
 }
 
+#ifdef QT_RESTCLIENT_USE_ASYNC
 RestReply *RestReply::makeAsync(QThreadPool *threadPool)
 {
 	Q_D(RestReply);
@@ -63,6 +64,7 @@ RestReply *RestReply::makeAsync(QThreadPool *threadPool)
 	Q_EMIT asyncChanged(d->asyncPool, {});
 	return this;
 }
+#endif
 
 bool RestReply::autoDelete() const
 {
@@ -76,11 +78,13 @@ bool RestReply::allowsEmptyReplies() const
 	return d->allowEmptyReplies;
 }
 
+#ifdef QT_RESTCLIENT_USE_ASYNC
 bool RestReply::isAsync() const
 {
 	Q_D(const RestReply);
 	return d->asyncPool;
 }
+#endif
 
 QNetworkReply *RestReply::networkReply() const
 {
@@ -131,6 +135,7 @@ void RestReply::setAllowEmptyReplies(bool allowEmptyReplies)
 	Q_EMIT allowEmptyRepliesChanged(d->allowEmptyReplies, {});
 }
 
+#ifdef QT_RESTCLIENT_USE_ASYNC
 void RestReply::setAsync(bool async)
 {
 	Q_D(RestReply);
@@ -142,15 +147,27 @@ void RestReply::setAsync(bool async)
 	else
 		makeAsync(nullptr);
 }
+#endif
 
 RestReply::RestReply(RestReplyPrivate &dd, QObject *parent) :
 	QObject{dd, parent}
-{}
+{
+	connect(this, &RestReply::succeeded,
+			this, &RestReply::completed,
+			Qt::DirectConnection);
+	connect(this, &RestReply::failed,
+			this, &RestReply::completed,
+			Qt::DirectConnection);
+}
 
 Qt::ConnectionType RestReply::callbackType() const
 {
+#ifdef QT_RESTCLIENT_USE_ASYNC
 	Q_D(const RestReply);
 	return d->asyncPool ? Qt::DirectConnection : Qt::AutoConnection;
+#else
+	return Qt::AutoConnection;
+#endif
 }
 
 // ------------- Private Implementation -------------
@@ -192,21 +209,15 @@ void RestReplyPrivate::connectReply()
 					 q, &RestReply::downloadProgress);
 	QObject::connect(networkReply, &QNetworkReply::uploadProgress,
 					 q, &RestReply::uploadProgress);
-
-	// forward for completed signal
-	QObject::connect(q, &RestReply::succeeded,
-					 q, &RestReply::completed,
-					 Qt::DirectConnection);
-	QObject::connect(q, &RestReply::failed,
-					 q, &RestReply::completed,
-					 Qt::DirectConnection);
 }
 
 void RestReplyPrivate::_q_replyFinished()
 {
+#ifdef QT_RESTCLIENT_USE_ASYNC
 	if (asyncPool)
 		asyncPool->start(this);
 	else
+#endif
 		run();
 }
 
