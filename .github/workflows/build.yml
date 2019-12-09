@@ -66,6 +66,7 @@ jobs:
             repository: windows_x86
           - platform: mingw73_32
             os: windows-latest
+            extra-flags: CONFIG+=no_coroutine_tests
             repository: windows_x86
           - platform: clang_64
             os: macos-latest
@@ -108,7 +109,7 @@ jobs:
       - name: build qthttpserver
         if: steps.cache-qt.outputs.cache-hit != 'true' && !contains(matrix.platform, 'mingw')
         run: |
-          qmake
+          qmake ${{matrix.extra-flags}}
           ${{steps.qt.outputs.make}} qmake_all
           ${{steps.qt.outputs.make}}
           ${{steps.qt.outputs.make}} install

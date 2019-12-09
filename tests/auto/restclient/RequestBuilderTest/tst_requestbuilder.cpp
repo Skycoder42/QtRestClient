@@ -1,4 +1,5 @@
 #include "testlib.h"
+using namespace QtRestClient;
 
 class RequestBuilderTest : public QObject
 {
@@ -17,6 +18,7 @@ private Q_SLOTS:
 	void testSending_data();
 	void testSending();
 	void setPostParamsSending();
+	void testAsyncSending();
 
 private:
 	HttpServer *server;
@@ -45,7 +47,7 @@ void RequestBuilderTest::testBuilding_data()
 	QTest::addColumn<QString>("user");
 	QTest::addColumn<QString>("pass");
 	QTest::addColumn<QVersionNumber>("version");
-	QTest::addColumn<QtRestClient::HeaderHash>("headers");
+	QTest::addColumn<HeaderHash>("headers");
 	QTest::addColumn<QUrlQuery>("params");
 	QTest::addColumn<QString>("fragment");
 	QTest::addColumn<QString>("path");
@@ -59,7 +61,7 @@ void RequestBuilderTest::testBuilding_data()
 						  << QString()
 						  << QString()
 						  << QVersionNumber()
-						  << QtRestClient::HeaderHash()
+						  << HeaderHash()
 						  << QUrlQuery()
 						  << QString()
 						  << QString()
@@ -73,7 +75,7 @@ void RequestBuilderTest::testBuilding_data()
 								 << "user"
 								 << "password"
 								 << QVersionNumber()
-								 << QtRestClient::HeaderHash()
+								 << HeaderHash()
 								 << QUrlQuery()
 								 << QString()
 								 << QString()
@@ -87,7 +89,7 @@ void RequestBuilderTest::testBuilding_data()
 							 << QString()
 							 << QString()
 							 << QVersionNumber(4,2,0)
-							 << QtRestClient::HeaderHash()
+							 << HeaderHash()
 							 << QUrlQuery()
 							 << QString()
 							 << QString()
@@ -101,7 +103,7 @@ void RequestBuilderTest::testBuilding_data()
 							<< QString()
 							<< QString()
 							<< QVersionNumber()
-							<< QtRestClient::HeaderHash({{"Bearer", "Secret"}})
+							<< HeaderHash({{"Bearer", "Secret"}})
 							<< QUrlQuery()
 							<< QString()
 							<< QString()
@@ -118,7 +120,7 @@ void RequestBuilderTest::testBuilding_data()
 								<< QString()
 								<< QString()
 								<< QVersionNumber()
-								<< QtRestClient::HeaderHash()
+								<< HeaderHash()
 								<< query
 								<< QString()
 								<< QString()
@@ -132,7 +134,7 @@ void RequestBuilderTest::testBuilding_data()
 							  << QString()
 							  << QString()
 							  << QVersionNumber()
-							  << QtRestClient::HeaderHash()
+							  << HeaderHash()
 							  << QUrlQuery()
 							  << QStringLiteral("example")
 							  << QString()
@@ -146,7 +148,7 @@ void RequestBuilderTest::testBuilding_data()
 						  << QString()
 						  << QString()
 						  << QVersionNumber()
-						  << QtRestClient::HeaderHash()
+						  << HeaderHash()
 						  << QUrlQuery()
 						  << QString()
 						  << QStringLiteral("/examples/exampleStuff/")
@@ -160,7 +162,7 @@ void RequestBuilderTest::testBuilding_data()
 						   << QString()
 						   << QString()
 						   << QVersionNumber()
-						   << QtRestClient::HeaderHash()
+						   << HeaderHash()
 						   << QUrlQuery()
 						   << QString()
 						   << QString()
@@ -174,7 +176,7 @@ void RequestBuilderTest::testBuilding_data()
 							   << QString()
 							   << QString()
 							   << QVersionNumber()
-							   << QtRestClient::HeaderHash()
+							   << HeaderHash()
 							   << QUrlQuery()
 							   << QString()
 							   << QString()
@@ -191,7 +193,7 @@ void RequestBuilderTest::testBuilding_data()
 							   << QString()
 							   << QString()
 							   << QVersionNumber()
-							   << QtRestClient::HeaderHash()
+							   << HeaderHash()
 							   << QUrlQuery()
 							   << QString()
 							   << QString()
@@ -205,7 +207,7 @@ void RequestBuilderTest::testBuilding_data()
 						  << "user"
 						  << "password"
 						  << QVersionNumber(4,2,0)
-						  << QtRestClient::HeaderHash({{"Bearer", "Secret"}})
+						  << HeaderHash({{"Bearer", "Secret"}})
 						  << query
 						  << QStringLiteral("example")
 						  << QStringLiteral("/examples/exampleStuff")
@@ -232,7 +234,7 @@ void RequestBuilderTest::testBuilding()
 	QFETCH(QSslConfiguration, sslConfig);
 	QFETCH(QUrl, resultUrl);
 
-	auto builder = QtRestClient::RequestBuilder(base)
+	auto builder = RequestBuilder(base)
 				   .setCredentials(user, pass)
 				   .setVersion(version)
 				   .addPath(path)
@@ -338,7 +340,7 @@ void RequestBuilderTest::testBuildingRelative()
 	QFETCH(bool, keepFragment);
 	QFETCH(QUrl, resultUrl);
 
-	auto builder = QtRestClient::RequestBuilder(url);
+	RequestBuilder builder(url);
 	builder.updateFromRelativeUrl(relative, mergeQuery, keepFragment);
 	QCOMPARE(builder.buildUrl(), resultUrl);
 }
@@ -409,7 +411,7 @@ void RequestBuilderTest::testSending()
 	QFETCH(QNetworkReply::NetworkError, error);
 	QFETCH(BodyType, object);
 
-	QtRestClient::RequestBuilder builder(url, nam);
+	RequestBuilder builder(url, nam);
 	builder.setAttribute(QNetworkRequest::HTTP2AllowedAttribute, false);
 	if (!verb.isEmpty())
 		builder.setVerb(verb);
@@ -444,7 +446,7 @@ void RequestBuilderTest::setPostParamsSending()
 		{QStringLiteral("password"), QStringLiteral("super secret")}
 	};
 
-	auto builder = QtRestClient::RequestBuilder(server->url("/posts"), nam);
+	RequestBuilder builder(server->url("/posts"), nam);
 	builder.setAttribute(QNetworkRequest::HTTP2AllowedAttribute, false);
 
 	builder.setVerb("POST");
@@ -464,6 +466,74 @@ void RequestBuilderTest::setPostParamsSending()
 	QCOMPARE(repData, repJson);
 
 	reply->deleteLater();
+}
+
+class TestThread : public QThread
+{
+public:
+	TestThread() {
+		setTerminationEnabled(true);
+	}
+
+	QUrl url;
+	QNetworkAccessManager *nam;
+	QJsonObject result;
+
+protected:
+	void run() override {
+		RequestBuilder builder{url, nam};
+		builder.setAttribute(QNetworkRequest::HTTP2AllowedAttribute, false);
+
+		builder.setVerb("POST");
+		builder.addPostParameter(QStringLiteral("username"), QStringLiteral("user"));
+		builder.addPostParameter(QStringLiteral("password"), QStringLiteral("super secret"));
+
+		QFutureWatcher<QNetworkReply*> watcher;
+		connect(&watcher, &QFutureWatcherBase::finished, [&](){
+			auto sg = qScopeGuard([this](){
+				exit(EXIT_FAILURE);
+			});
+			auto reply = watcher.result();
+			QSignalSpy replySpy(reply, &QNetworkReply::finished);
+
+			QCOMPARE(QThread::currentThread(), this);
+
+			QVERIFY(replySpy.wait());
+			QCOMPARE(reply->error(), QNetworkReply::NoError);
+			QCOMPARE(reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt(), 200);
+
+			QJsonParseError e;
+			auto repData = QJsonDocument::fromJson(reply->readAll(), &e).object();
+			QCOMPARE(e.error, QJsonParseError::NoError);
+			QCOMPARE(repData, result);
+
+			reply->deleteLater();
+			sg.dismiss();
+			quit();
+		});
+		watcher.setFuture(builder.sendAsync());
+		QCOMPARE(exec(), EXIT_SUCCESS);
+	}
+};
+
+void RequestBuilderTest::testAsyncSending()
+{
+	TestThread testThread;
+	testThread.url = server->url("/posts");
+	testThread.nam = nam;
+	testThread.result = QJsonObject {
+		{QStringLiteral("id"), 101},
+		{QStringLiteral("username"), QStringLiteral("user")},
+		{QStringLiteral("password"), QStringLiteral("super secret")}
+	};
+
+	testThread.start();
+	auto sg = qScopeGuard([&](){
+		testThread.terminate();
+		QVERIFY(testThread.wait(1000));
+	});
+	QTRY_VERIFY(testThread.isFinished());
+	sg.dismiss();
 }
 
 QTEST_MAIN(RequestBuilderTest)
