@@ -40,47 +40,65 @@ RestClass *RestClass::subClass(const QString &path, QObject *parent) const
 
 RestReply *RestClass::callRaw(const QByteArray &verb, const QString &methodPath, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody) const
 {
-	return new RestReply{create(verb, methodPath, parameters, headers, paramsAsBody), nullptr};
+	return std::visit([&](const auto &reply) {
+			return new RestReply{reply, nullptr};
+	}, create(verb, methodPath, parameters, headers, paramsAsBody));
 }
 
 RestReply *RestClass::callRaw(const QByteArray &verb, const QString &methodPath, const QCborValue &body, const QVariantHash &parameters, const HeaderHash &headers) const
 {
-	return new RestReply{create(verb, methodPath, body, parameters, headers), nullptr};
+	return std::visit([&](const auto &reply) {
+		return new RestReply{reply, nullptr};
+	}, create(verb, methodPath, body, parameters, headers));
 }
 
 RestReply *RestClass::callRaw(const QByteArray &verb, const QString &methodPath, const QJsonValue &body, const QVariantHash &parameters, const HeaderHash &headers) const
 {
-	return new RestReply{create(verb, methodPath, body, parameters, headers), nullptr};
+	return std::visit([&](const auto &reply) {
+		return new RestReply{reply, nullptr};
+	}, create(verb, methodPath, body, parameters, headers));
 }
 
 RestReply *RestClass::callRaw(const QByteArray &verb, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody) const
 {
-	return new RestReply{create(verb, parameters, headers, paramsAsBody), nullptr};
+	return std::visit([&](const auto &reply) {
+		return new RestReply{reply, nullptr};
+	}, create(verb, parameters, headers, paramsAsBody));
 }
 
 RestReply *RestClass::callRaw(const QByteArray &verb, const QCborValue &body, const QVariantHash &parameters, const HeaderHash &headers) const
 {
-	return new RestReply{create(verb, body, parameters, headers), nullptr};
+	return std::visit([&](const auto &reply) {
+		return new RestReply{reply, nullptr};
+	}, create(verb, body, parameters, headers));
 }
 
 RestReply *RestClass::callRaw(const QByteArray &verb, const QJsonValue &body, const QVariantHash &parameters, const HeaderHash &headers) const
 {
-	return new RestReply{create(verb, body, parameters, headers), nullptr};
+	return std::visit([&](const auto &reply) {
+		return new RestReply{reply, nullptr};
+	}, create(verb, body, parameters, headers));
 }
 
 RestReply *RestClass::callRaw(const QByteArray &verb, const QUrl &relativeUrl, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody) const
 {
-	return new RestReply{create(verb, relativeUrl, parameters, headers, paramsAsBody), nullptr};
+	return std::visit([&](const auto &reply) {
+		return new RestReply{reply, nullptr};
+	}, create(verb, relativeUrl, parameters, headers, paramsAsBody));
 }
 
 RestReply *RestClass::callRaw(const QByteArray &verb, const QUrl &relativeUrl, const QCborValue &body, const QVariantHash &parameters, const HeaderHash &headers) const
 {
-	return new RestReply{create(verb, relativeUrl, body, parameters, headers), nullptr};
+	return std::visit([&](const auto &reply) {
+		return new RestReply{reply, nullptr};
+	}, create(verb, relativeUrl, body, parameters, headers));
 }
 
 RestReply *RestClass::callRaw(const QByteArray &verb, const QUrl &relativeUrl, const QJsonValue &body, const QVariantHash &parameters, const HeaderHash &headers) const
 {
-	return new RestReply{create(verb, relativeUrl, body, parameters, headers), nullptr};
+	return std::visit([&](const auto &reply) {
+		return new RestReply{reply, nullptr};
+	}, create(verb, relativeUrl, body, parameters, headers));
 }
 
 RequestBuilder RestClass::builder() const
@@ -90,100 +108,145 @@ RequestBuilder RestClass::builder() const
 			.addPath(d->subPath);
 }
 
-QNetworkReply *RestClass::create(const QByteArray &verb, const QString &methodPath, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody) const
+RestClass::CreateResult RestClass::create(const QByteArray &verb, const QString &methodPath, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody) const
 {
-	return (paramsAsBody ?
+	auto cBuilder = (paramsAsBody ?
 				builder().addPostParameters(RestClassPrivate::hashToQuery(parameters)) :
 				builder().addParameters(RestClassPrivate::hashToQuery(parameters)))
 		.addPath(methodPath)
 		.addHeaders(headers)
-		.setVerb(verb)
-		.send();
+		.setVerb(verb);
+#ifdef QT_RESTCLIENT_USE_ASYNC
+	if (client()->isAsync())
+		return cBuilder.sendAsync();
+	else
+#endif
+		return cBuilder.send();
 }
 
-QNetworkReply *RestClass::create(const QByteArray &verb, const QString &methodPath, const QCborValue &body, const QVariantHash &parameters, const HeaderHash &headers) const
+RestClass::CreateResult RestClass::create(const QByteArray &verb, const QString &methodPath, const QCborValue &body, const QVariantHash &parameters, const HeaderHash &headers) const
 {
-	return builder()
+	auto cBuilder = builder()
 		.addPath(methodPath)
 		.addParameters(RestClassPrivate::hashToQuery(parameters))
 		.addHeaders(headers)
 		.setBody(body, false)
-		.setVerb(verb)
-		.send();
+		.setVerb(verb);
+#ifdef QT_RESTCLIENT_USE_ASYNC
+	if (client()->isAsync())
+		return cBuilder.sendAsync();
+	else
+#endif
+		return cBuilder.send();
 }
 
-QNetworkReply *RestClass::create(const QByteArray &verb, const QString &methodPath, const QJsonValue &body, const QVariantHash &parameters, const HeaderHash &headers) const
+RestClass::CreateResult RestClass::create(const QByteArray &verb, const QString &methodPath, const QJsonValue &body, const QVariantHash &parameters, const HeaderHash &headers) const
 {
-	return builder()
+	auto cBuilder = builder()
 		.addPath(methodPath)
 		.addParameters(RestClassPrivate::hashToQuery(parameters))
 		.addHeaders(headers)
 		.setBody(body, false)
-		.setVerb(verb)
-		.send();
+		.setVerb(verb);
+#ifdef QT_RESTCLIENT_USE_ASYNC
+	if (client()->isAsync())
+		return cBuilder.sendAsync();
+	else
+#endif
+		return cBuilder.send();
 }
 
-QNetworkReply *RestClass::create(const QByteArray &verb, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody) const
+RestClass::CreateResult RestClass::create(const QByteArray &verb, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody) const
 {
-	return (paramsAsBody ?
+	auto cBuilder = (paramsAsBody ?
 				builder().addPostParameters(RestClassPrivate::hashToQuery(parameters)) :
 				builder().addParameters(RestClassPrivate::hashToQuery(parameters)))
 		.addHeaders(headers)
-		.setVerb(verb)
-		.send();
+		.setVerb(verb);
+#ifdef QT_RESTCLIENT_USE_ASYNC
+	if (client()->isAsync())
+		return cBuilder.sendAsync();
+	else
+#endif
+		return cBuilder.send();
 }
 
-QNetworkReply *RestClass::create(const QByteArray &verb, const QCborValue &body, const QVariantHash &parameters, const HeaderHash &headers) const
+RestClass::CreateResult RestClass::create(const QByteArray &verb, const QCborValue &body, const QVariantHash &parameters, const HeaderHash &headers) const
 {
-	return builder()
+	auto cBuilder = builder()
 		.addParameters(RestClassPrivate::hashToQuery(parameters))
 		.addHeaders(headers)
 		.setBody(body, false)
-		.setVerb(verb)
-		.send();
+		.setVerb(verb);
+#ifdef QT_RESTCLIENT_USE_ASYNC
+	if (client()->isAsync())
+		return cBuilder.sendAsync();
+	else
+#endif
+		return cBuilder.send();
 }
 
-QNetworkReply *RestClass::create(const QByteArray &verb, const QJsonValue &body, const QVariantHash &parameters, const HeaderHash &headers) const
+RestClass::CreateResult RestClass::create(const QByteArray &verb, const QJsonValue &body, const QVariantHash &parameters, const HeaderHash &headers) const
 {
-	return builder()
+	auto cBuilder = builder()
 		.addParameters(RestClassPrivate::hashToQuery(parameters))
 		.addHeaders(headers)
 		.setBody(body, false)
-		.setVerb(verb)
-		.send();
+		.setVerb(verb);
+#ifdef QT_RESTCLIENT_USE_ASYNC
+	if (client()->isAsync())
+		return cBuilder.sendAsync();
+	else
+#endif
+		return cBuilder.send();
 }
 
-QNetworkReply *RestClass::create(const QByteArray &verb, const QUrl &relativeUrl, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody) const
+RestClass::CreateResult RestClass::create(const QByteArray &verb, const QUrl &relativeUrl, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody) const
 {
-	return (paramsAsBody ?
+	auto cBuilder = (paramsAsBody ?
 				builder().addPostParameters(RestClassPrivate::hashToQuery(parameters)) :
 				builder().addParameters(RestClassPrivate::hashToQuery(parameters)))
 		.updateFromRelativeUrl(relativeUrl, true)
 		.addHeaders(headers)
-		.setVerb(verb)
-		.send();
+		.setVerb(verb);
+#ifdef QT_RESTCLIENT_USE_ASYNC
+	if (client()->isAsync())
+		return cBuilder.sendAsync();
+	else
+#endif
+		return cBuilder.send();
 }
 
-QNetworkReply *RestClass::create(const QByteArray &verb, const QUrl &relativeUrl, const QCborValue &body, const QVariantHash &parameters, const HeaderHash &headers) const
+RestClass::CreateResult RestClass::create(const QByteArray &verb, const QUrl &relativeUrl, const QCborValue &body, const QVariantHash &parameters, const HeaderHash &headers) const
 {
-	return builder()
+	auto cBuilder = builder()
 		.updateFromRelativeUrl(relativeUrl, true)
 		.addParameters(RestClassPrivate::hashToQuery(parameters))
 		.addHeaders(headers)
 		.setBody(body, false)
-		.setVerb(verb)
-		.send();
+		.setVerb(verb);
+#ifdef QT_RESTCLIENT_USE_ASYNC
+	if (client()->isAsync())
+		return cBuilder.sendAsync();
+	else
+#endif
+		return cBuilder.send();
 }
 
-QNetworkReply *RestClass::create(const QByteArray &verb, const QUrl &relativeUrl, const QJsonValue &body, const QVariantHash &parameters, const HeaderHash &headers) const
+RestClass::CreateResult RestClass::create(const QByteArray &verb, const QUrl &relativeUrl, const QJsonValue &body, const QVariantHash &parameters, const HeaderHash &headers) const
 {
-	return builder()
+	auto cBuilder = builder()
 		.updateFromRelativeUrl(relativeUrl, true)
 		.addParameters(RestClassPrivate::hashToQuery(parameters))
 		.addHeaders(headers)
 		.setBody(body, false)
-		.setVerb(verb)
-		.send();
+		.setVerb(verb);
+#ifdef QT_RESTCLIENT_USE_ASYNC
+	if (client()->isAsync())
+		return cBuilder.sendAsync();
+	else
+#endif
+		return cBuilder.send();
 }
 
 // ------------- Private Implementation -------------

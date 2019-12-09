@@ -18,6 +18,10 @@
 #  define Q_RESTCLIENT_EXPORT
 #endif
 
+#if QT_CONFIG(thread) && QT_CONFIG(future)
+#define QT_RESTCLIENT_USE_ASYNC
+#endif
+
 //! The Namespace containing all classes of the QtRestClient module
 namespace QtRestClient {
 

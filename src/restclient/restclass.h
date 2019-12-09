@@ -208,15 +208,21 @@ protected:
 private:
 	Q_DECLARE_PRIVATE(RestClass)
 
-	QNetworkReply *create(const QByteArray &verb, const QString &methodPath, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody) const;
-	QNetworkReply *create(const QByteArray &verb, const QString &methodPath, const QCborValue &body, const QVariantHash &parameters, const HeaderHash &headers) const;
-	QNetworkReply *create(const QByteArray &verb, const QString &methodPath, const QJsonValue &body, const QVariantHash &parameters, const HeaderHash &headers) const;
-	QNetworkReply *create(const QByteArray &verb, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody) const;
-	QNetworkReply *create(const QByteArray &verb, const QCborValue &body, const QVariantHash &parameters, const HeaderHash &headers) const;
-	QNetworkReply *create(const QByteArray &verb, const QJsonValue &body, const QVariantHash &parameters, const HeaderHash &headers) const;
-	QNetworkReply *create(const QByteArray &verb, const QUrl &relativeUrl, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody) const;
-	QNetworkReply *create(const QByteArray &verb, const QUrl &relativeUrl, const QCborValue &body, const QVariantHash &parameters, const HeaderHash &headers) const;
-	QNetworkReply *create(const QByteArray &verb, const QUrl &relativeUrl, const QJsonValue &body, const QVariantHash &parameters, const HeaderHash &headers) const;
+#ifdef QT_RESTCLIENT_USE_ASYNC
+	using CreateResult = std::variant<QNetworkReply*, QFuture<QNetworkReply*>>;
+#else
+	using CreateResult = std::variant<QNetworkReply*>;
+#endif
+
+	CreateResult create(const QByteArray &verb, const QString &methodPath, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody) const;
+	CreateResult create(const QByteArray &verb, const QString &methodPath, const QCborValue &body, const QVariantHash &parameters, const HeaderHash &headers) const;
+	CreateResult create(const QByteArray &verb, const QString &methodPath, const QJsonValue &body, const QVariantHash &parameters, const HeaderHash &headers) const;
+	CreateResult create(const QByteArray &verb, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody) const;
+	CreateResult create(const QByteArray &verb, const QCborValue &body, const QVariantHash &parameters, const HeaderHash &headers) const;
+	CreateResult create(const QByteArray &verb, const QJsonValue &body, const QVariantHash &parameters, const HeaderHash &headers) const;
+	CreateResult create(const QByteArray &verb, const QUrl &relativeUrl, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody) const;
+	CreateResult create(const QByteArray &verb, const QUrl &relativeUrl, const QCborValue &body, const QVariantHash &parameters, const HeaderHash &headers) const;
+	CreateResult create(const QByteArray &verb, const QUrl &relativeUrl, const QJsonValue &body, const QVariantHash &parameters, const HeaderHash &headers) const;
 };
 
 //! Short macro for RestClass::concatParams(), to make the call shorter
@@ -228,76 +234,54 @@ private:
 template<typename DT, typename ET>
 GenericRestReply<DT, ET> *RestClass::call(const QByteArray &verb, const QString &methodPath, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody) const
 {
-	return new GenericRestReply<DT, ET>(create(verb,
-											   methodPath,
-											   parameters,
-											   headers,
-											   paramsAsBody),
-										client(),
-										nullptr);
+	return std::visit([&](const auto &reply) {
+		return new GenericRestReply<DT, ET>{reply, client(), nullptr};
+	}, create(verb, methodPath, parameters, headers, paramsAsBody));
 }
 
 template<typename DT, typename ET, typename RO>
 GenericRestReply<DT, ET> *RestClass::call(const QByteArray &verb, const QString &methodPath, const RO &body, const QVariantHash &parameters, const HeaderHash &headers) const
 {
 	return std::visit([&](auto bodyData) {
-		return new GenericRestReply<DT, ET>(create(verb,
-												   methodPath,
-												   bodyData,
-												   parameters,
-												   headers),
-											client(),
-											nullptr);
+		return std::visit([&](const auto &reply) {
+			return new GenericRestReply<DT, ET>{reply, client(), nullptr};
+		}, create(verb, methodPath, bodyData, parameters, headers));
 	}, client()->serializer()->serializeGeneric(QtJsonSerializer::__private::variant_helper<RO>::toVariant(body)));
 }
 
 template<typename DT, typename ET>
 GenericRestReply<DT, ET> *RestClass::call(const QByteArray &verb, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody) const
 {
-	return new GenericRestReply<DT, ET>(create(verb,
-											   parameters,
-											   headers,
-											   paramsAsBody),
-										client(),
-										nullptr);
+	return std::visit([&](const auto &reply) {
+		return new GenericRestReply<DT, ET>{reply, client(), nullptr};
+	}, create(verb, parameters, headers, paramsAsBody));
 }
 
 template<typename DT, typename ET, typename RO>
 GenericRestReply<DT, ET> *RestClass::call(const QByteArray &verb, const RO &body, const QVariantHash &parameters, const HeaderHash &headers) const
 {
 	return std::visit([&](auto bodyData) {
-		return new GenericRestReply<DT, ET>(create(verb,
-												   bodyData,
-												   parameters,
-												   headers),
-											client(),
-											nullptr);
+		return std::visit([&](const auto &reply) {
+			return new GenericRestReply<DT, ET>{reply, client(), nullptr};
+		}, create(verb, bodyData, parameters, headers));
 	}, client()->serializer()->serializeGeneric(QtJsonSerializer::__private::variant_helper<RO>::toVariant(body)));
 }
 
 template<typename DT, typename ET>
 GenericRestReply<DT, ET> *RestClass::call(const QByteArray &verb, const QUrl &relativeUrl, const QVariantHash &parameters, const HeaderHash &headers, bool paramsAsBody) const
 {
-	return new GenericRestReply<DT, ET>(create(verb,
-											   relativeUrl,
-											   parameters,
-											   headers,
-											   paramsAsBody),
-										client(),
-										nullptr);
+	return std::visit([&](const auto &reply) {
+		return new GenericRestReply<DT, ET>{reply, client(), nullptr};
+	}, create(verb, relativeUrl, parameters, headers, paramsAsBody));
 }
 
 template<typename DT, typename ET, typename RO>
 GenericRestReply<DT, ET> *RestClass::call(const QByteArray &verb, const QUrl &relativeUrl, const RO &body, const QVariantHash &parameters, const HeaderHash &headers) const
 {
 	return std::visit([&](auto bodyData) {
-		return new GenericRestReply<DT, ET>(create(verb,
-												   relativeUrl,
-												   bodyData,
-												   parameters,
-												   headers),
-											client(),
-											nullptr);
+		return std::visit([&](const auto &reply) {
+			return new GenericRestReply<DT, ET>{reply, client(), nullptr};
+		}, create(verb, relativeUrl, bodyData, parameters, headers));
 	}, client()->serializer()->serializeGeneric(QtJsonSerializer::__private::variant_helper<RO>::toVariant(body)));
 }
 #endif

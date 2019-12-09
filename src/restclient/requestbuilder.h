@@ -9,6 +9,9 @@
 #include <QtCore/qurlquery.h>
 #include <QtCore/qversionnumber.h>
 #include <QtCore/qshareddata.h>
+#ifdef QT_RESTCLIENT_USE_ASYNC
+#include <QtCore/qfuture.h>
+#endif
 
 #include <QtNetwork/qnetworkrequest.h>
 #include <QtNetwork/qnetworkreply.h>
@@ -102,6 +105,9 @@ public:
 	QNetworkRequest build() const;
 	//! reates a network request and sends it with the builder settings
 	QNetworkReply *send() const;
+#ifdef QT_RESTCLIENT_USE_ASYNC
+	QFuture<QNetworkReply*> sendAsync() const;
+#endif
 
 private:
 	QSharedDataPointer<RequestBuilderPrivate> d;

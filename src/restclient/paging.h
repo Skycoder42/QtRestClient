@@ -3,6 +3,7 @@
 
 #include "QtRestClient/paging_fwd.h"
 #include "QtRestClient/genericrestreply.h"
+#include "QtRestClient/restclass.h"
 
 #include <QtCore/qsharedpointer.h>
 #include <QtCore/qpointer.h>
@@ -93,15 +94,9 @@ template<typename T>
 template<typename EO>
 GenericRestReply<Paging<T>, EO> *Paging<T>::next() const
 {
-	if (d->iPaging->hasNext()) {
-		return new GenericRestReply<Paging<T>, EO>{
-			d->client->builder()
-				.updateFromRelativeUrl(d->iPaging->next(), true)
-				.send(),
-			d->client,
-			d->client
-		};
-	} else
+	if (d->iPaging->hasNext())
+		return d->client->rootClass()->template get<Paging<T>, EO>(d->iPaging->next());
+	else
 		return nullptr;
 }
 
@@ -121,15 +116,9 @@ template<typename T>
 template<typename EO>
 GenericRestReply<Paging<T>, EO> *Paging<T>::previous() const
 {
-	if (d->iPaging->hasPrevious()) {
-		return new GenericRestReply<Paging<T>, EO>{
-			d->client->builder()
-				.updateFromRelativeUrl(d->iPaging->previous(), true)
-				.send(),
-			d->client,
-			d->client
-		};
-	} else
+	if (d->iPaging->hasPrevious())
+		return d->client->rootClass()->template get<Paging<T>, EO>(d->iPaging->previous());
+	else
 		return nullptr;
 }
 

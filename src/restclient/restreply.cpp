@@ -22,6 +22,31 @@ RestReply::RestReply(QNetworkReply *networkReply, QObject *parent) :
 	d->connectReply();
 }
 
+#ifdef QT_RESTCLIENT_USE_ASYNC
+RestReply::RestReply(const QFuture<QNetworkReply*> &networkReplyFuture, QObject *parent) :
+	  RestReply{*new RestReplyPrivate{}, parent}
+{
+	Q_D(RestReply);
+	if (networkReplyFuture.isFinished()) {
+		d->networkReply = networkReplyFuture.result();
+		d->connectReply();
+	} else {
+		d->watcher = new QFutureWatcher<QNetworkReply*>{this};
+		connect(d->watcher, &QFutureWatcherBase::finished,
+				this, [this](){
+					Q_D(RestReply);
+					d->networkReply = d->watcher->result();
+					if (d->watcher->isCanceled())
+						d->networkReply->abort();
+					d->watcher->deleteLater();
+					d->watcher = nullptr;
+					d->connectReply();
+				}, Qt::DirectConnection);
+		d->watcher->setFuture(networkReplyFuture);
+	}
+}
+#endif
+
 RestReply::~RestReply()
 {
 	Q_D(RestReply);
@@ -61,6 +86,8 @@ RestReply *RestReply::makeAsync(QThreadPool *threadPool)
 {
 	Q_D(RestReply);
 	d->asyncPool = threadPool;
+	if (d->asyncPool)
+		moveToThread(d->asyncPool->thread());
 	Q_EMIT asyncChanged(d->asyncPool, {});
 	return this;
 }
@@ -100,7 +127,12 @@ RestReplyAwaitable RestReply::awaitable()
 void RestReply::abort()
 {
 	Q_D(RestReply);
-	d->networkReply->abort();
+	if (d->networkReply)
+		d->networkReply->abort();
+#ifdef QT_RESTCLIENT_USE_ASYNC
+	else if (d->watcher)
+		d->watcher->cancel();
+#endif
 }
 
 void RestReply::retry()
@@ -187,6 +219,23 @@ QNetworkReply *RestReplyPrivate::compatSend(QNetworkAccessManager *nam, const QN
 	return reply;
 }
 
+void RestReplyPrivate::compatSendAsync(QFutureInterface<QNetworkReply*> futureIf, QNetworkAccessManager *nam, const QNetworkRequest &request, const QByteArray &verb, const QByteArray &body)
+{
+	futureIf.reportStarted();
+	if (QThread::currentThread() == nam->thread()) {
+		auto rep = compatSend(nam, request, verb, body);
+		futureIf.reportFinished(&rep);
+	} else {
+		auto helper = new AsyncHelper{[xfif = std::move(futureIf), nam, request, verb, body]() {
+			auto fif = xfif;
+			auto rep = compatSend(nam, request, verb, body);
+			fif.reportFinished(&rep);
+		}};
+		helper->moveToThread(nam->thread());
+		QMetaObject::invokeMethod(helper, "exec");
+	}
+}
+
 RestReplyPrivate::RestReplyPrivate()
 {
 	setAutoDelete(false);
@@ -245,6 +294,7 @@ void RestReplyPrivate::_q_handleSslErrors(const QList<QSslError> &errors)
 	if (ignore)
 		networkReply->ignoreSslErrors(errors);
 }
+#endif
 
 void RestReplyPrivate::run()
 {
@@ -350,6 +400,17 @@ void RestReplyPrivate::run()
 	} else if (autoDelete)
 		QMetaObject::invokeMethod(q, "deleteLater");
 }
-#endif
+
+
+
+AsyncHelper::AsyncHelper(std::function<void ()> &&fn) :
+	_fn{std::move(fn)}
+{}
+
+void AsyncHelper::exec()
+{
+	_fn();
+	deleteLater();
+}
 
 #include "moc_restreply.cpp"

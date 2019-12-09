@@ -272,6 +272,22 @@ QNetworkReply *RequestBuilder::send() const
 	return RestReplyPrivate::compatSend(d->nam, request, verb, body);
 }
 
+#ifdef QT_RESTCLIENT_USE_ASYNC
+QFuture<QNetworkReply*> RequestBuilder::sendAsync() const
+{
+	QNetworkRequest request{buildUrl()};
+	auto verb = d->verb;
+	QByteArray body;
+	d->prepareRequest(request, &body);
+	if (d->extender)
+		d->extender->extendRequest(request, verb, &body);
+
+	QFutureInterface<QNetworkReply*> futureIf;
+	RestReplyPrivate::compatSendAsync(futureIf, d->nam, request, verb, body);
+	return futureIf.future();
+}
+#endif
+
 // ------------- Private Implementation -------------
 
 const QByteArray RequestBuilderPrivate::ContentType = "Content-Type";

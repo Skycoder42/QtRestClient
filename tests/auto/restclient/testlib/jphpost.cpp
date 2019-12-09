@@ -47,14 +47,25 @@ bool JphPost::equals(const QObject *other) const
 	}
 }
 
+JphPost *JphPost::create(int index, QObject *parent)
+{
+	return new JphPost{
+		index,
+		qCeil(index/2.0),
+		QStringLiteral("Title%1").arg(index),
+		QStringLiteral("Body%1").arg(index),
+		parent
+	};
+}
+
 JphPost *JphPost::createDefault(QObject *parent)
 {
-	return new JphPost{1, 1, QStringLiteral("Title1"), QStringLiteral("Body1"), parent};
+	return create(1, parent);
 }
 
 JphPost *JphPost::createFirst(QObject *parent)
 {
-	return new JphPost{0, 0, QStringLiteral("Title0"), QStringLiteral("Body0"), parent};
+	return create(0, parent);
 }
 
 

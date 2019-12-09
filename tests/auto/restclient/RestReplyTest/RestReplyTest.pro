@@ -1,6 +1,6 @@
 TEMPLATE = app
 
-QT += testlib
+QT += testlib restclient-private
 QT -= gui
 CONFIG += console
 CONFIG -= app_bundle

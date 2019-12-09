@@ -22,6 +22,7 @@ public:
 	template<typename T>
 	static bool listEquals(const QList<T*> &left, const QList<T*> &right);
 
+	static JphPost *create(int index, QObject *parent);
 	static JphPost *createDefault(QObject *parent);
 	static JphPost *createFirst(QObject *parent);
 

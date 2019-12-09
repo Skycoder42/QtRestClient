@@ -7,9 +7,9 @@
 #include <functional>
 #include <chrono>
 
-#if QT_CONFIG(thread)
+#ifdef QT_RESTCLIENT_USE_ASYNC
 #include <QtCore/QThreadPool>
-#define QT_RESTCLIENT_USE_ASYNC
+#include <QtCore/QFuture>
 #endif
 
 #include <QtNetwork/qnetworkreply.h>
@@ -49,6 +49,9 @@ public:
 
 	//! Creates a new reply based on a network reply
 	RestReply(QNetworkReply *networkReply, QObject *parent = nullptr);
+#ifdef QT_RESTCLIENT_USE_ASYNC
+	RestReply(const QFuture<QNetworkReply*> &networkReplyFuture, QObject *parent = nullptr);
+#endif
 	~RestReply() override;
 
 	// TODO add allowed signatures to doc

@@ -49,6 +49,7 @@ RestClass *RestClient::rootClass() const
 QNetworkAccessManager *RestClient::manager() const
 {
 	Q_D(const RestClient);
+	QReadLocker _{d->asyncLock};
 	return d->nam;
 }
 
@@ -56,6 +57,7 @@ QNetworkAccessManager *RestClient::manager() const
 SerializerBase *RestClient::serializer() const
 {
 	Q_D(const RestClient);
+	QReadLocker _{d->asyncLock};
 	return d->serializer;
 }
 #endif
@@ -63,12 +65,14 @@ SerializerBase *RestClient::serializer() const
 IPagingFactory *RestClient::pagingFactory() const
 {
 	Q_D(const RestClient);
+	QReadLocker _{d->asyncLock};
 	return d->pagingFactory.data();
 }
 
 RestClient::DataMode RestClient::dataMode() const
 {
 	Q_D(const RestClient);
+	QReadLocker _{d->asyncLock};
 #ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
 	return d->serializer && d->serializer->metaObject()->inherits(&CborSerializer::staticMetaObject) ?
 		DataMode::Cbor :
@@ -81,37 +85,49 @@ RestClient::DataMode RestClient::dataMode() const
 QUrl RestClient::baseUrl() const
 {
 	Q_D(const RestClient);
+	QReadLocker _{d->asyncLock};
 	return d->baseUrl;
 }
 
 QVersionNumber RestClient::apiVersion() const
 {
 	Q_D(const RestClient);
+	QReadLocker _{d->asyncLock};
 	return d->apiVersion;
 }
 
 HeaderHash RestClient::globalHeaders() const
 {
 	Q_D(const RestClient);
+	QReadLocker _{d->asyncLock};
 	return d->headers;
 }
 
 QUrlQuery RestClient::globalParameters() const
 {
 	Q_D(const RestClient);
+	QReadLocker _{d->asyncLock};
 	return d->query;
 }
 
 QHash<QNetworkRequest::Attribute, QVariant> RestClient::requestAttributes() const
 {
 	Q_D(const RestClient);
+	QReadLocker _{d->asyncLock};
 	return d->attribs;
+}
+
+bool RestClient::isAsync() const
+{
+	Q_D(const RestClient);
+	return d->asyncLock;
 }
 
 #ifndef QT_NO_SSL
 QSslConfiguration RestClient::sslConfiguration() const
 {
 	Q_D(const RestClient);
+	QReadLocker _{d->asyncLock};
 	return d->sslConfig;
 }
 #endif
@@ -119,6 +135,7 @@ QSslConfiguration RestClient::sslConfiguration() const
 RequestBuilder RestClient::builder() const
 {
 	Q_D(const RestClient);
+	QReadLocker _{d->asyncLock};
 	RequestBuilder builder{d->baseUrl, d->nam};
 
 	builder.setVersion(d->apiVersion)
@@ -146,6 +163,7 @@ RequestBuilder RestClient::builder() const
 void RestClient::setManager(QNetworkAccessManager *manager)
 {
 	Q_D(RestClient);
+	QWriteLocker _{d->asyncLock};
 	d->nam->deleteLater();
 	d->nam = manager;
 	manager->setParent(this);
@@ -155,6 +173,7 @@ void RestClient::setManager(QNetworkAccessManager *manager)
 void RestClient::setSerializer(SerializerBase *serializer)
 {
 	Q_D(RestClient);
+	QWriteLocker _{d->asyncLock};
 	if (d->serializer == serializer)
 		return;
 
@@ -162,6 +181,7 @@ void RestClient::setSerializer(SerializerBase *serializer)
 		d->serializer->deleteLater();
 	d->serializer = serializer;
 	serializer->setParent(this);
+	_.unlock();
 	Q_EMIT dataModeChanged(dataMode(), {});
 }
 #endif
@@ -169,13 +189,14 @@ void RestClient::setSerializer(SerializerBase *serializer)
 void RestClient::setPagingFactory(IPagingFactory *factory)
 {
 	Q_D(RestClient);
+	QWriteLocker _{d->asyncLock};
 	d->pagingFactory.reset(factory);
 }
 
 void RestClient::setDataMode(RestClient::DataMode dataMode)
 {
-#ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
 	Q_D(RestClient);
+#ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
 	if (this->dataMode() == dataMode && d->serializer)
 		return;
 
@@ -193,7 +214,7 @@ void RestClient::setDataMode(RestClient::DataMode dataMode)
 	ser->setAllowDefaultNull(true);
 	setSerializer(ser);
 #else
-	Q_D(RestClient);
+	QWriteLocker _{d->asyncLock};
 	if (d->dataMode == dataMode)
 		return;
 
@@ -205,6 +226,7 @@ void RestClient::setDataMode(RestClient::DataMode dataMode)
 void RestClient::setBaseUrl(QUrl baseUrl)
 {
 	Q_D(RestClient);
+	QWriteLocker _{d->asyncLock};
 	if (d->baseUrl == baseUrl)
 		return;
 
@@ -215,6 +237,7 @@ void RestClient::setBaseUrl(QUrl baseUrl)
 void RestClient::setApiVersion(QVersionNumber apiVersion)
 {
 	Q_D(RestClient);
+	QWriteLocker _{d->asyncLock};
 	if (d->apiVersion == apiVersion)
 		return;
 
@@ -225,6 +248,7 @@ void RestClient::setApiVersion(QVersionNumber apiVersion)
 void RestClient::setGlobalHeaders(HeaderHash globalHeaders)
 {
 	Q_D(RestClient);
+	QWriteLocker _{d->asyncLock};
 	if (d->headers == globalHeaders)
 		return;
 
@@ -235,6 +259,7 @@ void RestClient::setGlobalHeaders(HeaderHash globalHeaders)
 void RestClient::setGlobalParameters(QUrlQuery globalParameters)
 {
 	Q_D(RestClient);
+	QWriteLocker _{d->asyncLock};
 	if (d->query == globalParameters)
 		return;
 
@@ -245,6 +270,7 @@ void RestClient::setGlobalParameters(QUrlQuery globalParameters)
 void RestClient::setRequestAttributes(QHash<QNetworkRequest::Attribute, QVariant> requestAttributes)
 {
 	Q_D(RestClient);
+	QWriteLocker _{d->asyncLock};
 	if (d->attribs == requestAttributes)
 		return;
 
@@ -255,16 +281,33 @@ void RestClient::setRequestAttributes(QHash<QNetworkRequest::Attribute, QVariant
 void RestClient::setModernAttributes()
 {
 	Q_D(RestClient);
+	QWriteLocker _{d->asyncLock};
 	d->attribs.insert(QNetworkRequest::HttpPipeliningAllowedAttribute, true);
 	d->attribs.insert(QNetworkRequest::SpdyAllowedAttribute, true);
 	d->attribs.insert(QNetworkRequest::HTTP2AllowedAttribute, true);
 	Q_EMIT requestAttributesChanged(d->attribs, {});
 }
 
+void RestClient::setAsync(bool async)
+{
+	Q_D(RestClient);
+	if (static_cast<bool>(d->asyncLock) == async)
+		return;
+
+	if (async)
+		d->asyncLock.storeRelease(new QReadWriteLock{QReadWriteLock::Recursive});
+	else {
+		auto ptr = d->asyncLock.fetchAndStoreOrdered(nullptr);
+		delete ptr;
+	}
+	Q_EMIT asyncChanged(d->asyncLock, {});
+}
+
 #ifndef QT_NO_SSL
 void RestClient::setSslConfiguration(QSslConfiguration sslConfiguration)
 {
 	Q_D(RestClient);
+	QWriteLocker _{d->asyncLock};
 	if (d->sslConfig == sslConfiguration)
 		return;
 
@@ -276,6 +319,7 @@ void RestClient::setSslConfiguration(QSslConfiguration sslConfiguration)
 void RestClient::addGlobalHeader(const QByteArray &name, const QByteArray &value)
 {
 	Q_D(RestClient);
+	QWriteLocker _{d->asyncLock};
 	d->headers.insert(name, value);
 	Q_EMIT globalHeadersChanged(d->headers, {});
 }
@@ -283,6 +327,7 @@ void RestClient::addGlobalHeader(const QByteArray &name, const QByteArray &value
 void RestClient::removeGlobalHeader(const QByteArray &name)
 {
 	Q_D(RestClient);
+	QWriteLocker _{d->asyncLock};
 	if(d->headers.remove(name) > 0)
 		Q_EMIT globalHeadersChanged(d->headers, {});
 }
@@ -290,6 +335,7 @@ void RestClient::removeGlobalHeader(const QByteArray &name)
 void RestClient::addGlobalParameter(const QString &name, const QString &value)
 {
 	Q_D(RestClient);
+	QWriteLocker _{d->asyncLock};
 	d->query.addQueryItem(name, value);
 	Q_EMIT globalParametersChanged(d->query, {});
 }
@@ -297,6 +343,7 @@ void RestClient::addGlobalParameter(const QString &name, const QString &value)
 void RestClient::removeGlobalParameter(const QString &name)
 {
 	Q_D(RestClient);
+	QWriteLocker _{d->asyncLock};
 	d->query.removeQueryItem(name);
 	Q_EMIT globalParametersChanged(d->query, {});
 }
@@ -304,6 +351,7 @@ void RestClient::removeGlobalParameter(const QString &name)
 void RestClient::addRequestAttribute(QNetworkRequest::Attribute attribute, const QVariant &value)
 {
 	Q_D(RestClient);
+	QWriteLocker _{d->asyncLock};
 	d->attribs.insert(attribute, value);
 	Q_EMIT requestAttributesChanged(d->attribs, {});
 }
@@ -311,6 +359,7 @@ void RestClient::addRequestAttribute(QNetworkRequest::Attribute attribute, const
 void RestClient::removeRequestAttribute(QNetworkRequest::Attribute attribute)
 {
 	Q_D(RestClient);
+	QWriteLocker _{d->asyncLock};
 	d->attribs.remove(attribute);
 	Q_EMIT requestAttributesChanged(d->attribs, {});
 }
@@ -334,6 +383,12 @@ void RestClient::setupNam()
 // ------------- Private Implementation -------------
 
 QHash<QString, RestClient*> RestClientPrivate::globalApis;
+
+RestClientPrivate::~RestClientPrivate()
+{
+	auto ptr = asyncLock.fetchAndStoreOrdered(nullptr);
+	delete ptr;
+}
 
 // ------------- Global header implementation -------------
 
@@ -380,7 +435,7 @@ void QtRestClient::removeGlobalApi(const QString &name, bool deleteClient)
 {
 	if (deleteClient) {
 		auto client = RestClientPrivate::globalApis.take(name);
-		if(client)
+		if (client)
 			client->deleteLater();
 	} else
 		RestClientPrivate::globalApis.remove(name);

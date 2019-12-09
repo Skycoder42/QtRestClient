@@ -40,6 +40,7 @@ class Q_RESTCLIENT_EXPORT RestClient : public QObject
 	Q_PROPERTY(QUrlQuery globalParameters READ globalParameters WRITE setGlobalParameters NOTIFY globalParametersChanged)
 	//! A collection of attributes to be set on every request
 	Q_PROPERTY(QHash<QNetworkRequest::Attribute, QVariant> requestAttributes READ requestAttributes WRITE setRequestAttributes NOTIFY requestAttributesChanged)
+	Q_PROPERTY(bool async READ isAsync WRITE setAsync NOTIFY asyncChanged)
 
 #ifndef QT_NO_SSL
 	//! The SSL configuration to be used for HTTPS
@@ -86,6 +87,8 @@ public:
 	QUrlQuery globalParameters() const;
 	//! @readAcFn{RestClient::requestAttributes}
 	QHash<QNetworkRequest::Attribute, QVariant> requestAttributes() const;
+	//! @readAcFn{RestClient::async}
+	bool isAsync() const;
 #ifndef QT_NO_SSL
 	//! @readAcFn{RestClient::sslConfiguration}
 	QSslConfiguration sslConfiguration() const;
@@ -119,6 +122,8 @@ public Q_SLOTS:
 	void setRequestAttributes(QHash<QNetworkRequest::Attribute, QVariant> requestAttributes);
 	//! Sets modern attributes in RestClient::requestAttributes
 	void setModernAttributes();
+	//! @writeAcFn{RestClient::async}
+	void setAsync(bool async);
 #ifndef QT_NO_SSL
 	//! @writeAcFn{RestClient::sslConfiguration}
 	void setSslConfiguration(QSslConfiguration sslConfiguration);
@@ -152,6 +157,8 @@ Q_SIGNALS:
 	void globalParametersChanged(QUrlQuery globalParameters, QPrivateSignal);
 	//! @notifyAcFn{RestClient::requestAttributes}
 	void requestAttributesChanged(QHash<QNetworkRequest::Attribute, QVariant> requestAttributes, QPrivateSignal);
+	//! @notifyAcFn{RestClient::async}
+	void asyncChanged(bool async, QPrivateSignal);
 #ifndef QT_NO_SSL
 	//! @notifyAcFn{RestClient::sslConfiguration}
 	void sslConfigurationChanged(QSslConfiguration sslConfiguration, QPrivateSignal);

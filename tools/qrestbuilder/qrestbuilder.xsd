@@ -11,7 +11,7 @@
 	<xs:complexType name="Include">
 		<xs:simpleContent>
 			<xs:extension base="xs:string">
-				<xs:attribute default="false" name="local" type="xs:boolean" use="optional"/>
+				<xs:attribute name="local" type="xs:boolean" use="optional" default="false"/>
 			</xs:extension>
 		</xs:simpleContent>
 	</xs:complexType>
@@ -23,14 +23,14 @@
 		<xs:simpleContent>
 			<xs:extension base="xs:string" qxg:member="defaultValue">
 				<xs:attributeGroup ref="TypedVariableAttribs" qxg:inherit="true"/>
-				<xs:attribute default="false" name="asStr" type="xs:boolean" use="optional"/>
+				<xs:attribute name="asStr" type="xs:boolean" use="optional" default="false"/>
 			</xs:extension>
 		</xs:simpleContent>
 	</xs:complexType>
 	<xs:complexType name="Expression">
 		<xs:simpleContent>
 			<xs:extension base="xs:string" qxg:member="value">
-				<xs:attribute default="false" name="expr" type="xs:boolean" use="optional"/>
+				<xs:attribute name="expr" type="xs:boolean" use="optional" default="false"/>
 			</xs:extension>
 		</xs:simpleContent>
 	</xs:complexType>
@@ -55,9 +55,9 @@
 			<xs:element maxOccurs="unbounded" minOccurs="1" name="Key" type="EnumKey" qxg:member="keys"/>
 		</xs:sequence>
 		<xs:attribute name="name" type="xs:string" use="required"/>
-		<xs:attribute default="int" name="base" type="xs:string" use="optional"/>
-		<xs:attribute default="false" name="isFlags" type="xs:boolean" use="optional"/>
-		<xs:attribute default="true" name="isClass" type="xs:boolean" use="optional"/>
+		<xs:attribute name="base" type="xs:string" use="optional" default="int"/>
+		<xs:attribute name="isFlags" type="xs:boolean" use="optional" default="false"/>
+		<xs:attribute name="isClass" type="xs:boolean" use="optional" default="true"/>
 	</xs:complexType>
 	<xs:attributeGroup name="PropertyAttribs">
 		<xs:attribute name="metaType" type="xs:string" use="optional"/>
@@ -66,13 +66,13 @@
 		<xs:attribute name="scriptable" type="xs:boolean" use="optional"/>
 		<xs:attribute name="stored" type="xs:boolean" use="optional"/>
 		<xs:attribute name="user" type="xs:boolean" use="optional"/>
-		<xs:attribute default="false" name="final" type="xs:boolean" use="optional"/>
+		<xs:attribute name="final" type="xs:boolean" use="optional" default="false"/>
 	</xs:attributeGroup>
 	<xs:complexType name="Property">
 		<xs:simpleContent>
 			<xs:extension base="BaseParam">
 				<xs:attributeGroup ref="PropertyAttribs" qxg:inherit="true"/>
-				<xs:attribute default="false" name="generateReset" type="xs:boolean" use="optional"/>
+				<xs:attribute name="generateReset" type="xs:boolean" use="optional" default="false"/>
 			</xs:extension>
 		</xs:simpleContent>
 	</xs:complexType>
@@ -81,27 +81,27 @@
 		<xs:simpleContent>
 			<xs:extension base="xs:string" qxg:member="definition">
 				<xs:attribute name="name" type="xs:string" use="required"/>
-				<xs:attribute default="false" name="virtual" type="xs:boolean" use="optional" qxg:member="isVirtual"/>
+				<xs:attribute name="virtual" type="xs:boolean" use="optional" qxg:member="isVirtual" default="false"/>
 			</xs:extension>
 		</xs:simpleContent>
 	</xs:complexType>
 	<xs:complexType name="PropertyReadMethod">
 		<xs:simpleContent>
 			<xs:extension base="PropertyMethod">
-				<xs:attribute default="false" name="invokable" type="xs:boolean" use="optional"/>
+				<xs:attribute name="invokable" type="xs:boolean" use="optional" default="false"/>
 			</xs:extension>
 		</xs:simpleContent>
 	</xs:complexType>
 	<xs:complexType name="PropertyWriteMethod">
 		<xs:simpleContent>
 			<xs:extension base="PropertyMethod">
-				<xs:attribute default="value" name="parameter" type="xs:string" use="optional"/>
+				<xs:attribute name="parameter" type="xs:string" use="optional" default="value"/>
 			</xs:extension>
 		</xs:simpleContent>
 	</xs:complexType>
 	<xs:complexType name="PropertySignal">
 		<xs:attribute name="name" type="xs:string" use="required"/>
-		<xs:attribute default="true" name="declare" type="xs:boolean" use="optional"/>
+		<xs:attribute name="declare" type="xs:boolean" use="optional" default="true"/>
 	</xs:complexType>
 	<xs:complexType name="UserProperty">
 		<xs:sequence>
@@ -129,13 +129,13 @@
 		<xs:attribute name="base" type="xs:string" use="optional"/>
 		<xs:attribute name="export" type="xs:string" use="optional" qxg:member="exportKey"/>
 		<xs:attribute name="qmlUri" type="xs:string" use="optional"/>
-		<xs:attribute default="true" name="registerConverters" type="xs:boolean" use="optional"/>
-		<xs:attribute default="true" name="testEquality" type="xs:boolean" use="optional"/>
+		<xs:attribute name="registerConverters" type="xs:boolean" use="optional" default="true"/>
+		<xs:attribute name="testEquality" type="xs:boolean" use="optional" default="true"/>
 		<xs:attribute name="generateEquals" type="xs:boolean" use="optional"/>
-		<xs:attribute default="true" name="generateReset" type="xs:boolean" use="optional"/>
+		<xs:attribute name="generateReset" type="xs:boolean" use="optional" default="true"/>
 		<xs:attribute name="namespace" type="xs:string" use="optional" qxg:member="nspace"/>
 		<xs:attribute name="simpleHref" type="xs:string" use="optional"/>
-		<xs:attribute default="false" name="aggregateDefaults" type="xs:boolean" use="optional"/>
+		<xs:attribute name="aggregateDefaults" type="xs:boolean" use="optional" default="false"/>
 	</xs:complexType>
 
 	<xs:complexType name="RestObject">
@@ -158,7 +158,7 @@
 				<xs:element name="ParamSegment" type="BaseParam"/>
 			</xs:choice>
 		</xs:sequence>
-		<xs:attribute default="false" name="expr" type="xs:boolean" use="optional"/>
+		<xs:attribute name="expr" type="xs:boolean" use="optional" default="false"/>
 	</xs:complexType>
 
 	<xs:complexType name="Class">
@@ -175,7 +175,7 @@
 			<xs:element maxOccurs="unbounded" minOccurs="0" name="Header" type="FixedParam" qxg:member="headers"/>
 		</xs:sequence>
 		<xs:attribute name="name" type="xs:string" use="required"/>
-		<xs:attribute default="GET" name="verb" type="xs:string" use="optional"/>
+		<xs:attribute name="verb" type="xs:string" use="optional" default="GET"/>
 		<xs:attribute name="body" type="xs:string" use="optional"/>
 		<xs:attribute name="returns" type="xs:string" use="optional" default="void"/>
 		<xs:attribute name="except" type="xs:string" use="optional"/>
@@ -196,8 +196,8 @@
 		<xs:attribute name="name" type="xs:string" use="required"/>
 		<xs:attribute name="export" type="xs:string" use="optional" qxg:member="exportKey"/>
 		<xs:attribute name="qmlUri" type="xs:string" use="optional"/>
-		<xs:attribute default="QObject" name="base" type="xs:string" use="optional"/>
-		<xs:attribute default="QObject*" name="except" type="xs:string" use="optional"/>
+		<xs:attribute name="base" type="xs:string" use="optional" default="QObject"/>
+		<xs:attribute name="except" type="xs:string" use="optional" default="QObject*"/>
 		<xs:attribute name="namespace" type="xs:string" use="optional" qxg:member="nspace"/>
 	</xs:complexType>
 
@@ -239,7 +239,8 @@
 				</xs:sequence>
 				<xs:attribute name="globalName" type="xs:string" use="optional"/>
 				<xs:attribute name="dataMode" type="DataMode" use="optional" default="Json"/>
-				<xs:attribute default="true" name="autoCreate" type="xs:boolean" use="optional"/>
+				<xs:attribute name="async" type="xs:boolean" use="optional" default="false"/>
+				<xs:attribute name="autoCreate" type="xs:boolean" use="optional" default="true"/>
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>

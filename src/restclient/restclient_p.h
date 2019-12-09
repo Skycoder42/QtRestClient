@@ -6,6 +6,8 @@
 
 #include <optional>
 
+#include <QtCore/QReadWriteLock>
+
 #ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
 #include <QtJsonSerializer/SerializerBase>
 #endif
@@ -27,6 +29,7 @@ public:
 	HeaderHash headers;
 	QUrlQuery query;
 	QHash<QNetworkRequest::Attribute, QVariant> attribs;
+	QAtomicPointer<QReadWriteLock> asyncLock {nullptr};
 #ifndef QT_NO_SSL
 	QSslConfiguration sslConfig = QSslConfiguration::defaultConfiguration();
 #endif
@@ -41,6 +44,8 @@ public:
 	QScopedPointer<IPagingFactory> pagingFactory {};
 
 	RestClass *rootClass = nullptr;
+
+	~RestClientPrivate() override;
 };
 
 }

@@ -480,6 +480,7 @@ Module {
         Property { name: "globalHeaders"; type: "HeaderHash" }
         Property { name: "globalParameters"; type: "QUrlQuery" }
         Property { name: "requestAttributes"; type: "QHash<QNetworkRequest::Attribute,QVariant>" }
+        Property { name: "async"; type: "bool" }
         Property { name: "sslConfiguration"; type: "QSslConfiguration" }
         Signal {
             name: "dataModeChanged"
@@ -504,6 +505,10 @@ Module {
         Signal {
             name: "requestAttributesChanged"
             Parameter { name: "requestAttributes"; type: "QHash<QNetworkRequest::Attribute,QVariant>" }
+        }
+        Signal {
+            name: "asyncChanged"
+            Parameter { name: "async"; type: "bool" }
         }
         Signal {
             name: "sslConfigurationChanged"
@@ -546,6 +551,10 @@ Module {
             Parameter { name: "requestAttributes"; type: "QHash<QNetworkRequest::Attribute,QVariant>" }
         }
         Method { name: "setModernAttributes" }
+        Method {
+            name: "setAsync"
+            Parameter { name: "async"; type: "bool" }
+        }
         Method {
             name: "setSslConfiguration"
             Parameter { name: "sslConfiguration"; type: "QSslConfiguration" }

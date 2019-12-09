@@ -49,6 +49,10 @@ public:
 	TInstance *onError(std::function<void(QString, int, Error)> handler);
 	//! @copydoc RestReply::onError(QObject *, const std::function<void(QString, int, ErrorType)> &)
 	virtual TInstance *onError(QObject *scope, std::function<void(QString, int, Error)> handler);
+#ifdef QT_RESTCLIENT_USE_ASYNC
+	//! @copydoc RestReply::makeAsync
+	TInstance *makeAsync(QThreadPool *threadPool = QThreadPool::globalInstance());
+#endif
 	//! @copydoc RestReply::disableAutoDelete
 	TInstance *disableAutoDelete();
 
@@ -59,6 +63,11 @@ protected:
 	GenericRestReplyBase(QNetworkReply *networkReply,
 						 RestClient *client,
 						 QObject *parent);
+#ifdef QT_RESTCLIENT_USE_ASYNC
+	GenericRestReplyBase(const QFuture<QNetworkReply*> &networkReplyFuture,
+						 RestClient *client,
+						 QObject *parent);
+#endif
 
 	RestClient *_client;
 	std::function<void(QtJsonSerializer::Exception &)> _exceptionHandler;
@@ -73,6 +82,11 @@ public:
 	GenericRestReply(QNetworkReply *networkReply,
 					 RestClient *client,
 					 QObject *parent = nullptr);
+#ifdef QT_RESTCLIENT_USE_ASYNC
+	GenericRestReply(const QFuture<QNetworkReply*> &networkReplyFuture,
+					 RestClient *client,
+					 QObject *parent = nullptr);
+#endif
 
 	//! @copybrief RestReply::onSucceeded(const std::function<void(int, QJsonObject)>&)
 	GenericRestReply<DataClassType, ErrorClassType> *onSucceeded(std::function<void(int, DataClassType)> handler);
@@ -91,6 +105,11 @@ public:
 	GenericRestReply(QNetworkReply *networkReply,
 					 RestClient *client,
 					 QObject *parent = nullptr);
+#ifdef QT_RESTCLIENT_USE_ASYNC
+	GenericRestReply(const QFuture<QNetworkReply*> &networkReplyFuture,
+					 RestClient *client,
+					 QObject *parent = nullptr);
+#endif
 
 	//! @copydoc GenericRestReply::onSucceeded(const std::function<void(int, DataClassType)>&)
 	GenericRestReply<void, ErrorClassType> *onSucceeded(std::function<void(int)> handler);
@@ -111,6 +130,11 @@ public:
 	GenericRestReply(QNetworkReply *networkReply,
 					 RestClient *client,
 					 QObject *parent = nullptr);
+#ifdef QT_RESTCLIENT_USE_ASYNC
+	GenericRestReply(const QFuture<QNetworkReply*> &networkReplyFuture,
+					 RestClient *client,
+					 QObject *parent = nullptr);
+#endif
 
 	//! @copydoc GenericRestReply::onSucceeded(const std::function<void(int, DataClassType)>&)
 	GenericRestReply<Paging<DataClassType>, ErrorClassType> *onSucceeded(std::function<void(int, Paging<DataClassType>)> handler);
@@ -230,6 +254,15 @@ typename GenericRestReplyBase<DataClassType, ErrorClassType>::TInstance *Generic
 	return static_cast<TInstance*>(this);
 }
 
+#ifdef QT_RESTCLIENT_USE_ASYNC
+template<typename DataClassType, typename ErrorClassType>
+typename GenericRestReplyBase<DataClassType, ErrorClassType>::TInstance *GenericRestReplyBase<DataClassType, ErrorClassType>::makeAsync(QThreadPool *threadPool)
+{
+	RestReply::makeAsync(threadPool);
+	return static_cast<TInstance*>(this);
+}
+#endif
+
 template <typename DataClassType, typename ErrorClassType>
 typename GenericRestReplyBase<DataClassType, ErrorClassType>::TInstance *GenericRestReplyBase<DataClassType, ErrorClassType>::disableAutoDelete()
 {
@@ -243,12 +276,27 @@ GenericRestReplyBase<DataClassType, ErrorClassType>::GenericRestReplyBase(QNetwo
 	  _client{client}
 {}
 
+#ifdef QT_RESTCLIENT_USE_ASYNC
+template<typename DataClassType, typename ErrorClassType>
+GenericRestReplyBase<DataClassType, ErrorClassType>::GenericRestReplyBase(const QFuture<QNetworkReply*> &networkReplyFuture, RestClient *client, QObject *parent) :
+	RestReply{networkReplyFuture, parent},
+	_client{client}
+{}
+#endif
+
 // ------------- Implementation Single Element -------------
 
 template<typename DataClassType, typename ErrorClassType>
 GenericRestReply<DataClassType, ErrorClassType>::GenericRestReply(QNetworkReply *networkReply, RestClient *client, QObject *parent) :
-	  GenericRestReplyBase<DataClassType, ErrorClassType>{networkReply, client, parent}
+	GenericRestReplyBase<DataClassType, ErrorClassType>{networkReply, client, parent}
 {}
+
+#ifdef QT_RESTCLIENT_USE_ASYNC
+template<typename DataClassType, typename ErrorClassType>
+GenericRestReply<DataClassType, ErrorClassType>::GenericRestReply(const QFuture<QNetworkReply*> &networkReplyFuture, RestClient *client, QObject *parent) :
+	GenericRestReplyBase<DataClassType, ErrorClassType>{networkReplyFuture, client, parent}
+{}
+#endif
 
 template<typename DataClassType, typename ErrorClassType>
 GenericRestReply<DataClassType, ErrorClassType> *GenericRestReply<DataClassType, ErrorClassType>::onSucceeded(std::function<void (int, DataClassType)> handler)
@@ -286,6 +334,15 @@ GenericRestReply<void, ErrorClassType>::GenericRestReply(QNetworkReply *networkR
 	this->setAllowEmptyReplies(true);
 }
 
+#ifdef QT_RESTCLIENT_USE_ASYNC
+template<typename ErrorClassType>
+GenericRestReply<void, ErrorClassType>::GenericRestReply(const QFuture<QNetworkReply*> &networkReplyFuture, RestClient *client, QObject *parent) :
+	GenericRestReplyBase<void, ErrorClassType>{networkReplyFuture, client, parent}
+{
+	this->setAllowEmptyReplies(true);
+}
+#endif
+
 template<typename ErrorClassType>
 GenericRestReply<void, ErrorClassType> *GenericRestReply<void, ErrorClassType>::onSucceeded(std::function<void (int)> handler)
 {
@@ -305,6 +362,13 @@ template<typename DataClassType, typename ErrorClassType>
 GenericRestReply<Paging<DataClassType>, ErrorClassType>::GenericRestReply(QNetworkReply *networkReply, RestClient *client, QObject *parent) :
 	  GenericRestReplyBase<Paging<DataClassType>, ErrorClassType>{networkReply, client, parent}
 {}
+
+#ifdef QT_RESTCLIENT_USE_ASYNC
+template<typename DataClassType, typename ErrorClassType>
+GenericRestReply<Paging<DataClassType>, ErrorClassType>::GenericRestReply(const QFuture<QNetworkReply*> &networkReplyFuture, RestClient *client, QObject *parent) :
+	GenericRestReplyBase<Paging<DataClassType>, ErrorClassType>{networkReplyFuture, client, parent}
+{}
+#endif
 
 template<typename DataClassType, typename ErrorClassType>
 GenericRestReply<Paging<DataClassType>, ErrorClassType> *GenericRestReply<Paging<DataClassType>, ErrorClassType>::onSucceeded(std::function<void (int, Paging<DataClassType>)> handler)

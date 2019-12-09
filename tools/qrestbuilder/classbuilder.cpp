@@ -437,7 +437,8 @@ void ClassBuilder::writeApiCreation()
 		source << "client = new AuthRestClient(" << dataMode << ", " << *apiData.authenticator << ", QCoreApplication::instance());\n";
 	else
 		source << "client = new RestClient(" << dataMode << ", QCoreApplication::instance());\n";
-	source << "\t\tclient->setBaseUrl(QUrl{" << writeExpression(apiData.baseUrl, true) << "});\n";
+	source << "\t\tclient->setAsync(" << (apiData.async ? "true" : "false") << ");\n"
+		   << "\t\tclient->setBaseUrl(QUrl{" << writeExpression(apiData.baseUrl, true) << "});\n";
 	if (apiData.baseUrl.apiVersion) {
 		auto vNum = QVersionNumber::fromString(apiData.baseUrl.apiVersion.value());
 		QStringList args;
