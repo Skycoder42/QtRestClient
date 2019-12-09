@@ -1,20 +1,21 @@
 # QtRestClient
 A library for generic JSON-based REST-APIs, with a mechanism to map JSON to Qt objects.
 
-[![Travis Build Status](https://travis-ci.org/Skycoder42/QtRestClient.svg?branch=master)](https://travis-ci.org/Skycoder42/QtRestClient)
-[![Appveyor Build status](https://ci.appveyor.com/api/projects/status/66vntcoho3t4x1jw/branch/master?svg=true)](https://ci.appveyor.com/project/Skycoder42/qtrestclient/branch/master)
+[![Github Actions status](https://github.com/Skycoder42/QtRestClient/workflows/CI%20build/badge.svg)](https://github.com/Skycoder42/QtRestClient/actions?query=workflow%3A%22CI%20build%22)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/5a75806bda324b14bf493c1d94ad7041)](https://www.codacy.com/app/Skycoder42/QtRestClient)
 [![AUR](https://img.shields.io/aur/version/qt5-restclient.svg)](https://aur.archlinux.org/packages/qt5-restclient/)
 
 ## Features
-- Consume any JSON-REST-API
+- Consume any CBOR or JSON REST-API
 - Map API objects to QObject/Q_GADGET classes. Supports:
 	- basic objects
 	- lists
 	- paging objects
+	- anything [QtJsonSerializer](https://github.com/Skycoder42/QtJsonSerializer) supports
 - Allows to create API class representations to wrap specific parts of the api
 - Reply-based system - use either signal/slot or a more functional approach
 - Custom compiler to generate API objects, classes and methods from simple XML files
+- Support for multithreading and threadpools
 
 ## Download/Installation
 There are multiple ways to install the Qt module, sorted by preference:
@@ -56,6 +57,7 @@ Also, when building the library in this configuration, do not run `make all`, as
 The restclient is provided as a Qt module. Thus, all you have to do is add the module, and then, in your project, add `QT += restclient` to your `.pro` file!
 
 The API consists of 3 main classes:
+
 - **RestClient:** Set up the API, i.e. how to access it, the base URL and headers
 - **RestClass:** A subset of the API, allows to make requests
 - **RestReply/GenericRestReply:** The reply control returned for every request, to obtain the result and react on errors
@@ -113,6 +115,30 @@ restClass->get<Post>("42")->onSucceeded([](int statusCode, Post data) {  //calls
 
 And thats all you need for a basic API access. Check the documentation for more and *important* details about the client, the class and the replies!
 
+### Multithreading
+Generally speaking, the library primarily supports single threaded execution, as all requests and replies are handled asynchronously thanks to signals and slots. For most applications, you should keep it that way, as multithreading will only slow down your application, as long as your workload is not big enough to justify threaded mode.
+
+Please note that it is easily possible to create multiple different instances of the RestClient in their own respective thread. However, if you want to use the **same** instance in multiple threads, make sure to read the following carefully.
+
+#### Simple threading
+To enable basic threading support, simply set the `QtRestClient::RestClient::threaded` property to true. This will make all members of the client threadsafe, as well as of any `QtRestClient::RestClass` belonging to it. From that
+point on, any request sent via this client will have the requests asynchronously posted to it's original thread.
+This means requests are still *sent* from the primary thread, but any steps before that (i.e. creation, serialization, encoding) are run on whatever thread you call the method to send.
+
+The `QtRestClient::RestReply` classes handle this case transparently, you can use them the same as for normal single threaded operation. The only difference is, that their reply member may be `nullptr` for a while after
+sending the request. The handlers assigned to the replies (e.g. `onSuccess(...)`) will be executed on the **same thread** as the reply was created on.
+
+For this all to work, *all* threads that you use any class or reply on, *must* be a QThread with a running **eventloop** (QThread::exec). Otherwise the replies will not be notified of the completition and never run any of the handlers.
+
+#### Threadpooling replies
+In addition to this general multithreading support, it is also possible to let `QtRestClient::RestReply` instances run on a QThreadPool. To do so, you can either call `QtRestClient::RestReply::makeAsync` or set set `QtRestClient::RestClient::asyncPool` property - the latter affecting all replies created for a certain client.
+
+The network I/O will still be performed by the main thread, but the parsing, deserialization and proccessing via the handlers is run on an arbitrary thread of the pool. This mode should only be used in combination with the threaded mode.
+
+As threadpools do not run a standard eventloop, any request sent from within a pooled handler **must** call `makeAsync` on the replies to make sure they are correctly handled. Otherwise they replies assume they are on a normal QThread and will *never* complete. You can skip this step, if `QtRestClient::RestClient::asyncPool` was set, as this internally makes any reply send from the clients classes asynchronous.
+
+You can use the pooling without multithreading enabled, but in that case you **must not** send new requests from a handler. This means `QtRestClient::Paging` and `QtRestClient::Simple` objects cannot be used.
+
 ### API-Generator
 The library comes with a tool to create API data classes and wrapper classes over the rest client. Those are generated from XML files and allow an easy creation of APIs in your application. The tool is build as a custom compiler and added to qmake. To use the tool simply add the json files to you pro file, and the sources will be automatically generated and compiled into your application!
 
@@ -168,12 +194,12 @@ REST_API_FILES += post.xml \
 
 And thats it! once you run qmake and compile your application, those APIs will be generated for you. The usage is fairly simple:
 ```cpp
-//by using the API directly:
+// by using the API directly:
 auto api = new ExampleApi(this);
 auto reply = api->posts()->post(42);
-//continue as usual with any generic network reply
+// continue as usual with any generic network reply
 
-//by using the factory to create the class only:
+// by using the factory to create the class only:
 auto posts = ExampleApi::factory().posts().instance(this);
 auto reply = posts->post(42);
 ```
@@ -184,10 +210,23 @@ Check the JsonPlaceholderApi example in `examples/restclient` for this example.
 When I was trying to implement authentication, I found that it can be quite heterogenous. Because of that, I did not implement a specific authentication mechanism. Instead, you can either use one supported by Qt or create your own auth flow. The easiest way to do so is to create a RestClient, and then perform whatever authentication you need with the clients internal QNetworkAccessManager, and set parameters, headers, cookies, etc accordingly, if neccessary.
 
 Qt itself supports the following kinds of authentication:
+
 - [**QAuthenticator:**](https://doc.qt.io/qt-5/qauthenticator.html) Integrated in QNetworkAccessManager, via a signal. See Qt Docs for supported mechanisms
 - [**QtNetworkAuth:**](https://doc.qt.io/qt-5/qtnetworkauth-index.html) A Technology preview providing OAuth and OAuth2 authentication flows.
 
-**Note:** For the latter, I may add support in a Future version. For the first one, simply connect to the managers signal.
+**Note:** For the latter, use the `restclientauth` module. The following examples explains how
+
+#### Example
+```
+QAbstractOAuth *oAuth = ...; // create an OAuth instance as needed
+// perform the usual handshake to setup the oAuth object
+oAuth->grant();
+// ...
+
+// create a client from the oAuth
+auto client = new QtRestClient::Auth::AuthRestClient(oAuth);
+// continue as per usual
+```
 
 ### QObject Ownership
 If you are using QtRestClient with QObjects, please be aware that none of the RestClients functions take ownership of the returend objects. This means **you** are responsible for deleting them, if not needed anymore. In short, you as caller own the objects returned to your handlers. If you are uncertain whether you need to handle an object or not, check the documentation of the specific function for details.
