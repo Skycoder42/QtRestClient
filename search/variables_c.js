@@ -1,12 +1,11 @@
 var searchData=
 [
-  ['name',['name',['https://doc.qt.io/qt-5/struct_qt_auto_updater_1_1_updater_1_1_update_info.html#a28760ca994913fe3c19f34e0f4f25c21',0,'QtAutoUpdater::Updater::UpdateInfo']]],
-  ['namerole',['NameRole',['https://doc.qt.io/qt-5/class_qt_mvvm_1_1_account_model.html#a2a950cb7c009716d7d921a9e13c24913a5c7cc067b1f049895feb505226bd9116',0,'QtMvvm::AccountModel::NameRole()'],['https://doc.qt.io/qt-5/class_qt_mvvm_1_1_exchange_devices_model.html#a3d85b4374b3c15b81fa58909c5c55ca1a23e5e5ac750ef45ee9d36fdd7d476655',0,'QtMvvm::ExchangeDevicesModel::NameRole()']]],
-  ['navigationfeatures',['NavigationFeatures',['https://doc.qt.io/qt-5/qgeoserviceprovider.html#NavigationFeature-enum',0,'QGeoServiceProvider']]],
-  ['no',['No',['https://doc.qt.io/qt-5/class_qt_mvvm_1_1_message_config.html#ad6b7b271e558619f15c5eb9a3cf78fb8a2569c0a5af31616640a0ef12eb2dc8ba',0,'QtMvvm::MessageConfig']]],
-  ['nobutton',['NoButton',['https://doc.qt.io/qt-5/class_qt_mvvm_1_1_message_config.html#ad6b7b271e558619f15c5eb9a3cf78fb8a83a48e3acfda22ae83280136ed2f6751',0,'QtMvvm::MessageConfig']]],
-  ['noextraproperties',['NoExtraProperties',['https://skycoder42.github.io/QJsonSerializer/class_q_json_serializer.html#a0fb6dc294c5f0c2279e1e60c8bf19b37ac8cb0e946f61b483209cb2484259bcf0',0,'QJsonSerializer']]],
-  ['notoall',['NoToAll',['https://doc.qt.io/qt-5/class_qt_mvvm_1_1_message_config.html#ad6b7b271e558619f15c5eb9a3cf78fb8a60df15a4d2e2767a238681299c7f41e0',0,'QtMvvm::MessageConfig']]],
-  ['numberflags',['NumberFlags',['https://doc.qt.io/qt-5/qtextstream.html#NumberFlag-enum',0,'QTextStream']]],
-  ['numberoptions',['NumberOptions',['https://doc.qt.io/qt-5/qlocale.html#NumberOption-enum',0,'QLocale']]]
+  ['namerole_29586',['NameRole',['https://doc.qt.io/qt-5/classde_1_1skycoder42_1_1_qt_auto_updater_1_1_quick_1_1_update_info_model.html#ac5602d2e19391e2548a28d526a157e2da905ca72ff802eb25004015c319b993d7',0,'de::skycoder42::QtAutoUpdater::Quick::UpdateInfoModel']]],
+  ['navigationfeatures_29587',['NavigationFeatures',['https://doc.qt.io/qt-5/qgeoserviceprovider.html#NavigationFeature-enum',0,'QGeoServiceProvider']]],
+  ['negative_29588',['Negative',['https://skycoder42.github.io/QJsonSerializer/class_qt_json_serializer_1_1_type_converter.html#a475349c4aee769bbc629d78154e56c0ea79f976b4b243e7f2655710ead61ae897',0,'QtJsonSerializer::TypeConverter']]],
+  ['networkaddress_29589',['NetworkAddress',['https://skycoder42.github.io/QJsonSerializer/class_qt_json_serializer_1_1_cbor_serializer.html#af4564875f7ef9a1ff8b6838d0c6f93bca0d441e8b546c298c829788d0e28d8c49',0,'QtJsonSerializer::CborSerializer']]],
+  ['networkaddressprefix_29590',['NetworkAddressPrefix',['https://skycoder42.github.io/QJsonSerializer/class_qt_json_serializer_1_1_cbor_serializer.html#af4564875f7ef9a1ff8b6838d0c6f93bca12febcdc4a14c0083edd52b7a0233158',0,'QtJsonSerializer::CborSerializer']]],
+  ['notag_29591',['NoTag',['https://skycoder42.github.io/QJsonSerializer/class_qt_json_serializer_1_1_type_converter.html#a27b3172e357c12759fd8693a2c7011be',0,'QtJsonSerializer::TypeConverter']]],
+  ['numberflags_29592',['NumberFlags',['https://doc.qt.io/qt-5/qtextstream.html#NumberFlag-enum',0,'QTextStream']]],
+  ['numberoptions_29593',['NumberOptions',['https://doc.qt.io/qt-5/qlocale.html#NumberOption-enum',0,'QLocale']]]
 ];

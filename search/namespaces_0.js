@@ -1,11 +1,8 @@
 var searchData=
 [
-  ['core',['Core',['https://doc.qt.io/qt-5/namespacede_1_1skycoder42_1_1_qt_mvvm_1_1_core.html',0,'de::skycoder42::QtMvvm::Core'],['https://doc.qt.io/qt-5/namespacede_1_1skycoder42_1_1_qt_mvvm_1_1_data_sync_1_1_core.html',0,'de::skycoder42::QtMvvm::DataSync::Core']]],
-  ['datasync',['DataSync',['https://doc.qt.io/qt-5/namespacede_1_1skycoder42_1_1_qt_mvvm_1_1_data_sync_1_1_core.html',0,'de::skycoder42::QtMvvm']]],
-  ['de',['de',['https://doc.qt.io/qt-5/namespacede_1_1skycoder42_1_1_qt_mvvm_1_1_core.html',0,'']]],
-  ['qtmvvm',['QtMvvm',['https://doc.qt.io/qt-5/namespacede_1_1skycoder42_1_1_qt_mvvm_1_1_core.html',0,'de::skycoder42']]],
-  ['qtrestclient',['QtRestClient',['../namespacede_1_1skycoder42_1_1_qt_rest_client.html',1,'de::skycoder42']]],
-  ['qtservice',['QtService',['https://doc.qt.io/qt-5/namespacede_1_1skycoder42_1_1_qt_service.html',0,'de::skycoder42']]],
-  ['quick',['Quick',['https://doc.qt.io/qt-5/namespacede_1_1skycoder42_1_1_qt_mvvm_1_1_data_sync_1_1_quick.html',0,'de::skycoder42::QtMvvm::DataSync::Quick'],['https://doc.qt.io/qt-5/namespacede_1_1skycoder42_1_1_qt_mvvm_1_1_quick.html',0,'de::skycoder42::QtMvvm::Quick']]],
-  ['skycoder42',['skycoder42',['https://doc.qt.io/qt-5/namespacede_1_1skycoder42_1_1_qt_mvvm_1_1_core.html',0,'de']]]
+  ['core_16554',['Core',['https://doc.qt.io/qt-5/namespacede_1_1skycoder42_1_1_qt_auto_updater_1_1_core.html',0,'de::skycoder42::QtAutoUpdater']]],
+  ['qtautoupdater_16555',['QtAutoUpdater',['https://doc.qt.io/qt-5/namespacede_1_1skycoder42_1_1_qt_auto_updater_1_1_core.html',0,'de::skycoder42']]],
+  ['qtrestclient_16556',['QtRestClient',['../namespacede_1_1skycoder42_1_1_qt_rest_client.html',1,'de::skycoder42']]],
+  ['qtservice_16557',['qtservice',['https://doc.qt.io/qt-5/classde_1_1skycoder42_1_1qtservice_1_1_android_service.html',0,'de::skycoder42::qtservice'],['https://doc.qt.io/qt-5/namespacede_1_1skycoder42_1_1_qt_service.html',0,'de::skycoder42::QtService']]],
+  ['quick_16558',['Quick',['https://doc.qt.io/qt-5/namespacede_1_1skycoder42_1_1_qt_auto_updater_1_1_quick.html',0,'de::skycoder42::QtAutoUpdater']]]
 ];

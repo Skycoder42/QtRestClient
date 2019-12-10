@@ -1,4 +1,7 @@
 var searchData=
 [
-  ['failureerror',['FailureError',['../class_qt_rest_client_1_1_rest_reply.html#a7ac2c77cd405dff6fd116eaf3073fe2aa279bf25eece14ead7f2fb2ca1f5c99b8',1,'QtRestClient::RestReply']]]
+  ['base16_29840',['Base16',['https://skycoder42.github.io/QJsonSerializer/class_qt_json_serializer_1_1_json_serializer.html#afae5305294bb7c23a8d8dbeb29d5e497a1d9a64645e4ea1fe9970e3eea0400fe5',0,'QtJsonSerializer::JsonSerializer']]],
+  ['base64_29841',['Base64',['https://skycoder42.github.io/QJsonSerializer/class_qt_json_serializer_1_1_json_serializer.html#afae5305294bb7c23a8d8dbeb29d5e497a1eb445fa6bd078346bf63ecac35fa77c',0,'QtJsonSerializer::JsonSerializer']]],
+  ['base64url_29842',['Base64url',['https://skycoder42.github.io/QJsonSerializer/class_qt_json_serializer_1_1_json_serializer.html#afae5305294bb7c23a8d8dbeb29d5e497adde86a082d1a286963891b75365f06e5',0,'QtJsonSerializer::JsonSerializer']]],
+  ['blocking_29843',['Blocking',['https://doc.qt.io/qt-5/class_qt_service_1_1_service_control.html#aa2ce5f9226d19d61555de0ae0a692e32abd0ca6be53b0f3d2886fd53fcb52574e',0,'QtService::ServiceControl']]]
 ];
