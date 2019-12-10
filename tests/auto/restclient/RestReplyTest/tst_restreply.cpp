@@ -955,7 +955,7 @@ void RestReplyTest::testThreaded()
 			testThread.except = except;
 
 			testThread.start();
-			QTRY_VERIFY(testThread.isFinished());
+			QTRY_VERIFY_WITH_TIMEOUT(testThread.isFinished(), 10000);
 			guard.dismiss();
 		}
 	} catch (std::exception &e) {

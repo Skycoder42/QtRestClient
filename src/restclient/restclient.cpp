@@ -406,6 +406,7 @@ void RestClient::setupNam()
 
 // ------------- Private Implementation -------------
 
+#ifndef DOXYGEN_RUN
 QReadWriteLock RestClientPrivate::globalApiLock;
 QHash<QString, RestClient*> RestClientPrivate::globalApis;
 
@@ -414,6 +415,7 @@ RestClientPrivate::~RestClientPrivate()
 	auto ptr = threadLock.fetchAndStoreOrdered(nullptr);
 	delete ptr;
 }
+#endif
 
 // ------------- Global header implementation -------------
 

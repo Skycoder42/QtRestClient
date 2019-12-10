@@ -5,6 +5,26 @@ A library for generic JSON-based REST-APIs, with a mechanism to map JSON to Qt o
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/5a75806bda324b14bf493c1d94ad7041)](https://www.codacy.com/app/Skycoder42/QtRestClient)
 [![AUR](https://img.shields.io/aur/version/qt5-restclient.svg)](https://aur.archlinux.org/packages/qt5-restclient/)
 
+## Table of contents
+- [Features](#features)
+- [Download/Installation](#download-installation)
+  * [Building without QtJsonSerializer/qdep](#building-without-qtjsonserializer-qdep)
+- [Usage](#usage)
+  * [Examples](#examples)
+	+ [API-Definition](#api-definition)
+	+ [API-Use](#api-use)
+  * [Multithreading](#multithreading)
+	+ [Simple threading](#simple-threading)
+	+ [Threadpooling replies](#threadpooling-replies)
+  * [API-Generator](#api-generator)
+	+ [Example API definition](#example-api-definition)
+  * [Authentication](#authentication)
+	+ [Example authentication](#example-authentication)
+  * [QObject Ownership](#qobject-ownership)
+- [Documentation](#documentation)
+
+<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
+
 ## Features
 - Consume any CBOR or JSON REST-API
 - Map API objects to QObject/Q_GADGET classes. Supports:
@@ -62,8 +82,8 @@ The API consists of 3 main classes:
 - **RestClass:** A subset of the API, allows to make requests
 - **RestReply/GenericRestReply:** The reply control returned for every request, to obtain the result and react on errors
 
-### Example
-The following example shows an example request made to [JSONPlaceholder](https://jsonplaceholder.typicode.com/).
+### Examples
+The following examples show an example request made to [JSONPlaceholder](https://jsonplaceholder.typicode.com/) in different ways.
 
 #### API-Definition
 Before we can start using the API, we have to define c++ objects to map the JSON to. For this example, all we need is to represent a post. This example makes use of Q_GADGET, but it works the same for QObjets as well. MEMBER properties are used for simplicity, it works with any normal property. See [QtJsonSerializer](https://github.com/Skycoder42/QJsonSerializer) for more details about the serialization part. **Note:** This is optional. You can in fact use the API with JSON only.
@@ -142,7 +162,7 @@ You can use the pooling without multithreading enabled, but in that case you **m
 ### API-Generator
 The library comes with a tool to create API data classes and wrapper classes over the rest client. Those are generated from XML files and allow an easy creation of APIs in your application. The tool is build as a custom compiler and added to qmake. To use the tool simply add the json files to you pro file, and the sources will be automatically generated and compiled into your application!
 
-#### Example
+#### Example API definition
 The following example shows a XML file to generate the post type from above (with shared data optimizations, automatic registration, etc.). It could be named `post.xml`:
 ```xml
 <RestGadget name="Post">
@@ -216,7 +236,7 @@ Qt itself supports the following kinds of authentication:
 
 **Note:** For the latter, use the `restclientauth` module. The following examples explains how
 
-#### Example
+#### Example authentication
 ```
 QAbstractOAuth *oAuth = ...; // create an OAuth instance as needed
 // perform the usual handshake to setup the oAuth object

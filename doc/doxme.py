@@ -3,6 +3,7 @@
 # $pwd: dest dir
 
 import sys
+import re
 
 def readFirst(line, out):
 	if line[0:2] != "# ":
@@ -11,11 +12,20 @@ def readFirst(line, out):
 	out.write("[TOC]\n\n")
 
 readCounter = 0
+regexp = re.compile(r'\W')
+skip = False
 def readMore(line, out):
-	global readCounter
-	if line[0:2] == "##":
-		out.write(line[1:] + " {{#qtrestclient_readme_label_{}}}\n".format(readCounter))
-		readCounter += 1
+	global skip
+	if skip:
+		if line[0:2] == "##":
+			skip = False
+		else:
+			return
+
+	if line.strip() == "## Table of contents":
+		skip = True
+	elif line[0:2] == "##":
+		out.write(line[1:] + " {#" + regexp.sub('-', line.lstrip('#').strip()).lower() + "}\n")
 	else:
 		out.write(line + "\n")
 

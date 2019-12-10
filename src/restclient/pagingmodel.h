@@ -127,7 +127,7 @@ Q_SIGNALS:
 	void typeIdChanged(int typeId, QPrivateSignal);
 
 protected:
-	// @private
+	//! @private
 	explicit PagingModel(PagingModelPrivate &dd, QObject *parent = nullptr);
 
 private:

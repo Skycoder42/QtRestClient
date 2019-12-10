@@ -281,7 +281,26 @@ If this property is not set, the HTTP-GET will be used as default
 
 @returns The network reply for the sent request
 
-@sa RequestBuilder::buildUrl, RequestBuilder::build
+@sa RequestBuilder::sendAsync, RequestBuilder::buildUrl, RequestBuilder::build
+*/
+
+/*!
+@fn QtRestClient::RequestBuilder::sendAsync
+
+@returns A future for the network reply for the sent request
+
+This method will dispatch an asynchronous call to the internal QNetworkAccessManager. This call
+will run on the managers thread and perform the actual sending. The reply generated from the
+request will then be made available via the returned future.
+
+While the sending itself is run on the primary thread, anything before that, i.e. the URL and
+request generation, are run on the current thread, to minimize the workload on the managers
+thread.
+
+@warning Please read the @ref multithreading section of the @ref index "README" before using
+this method.
+
+@sa RequestBuilder::send, RequestBuilder::buildUrl, RequestBuilder::build
 */
 
 /*!

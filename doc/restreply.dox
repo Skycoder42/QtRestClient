@@ -60,8 +60,7 @@ data will not be run on the replies thread, but on a threadpool. By default, the
 threadpool QThreadPool::globalInstance() is used, but calling makeAsync() allows you to specify
 your own pool.
 
-@warning Using the reply in async mode can be dangerous. Make sure to read the "Async" section
-of the README!
+@warning Please read the @ref multithreading section of the @ref index "README" before using the replies in a threaded context.
 
 @accessors{
 	@readAc{isAsync()}

@@ -137,7 +137,7 @@ RequestBuilder::setAttributes
 By default, the restclient can only be accessed from the thread it was created in. By setting
 this property to true, it can be accessed globally from any thread.
 
-@warning Please read the "Async" section of the README before using it in a threaded context
+@warning Please read the @ref multithreading section of the @ref index "README" before using the restclient in a threaded context.
 
 @accessors{
 	@readAc{isThreaded()}
@@ -178,7 +178,7 @@ RestClass that belongs to this client instance will have the RestReply::async pr
 @note This property implies RestClient::threaded and will automatically change it to `true`
 when set to a non nullptr value.
 
-@warning Please read the "Async" section of the README before using it in a threaded context
+@warning Please read the @ref multithreading section of the @ref index "README" before using the restclient in a threaded context.
 
 @accessors{
 	@readAc{asyncPool()}
