@@ -17,5 +17,3 @@ QMAKE_EXTRA_TARGETS += runtests
 DISTFILES += .qmake.conf \
 	sync.profile \
 	qbs/Qt/restbuilder/*
-
-static_host_build: SUBDIRS = tools

@@ -146,7 +146,7 @@ jobs:
         with:
           repo_token: ${{secrets.GITHUB_TOKEN}}
           directory: ${{steps.qt.outputs.outdir}}/${{matrix.version}}
-          asset_name: qtservice-${{matrix.platform}}-${{matrix.version}}
+          asset_name: qtrestclient-${{matrix.platform}}-${{matrix.version}}
           tag: ${{github.ref}}
           overwrite: true
       - name: upload examples to releases
@@ -155,7 +155,7 @@ jobs:
         with:
           repo_token: ${{secrets.GITHUB_TOKEN}}
           directory: ${{steps.qt.outputs.outdir}}/Examples
-          asset_name: qtservice-examples-${{matrix.version}}
+          asset_name: qtrestclient-examples-${{matrix.version}}
           tag: ${{github.ref}}
           overwrite: true
       - name: upload doc to releases
@@ -164,7 +164,7 @@ jobs:
         with:
           repo_token: ${{secrets.GITHUB_TOKEN}}
           directory: ${{steps.qt.outputs.outdir}}/Docs
-          asset_name: qtservice-doc-${{matrix.version}}
+          asset_name: qtrestclient-doc-${{matrix.version}}
           tag: ${{github.ref}}
           overwrite: true
 
