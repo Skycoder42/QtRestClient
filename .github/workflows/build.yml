@@ -1,6 +1,6 @@
 name: CI build
 
-on: [push, check_run]
+on: [push]
 
 jobs:
   build:
@@ -8,13 +8,10 @@ jobs:
       fail-fast: false
       matrix:
         version:
-          - 5.13.2
+          - 5.14.0
         platform:
           - gcc_64
-          - android_arm64_v8a
-          - android_x86_64
-          - android_armv7
-          - android_x86
+          - android
           - wasm_32
           - msvc2017_64
           - msvc2017
@@ -30,22 +27,13 @@ jobs:
           - platform: gcc_64
             os: ubuntu-latest
             repository: linux_x64
-          - platform: android_arm64_v8a
-            os: ubuntu-latest
-            repository: linux_x64
-          - platform: android_x86_64
-            os: ubuntu-latest
-            repository: linux_x64
-          - platform: android_armv7
-            os: ubuntu-latest
-            repository: linux_x64
-          - platform: android_x86
+          - platform: android
             os: ubuntu-latest
             repository: linux_x64
           - platform: wasm_32
             os: ubuntu-latest
             repository: linux_x64
-            emsdk: sdk-1.38.27-64bit
+            emsdk: sdk-fastcomp-1.38.27-64bit
           - platform: msvc2017_64
             os: windows-2016
             repository: windows_x86
@@ -97,7 +85,7 @@ jobs:
         id: cache-qt
         with:
           path: qt/${{matrix.version}}/${{matrix.platform}}
-          key: qt-${{matrix.version}}-${{matrix.platform}}-http-json
+          key: qt-${{matrix.version}}-${{matrix.platform}}-json
       - uses: Skycoder42/action-setup-qt@master
         id: qt
         with:
@@ -173,13 +161,10 @@ jobs:
       fail-fast: false
       matrix:
         version:
-          - 5.13.2
+          - 5.14.0
         platform:
           - gcc_64
-          - android_arm64_v8a
-          - android_x86_64
-          - android_armv7
-          - android_x86
+          - android
           - wasm_32
           - msvc2017_64
           - msvc2017
@@ -194,17 +179,11 @@ jobs:
         include:
           - platform: gcc_64
             os: ubuntu-latest
-          - platform: android_arm64_v8a
-            os: ubuntu-latest
-          - platform: android_x86_64
-            os: ubuntu-latest
-          - platform: android_armv7
-            os: ubuntu-latest
-          - platform: android_x86
+          - platform: android
             os: ubuntu-latest
           - platform: wasm_32
             os: ubuntu-latest
-            emsdk: sdk-1.38.27-64bit
+            emsdk: sdk-fastcomp-1.38.27-64bit
           - platform: msvc2017_64
             os: windows-2016
           - platform: msvc2017
@@ -246,7 +225,7 @@ jobs:
         id: cache-qt
         with:
           path: qt/${{matrix.version}}/${{matrix.platform}}
-          key: qt-${{matrix.version}}-${{matrix.platform}}-http-no-json
+          key: qt-${{matrix.version}}-${{matrix.platform}}-no-json
       - uses: Skycoder42/action-setup-qt@master
         id: qt
         with:
@@ -282,7 +261,7 @@ jobs:
       - uses: Skycoder42/action-deploy-qt@master
         with:
           token: ${{secrets.GITHUB_TOKEN}}
-          version: 5.13.2
+          version: 5.14.0
           host: ${{secrets.SSHFS_HOST}}
           key: ${{secrets.SSHFS_KEY}}
           port: ${{secrets.SSHFS_PORT}}

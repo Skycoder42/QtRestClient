@@ -9,7 +9,8 @@ OTHER_FILES += Doxyfile \
 	images/* \
 	gh_header.html
 
-system($$QMAKE_MKDIR $$shell_quote($$shell_path($$OUT_PWD/qtrestclient)))
+mkpath($$OUT_PWD/qtrestclient)
+!exists($$OUT_PWD/qtrestclient.qch):write_file($$OUT_PWD/qtrestclient.qch, __NOTHING)
 
 docTarget.target = doxygen
 docTarget.commands = $$PWD/makedoc.sh "$$PWD" "$$MODULE_VERSION" "$$[QT_INSTALL_BINS]" "$$[QT_INSTALL_HEADERS]" "$$[QT_INSTALL_DOCS]"
