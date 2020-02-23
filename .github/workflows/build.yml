@@ -95,8 +95,7 @@ jobs:
           cachedir: qt/${{matrix.version}}/${{matrix.platform}}
       - name: clone qthttpserver
         if: steps.cache-qt.outputs.cache-hit != 'true'
-        run: git clone https://code.qt.io/qt-labs/qthttpserver.git
-        working-directory: qthttpserver
+        run: git clone https://code.qt.io/qt-labs/qthttpserver.git ./qthttpserver
       - name: build and install qthttpserver
         if: steps.cache-qt.outputs.cache-hit != 'true'
         run: |
