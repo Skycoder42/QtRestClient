@@ -137,7 +137,6 @@ jobs:
       - name: upload module to releases
         uses: Skycoder42/action-upload-release@master
         if: startsWith(github.ref, 'refs/tags/') && matrix.mode == 'generic'
-        working-directory: qtrestclient
         with:
           repo_token: ${{secrets.GITHUB_TOKEN}}
           directory: ${{steps.qt.outputs.outdir}}/${{matrix.version}}
@@ -147,7 +146,6 @@ jobs:
       - name: upload examples to releases
         uses: Skycoder42/action-upload-release@master
         if: matrix.platform == 'gcc_64' && startsWith(github.ref, 'refs/tags/') && matrix.mode == 'generic'
-        working-directory: qtrestclient
         with:
           repo_token: ${{secrets.GITHUB_TOKEN}}
           directory: ${{steps.qt.outputs.outdir}}/${{matrix.version}}/${{matrix.platform}}/examples
@@ -157,7 +155,6 @@ jobs:
       - name: upload doc to releases
         uses: Skycoder42/action-upload-release@master
         if: matrix.platform == 'gcc_64' && startsWith(github.ref, 'refs/tags/') && matrix.mode == 'generic'
-        working-directory: qtrestclient
         with:
           repo_token: ${{secrets.GITHUB_TOKEN}}
           directory: ${{steps.qt.outputs.outdir}}/${{matrix.version}}/${{matrix.platform}}/doc
