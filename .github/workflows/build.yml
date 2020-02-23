@@ -94,7 +94,6 @@ jobs:
           flat-sources: https://install.skycoder42.de/qtmodules/
           cachedir: qt/${{matrix.version}}/${{matrix.platform}}
       - name: clone qthttpserver
-        uses: actions/checkout@v2
         if: steps.cache-qt.outputs.cache-hit != 'true'
         run: git clone https://code.qt.io/qt-labs/qthttpserver.git
         working-directory: qthttpserver
