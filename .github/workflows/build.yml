@@ -8,7 +8,7 @@ jobs:
       fail-fast: false
       matrix:
         version:
-          - 5.14.0
+          - 5.14.1
         platform:
           - gcc_64
           - android
@@ -22,46 +22,45 @@ jobs:
           - mingw73_32
           - clang_64
           - ios
+        mode:
+          - json
+          - generic
 
         include:
           - platform: gcc_64
             os: ubuntu-latest
-            repository: linux_x64
           - platform: android
             os: ubuntu-latest
-            repository: linux_x64
           - platform: wasm_32
             os: ubuntu-latest
-            repository: linux_x64
             emsdk: sdk-fastcomp-1.38.27-64bit
           - platform: msvc2017_64
-            os: windows-2016
-            repository: windows_x86
+            os: windows-latest
           - platform: msvc2017
-            os: windows-2016
-            repository: windows_x86
+            os: windows-latest
           - platform: winrt_x64_msvc2017
-            os: windows-2016
-            repository: windows_x86
+            os: windows-latest
           - platform: winrt_x86_msvc2017
-            os: windows-2016
-            repository: windows_x86
+            os: windows-latest
           - platform: winrt_armv7_msvc2017
             os: windows-2016
-            repository: windows_x86
           - platform: mingw73_64
             os: windows-latest
-            repository: windows_x86
           - platform: mingw73_32
             os: windows-latest
             extra-flags: CONFIG+=no_coroutine_tests
-            repository: windows_x86
           - platform: clang_64
             os: macos-latest
-            repository: mac_x64
           - platform: ios
             os: macos-latest
-            repository: mac_x64
+
+          - mode: json
+            keysuffix: no-json
+            qtpackages: qtnetworkauth
+            config: CONFIG+=no_json_serializer
+          - mode: generic
+            keysuffix: json
+            qtpackages: qtnetworkauth,skycoder42.jsonserializer
 
     runs-on: ${{matrix.os}}
     steps:
@@ -85,14 +84,14 @@ jobs:
         id: cache-qt
         with:
           path: qt/${{matrix.version}}/${{matrix.platform}}
-          key: qt-${{matrix.version}}-${{matrix.platform}}-json
+          key: qt-${{matrix.version}}-${{matrix.platform}}-${{matrix.keysuffix}}
       - uses: Skycoder42/action-setup-qt@master
         id: qt
         with:
           version: ${{matrix.version}}
           platform: ${{matrix.platform}}
-          packages: qtnetworkauth,skycoder42.jsonserializer
-          install-args: --addRepository https://install.skycoder42.de/qtmodules/${{matrix.repository}} --verbose
+          packages: ${{matrix.qtpackages}}
+          flat-sources: https://install.skycoder42.de/qtmodules/
           cachedir: qt/${{matrix.version}}/${{matrix.platform}}
       - name: build qthttpserver
         if: steps.cache-qt.outputs.cache-hit != 'true' && !contains(matrix.platform, 'mingw')
@@ -107,30 +106,30 @@ jobs:
         run: 7z x "src/3rdparty/qthttpserver-${{matrix.platform}}.zip" "-o${{steps.qt.outputs.qtdir}}" -aoa -y
       - name: qmake
         run: |
-          qmake CONFIG+=install_ok QT_PLATFORM=${{matrix.platform}} ${{matrix.extra-flags}}
+          qmake CONFIG+=install_ok QT_PLATFORM=${{matrix.platform}} ${{matrix.config}} ${{matrix.extra-flags}}
           ${{steps.qt.outputs.make}} qmake_all
       - name: make module
         run: |
           ${{steps.qt.outputs.make}}
           ${{steps.qt.outputs.make}} INSTALL_ROOT="${{steps.qt.outputs.installdir}}" install
       - name: make tests
-        if: steps.qt.outputs.tests == 'true'
+        if: steps.qt.outputs.tests == 'true' && matrix.mode == 'generic'
         run: |
           ${{steps.qt.outputs.make}} all
           ${{steps.qt.outputs.make}} ${{steps.qt.outputs.testflags}} run-tests
       - name: make examples
-        if: matrix.platform == 'gcc_64'
+        if: matrix.platform == 'gcc_64' && matrix.mode == 'generic'
         run: |
           ${{steps.qt.outputs.make}} sub-examples
           cd examples && ${{steps.qt.outputs.make}} INSTALL_ROOT="${{steps.qt.outputs.installdir}}" install
       - name: make doc
-        if: matrix.platform == 'gcc_64'
+        if: matrix.platform == 'gcc_64' && matrix.mode == 'generic'
         run: |
           ${{steps.qt.outputs.make}} doxygen
           cd doc && ${{steps.qt.outputs.make}} INSTALL_ROOT="${{steps.qt.outputs.installdir}}" install
       - name: upload module to releases
         uses: Skycoder42/action-upload-release@master
-        if: startsWith(github.ref, 'refs/tags/')
+        if: startsWith(github.ref, 'refs/tags/') && matrix.mode == 'generic'
         with:
           repo_token: ${{secrets.GITHUB_TOKEN}}
           directory: ${{steps.qt.outputs.outdir}}/${{matrix.version}}
@@ -139,129 +138,33 @@ jobs:
           overwrite: true
       - name: upload examples to releases
         uses: Skycoder42/action-upload-release@master
-        if: matrix.platform == 'gcc_64' && startsWith(github.ref, 'refs/tags/')
+        if: matrix.platform == 'gcc_64' && startsWith(github.ref, 'refs/tags/') && matrix.mode == 'generic'
         with:
           repo_token: ${{secrets.GITHUB_TOKEN}}
-          directory: ${{steps.qt.outputs.outdir}}/Examples
+          directory: ${{steps.qt.outputs.outdir}}/${{matrix.version}}/${{matrix.platform}}/examples
           asset_name: qtrestclient-examples-${{matrix.version}}
           tag: ${{github.ref}}
           overwrite: true
       - name: upload doc to releases
         uses: Skycoder42/action-upload-release@master
-        if: matrix.platform == 'gcc_64' && startsWith(github.ref, 'refs/tags/')
+        if: matrix.platform == 'gcc_64' && startsWith(github.ref, 'refs/tags/') && matrix.mode == 'generic'
         with:
           repo_token: ${{secrets.GITHUB_TOKEN}}
-          directory: ${{steps.qt.outputs.outdir}}/Docs
+          directory: ${{steps.qt.outputs.outdir}}/${{matrix.version}}/${{matrix.platform}}/doc
           asset_name: qtrestclient-doc-${{matrix.version}}
           tag: ${{github.ref}}
           overwrite: true
 
-  build-no-json:
-    strategy:
-      fail-fast: false
-      matrix:
-        version:
-          - 5.14.0
-        platform:
-          - gcc_64
-          - android
-          - wasm_32
-          - msvc2017_64
-          - msvc2017
-          - winrt_x64_msvc2017
-          - winrt_x86_msvc2017
-          - winrt_armv7_msvc2017
-          - mingw73_64
-          - mingw73_32
-          - clang_64
-          - ios
-
-        include:
-          - platform: gcc_64
-            os: ubuntu-latest
-          - platform: android
-            os: ubuntu-latest
-          - platform: wasm_32
-            os: ubuntu-latest
-            emsdk: sdk-fastcomp-1.38.27-64bit
-          - platform: msvc2017_64
-            os: windows-2016
-          - platform: msvc2017
-            os: windows-2016
-          - platform: winrt_x64_msvc2017
-            os: windows-2016
-          - platform: winrt_x86_msvc2017
-            os: windows-2016
-          - platform: winrt_armv7_msvc2017
-            os: windows-2016
-          - platform: mingw73_64
-            os: windows-latest
-          - platform: mingw73_32
-            os: windows-latest
-          - platform: clang_64
-            os: macos-latest
-          - platform: ios
-            os: macos-latest
-
-    runs-on: ${{matrix.os}}
-    steps:
-      - uses: actions/checkout@v1
-        with:
-          submodules: recursive
-      - uses: actions/setup-python@v1
-      - name: actions/cache emsdk
-        uses: actions/cache@v1
-        if: matrix.platform == 'wasm_32'
-        with:
-          path: emsdk-cache
-          key: ${{runner.os}}-emsdk-${{matrix.emsdk}}
-      - uses: mymindstorm/setup-emsdk@v3
-        if: matrix.platform == 'wasm_32'
-        with:
-          version: ${{matrix.emsdk}}
-          actions-cache-folder: emsdk-cache
-      - name: actions/cache qt
-        uses: actions/cache@v1
-        id: cache-qt
-        with:
-          path: qt/${{matrix.version}}/${{matrix.platform}}
-          key: qt-${{matrix.version}}-${{matrix.platform}}-no-json
-      - uses: Skycoder42/action-setup-qt@master
-        id: qt
-        with:
-          version: ${{matrix.version}}
-          platform: ${{matrix.platform}}
-          packages: qtnetworkauth
-          install-args: --verbose
-          cachedir: qt/${{matrix.version}}/${{matrix.platform}}
-      - name: build qthttpserver
-        if: steps.cache-qt.outputs.cache-hit != 'true' && !contains(matrix.platform, 'mingw')
-        run: |
-          qmake
-          ${{steps.qt.outputs.make}} qmake_all
-          ${{steps.qt.outputs.make}}
-          ${{steps.qt.outputs.make}} install
-        working-directory: src/3rdparty/qthttpserver
-      - name: unpack qthttpserver
-        if: steps.cache-qt.outputs.cache-hit != 'true' && contains(matrix.platform, 'mingw')
-        run: 7z x "src/3rdparty/qthttpserver-${{matrix.platform}}.zip" "-o${{steps.qt.outputs.qtdir}}" -aoa -y
-      - name: qmake
-        run: |
-          qmake CONFIG+=install_ok CONFIG+=no_json_serializer QT_PLATFORM=${{matrix.platform}}
-          ${{steps.qt.outputs.make}} qmake_all
-      - name: make module
-        run: ${{steps.qt.outputs.make}}
-
   deploy:
     if: startsWith(github.ref, 'refs/tags/')
-    needs: [build, build-no-json]
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/setup-python@v1
       - uses: Skycoder42/action-deploy-qt@master
         with:
           token: ${{secrets.GITHUB_TOKEN}}
-          version: 5.14.0
+          version: 5.14.1
           host: ${{secrets.SSHFS_HOST}}
           key: ${{secrets.SSHFS_KEY}}
           port: ${{secrets.SSHFS_PORT}}
