@@ -55,11 +55,11 @@ jobs:
             os: macos-latest
 
           - mode: json
-            keysuffix: no-json
+            keysuffix: without-json
             qtpackages: qtnetworkauth
             config: CONFIG+=no_json_serializer
           - mode: generic
-            keysuffix: json
+            keysuffix: with-json
             qtpackages: qtnetworkauth,skycoder42.jsonserializer
 
     runs-on: ${{matrix.os}}
