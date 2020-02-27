@@ -64,9 +64,9 @@ jobs:
 
     runs-on: ${{matrix.os}}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v1
         with:
-          path: qtrestclient
+          submodules: recursive
       - uses: actions/setup-python@v1
       - name: actions/cache emsdk
         uses: actions/cache@v1
@@ -93,42 +93,40 @@ jobs:
           packages: ${{matrix.qtpackages}}
           flat-sources: https://install.skycoder42.de/qtmodules/
           cachedir: qt/${{matrix.version}}/${{matrix.platform}}
-      - name: clone qthttpserver
-        if: steps.cache-qt.outputs.cache-hit != 'true'
-        run: git clone https://code.qt.io/qt-labs/qthttpserver.git ./qthttpserver --recurse-submodules
+      - name: download qthttpserver precompiled binary
+        if: steps.cache-qt.outputs.cache-hit != 'true' && matrix.os == 'windows-latest'
+        shell: bash
+        run: |
+          curl -Lo "src/3rdparty/qthttpserver-binary.zip" 'https://github.com/Skycoder42/qt5-httpserver-build/releases/download/${{matrix.version}}/qthttpserver-${{matrix.platform}}-${{matrix.version}}.zip'
+          7z x "src/3rdparty/qthttpserver-binary.zip" "-o${{steps.qt.outputs.qtdir}}" -aoa -y
       - name: build and install qthttpserver
-        if: steps.cache-qt.outputs.cache-hit != 'true'
+        if: steps.cache-qt.outputs.cache-hit != 'true' && matrix.os != 'windows-latest'
+        working-directory: src/3rdparty/qthttpserver
         run: |
           qmake
           ${{steps.qt.outputs.make}} qmake_all
           ${{steps.qt.outputs.make}}
           ${{steps.qt.outputs.make}} install
-        working-directory: qthttpserver
       - name: qmake
-        working-directory: qtrestclient
         run: |
           qmake CONFIG+=install_ok QT_PLATFORM=${{matrix.platform}} ${{matrix.config}} ${{matrix.extra-flags}}
           ${{steps.qt.outputs.make}} qmake_all
       - name: make module
-        working-directory: qtrestclient
         run: |
           ${{steps.qt.outputs.make}}
           ${{steps.qt.outputs.make}} INSTALL_ROOT="${{steps.qt.outputs.installdir}}" install
       - name: make tests
         if: steps.qt.outputs.tests == 'true' && matrix.mode == 'generic'
-        working-directory: qtrestclient
         run: |
           ${{steps.qt.outputs.make}} all
           ${{steps.qt.outputs.make}} ${{steps.qt.outputs.testflags}} run-tests
       - name: make examples
         if: matrix.platform == 'gcc_64' && matrix.mode == 'generic'
-        working-directory: qtrestclient
         run: |
           ${{steps.qt.outputs.make}} sub-examples
           cd examples && ${{steps.qt.outputs.make}} INSTALL_ROOT="${{steps.qt.outputs.installdir}}" install
       - name: make doc
         if: matrix.platform == 'gcc_64' && matrix.mode == 'generic'
-        working-directory: qtrestclient
         run: |
           ${{steps.qt.outputs.make}} doxygen
           cd doc && ${{steps.qt.outputs.make}} INSTALL_ROOT="${{steps.qt.outputs.installdir}}" install
