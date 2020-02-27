@@ -98,7 +98,7 @@ jobs:
         shell: bash
         run: |
           curl -Lo "src/3rdparty/qthttpserver-binary.zip" 'https://github.com/Skycoder42/qt5-httpserver-build/releases/download/${{matrix.version}}/qthttpserver-${{matrix.platform}}-${{matrix.version}}.zip'
-          7z x "src/3rdparty/qthttpserver-binary.zip" "-o${{steps.qt.outputs.qtdir}}" -aoa -y
+          7z x "src/3rdparty/qthttpserver-binary.zip" "-o${{steps.qt.outputs.qtdir}}/.." -aoa -y
       - name: build and install qthttpserver
         if: steps.cache-qt.outputs.cache-hit != 'true' && matrix.os != 'windows-latest'
         working-directory: src/3rdparty/qthttpserver
