@@ -264,8 +264,13 @@ void RestReplyPrivate::connectReply()
 			this, &RestReplyPrivate::_q_replyFinished);
 
 	// forward some signals
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
 	QObject::connect(networkReply, QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::error),
 					 q, &RestReply::networkError);
+#else
+	QObject::connect(networkReply, &QNetworkReply::errorOccurred,
+					 q, &RestReply::networkError);
+#endif
 #ifndef QT_NO_SSL
 	connect(networkReply, &QNetworkReply::sslErrors,
 			this, &RestReplyPrivate::_q_handleSslErrors);
