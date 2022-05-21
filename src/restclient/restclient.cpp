@@ -37,7 +37,11 @@ RestClient::RestClient(SerializerBase *serializer, QObject *parent) :
 
 RestClass *RestClient::createClass(const QString &path, QObject *parent)
 {
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
 	return new RestClass{this, path.split(QLatin1Char('/'), QString::SkipEmptyParts), parent};
+#else
+	return new RestClass{this, path.split(QLatin1Char('/'), Qt::SkipEmptyParts), parent};
+#endif
 }
 
 RestClass *RestClient::rootClass() const

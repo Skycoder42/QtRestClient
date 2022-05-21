@@ -682,7 +682,11 @@ void ObjectBuilder::writeSetupHooks()
 			source << "\tQtJsonSerializer::SerializerBase::registerListConverters<" << data.name << ">();\n";
 	}
 	if (data.qmlUri) {
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
 		auto uriParts = data.qmlUri.value().split(QLatin1Char(' '), QString::SkipEmptyParts);
+#else
+		auto uriParts = data.qmlUri.value().split(QLatin1Char(' '), Qt::SkipEmptyParts);
+#endif
 		auto uriPath = uriParts.takeFirst();
 		auto uriVersion = QVersionNumber::fromString(uriParts.join(QLatin1Char(' ')));
 		if (uriVersion.isNull())
