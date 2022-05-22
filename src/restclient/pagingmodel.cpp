@@ -306,7 +306,7 @@ RestReply *RestClassFetcher::fetch(const QUrl &url) const
 
 void PagingModelPrivate::clearData()
 {
-	const auto tFlags = QMetaType::typeFlags(typeId);
+	const auto tFlags = QMetaType(typeId).flags();
 	if (tFlags.testFlag(QMetaType::PointerToQObject) ||
 		tFlags.testFlag(QMetaType::TrackingPointerToQObject)) {
 		for (const auto &value : qAsConst(data)) {
