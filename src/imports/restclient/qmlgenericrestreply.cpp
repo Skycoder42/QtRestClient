@@ -13,12 +13,20 @@ QtRestClient::QmlGenericRestReply::QmlGenericRestReply(SerializerBase *serialize
 
 QString QtRestClient::QmlGenericRestReply::returnType() const
 {
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
 	return QString::fromUtf8(QMetaType::typeName(_returnType));
+#else
+	return QString::fromUtf8(QMetaType(_returnType).name());
+#endif
 }
 
 QString QtRestClient::QmlGenericRestReply::errorType() const
 {
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
 	return QString::fromUtf8(QMetaType::typeName(_errorType));
+#else
+	return QString::fromUtf8(QMetaType(_errorType).name());
+#endif
 }
 
 void QtRestClient::QmlGenericRestReply::addCompletedHandler(const QJSValue &completedHandler)
