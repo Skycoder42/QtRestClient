@@ -178,8 +178,8 @@ private:
 
 #ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
 template<typename DataClassType, typename ErrorClassType>
-GenericRestReplyAwaitable<DataClassType, ErrorClassType>::GenericRestReplyAwaitable(GenericRestReply<DataClassType, ErrorClassType> *reply) :
-	reply{reply}
+GenericRestReplyAwaitable<DataClassType, ErrorClassType>::GenericRestReplyAwaitable(GenericRestReply<DataClassType, ErrorClassType> *genericReply) :
+	reply{genericReply}
 {}
 
 template<typename DataClassType, typename ErrorClassType>
@@ -215,8 +215,8 @@ void GenericRestReplyAwaitable<DataClassType, ErrorClassType>::prepare(const std
 		errorResult.reset(new exceptionType{0, RestReply::Error::Deserialization, QString::fromUtf8(data.what())});
 		resume();
 	});
-	reply->onError([this, resume](const QString &message, int code, RestReply::Error type) {
-		errorResult.reset(new exceptionType{code, type, message});
+	reply->onError([this, resume](const QString &message, int code, RestReply::Error errorType) {
+		errorResult.reset(new exceptionType{code, errorType, message});
 		resume();
 	});
 }
@@ -234,8 +234,8 @@ typename GenericRestReplyAwaitable<DataClassType, ErrorClassType>::type GenericR
 
 
 template<typename ErrorClassType>
-GenericRestReplyAwaitable<void, ErrorClassType>::GenericRestReplyAwaitable(GenericRestReply<void, ErrorClassType> *reply) :
-	reply{reply}
+GenericRestReplyAwaitable<void, ErrorClassType>::GenericRestReplyAwaitable(GenericRestReply<void, ErrorClassType> *genericReply) :
+	reply{genericReply}
 {}
 
 template<typename ErrorClassType>
@@ -268,8 +268,8 @@ void GenericRestReplyAwaitable<void, ErrorClassType>::prepare(const std::functio
 		errorResult.reset(new exceptionType{0, RestReply::Error::Deserialization, QString::fromUtf8(data.what())});
 		resume();
 	});
-	reply->onError([this, resume](const QString &message, int code, RestReply::Error type) {
-		errorResult.reset(new exceptionType{code, type, message});
+	reply->onError([this, resume](const QString &message, int code, RestReply::Error errorType) {
+		errorResult.reset(new exceptionType{code, errorType, message});
 		resume();
 	});
 }
