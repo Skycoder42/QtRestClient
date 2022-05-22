@@ -402,11 +402,11 @@ GenericRestReply<Paging<DataClassType>, ErrorClassType> *GenericRestReply<Paging
 						   [&](const auto &data) {
 							   auto iPaging = this->_client->pagingFactory()->createPaging(this->_client->serializer(), data);
 							   auto pData = this->_client->serializer()->deserializeGeneric(std::visit(__private::overload {
-																										   [](const QCborArray &data) -> std::variant<QCborValue, QJsonValue> {
-																											   return QCborValue{data};
+																										   [](const QCborArray &innerData) -> std::variant<QCborValue, QJsonValue> {
+																											   return QCborValue{innerData};
 																										   },
-																										   [](const QJsonArray &data) -> std::variant<QCborValue, QJsonValue> {
-																											   return QJsonValue{data};
+																										   [](const QJsonArray &innerData) -> std::variant<QCborValue, QJsonValue> {
+																											   return QJsonValue{innerData};
 																										   }
 																									   }, iPaging->items()),
 																							qMetaTypeId<QList<DataClassType>>())
