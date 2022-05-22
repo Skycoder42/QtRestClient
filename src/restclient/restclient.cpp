@@ -296,7 +296,9 @@ void RestClient::setModernAttributes()
 	Q_D(RestClient);
 	QWriteLocker _{d->threadLock};
 	d->attribs.insert(QNetworkRequest::HttpPipeliningAllowedAttribute, true);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 	d->attribs.insert(QNetworkRequest::SpdyAllowedAttribute, true);
+#endif
 #if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
 	d->attribs.insert(QNetworkRequest::HTTP2AllowedAttribute, true);
 #else
