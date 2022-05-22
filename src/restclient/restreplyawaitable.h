@@ -52,9 +52,9 @@ public:
 	const char *what() const noexcept override;
 
 	//! @inherit{QException::raise}
-	virtual Q_NORETURN void raise() const;
+	virtual Q_NORETURN void raise() const override;
 	//! @inherit{QException::clone}
-	virtual ExceptionBase *clone() const;
+	virtual ExceptionBase *clone() const override;
 
 protected:
 	//! @private
