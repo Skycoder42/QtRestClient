@@ -140,8 +140,8 @@ void Paging<T>::iterate(const std::function<bool (T, qint64)> &iterator, qint64 
 	//continue to the next one
 	auto max = calcMax(to);
 	if (index < max && d->iPaging->hasNext()) {
-		qCDebug(logPaging) << "Requesting next paging object with offset" << index
-						   << "as" << d->iPaging->next().toString(QUrl::PrettyDecoded | QUrl::RemoveUserInfo);
+		qCDebug(logPaging, "Requesting next paging object with offset %s as %s", QString::number(index), 
+				d->iPaging->next().toString(QUrl::PrettyDecoded | QUrl::RemoveUserInfo));
 		next()->onSucceeded([iterator, to, index](int, const Paging<T> &paging) {
 			if (paging.isValid())
 				paging.iterate(iterator, to, index);
@@ -161,8 +161,8 @@ void Paging<T>::iterate(QObject *scope, const std::function<bool (T, qint64)> &i
 	//continue to the next one
 	auto max = calcMax(to);
 	if (index < max && d->iPaging->hasNext()) {
-		qCDebug(logPaging) << "Requesting next paging object with offset" << index
-						   << "as" << d->iPaging->next().toString(QUrl::PrettyDecoded | QUrl::RemoveUserInfo);
+		qCDebug(logPaging, "Requesting next paging object with offset %s as %s", QString::number(index),
+						   d->iPaging->next().toString(QUrl::PrettyDecoded | QUrl::RemoveUserInfo));
 		next()->onSucceeded(scope, [scope, iterator, to, index](int, const Paging<T> &paging) {
 			if (paging.isValid())
 				paging.iterate(scope, iterator, to, index);
@@ -183,8 +183,8 @@ void Paging<T>::iterate(const std::function<bool(T, qint64)> &iterator, const st
 	//continue to the next one
 	auto max = calcMax(to);
 	if (index < max && d->iPaging->hasNext()) {
-		qCDebug(logPaging) << "Requesting next paging object with offset" << index
-						   << "as" << d->iPaging->next().toString(QUrl::PrettyDecoded | QUrl::RemoveUserInfo);
+		qCDebug(logPaging, "Requesting next paging object with offset %s as %s", QString::number(index),
+						   d->iPaging->next().toString(QUrl::PrettyDecoded | QUrl::RemoveUserInfo));
 		next<EO>()->onSucceeded([iterator, errorHandler, failureTransformer, to, index](int, const Paging<T> &paging) {
 					  if (paging.isValid())
 						  paging.iterate(iterator, errorHandler, failureTransformer, to, index);
@@ -206,8 +206,8 @@ void Paging<T>::iterate(QObject *scope, const std::function<bool(T, qint64)> &it
 	//continue to the next one
 	auto max = calcMax(to);
 	if (index < max && d->iPaging->hasNext()) {
-		qCDebug(logPaging) << "Requesting next paging object with offset" << index
-						   << "as" << d->iPaging->next().toString(QUrl::PrettyDecoded | QUrl::RemoveUserInfo);
+		qCDebug(logPaging, "Requesting next paging object with offset %s as %s", QString::number(index),
+						   d->iPaging->next().toString(QUrl::PrettyDecoded | QUrl::RemoveUserInfo));
 		next<EO>()->onSucceeded(scope, [scope, iterator, errorHandler, failureTransformer, to, index](int, const Paging<T> &paging) {
 					  if (paging.isValid())
 						  paging.iterate(scope, iterator, errorHandler, failureTransformer, to, index);
@@ -229,8 +229,8 @@ void Paging<T>::iterate(const std::function<bool(T, qint64)> &iterator, const st
 	//continue to the next one
 	auto max = calcMax(to);
 	if (index < max && d->iPaging->hasNext()) {
-		qCDebug(logPaging) << "Requesting next paging object with offset" << index
-						   << "as" << d->iPaging->next().toString(QUrl::PrettyDecoded | QUrl::RemoveUserInfo);
+		qCDebug(logPaging, "Requesting next paging object with offset %s as %s", QString::number(index),
+						   d->iPaging->next().toString(QUrl::PrettyDecoded | QUrl::RemoveUserInfo));
 		next<EO>()->onSucceeded([iterator, failureHandler, errorHandler, exceptionHandler, to, index](int, const Paging<T> &paging) {
 					  if (paging.isValid())
 						  paging.iterate(iterator, failureHandler, errorHandler, exceptionHandler, to, index);
@@ -254,8 +254,8 @@ void Paging<T>::iterate(QObject *scope, const std::function<bool(T, qint64)> &it
 	//continue to the next one
 	auto max = calcMax(to);
 	if(index < max && d->iPaging->hasNext()) {
-		qCDebug(logPaging) << "Requesting next paging object with offset" << index
-						   << "as" << d->iPaging->next().toString(QUrl::PrettyDecoded | QUrl::RemoveUserInfo);
+		qCDebug(logPaging, "Requesting next paging object with offset %s as %s", QString::number(index),
+						   d->iPaging->next().toString(QUrl::PrettyDecoded | QUrl::RemoveUserInfo));
 		next<EO>()->onSucceeded(scope, [scope, iterator, failureHandler, errorHandler, exceptionHandler, to, index](int, const Paging<T> &paging) {
 					  if (paging.isValid())
 						  paging.iterate(scope, iterator, failureHandler, errorHandler, exceptionHandler, to, index);
@@ -292,9 +292,9 @@ qint64 Paging<T>::internalIterate(const std::function<bool (T, qint64)> &iterato
 			max = static_cast<int>(std::min(to, offset + count) - offset);
 	}
 
-	qCDebug(logPaging).nospace() << "iterating over available range ["
-								 << offset + start << ":"
-								 << offset + max - 1 << "]";
+	qCDebug(logPaging, "iterating over available range [%s:%s]",
+			QString::number(offset + start),
+			QString::number(offset + max - 1));
 
 	// delete unused items caused by from
 	for (auto j = 0; j < start; ++j)
@@ -307,8 +307,8 @@ qint64 Paging<T>::internalIterate(const std::function<bool (T, qint64)> &iterato
 		auto item = d->data.value(i);
 		auto index = offset >= 0 ? offset + i : -1ll;
 		if (!iterator(item, index)) {
-			qCDebug(logPaging) << "Iterator stopped paging iteration at index"
-							   << index;
+			qCDebug(logPaging, "Iterator stopped paging iteration at index %s", 
+					QString::number(index));
 			canceled = true;
 			break;
 		}
