@@ -28,8 +28,9 @@ private:
 
 class Q_RESTCLIENT_EXPORT RestReplyPrivate : public QObjectPrivate, public QRunnable
 {
-	Q_DECLARE_PUBLIC(RestReply)
 public:
+	Q_DECLARE_PUBLIC(RestReply)
+
 	using DataType = RestReply::DataType;
 	using Error = RestReply::Error;
 
