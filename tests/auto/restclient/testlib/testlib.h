@@ -44,6 +44,7 @@ public:
 
 	bool operator==(const BodyType &other) const;
 	bool operator!=(const BodyType &other) const;
+	bool operator<(const BodyType &other) const = delete;
 };
 
 QDebug operator<<(QDebug debug, const BodyType &data);
