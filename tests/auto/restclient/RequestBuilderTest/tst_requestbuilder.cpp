@@ -412,7 +412,11 @@ void RequestBuilderTest::testSending()
 	QFETCH(BodyType, object);
 
 	RequestBuilder builder(url, nam);
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
 	builder.setAttribute(QNetworkRequest::HTTP2AllowedAttribute, false);
+#else
+	builder.setAttribute(QNetworkRequest::Http2AllowedAttribute, false);
+#endif
 	if (!verb.isEmpty())
 		builder.setVerb(verb);
 	if (object.isValid()) {
@@ -447,7 +451,11 @@ void RequestBuilderTest::setPostParamsSending()
 	};
 
 	RequestBuilder builder(server->url("/posts"), nam);
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
 	builder.setAttribute(QNetworkRequest::HTTP2AllowedAttribute, false);
+#else
+	builder.setAttribute(QNetworkRequest::Http2AllowedAttribute, false);
+#endif
 
 	builder.setVerb("POST");
 	builder.addPostParameter(QStringLiteral("username"), QStringLiteral("user"));
@@ -482,7 +490,11 @@ public:
 protected:
 	void run() override {
 		RequestBuilder builder{url, nam};
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
 		builder.setAttribute(QNetworkRequest::HTTP2AllowedAttribute, false);
+#else
+		builder.setAttribute(QNetworkRequest::Http2AllowedAttribute, false);
+#endif
 
 		builder.setVerb("POST");
 		builder.addPostParameter(QStringLiteral("username"), QStringLiteral("user"));

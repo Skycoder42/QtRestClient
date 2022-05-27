@@ -57,7 +57,7 @@ Paging<T>::Paging(IPaging *iPaging, const QList<T> &data, RestClient *client) :
 template<typename T>
 bool Paging<T>::isValid() const
 {
-	return d->iPaging;
+	return static_cast<bool>(d->iPaging);
 }
 
 template<typename T>

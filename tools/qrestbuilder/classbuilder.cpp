@@ -564,11 +564,20 @@ void ClassBuilder::writeQmlDefinitions()
 		source << ");\n"
 			   << "\tif(!reply)\n"
 			   << "\t\treturn nullptr;\n"
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 			   << "\treturn reinterpret_cast<QtRestClient::QmlGenericRestReply*>(QMetaType::metaObjectForType(QMetaType::type(\"QtRestClient::QmlGenericRestReply*\"))\n"
+#else
+			   << "\treturn reinterpret_cast<QtRestClient::QmlGenericRestReply*>(QMetaType::fromName(\"QtRestClient::QmlGenericRestReply*\").metaObject()\n"
+#endif
 			   << "\t\t->newInstance(Q_ARG(QtJsonSerializer::SerializerBase*, _d->restClient()->serializer()),\n"
 			   << "\t\t\tQ_ARG(QJSEngine*, reinterpret_cast<QJSEngine*>(_engine)),\n"
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 			   << "\t\t\tQ_ARG(int, QMetaType::type(\"" << method.returns << "\")),\n"
 			   << "\t\t\tQ_ARG(int, QMetaType::type(\"" << method.except.value() << "\")),\n"
+#else
+			   << "\t\t\tQ_ARG(int, QMetaType::fromName(\"" << method.returns << "\").id()),\n"
+			   << "\t\t\tQ_ARG(int, QMetaType::fromName(\"" << method.except.value() << "\").id()),\n"
+#endif
 			   << "\t\t\tQ_ARG(QtRestClient::RestReply*, reply)));\n"
 			   << "}\n";
 	}

@@ -5,7 +5,11 @@ QtRestClient::RestClient *Testlib::createClient(QObject *parent)
 {
 	auto client = new QtRestClient::RestClient(parent);
 	client->setModernAttributes();
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
 	client->addRequestAttribute(QNetworkRequest::HTTP2AllowedAttribute, false);
+#else
+	client->addRequestAttribute(QNetworkRequest::Http2AllowedAttribute, false);
+#endif
 	return client;
 }
 
