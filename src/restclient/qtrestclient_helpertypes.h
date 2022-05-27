@@ -78,7 +78,7 @@ struct FnBinder<int, QJsonValue> {
 							   xFn(code, QJsonValue{QJsonValue::Undefined});
 						   },
 						   [xFn, code](const QCborValue &){
-							   qCWarning(logGlobal) << "CBOR data in JSON callback - discarding";
+							   qCWarning(logGlobal, "CBOR data in JSON callback - discarding");
 						   },
 						   [xFn, code](const QJsonValue &vValue){
 							   xFn(code, vValue);
@@ -98,7 +98,7 @@ struct FnBinder<int, QJsonObject> {
 							   xFn(code, QJsonObject{});
 						   },
 						   [xFn, code](const QCborValue &){
-							   qCWarning(logGlobal) << "CBOR data in JSON callback - discarding";
+							   qCWarning(logGlobal, "CBOR data in JSON callback - discarding");
 						   },
 						   [xFn, code](const QJsonValue &vValue){
 							   xFn(code, vValue.toObject());
@@ -118,7 +118,7 @@ struct FnBinder<int, QJsonArray> {
 							   xFn(code, QJsonArray{});
 						   },
 						   [xFn, code](const QCborValue &){
-							   qCWarning(logGlobal) << "CBOR data in JSON callback - discarding";
+							   qCWarning(logGlobal, "CBOR data in JSON callback - discarding");
 						   },
 						   [xFn, code](const QJsonValue &vValue){
 							   xFn(code, vValue.toArray());
@@ -141,7 +141,7 @@ struct FnBinder<int, QCborValue> {
 							   xFn(code, vValue);
 						   },
 						   [xFn, code](const QJsonValue &){
-							   qCWarning(logGlobal) << "JSON data in CBOR callback - discarding";
+							   qCWarning(logGlobal, "JSON data in CBOR callback - discarding");
 						   }
 					   }, value);
 		};
@@ -161,7 +161,7 @@ struct FnBinder<int, QCborMap> {
 							   xFn(code, vValue.toMap());
 						   },
 						   [xFn, code](const QJsonValue &){
-							   qCWarning(logGlobal) << "JSON data in CBOR callback - discarding";
+							   qCWarning(logGlobal, "JSON data in CBOR callback - discarding");
 						   }
 					   }, value);
 		};
@@ -181,7 +181,7 @@ struct FnBinder<int, QCborArray> {
 							   xFn(code, vValue.toArray());
 						   },
 						   [xFn, code](const QJsonValue &){
-							   qCWarning(logGlobal) << "JSON data in CBOR callback - discarding";
+							   qCWarning(logGlobal, "JSON data in CBOR callback - discarding");
 						   }
 					   }, value);
 		};

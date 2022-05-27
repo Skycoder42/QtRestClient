@@ -7,5 +7,5 @@ QmlRestClient::QmlRestClient(QObject *parent) :
 
 QQmlListProperty<QmlRestClass> QmlRestClient::classes()
 {
-	return {this, _childClasses};
+	return {this, &_childClasses};
 }

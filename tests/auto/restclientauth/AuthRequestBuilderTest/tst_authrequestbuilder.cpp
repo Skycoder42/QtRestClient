@@ -105,7 +105,12 @@ void AuthRequestBuilderTest::testSending()
 
 	AuthRequestBuilder builder(url, oAuth);
 	builder.setAccept(body.accept());
+
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
 	builder.setAttribute(QNetworkRequest::HTTP2AllowedAttribute, false);
+#else
+	builder.setAttribute(QNetworkRequest::Http2AllowedAttribute, false);
+#endif
 	if (!verb.isEmpty())
 		builder.setVerb(verb);
 	if (body.isValid()) {

@@ -29,7 +29,7 @@ QmlPaging QmlPaging::create(RestClient *client, QJSEngine *engine, const RestRep
 
 bool QmlPaging::isValid() const
 {
-	return _paging;
+	return static_cast<bool>(_paging);
 }
 
 RestReply *QmlPaging::next()

@@ -373,7 +373,11 @@ void ClassBuilder::writeStartupCode()
 	if(apiData.autoCreate)
 		source << "\tQTimer::singleShot(0, &" << data.name << "::factory);\n";
 	if(data.qmlUri) {
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
 		auto uriParts = data.qmlUri.value().split(QLatin1Char(' '), QString::SkipEmptyParts);
+#else
+		auto uriParts = data.qmlUri.value().split(QLatin1Char(' '), Qt::SkipEmptyParts);
+#endif
 		auto uriPath = uriParts.takeFirst();
 		auto uriVersion = QVersionNumber::fromString(uriParts.join(QLatin1Char(' ')));
 		if(uriVersion.isNull())
@@ -560,11 +564,20 @@ void ClassBuilder::writeQmlDefinitions()
 		source << ");\n"
 			   << "\tif(!reply)\n"
 			   << "\t\treturn nullptr;\n"
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 			   << "\treturn reinterpret_cast<QtRestClient::QmlGenericRestReply*>(QMetaType::metaObjectForType(QMetaType::type(\"QtRestClient::QmlGenericRestReply*\"))\n"
+#else
+			   << "\treturn reinterpret_cast<QtRestClient::QmlGenericRestReply*>(QMetaType::fromName(\"QtRestClient::QmlGenericRestReply*\").metaObject()\n"
+#endif
 			   << "\t\t->newInstance(Q_ARG(QtJsonSerializer::SerializerBase*, _d->restClient()->serializer()),\n"
 			   << "\t\t\tQ_ARG(QJSEngine*, reinterpret_cast<QJSEngine*>(_engine)),\n"
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 			   << "\t\t\tQ_ARG(int, QMetaType::type(\"" << method.returns << "\")),\n"
 			   << "\t\t\tQ_ARG(int, QMetaType::type(\"" << method.except.value() << "\")),\n"
+#else
+			   << "\t\t\tQ_ARG(int, QMetaType::fromName(\"" << method.returns << "\").id()),\n"
+			   << "\t\t\tQ_ARG(int, QMetaType::fromName(\"" << method.except.value() << "\").id()),\n"
+#endif
 			   << "\t\t\tQ_ARG(QtRestClient::RestReply*, reply)));\n"
 			   << "}\n";
 	}

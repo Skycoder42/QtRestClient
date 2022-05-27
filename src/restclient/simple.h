@@ -178,7 +178,7 @@ bool Simple<T*, std::enable_if_t<std::is_base_of_v<QObject, T>>>::hasExtension()
 template<typename T>
 bool Simple<T*, std::enable_if_t<std::is_base_of_v<QObject, T>>>::isExtended() const
 {
-	return ext();
+	return static_cast<bool>(ext());
 }
 
 template<typename T>
@@ -259,7 +259,7 @@ bool Simple<T, std::enable_if_t<std::is_void_v<typename T::QtGadgetHelper>>>::ha
 template<typename T>
 bool Simple<T, std::enable_if_t<std::is_void_v<typename T::QtGadgetHelper>>>::isExtended() const
 {
-	return ext();
+	return static_cast<bool>(ext());
 }
 
 template<typename T>

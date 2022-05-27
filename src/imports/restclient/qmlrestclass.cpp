@@ -20,7 +20,7 @@ QString QmlRestClass::path() const
 
 QQmlListProperty<QmlRestClass> QmlRestClass::classes()
 {
-	return {this, _childClasses};
+	return {this, &_childClasses};
 }
 
 void QmlRestClass::classBegin() {}

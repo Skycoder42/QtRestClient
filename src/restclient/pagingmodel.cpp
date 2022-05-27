@@ -88,7 +88,11 @@ QVariant PagingModel::headerData(int section, Qt::Orientation orientation, int r
 
 	if (d->columns.isEmpty()) {
 		if (section == 0) {
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 			auto metaObject = QMetaType::metaObjectForType(d->typeId);
+#else
+			auto metaObject = QMetaType(d->typeId).metaObject();
+#endif
 			if (metaObject)
 				return QString::fromUtf8(metaObject->className());
 		}
@@ -175,7 +179,11 @@ QVariant PagingModel::data(const QModelIndex &index, int role) const
 #ifndef Q_RESTCLIENT_NO_JSON_SERIALIZER
 	} else {
 		// get the meta object
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 		const auto metaObject = QMetaType::metaObjectForType(d->typeId);
+#else
+		const auto metaObject = QMetaType(d->typeId).metaObject();
+#endif
 		if (!metaObject)
 			return {};
 
@@ -298,7 +306,7 @@ RestReply *RestClassFetcher::fetch(const QUrl &url) const
 
 void PagingModelPrivate::clearData()
 {
-	const auto tFlags = QMetaType::typeFlags(typeId);
+	const auto tFlags = QMetaType(typeId).flags();
 	if (tFlags.testFlag(QMetaType::PointerToQObject) ||
 		tFlags.testFlag(QMetaType::TrackingPointerToQObject)) {
 		for (const auto &value : qAsConst(data)) {
@@ -313,7 +321,11 @@ void PagingModelPrivate::clearData()
 void PagingModelPrivate::generateRoleNames()
 {
 	pagingRoleNames = {{PagingModel::ModelDataRole, "modelData"}};
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 	const auto metaObject = QMetaType::metaObjectForType(typeId);
+#else
+	const auto metaObject = QMetaType(typeId).metaObject();
+#endif
 	if (metaObject) {
 		auto roleIndex = PagingModel::ModelDataRole;
 		for(auto i = 0; i < metaObject->propertyCount(); ++i)

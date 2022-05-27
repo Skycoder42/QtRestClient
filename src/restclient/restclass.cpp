@@ -34,7 +34,11 @@ RestClass *RestClass::subClass(const QString &path, QObject *parent) const
 {
 	Q_D(const RestClass);
 	auto nPath = d->subPath;
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
 	nPath.append(path.split(QLatin1Char('/'), QString::SkipEmptyParts));
+#else
+	nPath.append(path.split(QLatin1Char('/'), Qt::SkipEmptyParts));
+#endif
 	return new RestClass{d->client, std::move(nPath), parent};
 }
 
